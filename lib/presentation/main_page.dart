@@ -22,11 +22,11 @@ class MainPage extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             useMaterial3: true,
-            // colorScheme: const ColorScheme.dark(
-            //   primary: Colors.white,
-            //   onPrimary: Colors.black87,
-            //
-            // ),
+            colorScheme: const ColorScheme.dark(
+              primary: Colors.white,
+              onPrimary: Colors.black87,
+
+            ),
 
             textSelectionTheme: const TextSelectionThemeData(cursorColor: Colors.black87),
             primaryColor: Colors.white,
