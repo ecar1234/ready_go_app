@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
-import 'package:ready_go_project/domain/entities/supplies_provider.dart';
+
+import '../provider/supplies_provider.dart';
+
 
 class SuppliesPage extends StatefulWidget {
   final int planId;
@@ -90,7 +92,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
         },
         child: const Center(
           child: Icon(
-            Icons.edit_document,
+            Icons.add,
             color: Colors.white,
           ),
         ),

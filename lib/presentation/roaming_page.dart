@@ -7,7 +7,9 @@ import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
-import 'package:ready_go_project/domain/entities/Roaming_provider.dart';
+
+import '../provider/Roaming_provider.dart';
+
 
 class RoamingPage extends StatefulWidget {
   final int planId;

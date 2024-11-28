@@ -9,7 +9,7 @@ import 'package:ready_go_project/data/models/accommodation_model/accommodation_m
 import 'package:accordion/accordion.dart';
 
 import 'package:ready_go_project/data/models/plan_model.dart';
-import 'package:ready_go_project/domain/entities/accommodation_provider.dart';
+import 'package:ready_go_project/provider/accommodation_provider.dart';
 import 'package:ready_go_project/util/intl_utils.dart';
 
 class AccommodationPage extends StatefulWidget {

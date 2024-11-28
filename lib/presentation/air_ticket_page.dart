@@ -5,8 +5,9 @@ import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
-import 'package:ready_go_project/data/models/plan_model.dart';
-import 'package:ready_go_project/domain/entities/images_provider.dart';
+
+import '../provider/images_provider.dart';
+
 
 class AirTicketPage extends StatefulWidget {
   final int planId;

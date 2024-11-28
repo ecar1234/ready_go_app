@@ -1,11 +1,6 @@
 
 import 'package:get_it/get_it.dart';
-import 'package:ready_go_project/domain/entities/Roaming_provider.dart';
-import 'package:ready_go_project/domain/entities/accommodation_provider.dart';
-import 'package:ready_go_project/domain/entities/account_provider.dart';
-import 'package:ready_go_project/domain/entities/images_provider.dart';
-import 'package:ready_go_project/domain/entities/plan_list_provider.dart';
-import 'package:ready_go_project/domain/entities/supplies_provider.dart';
+
 import 'package:ready_go_project/domain/use_cases/accommodation_data_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/account_data_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/image_data_use_case.dart';

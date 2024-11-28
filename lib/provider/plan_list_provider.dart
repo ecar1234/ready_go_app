@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:ready_go_project/domain/use_cases/plan_data_use_case.dart';
 
-import '../../data/models/plan_model.dart';
+import '../data/models/plan_model.dart';
 
 class PlanListProvider with ChangeNotifier, DiagnosticableTreeMixin{
   List<PlanModel> _planList =[];

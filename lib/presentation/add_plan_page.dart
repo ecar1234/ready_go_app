@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/plan_model.dart';
-import 'package:ready_go_project/domain/entities/plan_list_provider.dart';
 import 'package:ready_go_project/util/date_util.dart';
+
+import '../provider/plan_list_provider.dart';
 
 class AddPlanPage extends StatefulWidget {
   const AddPlanPage({super.key});

@@ -6,10 +6,11 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:ready_go_project/bloc/data_bloc.dart';
 import 'package:ready_go_project/data/models/plan_model.dart';
-import 'package:ready_go_project/domain/entities/plan_list_provider.dart';
 import 'package:ready_go_project/presentation/add_plan_page.dart';
 import 'package:ready_go_project/presentation/plan_page.dart';
 import 'package:ready_go_project/util/date_util.dart';
+
+import '../provider/plan_list_provider.dart';
 
 class MainPage extends StatelessWidget {
   const MainPage({super.key});
@@ -22,11 +23,6 @@ class MainPage extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             useMaterial3: true,
-            // colorScheme: const ColorScheme.dark(
-            //   primary: Colors.white,
-            //   onPrimary: Colors.black87,
-            //
-            // ),
 
             textSelectionTheme: const TextSelectionThemeData(cursorColor: Colors.black87),
             primaryColor: Colors.white,
