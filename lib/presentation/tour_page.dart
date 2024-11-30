@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ready_go_project/data/models/plan_model.dart';
+
+import '../data/models/plan_model/plan_model.dart';
 
 class TourPage extends StatelessWidget {
   final PlanModel plan;

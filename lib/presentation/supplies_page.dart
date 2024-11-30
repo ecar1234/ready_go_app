@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
+import 'package:ready_go_project/data/models/supply_model/supply_model.dart';
 
 import '../provider/supplies_provider.dart';
-
 
 class SuppliesPage extends StatefulWidget {
   final int planId;
@@ -36,22 +36,22 @@ class _SuppliesPageState extends State<SuppliesPage> {
                     height: 40,
                     child: TextButton(
                         onPressed: () {
-                          context.read<SuppliesProvider>().updateItemState(list[idx], widget.planId);
+                          context.read<SuppliesProvider>().updateItemState(idx, widget.planId);
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "${idx + 1}. ${list[idx].keys.first}",
+                              "${idx + 1}. ${list[idx].item}",
                               style: TextStyle(
                                   fontSize: 18,
-                                  color: list[idx].values.first
+                                  color: list[idx].isCheck == true
                                       ? Colors.grey
                                       : (MediaQuery.of(context).platformBrightness == Brightness.dark ? Colors.white : Colors.black87),
-                                  decoration: list[idx].values.first ? TextDecoration.lineThrough : TextDecoration.none),
+                                  decoration: list[idx].isCheck == true ? TextDecoration.lineThrough : TextDecoration.none),
                             ),
                             PopupMenuButton(
-                              iconColor: MediaQuery.of(context).platformBrightness == Brightness.dark ? Colors.white : Colors.black87,
+                              // iconColor: MediaQuery.of(context).platformBrightness == Brightness.dark ? Colors.white : Colors.black87,
                               itemBuilder: (context) => [
                                 PopupMenuItem(
                                     value: "edit",
@@ -71,10 +71,10 @@ class _SuppliesPageState extends State<SuppliesPage> {
                               onSelected: (value) {
                                 switch (value) {
                                   case "edit":
-                                    _controller.text = list[idx].keys.first;
+                                    _controller.text = list[idx].item!;
                                     _itemEditDialog(context, idx);
                                   case "delete":
-                                    context.read<SuppliesProvider>().removeItem(list[idx], widget.planId);
+                                    context.read<SuppliesProvider>().removeItem(idx, widget.planId);
                                 }
                               },
                             )
@@ -166,12 +166,12 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                 onPressed: () {
                                   if (_controller.text.isEmpty) {
                                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("항목을 입력해 주세요")));
-                                  } else {
-                                    Map<String, bool> item = {_controller.text: false};
-                                    context.read<SuppliesProvider>().addItem(item, widget.planId);
-                                    _controller.text = "";
-                                    Navigator.of(context).pop();
+                                    return;
                                   }
+                                  SupplyModel item = SupplyModel(item: _controller.text, isCheck: false);
+                                  context.read<SuppliesProvider>().addItem(item, widget.planId);
+                                  _controller.text = "";
+                                  Navigator.of(context).pop();
                                 },
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.black87,
@@ -257,12 +257,13 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                 onPressed: () {
                                   if (_controller.text.isEmpty) {
                                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("항목을 입력해 주세요")));
-                                  } else {
-                                    Map<String, bool> item = {_controller.text: false};
+                                    return;
+                                  }
+                                    String item = _controller.text;
                                     context.read<SuppliesProvider>().editItem(idx, item, widget.planId);
                                     _controller.text = "";
                                     Navigator.of(context).pop();
-                                  }
+
                                 },
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.black87,

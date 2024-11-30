@@ -1,49 +1,71 @@
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:ready_go_project/domain/use_cases/image_data_use_case.dart';
+import 'package:ready_go_project/domain/use_cases/image_use_case.dart';
 
 class ImagesProvider with ChangeNotifier {
+  final GetIt _getIt = GetIt.I;
   late List<XFile> _departureImage;
   late List<XFile> _arrivalImage;
 
   List<XFile> get departureImg => _departureImage;
+
   List<XFile> get arrivalImg => _arrivalImage;
 
-  Future<void> getImgList(int id)async{
-    if(id != -1){
-      _departureImage = await GetIt.I.get<ImageDataUseCase>().getDepartureImgList(id);
-      _arrivalImage = await GetIt.I.get<ImageDataUseCase>().getArrivalImgList(id);
-      if(kDebugMode){
-        print("get departure: $_departureImage");
-      }
-      notifyListeners();
-    }else {
-      if(kDebugMode){
-        print("plan id is -1. check the arguments");
-      }
+  Future<void> getImgList(int id) async {
+    try {
+      var imgList = await _getIt.get<ImageUseCase>().getImageList(id);
+      _departureImage = imgList[0];
+      _arrivalImage = imgList[1];
+    } catch (ex) {
+      print(ex.toString());
+      rethrow;
     }
-  }
 
-  Future<void> addDepartureImage(XFile image, int id)async{
-    _departureImage.add(image);
-    await GetIt.I.get<ImageDataUseCase>().addDepartureImg(image, id);
-    notifyListeners();
-  }
-  Future<void> addArrivalImage(XFile image, int id)async{
-    _arrivalImage.add(image);
-    await GetIt.I.get<ImageDataUseCase>().addArrivalImg(image, id);
-    notifyListeners();
-  }
-  Future<void> removeDepartureImage(XFile image, int id)async{
-    _departureImage.removeWhere((e) => e == image);
-    await GetIt.I.get<ImageDataUseCase>().removeDepartImg(image, id);
-    notifyListeners();
-  }
-  Future<void> removeArrivalImage(XFile image, int id)async{
-    _arrivalImage.removeWhere((e) => e == image);
-    await GetIt.I.get<ImageDataUseCase>().removeArrivalImg(image, id);
     notifyListeners();
   }
 
+  Future<void> addDepartureImage(XFile image, int id) async {
+    try {
+      List<XFile> list = await GetIt.I.get<ImageUseCase>().addDepartureImg(image, id);
+      _departureImage = list;
+    } on Exception catch (e) {
+      print(e.toString());
+      rethrow;
+    }
+    notifyListeners();
+  }
+
+  Future<void> addArrivalImage(XFile image, int id) async {
+    try {
+      List<XFile> list = await GetIt.I.get<ImageUseCase>().addArrivalImg(image, id);
+      _arrivalImage = list;
+    } on Exception catch (e) {
+      print(e.toString());
+      rethrow;
+    }
+    notifyListeners();
+  }
+
+  Future<void> removeDepartureImage(XFile image, int id) async {
+    try {
+      List<XFile> list = await GetIt.I.get<ImageUseCase>().removeDepartureImg(image, id);
+      _departureImage = list;
+    } on Exception catch (e) {
+      print(e.toString());
+      rethrow;
+    }
+    notifyListeners();
+  }
+
+  Future<void> removeArrivalImage(XFile image, int id) async {
+    try {
+      List<XFile> list = await GetIt.I.get<ImageUseCase>().removeArrivalImg(image, id);
+      _arrivalImage = list;
+    } on Exception catch (e) {
+      print(e.toString());
+      rethrow;
+    }
+    notifyListeners();
+  }
 }

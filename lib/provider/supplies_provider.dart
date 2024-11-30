@@ -1,49 +1,44 @@
-
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:ready_go_project/domain/use_cases/supplies_data_use_case.dart';
+import 'package:ready_go_project/data/models/supply_model/supply_model.dart';
+import 'package:ready_go_project/domain/use_cases/supplies_use_case.dart';
 
-class SuppliesProvider with ChangeNotifier{
-  late List<Map<String, bool>> _suppliesList;
+class SuppliesProvider with ChangeNotifier {
+  final GetIt _getIt = GetIt.I;
 
-  List<Map<String, bool>> get suppliesList => _suppliesList;
+  late List<SupplyModel> _suppliesList;
 
-  Future<void> getList(int id)async{
-    if(id != -1){
-      _suppliesList = await GetIt.I.get<SuppliesDataUseCase>().getSuppliesList(id);
-      notifyListeners();
-    }else{
-      print("plan id is -1, check the plan id");
-    }
-  }
+  List<SupplyModel> get suppliesList => _suppliesList;
 
-  Future<void> addItem(Map<String, bool> item, int id)async{
-    _suppliesList.add(item);
-    await GetIt.I.get<SuppliesDataUseCase>().addSuppliesItem(_suppliesList, id);
-    notifyListeners();
-  }
-
-  Future<void> removeItem(Map<String, bool> item, int id)async{
-    _suppliesList.removeWhere((e) => e.keys.first == item.keys.first);
-    await GetIt.I.get<SuppliesDataUseCase>().removeSuppliesItem(_suppliesList, id);
-    notifyListeners();
-  }
-  Future<void> updateItemState(Map<String, bool> item, int id)async{
-    for(var e in _suppliesList){
-      if(e.containsKey(item.keys.first)){
-        e[item.keys.first] = !e.values.first;
-        break;
-      }
-    }
-    await GetIt.I.get<SuppliesDataUseCase>().updateSuppliesItem(_suppliesList, id);
-    notifyListeners();
-  }
-  Future<void> editItem(int idx, Map<String, bool> item, int id)async{
-    _suppliesList.removeAt(idx);
-    _suppliesList.insert(idx, item);
-    await GetIt.I.get<SuppliesDataUseCase>().updateSuppliesItem(_suppliesList, id);
+  Future<void> getList(int id) async {
+    var list = await _getIt.get<SuppliesUseCase>().getSuppliesList(id);
+    _suppliesList = list;
 
     notifyListeners();
   }
 
+  Future<void> addItem(SupplyModel item, int id) async {
+    var list = await _getIt.get<SuppliesUseCase>().addSuppliesItem(item, id);
+    _suppliesList = list;
+    notifyListeners();
+  }
+
+  Future<void> removeItem(int idx, int id) async {
+    var list = await _getIt.get<SuppliesUseCase>().removeSuppliesItem(idx, id);
+    _suppliesList = list;
+    notifyListeners();
+  }
+
+  Future<void> editItem(int idx, String item, int id) async {
+    var list = await _getIt.get<SuppliesUseCase>().editSuppliesItem(idx, item, id);
+    _suppliesList = list;
+    notifyListeners();
+  }
+
+  Future<void> updateItemState(int idx, int id) async {
+    var list = await _getIt.get<SuppliesUseCase>().updateSupplyState(idx, id);
+    _suppliesList = list;
+
+    notifyListeners();
+  }
 }

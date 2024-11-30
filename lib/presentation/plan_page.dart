@@ -4,9 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:ready_go_project/bloc/data_bloc.dart';
-import 'package:ready_go_project/data/models/plan_model.dart';
-
-
 import 'package:ready_go_project/presentation/accommodation_page.dart';
 import 'package:ready_go_project/presentation/account_book_page.dart';
 import 'package:ready_go_project/presentation/air_ticket_page.dart';
@@ -14,6 +11,7 @@ import 'package:ready_go_project/presentation/roaming_page.dart';
 import 'package:ready_go_project/presentation/supplies_page.dart';
 // import 'package:ready_go_project/presentation/tour_page.dart';
 
+import '../data/models/plan_model/plan_model.dart';
 import '../provider/Roaming_provider.dart';
 import '../provider/accommodation_provider.dart';
 import '../provider/account_provider.dart';

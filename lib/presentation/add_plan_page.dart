@@ -2,9 +2,9 @@ import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
-import 'package:ready_go_project/data/models/plan_model.dart';
 import 'package:ready_go_project/util/date_util.dart';
 
+import '../data/models/plan_model/plan_model.dart';
 import '../provider/plan_list_provider.dart';
 
 class AddPlanPage extends StatefulWidget {
@@ -20,7 +20,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
 
   @override
   Widget build(BuildContext context) {
-  final int idNum = context.read<PlanListProvider>().planList.length;
+  final int idNum = context.watch<PlanListProvider>().planList.length;
     return GestureDetector(
       onTap: (){
         FocusManager.instance.primaryFocus?.unfocus();
@@ -53,11 +53,13 @@ class _AddPlanPageState extends State<AddPlanPage> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("국가명을 입력해 주세요."), duration: Duration(seconds: 1),)
                         );
+                        return;
                       }
                       if(_dates.length > 2 || _dates.isEmpty){
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("일정을 선택해 주세요"), duration: Duration(seconds: 1),)
                         );
+                        return;
                       }
                       try{
                         PlanModel plan = PlanModel(
@@ -75,7 +77,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)
                       )
-                    ), child: const Text("생성", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500,color: Colors.white),),),
+                    ), child: const Text("생성", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),),
                   ),
                 ],
               )

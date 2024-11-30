@@ -1,31 +1,47 @@
-
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
-import 'package:ready_go_project/domain/use_cases/plan_data_use_case.dart';
+import 'package:ready_go_project/domain/use_cases/plan_use_case.dart';
 
-import '../data/models/plan_model.dart';
+import '../data/models/plan_model/plan_model.dart';
 
-class PlanListProvider with ChangeNotifier, DiagnosticableTreeMixin{
-  List<PlanModel> _planList =[];
+
+class PlanListProvider with ChangeNotifier {
+  final GetIt _getIt = GetIt.I;
+
+  List<PlanModel> _planList = [];
 
   List<PlanModel> get planList => _planList;
 
-  Future<void> setPlanEntity()async{
-    var planList = await GetIt.I.get<PlanDataUseCase>().getLocalList();
-    _planList = planList;
-    notifyListeners();
-  }
-  Future<void> addPlanList(PlanModel plan)async{
-    _planList.add(plan);
-    await GetIt.I.get<PlanDataUseCase>().addToPlanList(plan);
-    if(kDebugMode){
-      print("add planList: $_planList");
+  Future<void> getPlanList() async {
+    try {
+      var list = await _getIt.get<PlanUseCase>().getLocalList();
+      _planList = list;
+    } catch (ex) {
+      print(ex.toString());
+      rethrow;
     }
     notifyListeners();
   }
+
+  Future<void> addPlanList(PlanModel plan) async {
+    try {
+      var list = await _getIt.get<PlanUseCase>().addToPlanList(plan);
+      _planList = list;
+    } catch (ex) {
+      print(ex.toString());
+      rethrow;
+    }
+    notifyListeners();
+  }
+
   Future<void> removePlanList(int id) async {
-    _planList.removeWhere((plan) => plan.id == id);
-    await GetIt.I.get<PlanDataUseCase>().removePlan(id);
+    try {
+      var list = await _getIt.get<PlanUseCase>().removePlan(id);
+      _planList = list;
+    } catch (ex) {
+      print(ex.toString());
+      rethrow;
+    }
     notifyListeners();
   }
 }

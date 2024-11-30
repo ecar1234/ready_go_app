@@ -1,5 +1,5 @@
 
-import 'package:ready_go_project/data/models/plan_model.dart';
+import 'package:ready_go_project/data/models/plan_model/plan_model.dart';
 
 class PlanListModel {
   List<PlanModel>? planList;

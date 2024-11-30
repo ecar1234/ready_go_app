@@ -5,11 +5,11 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:ready_go_project/bloc/data_bloc.dart';
-import 'package:ready_go_project/data/models/plan_model.dart';
 import 'package:ready_go_project/presentation/add_plan_page.dart';
 import 'package:ready_go_project/presentation/plan_page.dart';
 import 'package:ready_go_project/util/date_util.dart';
 
+import '../data/models/plan_model/plan_model.dart';
 import '../provider/plan_list_provider.dart';
 
 class MainPage extends StatelessWidget {
@@ -55,7 +55,7 @@ class _MainPage2State extends State<MainPage2> {
 
     return BlocBuilder<DataBloc, DataState>(builder: (context, state) {
       if (state.state == DataStatus.beforePlanList) {
-        context.read<PlanListProvider>().setPlanEntity();
+        context.read<PlanListProvider>().getPlanList();
         context.read<DataBloc>().add(DataLoadingPlanListEvent());
       }
 

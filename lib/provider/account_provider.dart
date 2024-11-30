@@ -3,8 +3,9 @@ import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:ready_go_project/data/models/account_model/account_model.dart';
 import 'package:ready_go_project/data/models/account_model/amount_model.dart';
-import 'package:ready_go_project/domain/use_cases/account_data_use_case.dart';
+import 'package:ready_go_project/domain/use_cases/account_use_case.dart';
 
+GetIt _getIt = GetIt.I;
 class AccountProvider with ChangeNotifier {
   AccountModel? _accountInfo;
 
@@ -12,7 +13,7 @@ class AccountProvider with ChangeNotifier {
 
   Future<void> getAccountInfo(int id)async{
     try{
-      var accountInfo = await GetIt.I.get<AccountDataUseCase>().getAccountInfo(id);
+      var accountInfo = await GetIt.I.get<AccountUseCase>().getAccountInfo(id);
       _accountInfo = accountInfo;
       notifyListeners();
       // throw Exception("get Account info failed!");
@@ -23,51 +24,26 @@ class AccountProvider with ChangeNotifier {
 
   }
   Future<void> addAmount(AmountModel amount, int day, int id)async{
-    Map<int, List<AmountModel>> history = _accountInfo!.usageHistory!;
-
-    switch(amount.category){
-      case 0:
-        _accountInfo!.totalUseAccount = _accountInfo!.totalUseAccount! - amount.amount!;
-        _accountInfo!.exchange = _accountInfo!.exchange! + amount.amount!;
-      case 1:
-        _accountInfo!.cash = _accountInfo!.cash! + amount.amount!;
-      case 2:
-        _accountInfo!.card = _accountInfo!.card! + amount.amount!;
+    try{
+      var account = await _getIt.get<AccountUseCase>().addAmount(amount, day, id);
+      _accountInfo = account;
+    }catch(ex){
+      print(ex.toString());
+      rethrow;
     }
 
-    if(history.isEmpty){
-      history[day] ??= [];
-      history[day]!.add(amount);
-    }else{
-      if(history.containsKey(day)){
-        history[day]!.add(amount);
-      }else{
-        history[day]??=[];
-        history[day]!.add(amount);
-
-        // print("addAmount : ${_accountInfo!.usageHistory![15]!.first}");
-      }
-      List<MapEntry<int, List<AmountModel>>> entry = history.entries.toList();
-      entry.sort((a,b) => a.key.compareTo(b.key));
-      _accountInfo!.usageHistory = Map.fromEntries(entry);
-    }
-
-    await updateAccountInfo(_accountInfo!, id);
     notifyListeners();
   }
 
   Future<void> addTotalAmount(int total, int id)async {
-    _accountInfo!.totalExchangeAccount = _accountInfo!.totalExchangeAccount! + total;
-    _accountInfo!.totalUseAccount = _accountInfo!.totalExchangeAccount! - _accountInfo!.exchange!;
+   try{
+     var account =  await _getIt.get<AccountUseCase>().addTotalAmount(total, id);
+     _accountInfo = account;
+   }catch(ex){
+     print(ex.toString());
+     rethrow;
+   }
 
-    await updateAccountInfo(_accountInfo!, id);
     notifyListeners();
   }
-
-
-  Future<void> updateAccountInfo(AccountModel info, int id)async{
-    await GetIt.I.get<AccountDataUseCase>().updateAccountInfo(info ,id);
-    notifyListeners();
-  }
-
 }

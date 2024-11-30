@@ -1,12 +1,13 @@
+
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
+import 'package:ready_go_project/data/models/roaming_model/roaming_period_model.dart';
 
 import '../provider/Roaming_provider.dart';
 
@@ -30,35 +31,25 @@ class _RoamingPageState extends State<RoamingPage> {
   @override
   Widget build(BuildContext context) {
     final List<XFile> list = context.watch<RoamingProvider>().imageList;
-    final Map<String, bool> code = context.watch<RoamingProvider>().code;
-    final Map<String, bool> address = context.watch<RoamingProvider>().dpAddress;
-    final Map<String, dynamic> period = context.watch<RoamingProvider>().period;
+    final String code = context.watch<RoamingProvider>().code;
+    final String address = context.watch<RoamingProvider>().dpAddress;
+    final RoamingPeriodModel period = context.watch<RoamingProvider>().period;
 
     if (address.isNotEmpty) {
-      dpAddressController.text = address.keys.first;
+      dpAddressController.text = address;
     }
     if (code.isNotEmpty) {
-      activeCodeController.text = code.keys.first;
+      activeCodeController.text = code;
     }
 
-    DateTime startDate = period["startDate"] as DateTime;
-    DateTime endDate = period["endDate"] as DateTime;
+    DateTime startDate = period.startDate!;
+    DateTime endDate = period.endDate!;
     DateTime now = DateTime.now();
     // Duration currentDuration = now.difference(startDate);
     Duration useDuration = now.difference(startDate);
     Duration remainDuration = endDate.difference(now);
     Duration totalDuration = endDate.difference(startDate);
 
-    if (context.watch<RoamingProvider>().isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator())); // 로딩 상태 표시
-    }
-
-    if (kDebugMode) {
-      print("address loaded: $address");
-      print("code loaded: $code");
-      print("period loaded: $period");
-      // print("total: $totalValue");
-    }
     return GestureDetector(
       onTap: (){
         FocusManager.instance.primaryFocus?.unfocus();
@@ -112,7 +103,7 @@ class _RoamingPageState extends State<RoamingPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 list.isEmpty
-                    ? SizedBox()
+                    ? const SizedBox()
                     : Expanded(
                         child: ListView.separated(
                             itemBuilder: (context, idx) {
@@ -170,7 +161,7 @@ class _RoamingPageState extends State<RoamingPage> {
     );
   }
 
-  Widget _dpAddressSection(BuildContext context, Map<String, bool> address) {
+  Widget _dpAddressSection(BuildContext context, String address) {
     return SizedBox(
       height: 120,
       child: Column(
@@ -217,12 +208,12 @@ class _RoamingPageState extends State<RoamingPage> {
                                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("수정 할 SM-DP주소를 입력해 주세요")));
                                         return;
                                       }
-                                      if (dpAddressController.text == address.keys.first) {
+                                      if (dpAddressController.text == address) {
                                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("변경 할 내용을 확인해 주세요")));
                                         return;
                                       }
-                                      Map<String, bool> addr = {dpAddressController.text: false};
-                                      context.read<RoamingProvider>().editAddress(addr, widget.planId);
+                                      String addr = dpAddressController.text;
+                                      context.read<RoamingProvider>().enterAddress(addr, widget.planId);
                                     },
                                     style: TextButton.styleFrom(
                                       padding: EdgeInsets.zero,
@@ -237,14 +228,14 @@ class _RoamingPageState extends State<RoamingPage> {
                                       showDialog(
                                           context: context,
                                           builder: (context) => AlertDialog(
-                                                content: Text("삭제 하시겠습니까?"),
+                                                content: const Text("삭제 하시겠습니까?"),
                                                 actions: [
                                                   SizedBox(
                                                     child: ElevatedButton(
                                                         onPressed: () {
                                                           Navigator.of(context).pop();
                                                         },
-                                                        child: Text("취소")),
+                                                        child: const Text("취소")),
                                                   ),
                                                   SizedBox(
                                                     child: ElevatedButton(
@@ -253,7 +244,7 @@ class _RoamingPageState extends State<RoamingPage> {
                                                         context.read<RoamingProvider>().removeAddress(widget.planId);
                                                         Navigator.of(context).pop();
                                                       },
-                                                      child: Text("삭제"),
+                                                      child: const Text("삭제"),
                                                     ),
                                                   )
                                                 ],
@@ -276,7 +267,7 @@ class _RoamingPageState extends State<RoamingPage> {
                                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("빈 값은 입력 할 수 없습니다.")));
                                   return;
                                 }
-                                Map<String, bool> newAddress = {dpAddressController.text: false};
+                                String newAddress = dpAddressController.text;
                                 context.read<RoamingProvider>().enterAddress(newAddress, widget.planId);
                               },
                               style: TextButton.styleFrom(
@@ -304,7 +295,7 @@ class _RoamingPageState extends State<RoamingPage> {
     );
   }
 
-  Widget _activeCodeSection(BuildContext context, Map<String, bool> code) {
+  Widget _activeCodeSection(BuildContext context, String code) {
     return SizedBox(
       height: 120,
       child: Column(
@@ -351,12 +342,12 @@ class _RoamingPageState extends State<RoamingPage> {
                                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("수정 할 활성화 코드를 입력해 주세요")));
                                         return;
                                       }
-                                      if (activeCodeController.text == code.keys.first) {
+                                      if (activeCodeController.text == code) {
                                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("변경 할 내용을 확인해 주세요")));
                                         return;
                                       }
-                                      Map<String, bool> newCode = {activeCodeController.text: false};
-                                      context.read<RoamingProvider>().editCode(newCode, widget.planId);
+                                      String newCode = activeCodeController.text;
+                                      context.read<RoamingProvider>().enterCode(newCode, widget.planId);
                                     },
                                     style: TextButton.styleFrom(
                                       padding: EdgeInsets.zero,
@@ -371,14 +362,14 @@ class _RoamingPageState extends State<RoamingPage> {
                                       showDialog(
                                           context: context,
                                           builder: (context) => AlertDialog(
-                                                content: Text("삭제 하시겠습니까?"),
+                                                content: const Text("삭제 하시겠습니까?"),
                                                 actions: [
                                                   SizedBox(
                                                     child: ElevatedButton(
                                                       onPressed: () {
                                                         Navigator.of(context).pop();
                                                       },
-                                                      child: Text("취소"),
+                                                      child: const Text("취소"),
                                                     ),
                                                   ),
                                                   SizedBox(
@@ -388,7 +379,7 @@ class _RoamingPageState extends State<RoamingPage> {
                                                           context.read<RoamingProvider>().removeCode(widget.planId);
                                                           Navigator.of(context).pop();
                                                         },
-                                                        child: Text("삭제")),
+                                                        child: const Text("삭제")),
                                                   )
                                                 ],
                                               ));
@@ -410,7 +401,7 @@ class _RoamingPageState extends State<RoamingPage> {
                                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("빈 값은 입력 할 수 없습니다.")));
                                   return;
                                 }
-                                Map<String, bool> newCode = {activeCodeController.text: false};
+                                String newCode = activeCodeController.text;
                                 context.read<RoamingProvider>().enterCode(newCode, widget.planId);
                               },
                               style: TextButton.styleFrom(
@@ -439,8 +430,8 @@ class _RoamingPageState extends State<RoamingPage> {
   }
 
   Widget _periodSection(
-      BuildContext context, Map<String, dynamic> period, DateTime startDate, Duration useDuration, Duration remainDuration, totalDuration) {
-    int? selectedValue = period["period"] as int?;
+      BuildContext context, RoamingPeriodModel period, DateTime startDate, Duration useDuration, Duration remainDuration, totalDuration) {
+    int? selectedValue = period.period!;
     return SizedBox(
       height: 220,
       child: Column(
@@ -456,14 +447,14 @@ class _RoamingPageState extends State<RoamingPage> {
                 ),
                 const Gap(20),
                 DropdownMenu(
-                  enabled: period["isActive"] == false,
+                  enabled: period.isActive == false,
                   initialSelection: selectedValue,
                   hintText: "기간 선택",
                   width: 120,
                   menuHeight: 300,
                   dropdownMenuEntries: List.generate(31, (idx) => DropdownMenuEntry(value: idx + 1, label: "${idx + 1}일")),
                   onSelected: (value) {
-                    if (period.containsKey("period") && period["isActive"] == true) {
+                    if (period.isActive == true) {
                       showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
@@ -482,8 +473,8 @@ class _RoamingPageState extends State<RoamingPage> {
                                     child: ElevatedButton(
                                         onPressed: () {
                                           Navigator.of(context).pop();
-                                          context.read<RoamingProvider>().setPeriodDate(period["period"], widget.planId);
-                                          selectedValue = period["period"];
+                                          context.read<RoamingProvider>().setPeriodDate(period.period!, widget.planId);
+                                          selectedValue = period.period;
                                         },
                                         child: const Text("취소")),
                                   ),
@@ -492,14 +483,10 @@ class _RoamingPageState extends State<RoamingPage> {
                                     height: 40,
                                     child: ElevatedButton(
                                         onPressed: () {
-                                          if (value != null) {
-                                            context.read<RoamingProvider>().setPeriodDate(value, widget.planId);
-                                            Navigator.of(context).pop();
-                                          } else {
-                                            print("$value");
-                                          }
+                                          context.read<RoamingProvider>().setPeriodDate(value!, widget.planId);
+                                          Navigator.of(context).pop();
                                         },
-                                        child: Text("확인")),
+                                        child: const Text("확인")),
                                   )
                                 ],
                               ));
@@ -516,7 +503,7 @@ class _RoamingPageState extends State<RoamingPage> {
           const Gap(10),
           Row(
             children: [
-              period["isActive"] == true
+              period.isActive == true
                   ? SizedBox(
                       width: 80,
                       height: 40,
@@ -529,7 +516,7 @@ class _RoamingPageState extends State<RoamingPage> {
                           onPressed: () {
                             context.read<RoamingProvider>().resetPeriod(widget.planId);
                             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text(("데이터가 초기화 되었습니다"))));
-                            selectedValue = period["period"];
+                            selectedValue = period.period;
                           },
                           child: const Text(
                             "초기화",
@@ -545,7 +532,7 @@ class _RoamingPageState extends State<RoamingPage> {
                               backgroundColor: Colors.black87,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                           onPressed: () {
-                            if (period["period"] == 0) {
+                            if (period.period == 0) {
                               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("사용기간을 설정 또는 재설정 해주세요")));
                               return;
                             }
@@ -557,16 +544,16 @@ class _RoamingPageState extends State<RoamingPage> {
                           )),
                     ),
               const Gap(10),
-              period["isActive"] == true
+              period.isActive == true
                   ? Text(
                       "시작시간: ${startDate.month}월 ${startDate.day}일 ${startDate.hour}시 ${startDate.minute}분",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     )
-                  : SizedBox()
+                  : const SizedBox()
             ],
           ),
           const Gap(10),
-          period["isActive"] == true
+          period.isActive == true
               ? Column(
                   children: [
                     SizedBox(
@@ -575,7 +562,7 @@ class _RoamingPageState extends State<RoamingPage> {
                         children: [
                           useDuration.inSeconds < totalDuration.inSeconds
                               ? Text("사용시간(분): ${useDuration.inMinutes}분")
-                              : Text("사용시간(분): ${totalDuration.inMinutes}"),
+                              : Text("사용시간(분): ${totalDuration.inMinutes}분"),
                           const Gap(10),
                           const Text("/"),
                           const Gap(10),
@@ -599,7 +586,7 @@ class _RoamingPageState extends State<RoamingPage> {
                     ),
                   ],
                 )
-              : SizedBox()
+              : const SizedBox()
         ],
       ),
     );

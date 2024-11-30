@@ -6,11 +6,12 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/account_model/account_model.dart';
 import 'package:ready_go_project/data/models/account_model/amount_model.dart';
-import 'package:ready_go_project/data/models/plan_model.dart';
+
 
 import 'package:ready_go_project/util/intl_utils.dart';
 import 'package:uuid/uuid.dart';
 
+import '../data/models/plan_model/plan_model.dart';
 import '../provider/account_provider.dart';
 
 class AccountBookPage extends StatefulWidget {

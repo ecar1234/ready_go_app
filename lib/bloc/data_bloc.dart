@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'package:ready_go_project/domain/use_cases/plan_data_use_case.dart';
+import 'package:ready_go_project/domain/use_cases/plan_use_case.dart';
 
 part 'data_event.dart';
 
