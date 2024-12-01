@@ -204,10 +204,8 @@ class _AccountBookPageState extends State<AccountBookPage> {
         onPressed: () {
           _addAmountDialog(context, info);
         },
-        backgroundColor: Colors.white,
         child: const Icon(
           Icons.add,
-          color: Colors.black87,
         ),
       ),
     );

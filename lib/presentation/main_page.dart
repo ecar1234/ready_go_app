@@ -25,6 +25,9 @@ class MainPage extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             useMaterial3: true,
+            floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              backgroundColor: Colors.white,
+            ),
             inputDecorationTheme: const InputDecorationTheme(
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(

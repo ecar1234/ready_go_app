@@ -104,14 +104,12 @@ class _SuppliesPageState extends State<SuppliesPage> {
                 itemCount: list.length),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.black87,
         onPressed: () {
           _itemAddDialog(context);
         },
         child: const Center(
           child: Icon(
             Icons.add,
-            color: Colors.white,
           ),
         ),
       ),
