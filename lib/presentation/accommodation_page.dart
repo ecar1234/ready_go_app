@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
@@ -10,6 +11,7 @@ import 'package:accordion/accordion.dart';
 
 import 'package:ready_go_project/provider/accommodation_provider.dart';
 import 'package:ready_go_project/util/intl_utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../data/models/plan_model/plan_model.dart';
 
@@ -39,6 +41,25 @@ class _AccommodationPageState extends State<AccommodationPage> {
     _debounce = Timer(const Duration(milliseconds: 500), () {
       print(value);
     });
+  }
+
+  Future<void> _openGoogleMap(String address) async {
+    final String mapsUrl = "comgooglemaps://?q=${Uri.encodeComponent(address)}";
+    final String webMapUrl = "https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(address)}";
+
+    if (await canLaunchUrl(Uri.parse(mapsUrl))) {
+      // Google Maps 앱으로 열기
+      await launchUrl(Uri.parse(mapsUrl));
+      if (kDebugMode) {
+        print("open google maps");
+      }
+    } else {
+      // Google Maps 웹 브라우저로 열기
+      await launchUrl(Uri.parse(webMapUrl), mode: LaunchMode.externalApplication);
+      if (kDebugMode) {
+        print("open web maps");
+      }
+    }
   }
 
   @override
@@ -474,7 +495,9 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                   SizedBox(
                                     width: 80,
                                     child: TextButton(
-                                      onPressed: () {},
+                                      onPressed: () async {
+                                        await _openGoogleMap(list[idx].address!);
+                                      },
                                       style: TextButton.styleFrom(padding: EdgeInsets.zero),
                                       child: const Text("구글맵 열기"),
                                     ),
@@ -483,7 +506,14 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                   SizedBox(
                                     width: 70,
                                     child: TextButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        if (list[idx].address!.isEmpty) {
+                                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("주소가 존재하지 않습니다.")));
+                                          return;
+                                        }
+                                        Clipboard.setData(ClipboardData(text: list[idx].address!));
+                                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("숙소 주소가 복사 되었습니다.")));
+                                      },
                                       style: TextButton.styleFrom(padding: EdgeInsets.zero),
                                       child: const Text("주소 복사"),
                                     ),
