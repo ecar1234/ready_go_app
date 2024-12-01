@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:gap/gap.dart';
@@ -23,9 +25,23 @@ class MainPage extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             useMaterial3: true,
-
+            inputDecorationTheme: const InputDecorationTheme(
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.black87, // 원하는 색상
+                  width: 1.0,
+                ), 
+                  borderRadius: BorderRadius.all(Radius.circular(10))
+              ),
+              enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.black87, // 원하는 색상
+                    width: 1.0,
+                  ),
+                  borderRadius: BorderRadius.all(Radius.circular(10))
+              ),
+            ),
             textSelectionTheme: const TextSelectionThemeData(cursorColor: Colors.black87),
-            primaryColor: Colors.white,
             fontFamily: 'Nanum',
             appBarTheme: const AppBarTheme(
               titleTextStyle: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Nanum'),

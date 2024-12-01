@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +18,22 @@ class SuppliesPage extends StatefulWidget {
 
 class _SuppliesPageState extends State<SuppliesPage> {
   final TextEditingController _controller = TextEditingController();
+
+  Timer? _debounce;
+  _onChanged(String value){
+    if(_debounce?.isActive ?? false){
+      _debounce?.cancel();
+    }
+    _debounce = Timer(const Duration(milliseconds: 500), (){});
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _controller.dispose();
+    _debounce?.cancel();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -146,6 +164,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
                         height: 30,
                         child: TextField(
                           controller: _controller,
+                          onChanged: _onChanged,
                           style: const TextStyle(fontSize: 12),
                           decoration: InputDecoration(
                             border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
@@ -237,6 +256,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
                         height: 30,
                         child: TextField(
                           controller: _controller,
+                          onChanged: _onChanged,
                           style: const TextStyle(fontSize: 12),
                           decoration: InputDecoration(
                             border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),

@@ -1,4 +1,5 @@
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -27,6 +28,23 @@ class _RoamingPageState extends State<RoamingPage> {
   TextEditingController activeCodeController = TextEditingController();
 
   int? selectedValue;
+
+  Timer? _debounce;
+  _onChanged(String value){
+    if(_debounce?.isActive ?? false){
+      _debounce?.cancel();
+    }
+    _debounce = Timer(const Duration(milliseconds: 500), (){});
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    dpAddressController.dispose();
+    activeCodeController.dispose();
+    _debounce?.cancel();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -140,11 +158,12 @@ class _RoamingPageState extends State<RoamingPage> {
                   width: 100,
                   child: ElevatedButton(
                       onPressed: () async {
-                        final imgProvider = context.read<RoamingProvider>();
-                        final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-                        if (image != null) {
-                          imgProvider.addImage(image, widget.planId);
-                        }
+                        _showImageSourceDialog();
+                        // final imgProvider = context.read<RoamingProvider>();
+                        // final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+                        // if (image != null) {
+                        //   imgProvider.addImage(image, widget.planId);
+                        // }
                       },
                       style: ElevatedButton.styleFrom(
                           side: const BorderSide(color: Colors.white12),
@@ -280,9 +299,11 @@ class _RoamingPageState extends State<RoamingPage> {
                 ),
               ),
               SizedBox(
-                height: 50,
+                height: 60,
                 child: TextField(
                     controller: dpAddressController,
+                    onChanged: _onChanged,
+                    style: const TextStyle(fontSize: 16),
                     decoration: InputDecoration(
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                       focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
@@ -414,9 +435,11 @@ class _RoamingPageState extends State<RoamingPage> {
                 ),
               ),
               SizedBox(
-                height: 50,
+                height: 60,
                 child: TextField(
                     controller: activeCodeController,
+                    onChanged: _onChanged,
+                    style: const TextStyle(fontSize: 16),
                     decoration: InputDecoration(
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                       focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
@@ -589,6 +612,42 @@ class _RoamingPageState extends State<RoamingPage> {
               : const SizedBox()
         ],
       ),
+    );
+  }
+
+  void _showImageSourceDialog() {
+    final roamingProvider = context.read<RoamingProvider>();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("이미지 선택"),
+          content: const Text("갤러리 또는 카메라 중 하나를 선택하세요."),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop(); // 다이얼로그 닫기
+                final XFile? image = await picker.pickImage(source: ImageSource.camera); // 카메라에서 이미지 선택
+                if (image != null) {
+                  roamingProvider.addImage(image, widget.planId);
+                }
+              },
+              child: const Text("카메라"),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop(); // 다이얼로그 닫기
+                final XFile? image = await picker.pickImage(source: ImageSource.gallery); // 갤러리에서 이미지 선택
+                if (image != null) {
+                  roamingProvider.addImage(image, widget.planId);
+                }
+              },
+              child: const Text("갤러리"),
+            ),
+          ],
+        );
+      },
     );
   }
 }

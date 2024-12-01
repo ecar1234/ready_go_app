@@ -51,7 +51,7 @@ class ImagePreference {
     try {
       List<String> stringJson = list.map((img) => img.path).toList();
       String? json = jsonEncode(stringJson);
-      pref.setString("departure$id", json);
+      pref.setString("departureImg$id", json);
     } catch (ex) {
       print(ex.toString());
       rethrow;
@@ -64,7 +64,7 @@ class ImagePreference {
     try {
       List<String> stringJson = list.map((img) => img.path).toList();
       String? json = jsonEncode(stringJson);
-      pref.setString("arrival$id", json);
+      pref.setString("arrivalImg$id", json);
     } catch (ex) {
       print(ex.toString());
       rethrow;

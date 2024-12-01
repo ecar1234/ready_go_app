@@ -32,9 +32,9 @@ class AccommodationProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> removeAccommodation(AccommodationModel info, int id) async {
+  Future<void> removeAccommodation(int idx, int id) async {
     try{
-      var list = await GetIt.I.get<AccommodationUseCase>().removeAccommodation(info, id);
+      var list = await GetIt.I.get<AccommodationUseCase>().removeAccommodation(idx, id);
       _accommodation = list;
     }catch(ex){
       print(ex.toString());

@@ -20,7 +20,7 @@ class AccommodationUseCase {
     List<AccommodationModel> list = [];
 
     try{
-      var list = await _getIt.get<AccommodationEntity>().getAccommodationList(id);
+      list = await _getIt.get<AccommodationEntity>().getAccommodationList(id);
       list.add(info);
 
       await _getIt.get<AccommodationEntity>().updateAccommodationList(list, id);
@@ -31,11 +31,11 @@ class AccommodationUseCase {
     return list;
   }
 
-  Future<List<AccommodationModel>> removeAccommodation(AccommodationModel info, int id) async {
+  Future<List<AccommodationModel>> removeAccommodation(int idx, int id) async {
     List<AccommodationModel> list = [];
     try{
       list = await _getIt<AccommodationEntity>().getAccommodationList(id);
-      list.removeWhere((item) => item == info);
+      list.removeAt(idx);
 
       await _getIt.get<AccommodationEntity>().updateAccommodationList(list, id);
 

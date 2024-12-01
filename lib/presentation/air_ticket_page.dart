@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 
 import '../provider/images_provider.dart';
 
-
 class AirTicketPage extends StatefulWidget {
   final int planId;
 
@@ -60,7 +59,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
                             scrollDirection: Axis.horizontal,
                             itemBuilder: (context, idx) {
                               return GestureDetector(
-                                onTap: (){
+                                onTap: () {
                                   OpenFile.open(list[idx].path);
                                 },
                                 child: Stack(children: [
@@ -97,17 +96,59 @@ class _AirTicketPageState extends State<AirTicketPage> {
                             borderRadius: BorderRadius.all(Radius.circular(10)),
                           )),
                       onPressed: () async {
-                        final imgProvider = context.read<ImagesProvider>();
-                        final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-                        if (image != null) {
-                          imgProvider.addDepartureImage(image, widget.planId);
-                        }
+                        _showImageSourceDialog("departure");
+
+                        // final imgProvider = context.read<ImagesProvider>();
+                        // final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+                        // if (image != null) {
+                        //   imgProvider.addDepartureImage(image, widget.planId);
+                        // }
                       },
                       child: const Icon(Icons.add)))
             ],
           ),
         )
       ],
+    );
+  }
+
+  void _showImageSourceDialog(String type) {
+    final imgProvider = context.read<ImagesProvider>();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("이미지 선택"),
+          content: const Text("갤러리 또는 카메라 중 하나를 선택하세요."),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop(); // 다이얼로그 닫기
+                final XFile? image = await picker.pickImage(source: ImageSource.camera); // 카메라에서 이미지 선택
+                if (image != null) {
+                  imgProvider.addDepartureImage(image, widget.planId);
+                }
+              },
+              child: const Text("카메라"),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop(); // 다이얼로그 닫기
+                final XFile? image = await picker.pickImage(source: ImageSource.gallery); // 갤러리에서 이미지 선택
+                if (image != null) {
+                  if(type == "departure"){
+                    imgProvider.addDepartureImage(image, widget.planId);
+                  } else if(type == "arrival"){
+                    imgProvider.addArrivalImage(image, widget.planId);
+                  }
+                }
+              },
+              child: const Text("갤러리"),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -133,7 +174,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
                             scrollDirection: Axis.horizontal,
                             itemBuilder: (context, idx) {
                               return GestureDetector(
-                                onTap: (){
+                                onTap: () {
                                   OpenFile.open(list[idx].path);
                                 },
                                 child: Stack(children: [
@@ -170,11 +211,12 @@ class _AirTicketPageState extends State<AirTicketPage> {
                             borderRadius: BorderRadius.all(Radius.circular(10)),
                           )),
                       onPressed: () async {
-                        final imgProvider = context.read<ImagesProvider>();
-                        final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-                        if (image != null) {
-                          imgProvider.addArrivalImage(image, widget.planId);
-                        }
+                        _showImageSourceDialog("arrival");
+                        // final imgProvider = context.read<ImagesProvider>();
+                        // final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+                        // if (image != null) {
+                        //   imgProvider.addArrivalImage(image, widget.planId);
+                        // }
                       },
                       child: const Icon(Icons.add)))
             ],

@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/accommodation_model/accommodation_model.dart';
 import 'package:accordion/accordion.dart';
 
-
 import 'package:ready_go_project/provider/accommodation_provider.dart';
 import 'package:ready_go_project/util/intl_utils.dart';
 
@@ -31,6 +30,17 @@ class _AccommodationPageState extends State<AccommodationPage> {
   final TextEditingController _checkInController = TextEditingController();
   final TextEditingController _checkOutController = TextEditingController();
 
+  Timer? _debounce;
+
+  _onChanged(String value) {
+    if (_debounce?.isActive ?? false) {
+      _debounce?.cancel();
+    }
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      print(value);
+    });
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -41,6 +51,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
     _paymentController.dispose();
     _checkOutController.dispose();
     _checkInController.dispose();
+    _debounce?.cancel();
   }
 
   @override
@@ -106,6 +117,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                             height: 50,
                             child: TextField(
                               controller: _nameController,
+                              onChanged: _onChanged,
                               decoration: InputDecoration(
                                 label: const Text(
                                   "숙소명",
@@ -121,6 +133,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                             height: 50,
                             child: TextField(
                               controller: _addressController,
+                              onChanged: _onChanged,
                               decoration: InputDecoration(
                                 label: const Text(
                                   "주소",
@@ -137,6 +150,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                             width: 300,
                             child: TextField(
                               controller: _paymentController,
+                              onChanged: _onChanged,
                               keyboardType: TextInputType.number,
                               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                               decoration: InputDecoration(
@@ -228,6 +242,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                             height: 50,
                             child: TextField(
                               controller: _periodController,
+                              onChanged: _onChanged,
                               keyboardType: TextInputType.number,
                               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                               textAlign: TextAlign.end,
@@ -264,6 +279,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                   width: 100,
                                   child: TextField(
                                     controller: _checkInController,
+                                    onChanged: _onChanged,
                                     decoration: InputDecoration(
                                         border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10))),
                                   ),
@@ -284,6 +300,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                   width: 100,
                                   child: TextField(
                                     controller: _checkOutController,
+                                    onChanged: _onChanged,
                                     decoration: InputDecoration(
                                         border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10))),
                                   ),
@@ -329,32 +346,38 @@ class _AccommodationPageState extends State<AccommodationPage> {
                               child: ElevatedButton(
                                   onPressed: () {
                                     if (_nameController.text.isEmpty) {
-                                      Get.snackbar("입력 정보 확인", "숙소명을 입력해 주세요", colorText: Colors.white, backgroundColor: Colors.black87, snackPosition: SnackPosition.BOTTOM);
+                                      Get.snackbar("입력 정보 확인", "숙소명을 입력해 주세요",
+                                          colorText: Colors.white, backgroundColor: Colors.black87, snackPosition: SnackPosition.BOTTOM);
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("여행 종료일 보다 이후 날짜로 설정 할 수 없습니다.")));
                                       return;
                                     }
                                     if (_addressController.text.isEmpty) {
-                                      Get.snackbar("입력 정보 확인", "주소를 입력해 주세요.", colorText: Colors.white, backgroundColor: Colors.black87, snackPosition: SnackPosition.BOTTOM);
+                                      Get.snackbar("입력 정보 확인", "주소를 입력해 주세요.",
+                                          colorText: Colors.white, backgroundColor: Colors.black87, snackPosition: SnackPosition.BOTTOM);
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("숙소 주소를 확인해 주세요")));
                                       return;
                                     }
                                     if (_paymentController.text.isEmpty) {
-                                      Get.snackbar("입력 정보 확인", "숙박 가격을 입력해 주세요.", colorText: Colors.white, backgroundColor: Colors.black87, snackPosition: SnackPosition.BOTTOM);
+                                      Get.snackbar("입력 정보 확인", "숙박 가격을 입력해 주세요.",
+                                          colorText: Colors.white, backgroundColor: Colors.black87, snackPosition: SnackPosition.BOTTOM);
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("숙소 가격을 확인해 주세요")));
                                       return;
                                     }
                                     if (_periodController.text.isEmpty) {
-                                      Get.snackbar("입력 정보 확인", "숙박 일 수를 입력해 주세요.", colorText: Colors.white, backgroundColor: Colors.black87, snackPosition: SnackPosition.BOTTOM);
+                                      Get.snackbar("입력 정보 확인", "숙박 일 수를 입력해 주세요.",
+                                          colorText: Colors.white, backgroundColor: Colors.black87, snackPosition: SnackPosition.BOTTOM);
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("숙박 기간을 확인해 주세요")));
                                       return;
                                     }
                                     if (_checkInController.text.isEmpty) {
-                                      Get.snackbar("입력 정보 확인", "체크인 시간을 입력해 주세요.", colorText: Colors.white, backgroundColor: Colors.black87, snackPosition: SnackPosition.BOTTOM);
+                                      Get.snackbar("입력 정보 확인", "체크인 시간을 입력해 주세요.",
+                                          colorText: Colors.white, backgroundColor: Colors.black87, snackPosition: SnackPosition.BOTTOM);
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("체크인 시간을 확인해 주세요")));
                                       return;
                                     }
                                     if (_checkOutController.text.isEmpty) {
-                                      Get.snackbar("입력 정보 확인", "체크 아웃 시간을 입력해 주세요.", colorText: Colors.white, backgroundColor: Colors.black87, snackPosition: SnackPosition.BOTTOM);
+                                      Get.snackbar("입력 정보 확인", "체크 아웃 시간을 입력해 주세요.",
+                                          colorText: Colors.white, backgroundColor: Colors.black87, snackPosition: SnackPosition.BOTTOM);
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("체크아웃 시간을 확인해 주세요")));
                                       return;
                                     }
@@ -425,7 +448,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                       height: 20,
                       child: TextButton(
                           onPressed: () {
-                            context.read<AccommodationProvider>().removeAccommodation(list[idx], widget.plan.id!);
+                            context.read<AccommodationProvider>().removeAccommodation(idx, widget.plan.id!);
                           },
                           style: TextButton.styleFrom(padding: EdgeInsets.zero),
                           child: const Text("삭제")),

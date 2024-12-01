@@ -57,6 +57,7 @@ class RoamingUseCase {
   }
   Future<RoamingPeriodModel> startPeriod(int id)async{
     var period = await _getIt.get<RoamingEntity>().getRoamingPeriod(id);
+    period.isActive = true;
     period.startDate = DateTime.now();
     await _getIt.get<RoamingEntity>().updateRoamingPeriod(period, id);
 

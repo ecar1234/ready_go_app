@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -17,6 +19,24 @@ class AddPlanPage extends StatefulWidget {
 class _AddPlanPageState extends State<AddPlanPage> {
   TextEditingController nationController = TextEditingController();
   List<DateTime?> _dates = [];
+
+  Timer? _debounce;
+
+  _onChanged(String value) {
+    if (_debounce?.isActive ?? false) {
+      _debounce?.cancel();
+    }
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      print(value);
+    });
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    nationController.dispose();
+    _debounce?.cancel();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,6 +121,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
           height: 50,
           child: TextField(
             controller: nationController,
+            onChanged: _onChanged,
             decoration: const InputDecoration(
                 border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black87), borderRadius: BorderRadius.all(Radius.circular(10))),
                 focusedBorder:

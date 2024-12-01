@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,6 +32,13 @@ class _AccountBookPageState extends State<AccountBookPage> {
   final TextEditingController _totalAmountController = TextEditingController();
   final PageController _expandController = PageController(initialPage: 0);
 
+  Timer? _debounce;
+  _onChanged(String value){
+    if(_debounce?.isActive ?? false){
+      _debounce?.cancel();
+    }
+    _debounce = Timer(const Duration(milliseconds: 500), (){});
+  }
   @override
   void dispose() {
     // TODO: implement dispose
@@ -39,6 +48,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
     _payAmountController.dispose();
     _totalAmountController.dispose();
     _expandController.dispose();
+    _debounce?.cancel();
   }
 
   @override
@@ -168,6 +178,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                           },
                           itemCount: info.usageHistory!.length,
                         ),
+                        const Gap(20),
                         SizedBox(
                           width: 120,
                           height: 50,
@@ -176,12 +187,13 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                 _expandController.animateToPage(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
                               },
                               style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
                                   side: const BorderSide(),
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                   padding: EdgeInsets.zero),
                               child: const Text(
                                 "사용정보 보기",
-                                style: TextStyle(color: Colors.black87),
+                                style: TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.w600),
                               )),
                         ),
                       ],
@@ -427,6 +439,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                             width: 100,
                             child: TextField(
                               controller: _daysController,
+                              onChanged: _onChanged,
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
                                   focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
@@ -470,6 +483,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                             width: 282,
                             child: TextField(
                               controller: _titleController,
+                              onChanged: _onChanged,
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
                                   focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
@@ -494,6 +508,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                             width: 282,
                             child: TextField(
                               controller: _payAmountController,
+                              onChanged: _onChanged,
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
                                   focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
@@ -616,6 +631,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                             width: 282,
                             child: TextField(
                               controller: _totalAmountController,
+                              onChanged: _onChanged,
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
                                   focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
@@ -668,6 +684,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                   int amount = int.tryParse(_totalAmountController.text) ?? 0;
 
                                   context.read<AccountProvider>().addTotalAmount(amount, widget.plan.id!);
+                                  _totalAmountController.text="";
                                   Get.back();
                                 },
                                 style: ElevatedButton.styleFrom(

@@ -48,9 +48,9 @@ class AccountUseCase {
         List<MapEntry<int, List<AmountModel>>> entry = history.entries.toList();
         entry.sort((a, b) => a.key.compareTo(b.key));
         account.usageHistory = Map.fromEntries(entry);
-
-        await _getIt.get<AccountEntity>().updateAccountInfo(account, id);
       }
+
+      await _getIt.get<AccountEntity>().updateAccountInfo(account, id);
     } catch (ex) {
       print(ex.toString());
       rethrow;
