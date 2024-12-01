@@ -41,4 +41,11 @@ class SuppliesProvider with ChangeNotifier {
 
     notifyListeners();
   }
+
+  Future<void> removeAllData(int id)async{
+    await _getIt.get<SuppliesUseCase>().removeAllData(id);
+    _suppliesList = [];
+
+    notifyListeners();
+  }
 }

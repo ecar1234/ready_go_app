@@ -74,4 +74,9 @@ class AccountUseCase {
     }
     return account;
   }
+
+  Future<AccountModel> removeAllData(int id)async{
+    await _getIt.get<AccountEntity>().removeAllData(id);
+    return AccountModel();
+  }
 }

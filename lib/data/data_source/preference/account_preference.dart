@@ -42,4 +42,9 @@ class AccountPreference {
     String stringJson = jsonEncode(json);
     pref.setString("accountInfo$id", stringJson);
   }
+
+  Future<void> removeAllData(int id)async{
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.remove("accountInfo$id");
+  }
 }

@@ -99,4 +99,14 @@ class RoamingProvider with ChangeNotifier {
     _period = periodData;
     notifyListeners();
   }
+
+  Future<void> removeAllData(int id)async{
+    await _getIt.get<RoamingUseCase>().removeAllData(id);
+    _imageList = null;
+    _dpAddress =null;
+    _code = null;
+    _period = null;
+
+    notifyListeners();
+  }
 }

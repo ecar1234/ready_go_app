@@ -67,4 +67,9 @@ class RoamingEntity implements RoamingLocalDataRepo {
     data.period = period;
     await pref.updateRoamingData(data, id);
   }
+
+  @override
+  Future<void> removeAllData(int id)async {
+    await pref.removeAllData(id);
+  }
 }

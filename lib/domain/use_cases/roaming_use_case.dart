@@ -75,5 +75,10 @@ class RoamingUseCase {
     return period;
   }
 
+  Future<RoamingModel> removeAllData(int id)async{
+    await _getIt.get<RoamingEntity>().removeAllData(id);
+    return RoamingModel();
+  }
+
 
 }

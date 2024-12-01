@@ -1,4 +1,6 @@
 
+import 'dart:ui';
+
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ready_go_project/domain/entities/image_entity.dart';
@@ -82,6 +84,11 @@ class ImageUseCase {
       rethrow;
     }
     return list;
+  }
+
+  Future<List<List<XFile>>> removeAllData(int id)async{
+    await _getIt.get<ImageEntity>().removeAllData(id);
+    return[[],[]];
   }
 
 }

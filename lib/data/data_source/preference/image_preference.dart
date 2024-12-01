@@ -70,4 +70,10 @@ class ImagePreference {
       rethrow;
     }
   }
+
+  Future<void> removeAllData(int id)async{
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.remove("arrivalImg$id");
+    pref.remove("departureImg$id");
+  }
 }

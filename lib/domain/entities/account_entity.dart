@@ -16,4 +16,9 @@ class AccountEntity implements AccountLocalDataRepo {
   Future<void> updateAccountInfo(AccountModel info, int id)async {
     await pref.updateAccountInfo(info, id);
   }
+
+  @override
+  Future<void> removeAllData(int id)async {
+    await pref.removeAllData(id);
+  }
 }

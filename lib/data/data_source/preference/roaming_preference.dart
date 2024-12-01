@@ -152,4 +152,9 @@ class RoamingPreference {
       rethrow;
     }
   }
+
+  Future<void> removeAllData(int id)async{
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.remove("roaming$id");
+  }
 }

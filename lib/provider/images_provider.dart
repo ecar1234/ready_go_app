@@ -68,4 +68,12 @@ class ImagesProvider with ChangeNotifier {
     }
     notifyListeners();
   }
+
+  Future<void> removeAllData(int id)async{
+    await _getIt.get<ImageUseCase>().removeAllData(id);
+    _arrivalImage = [];
+    _departureImage = [];
+
+    notifyListeners();
+  }
 }

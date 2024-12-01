@@ -9,6 +9,11 @@ import 'package:get/get.dart';
 import 'package:ready_go_project/bloc/data_bloc.dart';
 import 'package:ready_go_project/presentation/add_plan_page.dart';
 import 'package:ready_go_project/presentation/plan_page.dart';
+import 'package:ready_go_project/provider/Roaming_provider.dart';
+import 'package:ready_go_project/provider/accommodation_provider.dart';
+import 'package:ready_go_project/provider/account_provider.dart';
+import 'package:ready_go_project/provider/images_provider.dart';
+import 'package:ready_go_project/provider/supplies_provider.dart';
 import 'package:ready_go_project/util/date_util.dart';
 
 import '../data/models/plan_model/plan_model.dart';
@@ -134,14 +139,21 @@ class _MainPage2State extends State<MainPage2> {
               Get.to(() => PlanPage(plan: list[idx]));
             },
             child: Slidable(
-              endActionPane: ActionPane(extentRatio: 0.2, motion: const ScrollMotion(), children: [
+              endActionPane: ActionPane(extentRatio: 0.25, motion: const ScrollMotion(), children: [
                 SlidableAction(
                     icon: Icons.delete,
                     label: "삭제",
                     foregroundColor: Colors.white,
                     backgroundColor: Colors.redAccent,
+                    borderRadius: BorderRadius.circular(10),
                     onPressed: (context) {
-                      context.read<PlanListProvider>().removePlanList(list[idx].id ?? -1);
+                      context.read<PlanListProvider>().removePlanList(list[idx].id!);
+                      context.read<AccommodationProvider>().removeAllData(list[idx].id!);
+                      context.read<AccountProvider>().removeAllData(list[idx].id!);
+                      context.read<ImagesProvider>().removeAllData(list[idx].id!);
+                      context.read<RoamingProvider>().removeAllData(list[idx].id!);
+                      context.read<SuppliesProvider>().removeAllData(list[idx].id!);
+
                     })
               ]),
               child: Container(

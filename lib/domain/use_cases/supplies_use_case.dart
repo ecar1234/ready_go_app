@@ -46,5 +46,10 @@ class SuppliesUseCase {
     return list;
   }
 
+  Future<List<SupplyModel>> removeAllData(int id)async{
+    await _getIt.get<SuppliesEntity>().removeAllData(id);
+    return [];
+  }
+
 
 }

@@ -42,4 +42,9 @@ class SuppliesPreference {
       rethrow;
     }
   }
+
+  Future<void> removeAllData(int id)async{
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.remove("supplies$id");
+  }
 }

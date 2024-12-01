@@ -7,4 +7,5 @@ mixin SuppliesLocalDataRepo {
   Future<void> removeSuppliesItem(List<SupplyModel> list, int id);
   Future<void> editSuppliesItem(List<SupplyModel> list, int id);
   Future<void> updateSuppliesItem(List<SupplyModel> list, int id);
+  Future<void> removeAllData(int id);
 }

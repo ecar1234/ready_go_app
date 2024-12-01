@@ -45,4 +45,9 @@ class AccommodationUseCase {
     }
       return list;
   }
+
+  Future<List<AccommodationModel>> removeAllData(int id)async{
+    await _getIt.get<AccommodationEntity>().removeAllData(id);
+    return [];
+  }
 }

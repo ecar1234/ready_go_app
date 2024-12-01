@@ -15,4 +15,6 @@ mixin RoamingLocalDataRepo {
   Future<void> updateRoamingImgList(List<XFile> list, int id);
   Future<void> updateRoamingAddress(String addr, int id);
   Future<void> updateRoamingCode(String code, int id);
+
+  Future<void> removeAllData(int id);
 }

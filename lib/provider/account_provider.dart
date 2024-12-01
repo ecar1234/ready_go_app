@@ -46,4 +46,10 @@ class AccountProvider with ChangeNotifier {
 
     notifyListeners();
   }
+
+  Future<void> removeAllData(int id)async{
+    var account =  await _getIt.get<AccountUseCase>().removeAllData(id);
+    _accountInfo = account;
+    notifyListeners();
+  }
 }

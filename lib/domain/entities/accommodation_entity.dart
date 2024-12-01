@@ -27,4 +27,10 @@ class AccommodationEntity implements AccommodationLocalDateRepo{
     }
   }
 
+  @override
+  Future<void> removeAllData(int id)async {
+    await pref.removeAllData(id);
+  }
+
+
 }

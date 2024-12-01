@@ -32,6 +32,7 @@ class PlanUseCase {
       list = await _getIt.get<PlanEntity>().getLocalList();
       list.removeWhere((plan) => plan.id == id);
       await _getIt.get<PlanEntity>().updatePlanList(list);
+
     } on Exception catch (e) {
       print(e.toString());
       rethrow;

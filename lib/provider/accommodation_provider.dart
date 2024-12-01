@@ -43,4 +43,8 @@ class AccommodationProvider with ChangeNotifier {
 
     notifyListeners();
   }
+
+  Future<void> removeAllData(int id)async{
+    await GetIt.I.get<AccommodationUseCase>().removeAllData(id);
+  }
 }
