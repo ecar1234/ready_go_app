@@ -26,11 +26,13 @@ class _AirTicketPageState extends State<AirTicketPage> {
     final arrivalList = context.watch<ImagesProvider>().arrivalImg;
     return Scaffold(
       appBar: AppBar(),
-      body: Container(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [_departureSection(context, departureList), const Gap(20), _arrivalSection(context, arrivalList)],
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [_departureSection(context, departureList), const Gap(20), _arrivalSection(context, arrivalList)],
+          ),
         ),
       ),
     );

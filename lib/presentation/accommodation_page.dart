@@ -91,14 +91,16 @@ class _AccommodationPageState extends State<AccommodationPage> {
         appBar: AppBar(
           title: const Text("숙소정보"),
         ),
-        body: Container(
-            padding: const EdgeInsets.all(10),
-            child: list?.isEmpty == true || list == null
-                ? SizedBox(
-                    height: Get.height - 300,
-                    child: const Center(child: Text("숙소 정보가 없습니다.")),
-                  )
-                : _accordionSection(context, list)),
+        body: SingleChildScrollView(
+          child: Container(
+              padding: const EdgeInsets.all(10),
+              child: list?.isEmpty == true || list == null
+                  ? SizedBox(
+                      height: Get.height - 300,
+                      child: const Center(child: Text("숙소 정보가 없습니다.")),
+                    )
+                  : _accordionSection(context, list)),
+        ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             _addAccommodation(context, month, day);
