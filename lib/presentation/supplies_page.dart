@@ -65,7 +65,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                   fontSize: 18,
                                   color: list[idx].isCheck == true
                                       ? Colors.grey
-                                      : (MediaQuery.of(context).platformBrightness == Brightness.dark ? Colors.white : Colors.black87),
+                                      : Theme.of(context).colorScheme.primary,
                                   decoration: list[idx].isCheck == true ? TextDecoration.lineThrough : TextDecoration.none),
                             ),
                             PopupMenuButton(
@@ -75,15 +75,11 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                     value: "edit",
                                     child: Text(
                                       "수정",
-                                      style: TextStyle(
-                                          color: MediaQuery.of(context).platformBrightness == Brightness.dark ? Colors.white : Colors.black87),
                                     )),
                                 PopupMenuItem(
                                     value: "delete",
                                     child: Text(
                                       "삭제",
-                                      style: TextStyle(
-                                          color: MediaQuery.of(context).platformBrightness == Brightness.dark ? Colors.white : Colors.black87),
                                     )),
                               ],
                               onSelected: (value) {
@@ -121,6 +117,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
         context: context,
         builder: (context) => Dialog(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              surfaceTintColor: Colors.white12,
               child: Container(
                 width: 600,
                 height: 200,

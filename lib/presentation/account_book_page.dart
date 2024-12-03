@@ -74,13 +74,13 @@ class _AccountBookPageState extends State<AccountBookPage> {
                         _expandController.animateToPage(1, duration: const Duration(milliseconds: 300), curve: Curves.ease);
                       },
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
+
                           side: const BorderSide(),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                           padding: EdgeInsets.zero),
                       child: const Text(
                         "사용내역 보기",
-                        style: TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.w600),
+                        style: TextStyle( fontSize: 16, fontWeight: FontWeight.w600),
                       )),
                 )
               ],
@@ -113,7 +113,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                     height: 40,
                                     padding: const EdgeInsets.all(5),
                                     decoration: BoxDecoration(
-                                        border: Border.all(),
+                                        border: Border.all(color: Theme.of(context).colorScheme.outline),
                                         borderRadius: const BorderRadius.only(topRight: Radius.circular(6), topLeft: Radius.circular(6))),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
@@ -126,7 +126,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                       ],
                                     )),
                                 Table(
-                                  border: TableBorder.all(),
+                                  border: TableBorder.all(color: Theme.of(context).colorScheme.outline),
                                   columnWidths: const {
                                     0: FixedColumnWidth(80),
                                     1: FlexColumnWidth(1),
@@ -137,29 +137,29 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                       TableCell(
                                           child: Container(
                                               height: 40,
-                                              decoration: const BoxDecoration(color: Colors.black87),
+                                              // decoration: const BoxDecoration(color: Colors.black87),
                                               child: const Center(
                                                   child: Text(
                                                 "결제방법",
-                                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                                               )))),
                                       TableCell(
                                           child: Container(
                                               height: 40,
-                                              decoration: const BoxDecoration(color: Colors.black87),
+                                              // decoration: const BoxDecoration(color: Colors.black87),
                                               child: const Center(
                                                   child: Text(
                                                 "사용 내용",
-                                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                                               )))),
                                       TableCell(
                                           child: Container(
                                               height: 40,
-                                              decoration: const BoxDecoration(color: Colors.black87),
+                                              // decoration: const BoxDecoration(color: Colors.black87),
                                               child: const Center(
                                                   child: Text(
                                                 "금액",
-                                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                                               )))),
                                     ]),
                                     ...List.generate(dayHistory[keys[idx]]!.length, (count) {
@@ -231,11 +231,11 @@ class _AccountBookPageState extends State<AccountBookPage> {
                   },
                   style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.zero,
-                      side: const BorderSide(color: Colors.grey),
+                      side: const BorderSide(),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
                   child: const Text(
                     "환전 추가",
-                    style: TextStyle(color: Colors.black87),
+                    // style: TextStyle(color: Colors.black87),
                   )),
             )
           ],
@@ -245,21 +245,21 @@ class _AccountBookPageState extends State<AccountBookPage> {
       Container(
         width: Get.width,
         height: 282,
-        decoration: BoxDecoration(border: Border.all(), borderRadius: BorderRadius.circular(10)),
+        decoration: BoxDecoration(border: Border.all(color: Theme.of(context).colorScheme.outline), borderRadius: BorderRadius.circular(10)),
         child: Column(
           children: [
             Container(
               height: 40,
-              decoration: const BoxDecoration(
-                  color: Colors.black87,
-                  border: Border(bottom: BorderSide()),
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
+              decoration: BoxDecoration(
+                  // color: Colors.black87,
+                  border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
+                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
               child: GestureDetector(
                 onTap: () {},
                 child: const Center(
                   child: Text(
                     "사용 내역",
-                    style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -267,12 +267,12 @@ class _AccountBookPageState extends State<AccountBookPage> {
             // total exchange account
             Container(
               height: 60,
-              decoration: const BoxDecoration(border: Border(bottom: BorderSide())),
+              decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline))),
               child: Row(
                 children: [
                   Container(
                     width: 100,
-                    decoration: const BoxDecoration(border: Border(right: BorderSide())),
+                    decoration: BoxDecoration(border: Border(right: BorderSide(color: Theme.of(context).colorScheme.outline))),
                     child: const Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                       Text(
                         "환전 총액",
@@ -300,12 +300,12 @@ class _AccountBookPageState extends State<AccountBookPage> {
             // total use account
             Container(
               height: 60,
-              decoration: const BoxDecoration(border: Border(bottom: BorderSide())),
+              decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline))),
               child: Row(
                 children: [
                   Container(
                     width: 100,
-                    decoration: const BoxDecoration(border: Border(right: BorderSide())),
+                    decoration: BoxDecoration(border: Border(right: BorderSide(color: Theme.of(context).colorScheme.outline))),
                     child: const Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                       Text(
                         "잔여 총액",
@@ -333,12 +333,12 @@ class _AccountBookPageState extends State<AccountBookPage> {
             // usage exchange cash
             Container(
               height: 60,
-              decoration: const BoxDecoration(border: Border(bottom: BorderSide())),
+              decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline))),
               child: Row(
                 children: [
                   Container(
                     width: 100,
-                    decoration: const BoxDecoration(border: Border(right: BorderSide())),
+                    decoration: BoxDecoration(border: Border(right: BorderSide(color: Theme.of(context).colorScheme.outline))),
                     child: const Center(
                       child: Text(
                         "환전 사용 금액",
@@ -369,7 +369,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                 children: [
                   Container(
                     width: 100,
-                    decoration: const BoxDecoration(border: Border(right: BorderSide())),
+                    decoration: BoxDecoration(border: Border(right: BorderSide(color: Theme.of(context).colorScheme.outline))),
                     child: const Center(
                       child: Text(
                         "카드 사용 금액",
@@ -444,7 +444,6 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                   counterText: "",
                                   labelText: "사용 일차",
                                   labelStyle: const TextStyle(
-                                    color: Colors.black87,
                                     fontSize: 12,
                                   )),
                               textAlign: TextAlign.end,
@@ -487,7 +486,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                   focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
                                   counterText: "",
                                   labelText: "제목",
-                                  labelStyle: const TextStyle(fontSize: 12, color: Colors.black87)),
+                                  labelStyle: const TextStyle(fontSize: 12)),
                               textAlign: TextAlign.end,
                               maxLines: 1,
                               maxLength: 15,
@@ -512,7 +511,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                   focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
                                   counterText: "",
                                   labelText: "사용 금액",
-                                  labelStyle: const TextStyle(fontSize: 12, color: Colors.black87)),
+                                  labelStyle: const TextStyle(fontSize: 12)),
                               textAlign: TextAlign.end,
                               maxLines: 1,
                               maxLength: 13,
@@ -537,13 +536,12 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                   Get.back();
                                 },
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white,
+
                                     side: const BorderSide(color: Colors.grey),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                     padding: EdgeInsets.zero),
                                 child: const Text(
                                   "취소",
-                                  style: TextStyle(color: Colors.black87),
                                 )),
                           ),
                           const Gap(20),
@@ -582,12 +580,12 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                   Get.back();
                                 },
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.black87,
+                                    backgroundColor: Theme.of(context).colorScheme.primary,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                     padding: EdgeInsets.zero),
-                                child: const Text(
+                                child: Text(
                                   "추가하기",
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(color: Theme.of(context).colorScheme.surface,),
                                 )),
                           ),
                         ],
@@ -635,7 +633,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                   focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
                                   counterText: "",
                                   labelText: "추가 금액",
-                                  labelStyle: const TextStyle(fontSize: 12, color: Colors.black87)),
+                                  labelStyle: const TextStyle(fontSize: 12)),
                               textAlign: TextAlign.end,
                               maxLines: 1,
                               maxLength: 13,
@@ -660,13 +658,13 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                   Get.back();
                                 },
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white,
+                                    // backgroundColor: Theme.of(context).colorScheme.primary,
                                     side: const BorderSide(color: Colors.grey),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                     padding: EdgeInsets.zero),
                                 child: const Text(
                                   "취소",
-                                  style: TextStyle(color: Colors.black87),
+                                  // style: TextStyle(color: Colors.black87),
                                 )),
                           ),
                           const Gap(20),
@@ -686,12 +684,12 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                   Get.back();
                                 },
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.black87,
+                                    backgroundColor: Theme.of(context).colorScheme.primary,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                     padding: EdgeInsets.zero),
-                                child: const Text(
+                                child: Text(
                                   "추가하기",
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(color: Theme.of(context).colorScheme.surface,),
                                 )),
                           ),
                         ],

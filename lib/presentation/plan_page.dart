@@ -9,6 +9,7 @@ import 'package:ready_go_project/presentation/account_book_page.dart';
 import 'package:ready_go_project/presentation/air_ticket_page.dart';
 import 'package:ready_go_project/presentation/roaming_page.dart';
 import 'package:ready_go_project/presentation/supplies_page.dart';
+import 'package:ready_go_project/provider/theme_mode_provider.dart';
 // import 'package:ready_go_project/presentation/tour_page.dart';
 
 import '../data/models/plan_model/plan_model.dart';
@@ -46,6 +47,7 @@ class _PlanPageState extends State<PlanPage> {
       // context.read<ImagesProvider>().getImgList(widget.plan.id!);
       context.read<DataBloc>().add(DataLoadingPlanEvent());
     }
+    bool isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
     return Scaffold(
       appBar: AppBar(
         title: const Text("여행준비"),
@@ -99,10 +101,10 @@ class _PlanPageState extends State<PlanPage> {
                               return;
                           }
                         },
-                        style: ElevatedButton.styleFrom(side: const BorderSide(color: Colors.grey)),
+                        style: ElevatedButton.styleFrom(side: BorderSide(color: isDarkMode?Colors.white:Colors.black87)),
                         child: Text(
                           itemList[idx],
-                          style: const TextStyle(fontWeight: FontWeight.w600),
+                          style: TextStyle(color: isDarkMode?Colors.white:Colors.black87, fontWeight: FontWeight.w600),
                         ),
                       ),
                     );

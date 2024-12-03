@@ -15,8 +15,7 @@ import 'package:ready_go_project/domain/use_cases/supplies_use_case.dart';
 
 final _getIt = GetIt.instance;
 Future<void> serviceLocator()async{
-
-  //useCases
+   //useCases
   _getIt.registerSingleton<AccommodationUseCase>(AccommodationUseCase());
   _getIt.registerSingleton<AccountUseCase>(AccountUseCase());
   _getIt.registerSingleton<ImageUseCase>(ImageUseCase());

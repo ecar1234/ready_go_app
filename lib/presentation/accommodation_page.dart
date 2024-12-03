@@ -10,6 +10,7 @@ import 'package:ready_go_project/data/models/accommodation_model/accommodation_m
 import 'package:accordion/accordion.dart';
 
 import 'package:ready_go_project/provider/accommodation_provider.dart';
+import 'package:ready_go_project/provider/theme_mode_provider.dart';
 import 'package:ready_go_project/util/intl_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -142,7 +143,6 @@ class _AccommodationPageState extends State<AccommodationPage> {
                               decoration: InputDecoration(
                                 label: const Text(
                                   "숙소명",
-                                  style: TextStyle(color: Colors.black87),
                                 ),
                                 border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
                                 focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
@@ -158,7 +158,6 @@ class _AccommodationPageState extends State<AccommodationPage> {
                               decoration: InputDecoration(
                                 label: const Text(
                                   "주소",
-                                  style: TextStyle(color: Colors.black87),
                                 ),
                                 border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
                                 focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
@@ -177,7 +176,6 @@ class _AccommodationPageState extends State<AccommodationPage> {
                               decoration: InputDecoration(
                                 label: const Text(
                                   "결제금액",
-                                  style: TextStyle(color: Colors.black87),
                                 ),
                                 border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
                                 focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
@@ -268,7 +266,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                               textAlign: TextAlign.end,
                               decoration: InputDecoration(
-                                label: const Text("일정", style: TextStyle(color: Colors.black87)),
+                                label: const Text("일정"),
                                 border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
                                 focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
                               ),
@@ -351,13 +349,11 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                     Get.back();
                                   },
                                   style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.white,
                                       elevation: 0,
                                       side: const BorderSide(),
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                                   child: const Text(
                                     "닫기",
-                                    style: TextStyle(color: Colors.black87),
                                   )),
                             ),
                             const Gap(20),
@@ -423,12 +419,12 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                     Navigator.pop(diaContext);
                                   },
                                   style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.black87,
+                                      backgroundColor: Theme.of(context).colorScheme.primary,
                                       elevation: 0,
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                  child: const Text(
+                                  child: Text(
                                     "추가",
-                                    style: TextStyle(color: Colors.white),
+                                    style: TextStyle(color: Theme.of(context).colorScheme.surface),
                                   )),
                             )
                           ],
@@ -444,14 +440,17 @@ class _AccommodationPageState extends State<AccommodationPage> {
   }
 
   Widget _accordionSection(BuildContext context, List<AccommodationModel> list) {
+    bool isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
     return Accordion(
         disableScrolling: true,
-        headerBorderColor: Colors.black87,
-        headerBorderColorOpened: Colors.black87,
+        rightIcon: null,
+        headerBorderColor: isDarkMode ? Colors.white : Colors.black87,
+        // headerBorderColorOpened: Colors.black87,
         headerBorderWidth: 1,
         headerPadding: const EdgeInsets.all(20),
-        headerBackgroundColor: Colors.white,
-        contentBorderColor: Colors.black87,
+        headerBackgroundColor: isDarkMode ? Colors.black87 : Colors.white,
+        contentBorderColor: isDarkMode ? Colors.white : Colors.black87,
+        contentBackgroundColor: isDarkMode ? Colors.black87 : Colors.white,
         contentVerticalPadding: 20,
         contentHorizontalPadding: 20,
         children: [
