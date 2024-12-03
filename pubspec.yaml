@@ -52,6 +52,7 @@ dependencies:
   accordion: ^2.6.0
   permission_handler: ^11.3.1
   url_launcher: ^6.3.1
+  flutter_native_splash: ^2.4.1
 
 
 dev_dependencies:
@@ -82,6 +83,8 @@ flutter:
   assets:
    - assets/images/logo.png
    - assets/images/logo_white.png
+   - assets/images/splash.png
+   - assets/images/icon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -111,3 +114,14 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+flutter_native_splash:
+    android: true
+    ios: true
+    color: "#FFFFFF"
+    image: "assets/images/splash.png"
+    android_12:
+      color: "#FFFFFF"
+      image: "assets/images/icon.png"
+      icon_background_color: "#FFFFFF"
+
+    web: false

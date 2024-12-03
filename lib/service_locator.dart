@@ -1,4 +1,5 @@
 
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get_it/get_it.dart';
 import 'package:ready_go_project/domain/entities/accommodation_entity.dart';
 import 'package:ready_go_project/domain/entities/account_entity.dart';
@@ -31,4 +32,5 @@ Future<void> serviceLocator()async{
   _getIt.registerSingleton<RoamingEntity>(RoamingEntity());
   _getIt.registerSingleton<SuppliesEntity>(SuppliesEntity());
 
+  FlutterNativeSplash.remove();
 }

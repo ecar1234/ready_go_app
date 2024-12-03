@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/presentation/main_page.dart';
 import 'package:ready_go_project/provider/theme_mode_provider.dart';
@@ -13,7 +14,8 @@ import 'provider/supplies_provider.dart';
 
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await serviceLocator();
   runApp(
     MultiProvider(providers: [
