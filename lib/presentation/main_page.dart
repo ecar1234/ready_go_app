@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,6 +28,8 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -40,6 +43,7 @@ class _MainPageState extends State<MainPage> {
     return BlocProvider(
       create: (_) => DataBloc(),
       child: GetMaterialApp(
+          navigatorObservers: [FirebaseAnalyticsObserver(analytics: _analytics)],
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             useMaterial3: true,
@@ -204,7 +208,8 @@ class _MainPage2State extends State<MainPage2> {
                 width: 600,
                 height: 100,
                 padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(border: Border.all(color: isDarkMode ? Colors.white : Colors.black87), borderRadius: BorderRadius.circular(10)),
+                decoration:
+                    BoxDecoration(border: Border.all(color: isDarkMode ? Colors.white : Colors.black87), borderRadius: BorderRadius.circular(10)),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,

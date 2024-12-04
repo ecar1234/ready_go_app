@@ -1,6 +1,7 @@
-
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get_it/get_it.dart';
+import 'package:ready_go_project/data/data_source/preference/analytics_preference.dart';
 import 'package:ready_go_project/domain/entities/accommodation_entity.dart';
 import 'package:ready_go_project/domain/entities/account_entity.dart';
 import 'package:ready_go_project/domain/entities/image_entity.dart';
@@ -15,8 +16,15 @@ import 'package:ready_go_project/domain/use_cases/roaming_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/supplies_use_case.dart';
 
 final _getIt = GetIt.instance;
-Future<void> serviceLocator()async{
-   //useCases
+
+AnalyticsPreference get pref => AnalyticsPreference.singleton;
+
+Future<void> serviceLocator() async {
+  await Firebase.initializeApp();
+
+  await pref.checkIsFirst();
+
+  //useCases
   _getIt.registerSingleton<AccommodationUseCase>(AccommodationUseCase());
   _getIt.registerSingleton<AccountUseCase>(AccountUseCase());
   _getIt.registerSingleton<ImageUseCase>(ImageUseCase());
