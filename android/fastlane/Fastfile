@@ -1,0 +1,75 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+
+  def get_version_code
+    versionCode = File.read("../../versionCode")
+    versionCode
+  end
+
+  def get_version_name
+    versionName = File.read("../../versionName").to_i
+    versionName = versionName + 1
+
+    f = File.new("../../versionName", "w")
+    f.write(versionName)
+    f.close
+
+    versionName
+  end
+
+  def build_aab
+    code = get_version_code
+    name = get_version_name
+
+    Dir.chdir "../.." do
+      sh("flutter", "clean")
+      sh("flutter", "pub", "get")
+      sh("flutter", "build", "appbundle", "--build-number=#{name}", "--build-name=#{code}.#{name}")
+    end
+
+    puts "#{code}.#{name}"
+  end
+
+  desc "Runs all the tests"
+  lane :test do |_options|
+#     gradle(task: "test")
+    versionCode = File.read("../../versionCode")
+    versionName = File.read("../../versionName")
+
+    puts "#{versionCode}.#{versionName}"
+  end
+
+  desc "Submit a new Beta Build to Crashlytics Beta"
+  lane :beta do |_options|
+
+    build_aab
+
+#     upload_to_play_store(
+#       track: "internal"
+#     )
+  end
+
+  desc "Deploy a new version to the Google Play"
+  lane :deploy do
+    gradle(task: "clean bundleRelease")
+    upload_to_play_store(
+
+    )
+  end
+end

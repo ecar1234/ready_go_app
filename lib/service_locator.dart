@@ -14,14 +14,14 @@ import 'package:ready_go_project/domain/use_cases/image_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/plan_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/roaming_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/supplies_use_case.dart';
+import 'package:ready_go_project/firebase/firebase_options.dart';
 
 final _getIt = GetIt.instance;
 
 AnalyticsPreference get pref => AnalyticsPreference.singleton;
 
 Future<void> serviceLocator() async {
-  await Firebase.initializeApp();
-
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await pref.checkIsFirst();
 
   //useCases
