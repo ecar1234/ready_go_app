@@ -47,7 +47,7 @@ platform :android do
   end
 
   desc "Runs all the tests"
-  lane :test do |_options|
+  lane :test do
 #     gradle(task: "test")
     versionCode = File.read("../../versionCode")
     versionName = File.read("../../versionName")
@@ -55,14 +55,28 @@ platform :android do
     puts "#{versionCode}.#{versionName}"
   end
 
+  lane :internal do
+#     build_aab
+    upload_to_play_store(
+      json_key: "readygo-play-store-api.json",
+      package_name: "com.ready_go_project",
+      track: "internal",
+      release_status: "draft",
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      skip_upload_changelogs: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true
+    )
+  end
+
   desc "Submit a new Beta Build to Crashlytics Beta"
   lane :beta do |_options|
 
     build_aab
 
-#     upload_to_play_store(
-#       track: "internal"
-#     )
+    upload_to_play_store(
+      track: "beta"
+    )
   end
 
   desc "Deploy a new version to the Google Play"
