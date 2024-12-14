@@ -33,6 +33,7 @@ target 'Runner' do
 #   pod 'firebase/core'
 #   pod 'firebase/remote_config'
 #   pod 'firebase/analytics'
+#   pod 'Google-Mobile-Ads-SDK'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   target 'RunnerTests' do

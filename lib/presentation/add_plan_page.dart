@@ -3,7 +3,10 @@ import 'dart:async';
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
+import 'package:ready_go_project/provider/admob_provider.dart';
 import 'package:ready_go_project/util/date_util.dart';
 
 import '../data/models/plan_model/plan_model.dart';
@@ -30,19 +33,23 @@ class _AddPlanPageState extends State<AddPlanPage> {
       print(value);
     });
   }
+
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
     nationController.dispose();
     _debounce?.cancel();
+    // context.read<AdmobProvider>().bannerAdDispose();
   }
 
   @override
   Widget build(BuildContext context) {
-  final int idNum = context.watch<PlanListProvider>().planList.length;
+    final int idNum = context.watch<PlanListProvider>().planList.length;
+    context.read<AdmobProvider>().loadAdBanner();
+
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
@@ -54,57 +61,79 @@ class _AddPlanPageState extends State<AddPlanPage> {
           ),
         ),
         body: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.all(30),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _titleSection(),
-                const Gap(30),
-                _calendarSection(),
-                const Gap(30),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 150,
-                      height: 50,
-                      child: ElevatedButton(onPressed: (){
-                        if(nationController.text.isEmpty){
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("국가명을 입력해 주세요."), duration: Duration(seconds: 1),)
-                          );
-                          return;
-                        }
-                        if(_dates.length > 2 || _dates.isEmpty){
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("일정을 선택해 주세요"), duration: Duration(seconds: 1),)
-                          );
-                          return;
-                        }
-                        try{
-                          PlanModel plan = PlanModel(
-                            id: idNum + 1,
-                            nation: nationController.text,
-                            schedule: _dates
-                          );
-                          context.read<PlanListProvider>().addPlanList(plan);
-                        }catch(ex){
-                          throw(ex).toString();
-                        }
-                        Navigator.pop(context);
-                      }, style: ElevatedButton.styleFrom(
-                        // backgroundColor: Colors.black87,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)
-                        )
-                      ), child: const Text("생성", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),),
-                    ),
-                  ],
-                )
-              ],
+          child: Stack(children: [
+            Container(
+              height: Get.height-120,
+              padding: const EdgeInsets.only(top: 20, right: 20, left: 20, bottom: 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _titleSection(),
+                  const Gap(20),
+                  _calendarSection(),
+                  const Gap(10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 150,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (nationController.text.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                content: Text("국가명을 입력해 주세요."),
+                                duration: Duration(seconds: 1),
+                              ));
+                              return;
+                            }
+                            if (_dates.length > 2 || _dates.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                content: Text("일정을 선택해 주세요"),
+                                duration: Duration(seconds: 1),
+                              ));
+                              return;
+                            }
+                            try {
+                              PlanModel plan = PlanModel(id: idNum + 1, nation: nationController.text, schedule: _dates);
+                              context.read<PlanListProvider>().addPlanList(plan);
+                            } catch (ex) {
+                              throw (ex).toString();
+                            }
+                            Navigator.pop(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                              // backgroundColor: Colors.black87,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                          child: const Text(
+                            "생성",
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
+
+            Builder(
+              builder:(context) {
+                final BannerAd bannerAd = context.watch<AdmobProvider>().bannerAd!;
+              return Positioned(
+                    left: 20,
+                    right: 20,
+                    bottom: 30,
+                    child: SizedBox(
+                      width: bannerAd.size.width.toDouble(),
+                      height: bannerAd.size.height.toDouble(),
+                      child: AdWidget(
+                        ad: bannerAd,
+                      ),
+                    ));
+              }
+            )
+          ]),
         ),
       ),
     );
@@ -127,7 +156,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
             decoration: const InputDecoration(
                 border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black87), borderRadius: BorderRadius.all(Radius.circular(10))),
                 focusedBorder:
-                OutlineInputBorder(borderSide: BorderSide(color: Colors.black87), borderRadius: BorderRadius.all(Radius.circular(10)))),
+                    OutlineInputBorder(borderSide: BorderSide(color: Colors.black87), borderRadius: BorderRadius.all(Radius.circular(10)))),
           ),
         )
       ],
@@ -145,23 +174,25 @@ class _AddPlanPageState extends State<AddPlanPage> {
         SizedBox(
             width: 500,
             child: CalendarDatePicker2(
-              config: CalendarDatePicker2Config(
+                config: CalendarDatePicker2Config(
                   firstDate: DateTime.now(),
                   firstDayOfWeek: 0,
                   calendarType: CalendarDatePicker2Type.range,
-                weekdayLabels: ["일","월", "화","수","목","금","토"],
-
-              ),
-              value: _dates,
-              onValueChanged: (list) => setState(() {
-                _dates = list;
-              })
-            )),
+                  weekdayLabels: ["일", "월", "화", "수", "목", "금", "토"],
+                ),
+                value: _dates,
+                onValueChanged: (list) => setState(() {
+                      _dates = list;
+                    }))),
         SizedBox(
-            height: 60,
-            child: _dates.isNotEmpty ? Text("${DateUtil.dateToString(_dates.first ?? DateTime.now())} "
-                "~ ${DateUtil.dateToString(_dates.last??DateTime.now())}", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),) : const Text("일정 선택")
-        )
+            height: 50,
+            child: _dates.isNotEmpty
+                ? Text(
+                    "${DateUtil.dateToString(_dates.first ?? DateTime.now())} "
+                    "~ ${DateUtil.dateToString(_dates.last ?? DateTime.now())}",
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  )
+                : const Text("일정 선택"))
       ],
     );
   }

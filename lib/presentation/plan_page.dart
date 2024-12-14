@@ -1,14 +1,15 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ready_go_project/bloc/data_bloc.dart';
 import 'package:ready_go_project/presentation/accommodation_page.dart';
 import 'package:ready_go_project/presentation/account_book_page.dart';
 import 'package:ready_go_project/presentation/air_ticket_page.dart';
 import 'package:ready_go_project/presentation/roaming_page.dart';
 import 'package:ready_go_project/presentation/supplies_page.dart';
+import 'package:ready_go_project/provider/admob_provider.dart';
 import 'package:ready_go_project/provider/theme_mode_provider.dart';
 // import 'package:ready_go_project/presentation/tour_page.dart';
 
@@ -31,11 +32,13 @@ class PlanPage extends StatefulWidget {
 
 class _PlanPageState extends State<PlanPage> {
   List<String> itemList = ["항공권", "준비물", "로밍 & ESIM", "여행 경비", "숙소"];
+
   // List<String> itemList = ["항공권", "준비물", "로밍 & ESIM", "여행 경비", "숙소", "일정"];
 
   @override
   Widget build(BuildContext context) {
     // PlanModel plan = ModalRoute.of(context)!.settings.arguments as PlanModel;
+    context.watch<AdmobProvider>().loadAdBanner();
     DataState state = context.watch<DataBloc>().state;
     if (state.state == DataStatus.loadedPlanList) {
       context.read<ImagesProvider>().getImgList(widget.plan.id!);
@@ -51,76 +54,93 @@ class _PlanPageState extends State<PlanPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("여행준비"),
-        leading: IconButton(onPressed: (){
-          Get.back();
-          context.read<DataBloc>().add(DataResetEvent());
-        },
+        leading: IconButton(
+          onPressed: () {
+            Get.back();
+            context.read<DataBloc>().add(DataResetEvent());
+          },
           icon: const Icon(Icons.arrow_back),
         ),
       ),
-      body: Container(
-        width: Get.width,
-        padding: const EdgeInsets.all(30),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "${widget.plan.nation}",
-                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
-                ),
-                const Gap(5),
-                Text(
-                  "${DateUtil.dateToString(widget.plan.schedule?.first ?? DateTime.now())} ~ ${DateUtil.dateToString(widget.plan.schedule?.last ?? DateTime.now())}",
-                  style: const TextStyle(wordSpacing: 15),
-                ),
-                const Gap(5),
-                const Divider()
-              ],
-            ),
-            const Gap(20),
-            Expanded(
-              child: ListView.separated(
-                  primary: false,
-                  itemBuilder: (context, idx) {
-                    return SizedBox(
-                      width: Get.width,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          switch (itemList[idx]) {
-                            case "항공권":
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => AirTicketPage(planId: widget.plan.id!)));
-                            case "준비물":
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => SuppliesPage(planId: widget.plan.id!)));
-                            case "로밍 & ESIM":
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => RoamingPage(planId: widget.plan.id!)));
-                            case "여행 경비":
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
-                            case "숙소":
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccommodationPage(plan: widget.plan)));
-                            // case "일정":
-                            //   Navigator.of(context).push(MaterialPageRoute(builder: (context) => TourPage(plan: widget.plan)));
-                            default:
-                              return;
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(side: BorderSide(color: isDarkMode?Colors.white:Colors.black87)),
-                        child: Text(
-                          itemList[idx],
-                          style: TextStyle(color: isDarkMode?Colors.white:Colors.black87, fontWeight: FontWeight.w600),
+      body: Stack(children: [
+        Container(
+          width: Get.width,
+          padding: const EdgeInsets.all(30),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "${widget.plan.nation}",
+                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+                  ),
+                  const Gap(5),
+                  Text(
+                    "${DateUtil.dateToString(widget.plan.schedule?.first ?? DateTime.now())} ~ ${DateUtil.dateToString(widget.plan.schedule?.last ?? DateTime.now())}",
+                    style: const TextStyle(wordSpacing: 15),
+                  ),
+                  const Gap(5),
+                  const Divider()
+                ],
+              ),
+              const Gap(20),
+              Expanded(
+                child: ListView.separated(
+                    primary: false,
+                    itemBuilder: (context, idx) {
+                      return SizedBox(
+                        width: Get.width,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            switch (itemList[idx]) {
+                              case "항공권":
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => AirTicketPage(planId: widget.plan.id!)));
+                              case "준비물":
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => SuppliesPage(planId: widget.plan.id!)));
+                              case "로밍 & ESIM":
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => RoamingPage(planId: widget.plan.id!)));
+                              case "여행 경비":
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
+                              case "숙소":
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccommodationPage(plan: widget.plan)));
+                              // case "일정":
+                              //   Navigator.of(context).push(MaterialPageRoute(builder: (context) => TourPage(plan: widget.plan)));
+                              default:
+                                return;
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(side: BorderSide(color: isDarkMode ? Colors.white : Colors.black87)),
+                          child: Text(
+                            itemList[idx],
+                            style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w600),
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                  separatorBuilder: (context, idx) => const Gap(20),
-                  itemCount: itemList.length),
-            )
-          ],
+                      );
+                    },
+                    separatorBuilder: (context, idx) => const Gap(20),
+                    itemCount: itemList.length),
+              )
+            ],
+          ),
         ),
-      ),
+        Builder(builder: (context) {
+          final BannerAd bannerAd = context.watch<AdmobProvider>().bannerAd!;
+          return Positioned(
+              left: 20,
+              right: 20,
+              bottom: 30,
+              child: SizedBox(
+                width: bannerAd.size.width.toDouble(),
+                height: bannerAd.size.height.toDouble(),
+                child: AdWidget(
+                  ad: bannerAd,
+                ),
+              ));
+        })
+      ]),
     );
   }
 }

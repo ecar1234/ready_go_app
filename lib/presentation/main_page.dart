@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ready_go_project/bloc/data_bloc.dart';
 import 'package:ready_go_project/presentation/add_plan_page.dart';
 import 'package:ready_go_project/presentation/option_page.dart';
@@ -12,6 +15,7 @@ import 'package:ready_go_project/presentation/plan_page.dart';
 import 'package:ready_go_project/provider/Roaming_provider.dart';
 import 'package:ready_go_project/provider/accommodation_provider.dart';
 import 'package:ready_go_project/provider/account_provider.dart';
+import 'package:ready_go_project/provider/admob_provider.dart';
 import 'package:ready_go_project/provider/images_provider.dart';
 import 'package:ready_go_project/provider/supplies_provider.dart';
 import 'package:ready_go_project/provider/theme_mode_provider.dart';
@@ -125,6 +129,7 @@ class _MainPage2State extends State<MainPage2> {
   Widget build(BuildContext context) {
     final list = context.watch<PlanListProvider>().planList;
     bool isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
+    context.read<AdmobProvider>().loadAdBanner();
     return BlocBuilder<DataBloc, DataState>(builder: (context, state) {
       if (state.state == DataStatus.beforePlanList) {
         context.read<PlanListProvider>().getPlanList();
@@ -149,9 +154,10 @@ class _MainPage2State extends State<MainPage2> {
             )
           ],
         ),
-        body: SingleChildScrollView(
-          child: Container(
+        body: Stack(children: [
+          Container(
               width: Get.width,
+              height: Get.height - 120,
               padding: const EdgeInsets.all(20),
               child: list.isEmpty
                   ? const Center(
@@ -163,8 +169,21 @@ class _MainPage2State extends State<MainPage2> {
                         ],
                       ),
                     )
-                  : Column(crossAxisAlignment: CrossAxisAlignment.center, children: [_planListSection(context, list, isDarkMode,state)])),
-        ),
+                  : SingleChildScrollView(
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [_planListSection(context, list, isDarkMode, state)]))),
+          Builder(builder: (context) {
+            final BannerAd bannerAd = context.watch<AdmobProvider>().bannerAd!;
+            return Positioned(
+                right: 20,
+                left: 20,
+                bottom: 30,
+                child: SizedBox(
+                  height: bannerAd.size.height.toDouble(),
+                  width: bannerAd.size.width.toDouble(),
+                  child: AdWidget(ad: bannerAd),
+                ));
+          })
+        ]),
         floatingActionButton: FloatingActionButton(
           // backgroundColor: Colors.black87,
           child: const Icon(
@@ -190,7 +209,7 @@ class _MainPage2State extends State<MainPage2> {
           return InkWell(
             onTap: () {
               // Navigator.of(context).push(MaterialPageRoute(builder: (context) => const PlanPage(), settings: RouteSettings(arguments: list[idx])));
-              if(state.state == DataStatus.endPlan){
+              if (state.state == DataStatus.endPlan) {
                 context.read<DataBloc>().add(DataLoadingPlanListEvent());
               }
               Get.to(() => PlanPage(plan: list[idx]));

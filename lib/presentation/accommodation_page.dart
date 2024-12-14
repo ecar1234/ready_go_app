@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/accommodation_model/accommodation_model.dart';
 import 'package:accordion/accordion.dart';
 
 import 'package:ready_go_project/provider/accommodation_provider.dart';
+import 'package:ready_go_project/provider/admob_provider.dart';
 import 'package:ready_go_project/provider/theme_mode_provider.dart';
 import 'package:ready_go_project/util/intl_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -79,6 +81,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
   @override
   Widget build(BuildContext context) {
     final list = context.watch<AccommodationProvider>().accommodation;
+    context.read<AdmobProvider>().loadAdBanner();
     int month = widget.plan.schedule!.first!.month;
     int day = widget.plan.schedule!.first!.day;
 
@@ -91,16 +94,30 @@ class _AccommodationPageState extends State<AccommodationPage> {
         appBar: AppBar(
           title: const Text("숙소정보"),
         ),
-        body: SingleChildScrollView(
-          child: Container(
-              padding: const EdgeInsets.all(10),
+        body: Stack(children: [
+          Container(
+              padding: const EdgeInsets.all(20),
               child: list?.isEmpty == true || list == null
                   ? SizedBox(
-                      height: Get.height - 300,
+                      height: Get.height - 150,
                       child: const Center(child: Text("숙소 정보가 없습니다.")),
                     )
-                  : _accordionSection(context, list)),
-        ),
+                  : SizedBox(height: Get.height - 150, child: SingleChildScrollView(child: _accordionSection(context, list)))),
+          Builder(builder: (context) {
+            final BannerAd bannerAd = context.watch<AdmobProvider>().bannerAd!;
+            return Positioned(
+                left: 20,
+                right: 20,
+                bottom: 30,
+                child: SizedBox(
+                  width: bannerAd.size.width.toDouble(),
+                  height: bannerAd.size.height.toDouble(),
+                  child: AdWidget(
+                    ad: bannerAd,
+                  ),
+                ));
+          })
+        ]),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             _addAccommodation(context, month, day);
@@ -353,9 +370,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                     Get.back();
                                   },
                                   style: ElevatedButton.styleFrom(
-                                      elevation: 0,
-                                      side: const BorderSide(),
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                                      elevation: 0, side: const BorderSide(), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                                   child: const Text(
                                     "닫기",
                                   )),

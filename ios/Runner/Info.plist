@@ -4,6 +4,15 @@
 	<dict>
 		<key>com.apple.security.files.user-selected.read-only</key>
 		<true/>
+		<key>GADApplicationIdentifier</key>
+    <string>ca-app-pub-6057371989804889~7266820383</string>
+    <key>SKAdNetworkItems</key>
+    <array>
+      <dict>
+        <key>SKAdNetworkIdentifier</key>
+        <string>cstr6suwn9.skadnetwork</string>
+      </dict>
+    </array>
 		<key>NSCameraUsageDescription</key>
 		<string>Used to demonstrate image picker plugin</string>
 		<key>NSMicrophoneUsageDescription</key>
