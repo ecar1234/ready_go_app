@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
@@ -48,7 +49,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
         ),
         SizedBox(
-          width: list.isEmpty ? 120 : list.length * 120 + 80,
+          width: list.isEmpty ? 100 : (list.length * 110) + 100,
           height: 120,
           child: Row(
             children: [
@@ -65,12 +66,19 @@ class _AirTicketPageState extends State<AirTicketPage> {
                                   OpenFile.open(list[idx].path);
                                 },
                                 child: Stack(children: [
-                                  SizedBox(
+                                  Container(
                                     width: 100,
                                     height: 100,
-                                    child: Image.file(
-                                      File(list[idx].path),
-                                      fit: BoxFit.cover,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all()
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.file(
+                                        File(list[idx].path),
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   ),
                                   Positioned(
@@ -89,7 +97,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
                       ),
                     ),
               SizedBox(
-                  width: list.length < 3 ? 100 : 50,
+                  width: (list.length * 110)+100 < Get.width ? 100 : 50,
                   height: 100,
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -163,7 +171,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
         ),
         SizedBox(
-          width: list.isEmpty ? 120 : list.length * 120 + 80,
+          width: list.isEmpty ? 100 : (list.length * 110)+100,
           height: 120,
           child: Row(
             children: [
@@ -180,12 +188,19 @@ class _AirTicketPageState extends State<AirTicketPage> {
                                   OpenFile.open(list[idx].path);
                                 },
                                 child: Stack(children: [
-                                  SizedBox(
+                                  Container(
                                     width: 100,
                                     height: 100,
-                                    child: Image.file(
-                                      File(list[idx].path),
-                                      fit: BoxFit.cover,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all()
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.file(
+                                        File(list[idx].path),
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   ),
                                   Positioned(
@@ -204,7 +219,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
                       ),
                     ),
               SizedBox(
-                  width: list.length < 3 ? 100 : 50,
+                  width: (list.length * 110)+100 < Get.width ? 100 : 50,
                   height: 100,
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(

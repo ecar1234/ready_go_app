@@ -187,13 +187,12 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                 _expandController.animateToPage(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
                               },
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
                                   side: const BorderSide(),
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                   padding: EdgeInsets.zero),
                               child: const Text(
                                 "사용정보 보기",
-                                style: TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.w600),
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                               )),
                         ),
                       ],
@@ -412,186 +411,192 @@ class _AccountBookPageState extends State<AccountBookPage> {
         context: context,
         builder: (context) => Dialog(
               insetPadding: const EdgeInsets.all(20),
-              child: Container(
-                height: 420,
-                padding: const EdgeInsets.all(30),
-                child: Column(
-                  children: [
-                    const SizedBox(
-                      height: 50,
-                      child: Center(
-                        child: Text(
-                          "사용내역 추가 하기",
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              child: SingleChildScrollView(
+                child: Container(
+                  height: 420,
+                  padding: const EdgeInsets.all(30),
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 50,
+                        child: Center(
+                          child: Text(
+                            "사용내역 추가 하기",
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                          ),
                         ),
                       ),
-                    ),
-                    const Divider(),
-                    const Gap(20),
-                    SizedBox(
-                      height: 50,
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            height: 50,
-                            width: 100,
-                            child: TextField(
-                              controller: _daysController,
-                              onChanged: _onChanged,
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                                  focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                                  counterText: "",
-                                  labelText: "사용 일차",
-                                  labelStyle: const TextStyle(
-                                    fontSize: 12,
+                      const Divider(),
+                      const Gap(20),
+                      SizedBox(
+                        height: 50,
+                        width: 280,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 50,
+                              width: 100,
+                              child: TextField(
+                                controller: _daysController,
+                                onChanged: _onChanged,
+                                decoration: InputDecoration(
+                                    border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
+                                    focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
+                                    counterText: "",
+                                    labelText: "사용 일차",
+                                    labelStyle: const TextStyle(
+                                      fontSize: 12,
+                                    )),
+                                textAlign: TextAlign.end,
+                                maxLines: 1,
+                                maxLength: 2,
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                              ),
+                            ),
+                            const Gap(10),
+                            const Text("일차"),
+                            const Gap(10),
+                            SizedBox(
+                              height: 50,
+                              width: 100,
+                              child: DropdownMenu(
+                                initialSelection: 0,
+                                dropdownMenuEntries: const [DropdownMenuEntry(value: 0, label: "환전"), DropdownMenuEntry(value: 2, label: "카드")],
+                                onSelected: (value) {
+                                  newAmount.category = value;
+                                },
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      const Gap(20),
+                      SizedBox(
+                        height: 50,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: 50,
+                              width: 282,
+                              child: TextField(
+                                controller: _titleController,
+                                onChanged: _onChanged,
+                                decoration: InputDecoration(
+                                    border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
+                                    focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
+                                    counterText: "",
+                                    labelText: "제목",
+                                    labelStyle: const TextStyle(fontSize: 12)),
+                                textAlign: TextAlign.end,
+                                maxLines: 1,
+                                maxLength: 15,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Gap(20),
+                      SizedBox(
+                        height: 50,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: 50,
+                              width: 282,
+                              child: TextField(
+                                controller: _payAmountController,
+                                onChanged: _onChanged,
+                                decoration: InputDecoration(
+                                    border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
+                                    focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
+                                    counterText: "",
+                                    labelText: "사용 금액",
+                                    labelStyle: const TextStyle(fontSize: 12)),
+                                textAlign: TextAlign.end,
+                                maxLines: 1,
+                                maxLength: 13,
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Gap(20),
+                      SizedBox(
+                        height: 50,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: 50,
+                              width: 100,
+                              child: ElevatedButton(
+                                  onPressed: () {
+                                    Get.back();
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                
+                                      side: const BorderSide(color: Colors.grey),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                      padding: EdgeInsets.zero),
+                                  child: const Text(
+                                    "취소",
                                   )),
-                              textAlign: TextAlign.end,
-                              maxLines: 1,
-                              maxLength: 2,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                             ),
-                          ),
-                          const Gap(10),
-                          const Text("일차"),
-                          const Gap(10),
-                          SizedBox(
-                            height: 50,
-                            width: 100,
-                            child: DropdownMenu(
-                              initialSelection: 0,
-                              dropdownMenuEntries: const [DropdownMenuEntry(value: 0, label: "환전"), DropdownMenuEntry(value: 2, label: "카드")],
-                              onSelected: (value) {
-                                newAmount.category = value;
-                              },
+                            const Gap(20),
+                            SizedBox(
+                              height: 50,
+                              width: 100,
+                              child: ElevatedButton(
+                                  onPressed: () {
+                                    if (_daysController.text.isEmpty) {
+                                      Get.snackbar("데이터 입력 확인", "사용 일차를 확인해 주세요", backgroundColor: Colors.white);
+                                      return;
+                                    }
+                                    if (_titleController.text.isEmpty) {
+                                      Get.snackbar("데이터 입력 확인", "제목을 확인해 주세요", backgroundColor: Colors.white);
+                                      return;
+                                    }
+                                    if (_payAmountController.text.isEmpty) {
+                                      Get.snackbar("데이터 입력 확인", "사용 금액을 확인해 주세요", backgroundColor: Colors.white);
+                                      return;
+                                    }
+                                    newAmount.id = const Uuid().v4();
+                                    newAmount.title = _titleController.text;
+                
+                                    newAmount.amount = int.parse(_payAmountController.text);
+                                    newAmount.category ??= 0;
+                                    int day = int.parse(_daysController.text);
+                                    if (day == 1) {
+                                      newAmount.usageTime = widget.plan.schedule!.first;
+                                    } else if (day > 1) {
+                                      newAmount.usageTime = widget.plan.schedule!.first!.add(Duration(days: day - 1));
+                                    }
+                
+                                    context.read<AccountProvider>().addAmount(newAmount, day, widget.plan.id!);
+                                    _titleController.text = "";
+                                    _payAmountController.text = "";
+                                    Get.back();
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Theme.of(context).colorScheme.primary,
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                      padding: EdgeInsets.zero),
+                                  child: Text(
+                                    "추가하기",
+                                    style: TextStyle(color: Theme.of(context).colorScheme.surface,),
+                                  )),
                             ),
-                          )
-                        ],
-                      ),
-                    ),
-                    const Gap(20),
-                    SizedBox(
-                      height: 50,
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            height: 50,
-                            width: 282,
-                            child: TextField(
-                              controller: _titleController,
-                              onChanged: _onChanged,
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                                  focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                                  counterText: "",
-                                  labelText: "제목",
-                                  labelStyle: const TextStyle(fontSize: 12)),
-                              textAlign: TextAlign.end,
-                              maxLines: 1,
-                              maxLength: 15,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Gap(20),
-                    SizedBox(
-                      height: 50,
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            height: 50,
-                            width: 282,
-                            child: TextField(
-                              controller: _payAmountController,
-                              onChanged: _onChanged,
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                                  focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                                  counterText: "",
-                                  labelText: "사용 금액",
-                                  labelStyle: const TextStyle(fontSize: 12)),
-                              textAlign: TextAlign.end,
-                              maxLines: 1,
-                              maxLength: 13,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Gap(20),
-                    SizedBox(
-                      height: 50,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            height: 50,
-                            width: 100,
-                            child: ElevatedButton(
-                                onPressed: () {
-                                  Get.back();
-                                },
-                                style: ElevatedButton.styleFrom(
-
-                                    side: const BorderSide(color: Colors.grey),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                    padding: EdgeInsets.zero),
-                                child: const Text(
-                                  "취소",
-                                )),
-                          ),
-                          const Gap(20),
-                          SizedBox(
-                            height: 50,
-                            width: 100,
-                            child: ElevatedButton(
-                                onPressed: () {
-                                  if (_daysController.text.isEmpty) {
-                                    Get.snackbar("데이터 입력 확인", "사용 일차를 확인해 주세요", backgroundColor: Colors.white);
-                                    return;
-                                  }
-                                  if (_titleController.text.isEmpty) {
-                                    Get.snackbar("데이터 입력 확인", "제목을 확인해 주세요", backgroundColor: Colors.white);
-                                    return;
-                                  }
-                                  if (_payAmountController.text.isEmpty) {
-                                    Get.snackbar("데이터 입력 확인", "사용 금액을 확인해 주세요", backgroundColor: Colors.white);
-                                    return;
-                                  }
-                                  newAmount.id = const Uuid().v4();
-                                  newAmount.title = _titleController.text;
-
-                                  newAmount.amount = int.parse(_payAmountController.text);
-                                  newAmount.category ??= 0;
-                                  int day = int.parse(_daysController.text);
-                                  if (day == 1) {
-                                    newAmount.usageTime = widget.plan.schedule!.first;
-                                  } else if (day > 1) {
-                                    newAmount.usageTime = widget.plan.schedule!.first!.add(Duration(days: day - 1));
-                                  }
-
-                                  context.read<AccountProvider>().addAmount(newAmount, day, widget.plan.id!);
-                                  _titleController.text = "";
-                                  _payAmountController.text = "";
-                                  Get.back();
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Theme.of(context).colorScheme.primary,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                    padding: EdgeInsets.zero),
-                                child: Text(
-                                  "추가하기",
-                                  style: TextStyle(color: Theme.of(context).colorScheme.surface,),
-                                )),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ));
@@ -621,6 +626,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                     SizedBox(
                       height: 50,
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SizedBox(
                             height: 50,

@@ -51,6 +51,12 @@ class _PlanPageState extends State<PlanPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("여행준비"),
+        leading: IconButton(onPressed: (){
+          Get.back();
+          context.read<DataBloc>().add(DataResetEvent());
+        },
+          icon: const Icon(Icons.arrow_back),
+        ),
       ),
       body: Container(
         width: Get.width,

@@ -129,62 +129,64 @@ class _AccommodationPageState extends State<AccommodationPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // info field
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "숙소 정보",
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                          ),
-                          const Gap(10),
-                          SizedBox(
-                            height: 50,
-                            child: TextField(
-                              controller: _nameController,
-                              onChanged: _onChanged,
-                              decoration: InputDecoration(
-                                label: const Text(
-                                  "숙소명",
+                      SizedBox(
+                        width: 280,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "숙소 정보",
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                            ),
+                            const Gap(10),
+                            SizedBox(
+                              height: 50,
+                              child: TextField(
+                                controller: _nameController,
+                                onChanged: _onChanged,
+                                decoration: InputDecoration(
+                                  label: const Text(
+                                    "숙소명",
+                                  ),
+                                  border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
+                                  focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
                                 ),
-                                border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                                focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
                               ),
                             ),
-                          ),
-                          const Gap(10),
-                          SizedBox(
-                            height: 50,
-                            child: TextField(
-                              controller: _addressController,
-                              onChanged: _onChanged,
-                              decoration: InputDecoration(
-                                label: const Text(
-                                  "주소",
+                            const Gap(10),
+                            SizedBox(
+                              height: 50,
+                              child: TextField(
+                                controller: _addressController,
+                                onChanged: _onChanged,
+                                decoration: InputDecoration(
+                                  label: const Text(
+                                    "주소",
+                                  ),
+                                  border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
+                                  focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
                                 ),
-                                border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                                focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
                               ),
                             ),
-                          ),
-                          const Gap(10),
-                          SizedBox(
-                            height: 50,
-                            width: 300,
-                            child: TextField(
-                              controller: _paymentController,
-                              onChanged: _onChanged,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                              decoration: InputDecoration(
-                                label: const Text(
-                                  "결제금액",
+                            const Gap(10),
+                            SizedBox(
+                              height: 50,
+                              child: TextField(
+                                controller: _paymentController,
+                                onChanged: _onChanged,
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                decoration: InputDecoration(
+                                  label: const Text(
+                                    "결제금액",
+                                  ),
+                                  border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
+                                  focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
                                 ),
-                                border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                                focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
                               ),
-                            ),
-                          )
-                        ],
+                            )
+                          ],
+                        ),
                       ),
                       const Gap(10),
                       const Divider(),

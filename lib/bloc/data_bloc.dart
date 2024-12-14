@@ -19,6 +19,8 @@ class DataBloc extends Bloc<DataEvent, DataState> {
     on<DataLoadingPlanEvent>((event, emit) {
       emit(DataState(state: DataStatus.loadedPlan));
     });
-
+    on<DataResetEvent>((event, emit) async {
+      emit(DataState(state: DataStatus.endPlan));
+    });
   }
 }

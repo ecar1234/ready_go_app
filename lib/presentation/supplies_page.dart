@@ -58,6 +58,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
                               "${idx + 1}. ${list[idx].item}",
@@ -69,14 +70,14 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                   decoration: list[idx].isCheck == true ? TextDecoration.lineThrough : TextDecoration.none),
                             ),
                             PopupMenuButton(
-                              // iconColor: MediaQuery.of(context).platformBrightness == Brightness.dark ? Colors.white : Colors.black87,
+                              padding: EdgeInsets.zero,
                               itemBuilder: (context) => [
-                                PopupMenuItem(
+                                const PopupMenuItem(
                                     value: "edit",
                                     child: Text(
                                       "수정",
                                     )),
-                                PopupMenuItem(
+                                const PopupMenuItem(
                                     value: "delete",
                                     child: Text(
                                       "삭제",

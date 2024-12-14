@@ -149,19 +149,22 @@ class _MainPage2State extends State<MainPage2> {
             )
           ],
         ),
-        body: Padding(
-            padding: const EdgeInsets.all(20),
-            child: list.isEmpty
-                ? const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text("생성된 여행이 없습니다."),
-                      ],
-                    ),
-                  )
-                : _planListSection(context, list, isDarkMode)),
+        body: SingleChildScrollView(
+          child: Container(
+              width: Get.width,
+              padding: const EdgeInsets.all(20),
+              child: list.isEmpty
+                  ? const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text("생성된 여행이 없습니다."),
+                        ],
+                      ),
+                    )
+                  : Column(crossAxisAlignment: CrossAxisAlignment.center, children: [_planListSection(context, list, isDarkMode,state)])),
+        ),
         floatingActionButton: FloatingActionButton(
           // backgroundColor: Colors.black87,
           child: const Icon(
@@ -178,13 +181,18 @@ class _MainPage2State extends State<MainPage2> {
     });
   }
 
-  Widget _planListSection(BuildContext context, List<PlanModel> list, bool isDarkMode) {
+  Widget _planListSection(BuildContext context, List<PlanModel> list, bool isDarkMode, DataState state) {
     return ListView.separated(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
         primary: false,
         itemBuilder: (context, idx) {
           return InkWell(
             onTap: () {
               // Navigator.of(context).push(MaterialPageRoute(builder: (context) => const PlanPage(), settings: RouteSettings(arguments: list[idx])));
+              if(state.state == DataStatus.endPlan){
+                context.read<DataBloc>().add(DataLoadingPlanListEvent());
+              }
               Get.to(() => PlanPage(plan: list[idx]));
             },
             child: Slidable(
@@ -204,33 +212,35 @@ class _MainPage2State extends State<MainPage2> {
                       context.read<SuppliesProvider>().removeAllData(list[idx].id!);
                     })
               ]),
-              child: Container(
-                width: 600,
-                height: 100,
-                padding: const EdgeInsets.all(20),
-                decoration:
-                    BoxDecoration(border: Border.all(color: isDarkMode ? Colors.white : Colors.black87), borderRadius: BorderRadius.circular(10)),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                        child: Text(
-                      "${list[idx].nation}",
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                    )),
-                    SizedBox(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                              "${DateUtil.dateToString(list[idx].schedule?.first ?? DateTime.now())} ~ ${DateUtil.dateToString(list[idx].schedule?.last ?? DateTime.now())}"),
-                          const Gap(10),
-                          list[idx].schedule!.last!.isAfter(DateTime.now()) ? const Text("(준비중)") : const Text("(완료)")
-                        ],
-                      ),
-                    )
-                  ],
+              child: Center(
+                child: Container(
+                  width: 600,
+                  height: 100,
+                  padding: const EdgeInsets.all(20),
+                  decoration:
+                      BoxDecoration(border: Border.all(color: isDarkMode ? Colors.white : Colors.black87), borderRadius: BorderRadius.circular(10)),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                          child: Text(
+                        "${list[idx].nation}",
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                      )),
+                      SizedBox(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                                "${DateUtil.dateToString(list[idx].schedule?.first ?? DateTime.now())} ~ ${DateUtil.dateToString(list[idx].schedule?.last ?? DateTime.now())}"),
+                            const Gap(10),
+                            list[idx].schedule!.last!.isAfter(DateTime.now()) ? const Text("(준비중)") : const Text("(완료)")
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -44,29 +44,92 @@ class ImagePreference {
       rethrow;
     }
   }
-
-  Future<void> updateDepartureImgList(List<XFile> list, int id) async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-
+  Future<List<XFile>> addDepartureImage(XFile image, int id)async{
     try {
-      List<String> stringJson = list.map((img) => img.path).toList();
-      String? json = jsonEncode(stringJson);
-      pref.setString("departureImg$id", json);
-    } catch (ex) {
-      print(ex.toString());
+      SharedPreferences pref = await SharedPreferences.getInstance();
+
+      String? json =  pref.getString("departureImg$id");
+      if(json != null){
+        List<String> pathList = List<String>.from(jsonDecode(json));
+        pathList.add(image.path);
+        String? jsonList = jsonEncode(pathList);
+        pref.setString("departureImg$id", jsonList);
+        List<XFile> list = pathList.map((path) => XFile(path)).toList();
+        return list;
+      }else{
+        List<String> list = [];
+        list.add(image.path);
+        String? jsonList = jsonEncode(list);
+        pref.setString("departureImg$id", jsonList);
+        return [image];
+      }
+    } on Exception catch (e) {
+      print(e.toString());
       rethrow;
     }
   }
 
-  Future<void> updateArrivalImgList(List<XFile> list, int id) async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-
+  Future<List<XFile>> addArrivalImage(XFile image, int id)async{
     try {
-      List<String> stringJson = list.map((img) => img.path).toList();
-      String? json = jsonEncode(stringJson);
-      pref.setString("arrivalImg$id", json);
-    } catch (ex) {
-      print(ex.toString());
+      SharedPreferences pref = await SharedPreferences.getInstance();
+
+      String? json =  pref.getString("arrivalImg$id");
+      if(json != null){
+        List<String> pathList = List<String>.from(jsonDecode(json));
+        pathList.add(image.path);
+        String? jsonList = jsonEncode(pathList);
+        pref.setString("arrivalImg$id", jsonList);
+        List<XFile> list = pathList.map((path) => XFile(path)).toList();
+        return list;
+      }else{
+        List<String> list = [];
+        list.add(image.path);
+        String? jsonList = jsonEncode(list);
+        pref.setString("arrivalImg$id", jsonList);
+        return [image];
+      }
+    } on Exception catch (e) {
+      print(e.toString());
+      rethrow;
+    }
+  }
+
+  Future<List<XFile>> removeDepartureImage(XFile image, int id)async{
+    try {
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      String? json =  pref.getString("departureImg$id");
+      if(json != null){
+        List<String> pathList = List<String>.from(jsonDecode(json));
+        pathList.removeWhere((path) => path == image.path);
+        String? jsonList = jsonEncode(pathList);
+        pref.setString("departureImg$id", jsonList);
+        List<XFile> list = pathList.map((path) => XFile(path)).toList();
+        return list;
+      }else{
+        return [];
+      }
+    } on Exception catch (e) {
+      print(e.toString());
+      rethrow;
+    }
+  }
+  Future<List<XFile>> removeArrivalImage(XFile image, int id)async{
+    try {
+      SharedPreferences pref = await SharedPreferences.getInstance();
+
+      String? json =  pref.getString("arrivalImg$id");
+      if(json != null){
+        List<String> pathList = List<String>.from(jsonDecode(json));
+        pathList.removeWhere((path) => path == image.path);
+        String? jsonList = jsonEncode(pathList);
+        pref.setString("arrivalImg$id", jsonList);
+        List<XFile> list = pathList.map((path) => XFile(path)).toList();
+        return list;
+      }else{
+        return [];
+      }
+    } on Exception catch (e) {
+      print(e.toString());
       rethrow;
     }
   }

@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
@@ -101,42 +102,41 @@ class _RoamingPageState extends State<RoamingPage> {
   }
 
   Widget _voucherImageSection(BuildContext context, List<XFile> list) {
-    return SizedBox(
-      height: 150,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const SizedBox(
-              height: 30,
-              child: Text(
-                "바우처 이미지",
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
-              )),
-          SizedBox(
-            width: list.isEmpty ? 120 : list.length * 130 + 80,
-            height: 100,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                list.isEmpty
-                    ? const SizedBox()
-                    : Expanded(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+       const Text(
+          "바우처 이미지",
+          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+        ),
+        SizedBox(
+          width: list.isEmpty ? 100 : (list.length * 110) + 100,
+          height: 120,
+          child: Row(
+            children: [
+              list.isEmpty
+                  ? const SizedBox()
+                  : Expanded(
+                      child: SizedBox(
+                        height: 100,
                         child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
                             itemBuilder: (context, idx) {
                               return Stack(children: [
                                 Container(
                                   width: 100,
                                   height: 100,
-                                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+                                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all()),
                                   child: GestureDetector(
                                       onTap: () {
                                         OpenFile.open(list[idx].path);
                                       },
-                                      child: Image.file(
-                                        File(list[idx].path),
-                                        fit: BoxFit.cover,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: Image.file(
+                                          File(list[idx].path),
+                                          fit: BoxFit.cover,
+                                        ),
                                       )),
                                 ),
                                 Positioned(
@@ -149,34 +149,32 @@ class _RoamingPageState extends State<RoamingPage> {
                                         icon: const Icon(Icons.close))),
                               ]);
                             },
-                            separatorBuilder: (context, idx) {
-                              return const Gap(10);
-                            },
-                            itemCount: list.length)),
-                SizedBox(
-                  height: 100,
-                  width: 100,
-                  child: ElevatedButton(
-                      onPressed: () async {
-                        _showImageSourceDialog();
-                        // final imgProvider = context.read<RoamingProvider>();
-                        // final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-                        // if (image != null) {
-                        //   imgProvider.addImage(image, widget.planId);
-                        // }
-                      },
-                      style: ElevatedButton.styleFrom(
-                          side: const BorderSide(color: Colors.white12),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                          )),
-                      child: const Icon(Icons.add)),
-                )
-              ],
-            ),
+                            separatorBuilder: (context, idx) => const Gap(10),
+                            itemCount: list.length),
+                      )),
+              SizedBox(
+                height: 100,
+                width: (list.length*110)+100 < Get.width ? 100 : 50,
+                child: ElevatedButton(
+                    onPressed: () async {
+                      _showImageSourceDialog();
+                      // final imgProvider = context.read<RoamingProvider>();
+                      // final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+                      // if (image != null) {
+                      //   imgProvider.addImage(image, widget.planId);
+                      // }
+                    },
+                    style: ElevatedButton.styleFrom(
+                        side: const BorderSide(color: Colors.white12),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        )),
+                    child: const Icon(Icons.add)),
+              )
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -247,6 +245,7 @@ class _RoamingPageState extends State<RoamingPage> {
                                       showDialog(
                                           context: context,
                                           builder: (context) => AlertDialog(
+                                            actionsAlignment: MainAxisAlignment.center,
                                                 content: const Text("삭제 하시겠습니까?"),
                                                 actions: [
                                                   SizedBox(

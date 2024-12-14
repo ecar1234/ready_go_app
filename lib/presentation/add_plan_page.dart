@@ -53,55 +53,57 @@ class _AddPlanPageState extends State<AddPlanPage> {
             style: TextStyle(fontWeight: FontWeight.w600),
           ),
         ),
-        body: Container(
-          padding: const EdgeInsets.all(30),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _titleSection(),
-              const Gap(30),
-              _calendarSection(),
-              const Gap(30),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 150,
-                    height: 50,
-                    child: ElevatedButton(onPressed: (){
-                      if(nationController.text.isEmpty){
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("국가명을 입력해 주세요."), duration: Duration(seconds: 1),)
-                        );
-                        return;
-                      }
-                      if(_dates.length > 2 || _dates.isEmpty){
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("일정을 선택해 주세요"), duration: Duration(seconds: 1),)
-                        );
-                        return;
-                      }
-                      try{
-                        PlanModel plan = PlanModel(
-                          id: idNum + 1,
-                          nation: nationController.text,
-                          schedule: _dates
-                        );
-                        context.read<PlanListProvider>().addPlanList(plan);
-                      }catch(ex){
-                        throw(ex).toString();
-                      }
-                      Navigator.pop(context);
-                    }, style: ElevatedButton.styleFrom(
-                      // backgroundColor: Colors.black87,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)
-                      )
-                    ), child: const Text("생성", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),),
-                  ),
-                ],
-              )
-            ],
+        body: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.all(30),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _titleSection(),
+                const Gap(30),
+                _calendarSection(),
+                const Gap(30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 150,
+                      height: 50,
+                      child: ElevatedButton(onPressed: (){
+                        if(nationController.text.isEmpty){
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("국가명을 입력해 주세요."), duration: Duration(seconds: 1),)
+                          );
+                          return;
+                        }
+                        if(_dates.length > 2 || _dates.isEmpty){
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("일정을 선택해 주세요"), duration: Duration(seconds: 1),)
+                          );
+                          return;
+                        }
+                        try{
+                          PlanModel plan = PlanModel(
+                            id: idNum + 1,
+                            nation: nationController.text,
+                            schedule: _dates
+                          );
+                          context.read<PlanListProvider>().addPlanList(plan);
+                        }catch(ex){
+                          throw(ex).toString();
+                        }
+                        Navigator.pop(context);
+                      }, style: ElevatedButton.styleFrom(
+                        // backgroundColor: Colors.black87,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)
+                        )
+                      ), child: const Text("생성", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),

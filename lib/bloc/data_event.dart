@@ -7,3 +7,4 @@ class DataLoadingPlanEvent extends DataEvent {
   // int planId;
   // DataLoadingPlanEvent({required this.planId});
 }
+class DataResetEvent extends DataEvent {}
