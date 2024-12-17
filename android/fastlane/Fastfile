@@ -58,7 +58,7 @@ platform :android do
   lane :internal do
     build_aab
     upload_to_play_store(
-      json_key: "readygo-play-store-api.json",
+      json_key: "readygo-444508-fa605496760b.json",
       package_name: "com.ready_go_project",
       track: "internal",
       release_status: "draft",
