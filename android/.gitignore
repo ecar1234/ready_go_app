@@ -12,4 +12,5 @@ key.properties
 local.properties
 **/*.keystore
 **/*.jks
+**/*.json
 readygo-444508-fa605496760b.json

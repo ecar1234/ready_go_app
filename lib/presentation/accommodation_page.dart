@@ -81,7 +81,9 @@ class _AccommodationPageState extends State<AccommodationPage> {
   @override
   Widget build(BuildContext context) {
     final list = context.watch<AccommodationProvider>().accommodation;
-    context.read<AdmobProvider>().loadAdBanner();
+    if (kReleaseMode) {
+      context.read<AdmobProvider>().loadAdBanner();
+    }
     int month = widget.plan.schedule!.first!.month;
     int day = widget.plan.schedule!.first!.day;
 
@@ -103,6 +105,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                       child: const Center(child: Text("숙소 정보가 없습니다.")),
                     )
                   : SizedBox(height: Get.height - 150, child: SingleChildScrollView(child: _accordionSection(context, list)))),
+          if(kReleaseMode)
           Builder(builder: (context) {
             final BannerAd bannerAd = context.watch<AdmobProvider>().bannerAd!;
             return Positioned(

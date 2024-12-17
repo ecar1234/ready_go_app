@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -38,7 +39,9 @@ class _PlanPageState extends State<PlanPage> {
   @override
   Widget build(BuildContext context) {
     // PlanModel plan = ModalRoute.of(context)!.settings.arguments as PlanModel;
-    context.watch<AdmobProvider>().loadAdBanner();
+    if (kReleaseMode) {
+      context.watch<AdmobProvider>().loadAdBanner();
+    }
     DataState state = context.watch<DataBloc>().state;
     if (state.state == DataStatus.loadedPlanList) {
       context.read<ImagesProvider>().getImgList(widget.plan.id!);
@@ -126,6 +129,7 @@ class _PlanPageState extends State<PlanPage> {
             ],
           ),
         ),
+        if(kReleaseMode)
         Builder(builder: (context) {
           final BannerAd bannerAd = context.watch<AdmobProvider>().bannerAd!;
           return Positioned(

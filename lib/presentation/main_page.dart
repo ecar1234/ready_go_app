@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -129,15 +127,13 @@ class _MainPage2State extends State<MainPage2> {
   Widget build(BuildContext context) {
     final list = context.watch<PlanListProvider>().planList;
     bool isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
-    context.read<AdmobProvider>().loadAdBanner();
+    if (kReleaseMode) {
+      context.read<AdmobProvider>().loadAdBanner();
+    }
     return BlocBuilder<DataBloc, DataState>(builder: (context, state) {
       if (state.state == DataStatus.beforePlanList) {
         context.read<PlanListProvider>().getPlanList();
         context.read<DataBloc>().add(DataLoadingPlanListEvent());
-      }
-
-      if (kDebugMode) {
-        print("$list");
       }
       return Scaffold(
         appBar: AppBar(
@@ -171,6 +167,7 @@ class _MainPage2State extends State<MainPage2> {
                     )
                   : SingleChildScrollView(
                       child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [_planListSection(context, list, isDarkMode, state)]))),
+          if(kReleaseMode)
           Builder(builder: (context) {
             final BannerAd bannerAd = context.watch<AdmobProvider>().bannerAd!;
             return Positioned(

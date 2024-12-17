@@ -10,7 +10,7 @@ class AccountModel {
   int? cash;
   int? card;
   int? totalUseAccount;
-  Map<int, List<AmountModel>>? usageHistory;
+  List<List<AmountModel>?>? usageHistory;
 
   AccountModel({this.totalExchangeAccount, this.exchange, this. cash, this.card, this.totalUseAccount, this.usageHistory});
 

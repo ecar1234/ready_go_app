@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/supply_model/supply_model.dart';
 
@@ -20,11 +21,12 @@ class _SuppliesPageState extends State<SuppliesPage> {
   final TextEditingController _controller = TextEditingController();
 
   Timer? _debounce;
-  _onChanged(String value){
-    if(_debounce?.isActive ?? false){
+
+  _onChanged(String value) {
+    if (_debounce?.isActive ?? false) {
       _debounce?.cancel();
     }
-    _debounce = Timer(const Duration(milliseconds: 500), (){});
+    _debounce = Timer(const Duration(milliseconds: 500), () {});
   }
 
   @override
@@ -42,63 +44,65 @@ class _SuppliesPageState extends State<SuppliesPage> {
       appBar: AppBar(
         title: const Text("준비물"),
       ),
-      body: Container(
-        padding: const EdgeInsets.all(20),
-        child: list.isEmpty
-            ? const Center(
-                child: Text("목록을 추가해 주세요"),
-              )
-            : ListView.separated(
-                itemBuilder: (context, idx) {
-                  return SizedBox(
-                    height: 40,
-                    child: TextButton(
-                        onPressed: () {
-                          context.read<SuppliesProvider>().updateItemState(idx, widget.planId);
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              "${idx + 1}. ${list[idx].item}",
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  color: list[idx].isCheck == true
-                                      ? Colors.grey
-                                      : Theme.of(context).colorScheme.primary,
-                                  decoration: list[idx].isCheck == true ? TextDecoration.lineThrough : TextDecoration.none),
-                            ),
-                            PopupMenuButton(
-                              padding: EdgeInsets.zero,
-                              itemBuilder: (context) => [
-                                const PopupMenuItem(
-                                    value: "edit",
-                                    child: Text(
-                                      "수정",
-                                    )),
-                                const PopupMenuItem(
-                                    value: "delete",
-                                    child: Text(
-                                      "삭제",
-                                    )),
-                              ],
-                              onSelected: (value) {
-                                switch (value) {
-                                  case "edit":
-                                    _controller.text = list[idx].item!;
-                                    _itemEditDialog(context, idx);
-                                  case "delete":
-                                    context.read<SuppliesProvider>().removeItem(idx, widget.planId);
-                                }
-                              },
-                            )
-                          ],
-                        )),
-                  );
-                },
-                separatorBuilder: (context, idx) => const Gap(5),
-                itemCount: list.length),
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 40),
+          child: list.isEmpty
+              ? const Center(
+                  child: Text("목록을 추가해 주세요"),
+                )
+              : ListView.separated(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemBuilder: (context, idx) {
+                    return SizedBox(
+                      height: 40,
+                      child: TextButton(
+                          onPressed: () {
+                            context.read<SuppliesProvider>().updateItemState(idx, widget.planId);
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                "${idx + 1}. ${list[idx].item}",
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    color: list[idx].isCheck == true ? Colors.grey : Theme.of(context).colorScheme.primary,
+                                    decoration: list[idx].isCheck == true ? TextDecoration.lineThrough : TextDecoration.none),
+                              ),
+                              PopupMenuButton(
+                                padding: EdgeInsets.zero,
+                                itemBuilder: (context) => [
+                                  const PopupMenuItem(
+                                      value: "edit",
+                                      child: Text(
+                                        "수정",
+                                      )),
+                                  const PopupMenuItem(
+                                      value: "delete",
+                                      child: Text(
+                                        "삭제",
+                                      )),
+                                ],
+                                onSelected: (value) {
+                                  switch (value) {
+                                    case "edit":
+                                      _controller.text = list[idx].item!;
+                                      _itemEditDialog(context, idx);
+                                    case "delete":
+                                      context.read<SuppliesProvider>().removeItem(idx, widget.planId);
+                                  }
+                                },
+                              )
+                            ],
+                          )),
+                    );
+                  },
+                  separatorBuilder: (context, idx) => const Gap(5),
+                  itemCount: list.length),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -160,6 +164,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
                         height: 30,
                         child: TextField(
                           controller: _controller,
+                          autofocus: true,
                           onChanged: _onChanged,
                           style: const TextStyle(fontSize: 12),
                           decoration: InputDecoration(
@@ -175,6 +180,18 @@ class _SuppliesPageState extends State<SuppliesPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SizedBox(
+                            width: 100,
+                            height: 40,
+                            child: ElevatedButton(
+                                onPressed: () {
+                                  Get.back();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                    padding: EdgeInsets.zero, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                                child: const Text("닫기")),
+                          ),
+                          const Gap(10),
+                          SizedBox(
                               height: 40,
                               width: 100,
                               child: ElevatedButton(
@@ -186,7 +203,6 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                   SupplyModel item = SupplyModel(item: _controller.text, isCheck: false);
                                   context.read<SuppliesProvider>().addItem(item, widget.planId);
                                   _controller.text = "";
-                                  Navigator.of(context).pop();
                                 },
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.black87,
@@ -275,11 +291,10 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("항목을 입력해 주세요")));
                                     return;
                                   }
-                                    String item = _controller.text;
-                                    context.read<SuppliesProvider>().editItem(idx, item, widget.planId);
-                                    _controller.text = "";
-                                    Navigator.of(context).pop();
-
+                                  String item = _controller.text;
+                                  context.read<SuppliesProvider>().editItem(idx, item, widget.planId);
+                                  _controller.text = "";
+                                  Navigator.of(context).pop();
                                 },
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.black87,

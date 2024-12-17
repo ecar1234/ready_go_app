@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:ready_go_project/data/data_source/preference/dark_mode_preference.dart';
 
 class ThemeModeProvider with ChangeNotifier {

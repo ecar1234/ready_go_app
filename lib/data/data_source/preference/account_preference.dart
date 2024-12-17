@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/account_model/account_model.dart';
-import '../../models/account_model/amount_model.dart';
 
 class AccountPreference {
   AccountPreference._internal();
@@ -27,7 +26,7 @@ class AccountPreference {
             card: 0,
             cash: 0,
             totalUseAccount: 0,
-            usageHistory: {}
+            usageHistory: []
         );
       }
     }catch(ex){

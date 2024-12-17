@@ -12,13 +12,11 @@ AccountModel _$AccountModelFromJson(Map<String, dynamic> json) => AccountModel(
       cash: (json['cash'] as num?)?.toInt(),
       card: (json['card'] as num?)?.toInt(),
       totalUseAccount: (json['totalUseAccount'] as num?)?.toInt(),
-      usageHistory: (json['usageHistory'] as Map<String, dynamic>?)?.map(
-        (k, e) => MapEntry(
-            int.parse(k),
-            (e as List<dynamic>)
-                .map((e) => AmountModel.fromJson(e as Map<String, dynamic>))
-                .toList()),
-      ),
+      usageHistory: (json['usageHistory'] as List<dynamic>?)
+          ?.map((e) => (e as List<dynamic>?)
+              ?.map((e) => AmountModel.fromJson(e as Map<String, dynamic>))
+              .toList())
+          .toList(),
     );
 
 Map<String, dynamic> _$AccountModelToJson(AccountModel instance) =>
@@ -28,6 +26,5 @@ Map<String, dynamic> _$AccountModelToJson(AccountModel instance) =>
       'cash': instance.cash,
       'card': instance.card,
       'totalUseAccount': instance.totalUseAccount,
-      'usageHistory':
-          instance.usageHistory?.map((k, e) => MapEntry(k.toString(), e)),
+      'usageHistory': instance.usageHistory,
     };

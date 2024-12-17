@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../models/plan_model/plan_list_model.dart';
 import '../../models/plan_model/plan_model.dart';
 
 class PlanPreference {
