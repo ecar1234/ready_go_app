@@ -48,8 +48,11 @@ class _SuppliesPageState extends State<SuppliesPage> {
         child: Container(
           padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 40),
           child: list.isEmpty
-              ? const Center(
-                  child: Text("목록을 추가해 주세요"),
+              ? SizedBox(
+                  height: Get.height - 200,
+                  child: const Center(
+                    child: Text("목록을 추가해 주세요"),
+                  ),
                 )
               : ListView.separated(
                   physics: const NeverScrollableScrollPhysics(),
@@ -105,6 +108,8 @@ class _SuppliesPageState extends State<SuppliesPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        foregroundColor: Theme.of(context).colorScheme.surface,
+        backgroundColor: Theme.of(context).colorScheme.secondary,
         onPressed: () {
           _itemAddDialog(context);
         },

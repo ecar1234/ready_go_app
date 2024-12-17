@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:io';
 
@@ -12,7 +11,6 @@ import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/roaming_model/roaming_period_model.dart';
 
 import '../provider/Roaming_provider.dart';
-
 
 class RoamingPage extends StatefulWidget {
   final int planId;
@@ -31,11 +29,12 @@ class _RoamingPageState extends State<RoamingPage> {
   int? selectedValue;
 
   Timer? _debounce;
-  _onChanged(String value){
-    if(_debounce?.isActive ?? false){
+
+  _onChanged(String value) {
+    if (_debounce?.isActive ?? false) {
       _debounce?.cancel();
     }
-    _debounce = Timer(const Duration(milliseconds: 500), (){});
+    _debounce = Timer(const Duration(milliseconds: 500), () {});
   }
 
   @override
@@ -70,7 +69,7 @@ class _RoamingPageState extends State<RoamingPage> {
     Duration totalDuration = endDate.difference(startDate);
 
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
@@ -105,7 +104,7 @@ class _RoamingPageState extends State<RoamingPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-       const Text(
+        const Text(
           "바우처 이미지",
           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
         ),
@@ -118,43 +117,43 @@ class _RoamingPageState extends State<RoamingPage> {
                   ? const SizedBox()
                   : Expanded(
                       child: SizedBox(
-                        height: 100,
-                        child: ListView.separated(
+                      height: 100,
+                      child: ListView.separated(
                           scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, idx) {
-                              return Stack(children: [
-                                Container(
-                                  width: 100,
-                                  height: 100,
-                                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all()),
-                                  child: GestureDetector(
-                                      onTap: () {
-                                        OpenFile.open(list[idx].path);
+                          itemBuilder: (context, idx) {
+                            return Stack(children: [
+                              Container(
+                                width: 100,
+                                height: 100,
+                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all()),
+                                child: GestureDetector(
+                                    onTap: () {
+                                      OpenFile.open(list[idx].path);
+                                    },
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.file(
+                                        File(list[idx].path),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )),
+                              ),
+                              Positioned(
+                                  right: 0,
+                                  top: 0,
+                                  child: IconButton(
+                                      onPressed: () {
+                                        context.read<RoamingProvider>().removeImage(list[idx], widget.planId);
                                       },
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: Image.file(
-                                          File(list[idx].path),
-                                          fit: BoxFit.cover,
-                                        ),
-                                      )),
-                                ),
-                                Positioned(
-                                    right: 0,
-                                    top: 0,
-                                    child: IconButton(
-                                        onPressed: () {
-                                          context.read<RoamingProvider>().removeImage(list[idx], widget.planId);
-                                        },
-                                        icon: const Icon(Icons.close))),
-                              ]);
-                            },
-                            separatorBuilder: (context, idx) => const Gap(10),
-                            itemCount: list.length),
-                      )),
+                                      icon: const Icon(Icons.close))),
+                            ]);
+                          },
+                          separatorBuilder: (context, idx) => const Gap(10),
+                          itemCount: list.length),
+                    )),
               SizedBox(
                 height: 100,
-                width: (list.length*110)+100 < Get.width ? 100 : 50,
+                width: (list.length * 110) + 100 < Get.width ? 100 : 50,
                 child: ElevatedButton(
                     onPressed: () async {
                       _showImageSourceDialog();
@@ -245,7 +244,7 @@ class _RoamingPageState extends State<RoamingPage> {
                                       showDialog(
                                           context: context,
                                           builder: (context) => AlertDialog(
-                                            actionsAlignment: MainAxisAlignment.center,
+                                                actionsAlignment: MainAxisAlignment.center,
                                                 content: const Text("삭제 하시겠습니까?"),
                                                 actions: [
                                                   SizedBox(
@@ -300,13 +299,10 @@ class _RoamingPageState extends State<RoamingPage> {
               SizedBox(
                 height: 60,
                 child: TextField(
-                    controller: dpAddressController,
-                    onChanged: _onChanged,
-                    style: const TextStyle(fontSize: 16),
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                    )),
+                  controller: dpAddressController,
+                  onChanged: _onChanged,
+                  style: const TextStyle(fontSize: 16),
+                ),
               )
             ],
           ),
@@ -436,13 +432,10 @@ class _RoamingPageState extends State<RoamingPage> {
               SizedBox(
                 height: 60,
                 child: TextField(
-                    controller: activeCodeController,
-                    onChanged: _onChanged,
-                    style: const TextStyle(fontSize: 16),
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                    )),
+                  controller: activeCodeController,
+                  onChanged: _onChanged,
+                  style: const TextStyle(fontSize: 16),
+                ),
               )
             ],
           ),
@@ -551,7 +544,7 @@ class _RoamingPageState extends State<RoamingPage> {
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                               padding: EdgeInsets.zero,
-                              backgroundColor: Colors.black87,
+                              backgroundColor: Theme.of(context).colorScheme.secondary,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                           onPressed: () {
                             if (period.period == 0) {
@@ -560,9 +553,9 @@ class _RoamingPageState extends State<RoamingPage> {
                             }
                             context.read<RoamingProvider>().startPeriod(widget.planId);
                           },
-                          child: const Text(
+                          child: Text(
                             "활성화",
-                            style: TextStyle(color: Colors.white, fontSize: 16),
+                            style: TextStyle(color: Theme.of(context).colorScheme.surface, fontSize: 16),
                           )),
                     ),
               const Gap(10),

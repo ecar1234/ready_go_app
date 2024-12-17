@@ -182,7 +182,8 @@ class _MainPage2State extends State<MainPage2> {
           })
         ]),
         floatingActionButton: FloatingActionButton(
-          // backgroundColor: Colors.black87,
+          backgroundColor: Theme.of(context).colorScheme.secondary,
+          foregroundColor: Theme.of(context).colorScheme.surface,
           child: const Icon(
             Icons.add,
             // color: Colors.white,

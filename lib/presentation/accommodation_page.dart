@@ -122,6 +122,8 @@ class _AccommodationPageState extends State<AccommodationPage> {
           })
         ]),
         floatingActionButton: FloatingActionButton(
+          foregroundColor: Theme.of(context).colorScheme.surface,
+          backgroundColor: Theme.of(context).colorScheme.secondary,
           onPressed: () {
             _addAccommodation(context, month, day);
           },
@@ -164,12 +166,10 @@ class _AccommodationPageState extends State<AccommodationPage> {
                               child: TextField(
                                 controller: _nameController,
                                 onChanged: _onChanged,
-                                decoration: InputDecoration(
-                                  label: const Text(
+                                decoration: const InputDecoration(
+                                  label: Text(
                                     "숙소명",
                                   ),
-                                  border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                                  focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
                                 ),
                               ),
                             ),
@@ -179,12 +179,10 @@ class _AccommodationPageState extends State<AccommodationPage> {
                               child: TextField(
                                 controller: _addressController,
                                 onChanged: _onChanged,
-                                decoration: InputDecoration(
-                                  label: const Text(
+                                decoration: const InputDecoration(
+                                  label: Text(
                                     "주소",
                                   ),
-                                  border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                                  focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
                                 ),
                               ),
                             ),
@@ -196,12 +194,10 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                 onChanged: _onChanged,
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                decoration: InputDecoration(
-                                  label: const Text(
+                                decoration: const InputDecoration(
+                                  label: Text(
                                     "결제금액",
                                   ),
-                                  border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                                  focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
                                 ),
                               ),
                             )
@@ -289,10 +285,8 @@ class _AccommodationPageState extends State<AccommodationPage> {
                               keyboardType: TextInputType.number,
                               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                               textAlign: TextAlign.end,
-                              decoration: InputDecoration(
-                                label: const Text("일정"),
-                                border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                                focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
+                              decoration: const InputDecoration(
+                                label: Text("일정"),
                               ),
                             ),
                           ),
@@ -323,6 +317,9 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                   child: TextField(
                                     controller: _checkInController,
                                     onChanged: _onChanged,
+                                    textAlign: TextAlign.end,
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                     decoration: InputDecoration(
                                         border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10))),
                                   ),
@@ -344,6 +341,9 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                   child: TextField(
                                     controller: _checkOutController,
                                     onChanged: _onChanged,
+                                    textAlign: TextAlign.end,
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                     decoration: InputDecoration(
                                         border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10))),
                                   ),

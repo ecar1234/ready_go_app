@@ -62,9 +62,11 @@ class _AccountBookPageState extends State<AccountBookPage> {
       ),
       body: SingleChildScrollView(
         child: ExpandablePageView(
-            controller: _expandController, physics: const BouncingScrollPhysics(), children: [_page1(context, info, isDarkMode), _page2(context, info, isDarkMode)]),
+            controller: _expandController, physics: const BouncingScrollPhysics(), children: [_page1(context, info), _page2(context, info)]),
       ),
       floatingActionButton: FloatingActionButton(
+        foregroundColor: Theme.of(context).colorScheme.surface,
+        backgroundColor: Theme.of(context).colorScheme.secondary,
         onPressed: () {
           _addAmountDialog(context, info);
         },
@@ -75,7 +77,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
     );
   }
 
-  Widget _page1(BuildContext context, AccountModel info, bool isDarkMode) {
+  Widget _page1(BuildContext context, AccountModel info) {
     return Container(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -101,7 +103,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
     );
   }
 
-  Widget _page2(BuildContext context, AccountModel info, bool isDarkMode) {
+  Widget _page2(BuildContext context, AccountModel info) {
     return Container(
         padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 100),
         child: info.usageHistory == null || info.usageHistory!.isEmpty
@@ -117,7 +119,8 @@ class _AccountBookPageState extends State<AccountBookPage> {
                   Container(
                     height: 60,
                     width: Get.width,
-                    decoration: BoxDecoration(border: Border.all(), borderRadius: BorderRadius.circular(10)),
+                    decoration:
+                        BoxDecoration(border: Border.all(color: Theme.of(context).colorScheme.outline), borderRadius: BorderRadius.circular(10)),
                     child: Flex(
                       direction: Axis.horizontal,
                       children: [
@@ -125,7 +128,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                         Expanded(
                             flex: 1,
                             child: Container(
-                              decoration: const BoxDecoration(border: Border(right: BorderSide())),
+                              decoration: BoxDecoration(border: Border(right: BorderSide(color: Theme.of(context).colorScheme.outline))),
                               child: Flex(
                                 direction: Axis.horizontal,
                                 children: [
@@ -133,13 +136,13 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                       flex: 1,
                                       child: Container(
                                         decoration: BoxDecoration(
-                                            color: isDarkMode ? Colors.white : Colors.black87,
-                                            border: const Border(right: BorderSide()),
+                                            color: Theme.of(context).colorScheme.secondary,
+                                            border: Border(right: BorderSide(color: Theme.of(context).colorScheme.outline)),
                                             borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10))),
-                                        child: const Center(
+                                        child: Center(
                                           child: Text(
                                             "잔액",
-                                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                                            style: TextStyle(color: Theme.of(context).colorScheme.surface, fontWeight: FontWeight.w600),
                                           ),
                                         ),
                                       )),
@@ -170,11 +173,13 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                   Expanded(
                                       flex: 1,
                                       child: Container(
-                                        decoration: const BoxDecoration(color: Colors.black87, border: Border(right: BorderSide())),
-                                        child: const Center(
+                                        decoration: BoxDecoration(
+                                            color: Theme.of(context).colorScheme.secondary,
+                                            border: Border(right: BorderSide(color: Theme.of(context).colorScheme.outline))),
+                                        child: Center(
                                           child: Text(
                                             "총 지출",
-                                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                                            style: TextStyle(color: Theme.of(context).colorScheme.surface, fontWeight: FontWeight.w600),
                                           ),
                                         ),
                                       )),
@@ -206,7 +211,9 @@ class _AccountBookPageState extends State<AccountBookPage> {
                       List<List<AmountModel>?> amountList = info.usageHistory!;
                       return Container(
                         width: Get.width - 40,
-                        decoration: BoxDecoration(border: Border.all(), borderRadius: BorderRadius.circular(10)),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Theme.of(context).colorScheme.outline),
+                            borderRadius: BorderRadius.circular(10)),
                         child: Column(
                           children: [
                             Row(
@@ -217,14 +224,18 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                     height: 40,
                                     width: Get.width - 42,
                                     padding: const EdgeInsets.symmetric(horizontal: 10),
-                                    decoration: const BoxDecoration(border: Border(bottom: BorderSide())),
+                                    decoration: BoxDecoration(
+                                        color: Theme.of(context).colorScheme.secondary,
+                                        border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
+                                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))
+                                    ),
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           "${amountList[fidx]!.first.usageTime!.month}월 ${amountList[fidx]!.first.usageTime!.day}일(${amountList[fidx]!.first.id}일차)",
-                                          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                                          style: TextStyle(color: Theme.of(context).colorScheme.surface, fontWeight: FontWeight.w600, fontSize: 16),
                                         ),
                                       ],
                                     )),
@@ -233,7 +244,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                             // title menu
                             Container(
                               height: 40,
-                              decoration: const BoxDecoration(border: Border(bottom: BorderSide())),
+                              decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline))),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: [
@@ -246,7 +257,8 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                       ))),
                                   Container(
                                       width: (Get.width - 42) * 0.6,
-                                      decoration: const BoxDecoration(border: Border.symmetric(vertical: BorderSide())),
+                                      decoration:
+                                          BoxDecoration(border: Border.symmetric(vertical: BorderSide(color: Theme.of(context).colorScheme.outline))),
                                       child: const Center(
                                           child: Text(
                                         "사용 내역",
@@ -270,7 +282,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                               itemBuilder: (context, idx) {
                                 List<AmountModel> list = amountList[fidx]!;
                                 return Container(
-                                  decoration: const BoxDecoration(border: Border(top: BorderSide())),
+                                  decoration: BoxDecoration(border: Border(top: BorderSide(color: Theme.of(context).colorScheme.outline))),
                                   child: Column(
                                     children: [
                                       Column(
@@ -289,7 +301,8 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                                 Container(
                                                     height: 40,
                                                     width: (Get.width - 42) * 0.6,
-                                                    decoration: const BoxDecoration(border: Border.symmetric(vertical: BorderSide())),
+                                                    decoration: BoxDecoration(
+                                                        border: Border.symmetric(vertical: BorderSide(color: Theme.of(context).colorScheme.outline))),
                                                     child: Center(child: Text("${list[idx].title}"))),
                                                 SizedBox(
                                                     height: 40,
@@ -362,7 +375,6 @@ class _AccountBookPageState extends State<AccountBookPage> {
                       padding: EdgeInsets.zero, side: const BorderSide(), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
                   child: const Text(
                     "총 경비 추가",
-                    // style: TextStyle(color: Colors.black87),
                   )),
             )
           ],
@@ -571,7 +583,9 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                 controller: _daysController,
                                 onChanged: _onChanged,
                                 decoration: InputDecoration(
-                                    border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
+                                    border: OutlineInputBorder(
+                                        borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+                                        borderRadius: BorderRadius.circular(10)),
                                     focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
                                     counterText: "",
                                     labelText: "사용 일차",
@@ -616,8 +630,12 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                 controller: _titleController,
                                 onChanged: _onChanged,
                                 decoration: InputDecoration(
-                                    border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                                    focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
+                                    border: OutlineInputBorder(
+                                        borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+                                        borderRadius: BorderRadius.circular(10)),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+                                        borderRadius: BorderRadius.circular(10)),
                                     counterText: "",
                                     labelText: "제목",
                                     labelStyle: const TextStyle(fontSize: 12)),
@@ -643,8 +661,12 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                 controller: _payAmountController,
                                 onChanged: _onChanged,
                                 decoration: InputDecoration(
-                                    border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                                    focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
+                                    border: OutlineInputBorder(
+                                        borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+                                        borderRadius: BorderRadius.circular(10)),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+                                        borderRadius: BorderRadius.circular(10)),
                                     counterText: "",
                                     labelText: "사용 금액",
                                     labelStyle: const TextStyle(fontSize: 12)),
@@ -673,7 +695,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                     Get.back();
                                   },
                                   style: ElevatedButton.styleFrom(
-                                      side: const BorderSide(color: Colors.grey),
+                                      side: BorderSide(color: Theme.of(context).colorScheme.outline),
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                       padding: EdgeInsets.zero),
                                   child: const Text(
@@ -769,8 +791,10 @@ class _AccountBookPageState extends State<AccountBookPage> {
                               controller: _totalAmountController,
                               onChanged: _onChanged,
                               decoration: InputDecoration(
-                                  border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                                  focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
+                                  border: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Theme.of(context).colorScheme.outline), borderRadius: BorderRadius.circular(10)),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Theme.of(context).colorScheme.outline), borderRadius: BorderRadius.circular(10)),
                                   counterText: "",
                                   labelText: "추가 금액",
                                   labelStyle: const TextStyle(fontSize: 12)),
@@ -808,12 +832,11 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                 },
                                 style: ElevatedButton.styleFrom(
                                     // backgroundColor: Theme.of(context).colorScheme.primary,
-                                    side: const BorderSide(color: Colors.grey),
+                                    side: BorderSide(color: Theme.of(context).colorScheme.outline),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                     padding: EdgeInsets.zero),
                                 child: const Text(
                                   "취소",
-                                  // style: TextStyle(color: Colors.black87),
                                 )),
                           ),
                           const Gap(20),
