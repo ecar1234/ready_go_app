@@ -70,12 +70,19 @@ platform :android do
   end
 
   desc "Submit a new Beta Build to Crashlytics Beta"
-  lane :beta do |_options|
+  lane :beta do
 
     build_aab
 
     upload_to_play_store(
-      track: "beta"
+      json_key: "readygo-444508-fa605496760b.json",
+      package_name: "com.ready_go_project",
+      track: "alpha",
+      release_status: "draft",
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      skip_upload_changelogs: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true
     )
   end
 

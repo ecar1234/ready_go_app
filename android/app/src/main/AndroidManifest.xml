@@ -25,20 +25,20 @@
         android:required="false"
         tools:targetApi="eclair" />
 
-    <!-- 스마트폰 및 태블릿만 지원 -->
-    <compatible-screens>
-        <!-- 모든 해상도의 스마트폰 지원 -->
-        <screen android:screenSize="small" android:screenDensity="hdpi" />
-        <screen android:screenSize="normal" android:screenDensity="xhdpi" />
-        <screen android:screenSize="large" android:screenDensity="xhdpi" />
-        <screen android:screenSize="xlarge" android:screenDensity="xxhdpi" />
-        <screen android:screenSize="large" android:screenDensity="xxxhdpi" />
-        <screen android:screenSize="normal" android:screenDensity="xxxhdpi" />
-    </compatible-screens>
+<!--    &lt;!&ndash; 스마트폰 및 태블릿만 지원 &ndash;&gt;-->
+<!--    <compatible-screens>-->
+<!--        &lt;!&ndash; 모든 해상도의 스마트폰 지원 &ndash;&gt;-->
+<!--        <screen android:screenSize="small" android:screenDensity="hdpi" />-->
+<!--        <screen android:screenSize="normal" android:screenDensity="xhdpi" />-->
+<!--        <screen android:screenSize="large" android:screenDensity="xhdpi" />-->
+<!--        <screen android:screenSize="xlarge" android:screenDensity="xxhdpi" />-->
+<!--        <screen android:screenSize="large" android:screenDensity="xxxhdpi" />-->
+<!--        <screen android:screenSize="normal" android:screenDensity="xxxhdpi" />-->
+<!--    </compatible-screens>-->
 
-    <!-- TV 및 Wear OS 제외 -->
-    <uses-feature android:name="android.hardware.touchscreen" android:required="true" />
-    <uses-feature android:name="android.hardware.telephony" android:required="false" />
+<!--    &lt;!&ndash; TV 및 Wear OS 제외 &ndash;&gt;-->
+<!--    <uses-feature android:name="android.hardware.touchscreen" android:required="true" />-->
+<!--    <uses-feature android:name="android.hardware.telephony" android:required="false" />-->
 
     <application
         android:name="${applicationName}"
