@@ -152,7 +152,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                     children: [
                       // info field
                       SizedBox(
-                        width: 280,
+                        width: Get.width - 40,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

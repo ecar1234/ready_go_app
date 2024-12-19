@@ -50,7 +50,9 @@ class AccountProvider with ChangeNotifier {
     notifyListeners();
   }
   Future<void> editeAmountItem(int firstIdx, int secondIdx, AmountModel newAmount, int id)async{
-
+    var account = await _getIt.get<AccountUseCase>().editAmountItem(firstIdx, secondIdx, newAmount, id);
+    _accountInfo = account;
+    notifyListeners();
   }
 
   Future<void> removeAllData(int id)async{

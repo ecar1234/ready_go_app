@@ -35,19 +35,19 @@ class AccountUseCase {
           account.card = account.card! + amount.amount!;
       }
 
-      if(history.isEmpty){
+      if (history.isEmpty) {
         List<AmountModel> list = [];
         list.add(amount);
         history.add(list);
-      }else{
-        if(history.length >= day && history[day-1] != null){
-          if(history[day-1]!.first.id != amount.id){
+      } else {
+        if (history.length >= day && history[day - 1] != null) {
+          if (history[day - 1]!.first.id != amount.id) {
             List<AmountModel> list = [];
             list.add(amount);
             history.add(list);
           }
-          history[day-1]!.add(amount);
-        }else {
+          history[day - 1]!.add(amount);
+        } else {
           List<AmountModel> list = [];
           list.add(amount);
           history.add(list);
@@ -82,22 +82,22 @@ class AccountUseCase {
 
         try {
           DateTime? useDay;
-          if(plan != null){
-            if(plan.schedule != null){
-              if(plan.schedule!.first != null){
-                if(day == 1){
+          if (plan != null) {
+            if (plan.schedule != null) {
+              if (plan.schedule!.first != null) {
+                if (day == 1) {
                   useDay = plan.schedule!.first!;
-                }else{
+                } else {
                   useDay = plan.schedule!.first!.add(Duration(days: day));
                 }
-              }else{
-                throw("start schedule is null");
+              } else {
+                throw ("start schedule is null");
               }
-            }else{
-              throw("schedule is null");
+            } else {
+              throw ("schedule is null");
             }
-          }else {
-            throw("plan is null");
+          } else {
+            throw ("plan is null");
           }
           try {
             List<List<AmountModel>?> history = account.usageHistory!;
@@ -110,22 +110,26 @@ class AccountUseCase {
             amount.title = "경비 추가";
             amount.category = 0;
 
-            if(history.isEmpty){
+            if (history.isEmpty) {
               List<AmountModel> list = [];
               list.add(amount);
               history.add(list);
-            }else{
-             if(history.length > day && history[day-1] != null){
-               history[day-1]!.add(amount);
-             }else {
-               List<AmountModel> list = [];
-               list.add(amount);
-               history.add(list);
-             }
+            } else {
+              if (history.length >= day && history[day - 1] != null) {
+                if (history[day - 1]!.first.id != amount.id) {
+                  List<AmountModel> list = [];
+                  list.add(amount);
+                  history.add(list);
+                }
+                history[day - 1]!.add(amount);
+              } else {
+                List<AmountModel> list = [];
+                list.add(amount);
+                history.add(list);
+              }
             }
 
             history.sort((a, b) => int.tryParse(a!.first.id!)!.compareTo(int.parse(b!.first.id!)));
-
           } on Exception catch (e) {
             print(e.toString());
             rethrow;
@@ -148,15 +152,64 @@ class AccountUseCase {
     }
   }
 
-  Future<AccountModel> removeAmountItem(int firstIdx, int secondIdx, int id)async{
+  Future<AccountModel> removeAmountItem(int firstIdx, int secondIdx, int id) async {
     try {
       var account = await _getIt.get<AccountEntity>().getAccountInfo(id);
       var history = account.usageHistory!;
-      history[firstIdx]!.removeAt(secondIdx);
+      var removeItem = history[firstIdx]![secondIdx];
 
-      if(history[firstIdx]!.isEmpty){
-        history.removeAt(firstIdx);
+      if (removeItem.type == AmountType.add) {
+        account.totalExchangeAccount = account.totalExchangeAccount! - removeItem.amount!;
+        account.totalUseAccount = account.totalExchangeAccount! - account.exchange!;
+      } else if (removeItem.type == AmountType.use) {
+        if(removeItem.category == 0){
+          account.totalUseAccount = account.totalUseAccount! + removeItem.amount!;
+          account.exchange = account.exchange! - removeItem.amount!;
+        }else if(removeItem.category == 2){
+          account.card = account.card! - removeItem.amount!;
+        }
       }
+
+      account.usageHistory![firstIdx]!.removeAt(secondIdx);
+
+      if (account.usageHistory![firstIdx]!.isEmpty) {
+        account.usageHistory!.removeAt(firstIdx);
+      }
+
+      await _getIt.get<AccountEntity>().updateAccountInfo(account, id);
+      return account;
+    } on Exception catch (e) {
+      print(e.toString());
+      rethrow;
+    }
+  }
+
+  Future<AccountModel> editAmountItem(int firstIdx, int secondIdx, AmountModel newAmount, int id) async {
+    try {
+      var account = await _getIt.get<AccountEntity>().getAccountInfo(id);
+      var history = account.usageHistory!;
+      var item = history[firstIdx]![secondIdx];
+
+      if (item.category == newAmount.category) {
+        if (newAmount.type == AmountType.add) {
+          account.totalExchangeAccount = (account.totalExchangeAccount! - item.amount!) + newAmount.amount!;
+          account.totalUseAccount = account.totalExchangeAccount! - account.exchange!;
+        } else if (newAmount.type == AmountType.use) {
+          account.totalUseAccount = (account.totalUseAccount! + item.amount!) - newAmount.amount!;
+          account.exchange = (account.exchange! - item.amount!) + newAmount.amount!;
+        }
+      } else {
+        if (newAmount.category == 2) {
+          account.exchange = account.exchange! - item.amount!;
+          account.card = account.card! + newAmount.amount!;
+          account.totalUseAccount = account.totalExchangeAccount! - account.exchange!;
+        } else if (newAmount.category == 0) {
+          account.card = account.card! - newAmount.amount!;
+          account.exchange = account.exchange! + newAmount.amount!;
+          account.totalUseAccount = account.totalExchangeAccount! - account.exchange!;
+        }
+      }
+      account.usageHistory![firstIdx]![secondIdx] = newAmount;
 
       await _getIt.get<AccountEntity>().updateAccountInfo(account, id);
       return account;

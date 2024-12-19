@@ -60,10 +60,10 @@ class _AddPlanPageState extends State<AddPlanPage> {
             style: TextStyle(fontWeight: FontWeight.w600),
           ),
         ),
-        body: SingleChildScrollView(
-          child: Stack(children: [
-            Container(
-              height: Get.height-120,
+        body: Stack(children: [
+          SingleChildScrollView(
+            child: Container(
+              height: Get.height,
               padding: const EdgeInsets.only(top: 20, right: 20, left: 20, bottom: 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -71,7 +71,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                   _titleSection(),
                   const Gap(20),
                   _calendarSection(),
-                  const Gap(10),
+                  const Gap(20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -116,25 +116,24 @@ class _AddPlanPageState extends State<AddPlanPage> {
                 ],
               ),
             ),
+          ),
+          Builder(
+            builder:(context) {
+              final BannerAd bannerAd = context.watch<AdmobProvider>().bannerAd!;
+            return Positioned(
+                  left: 20,
 
-            Builder(
-              builder:(context) {
-                final BannerAd bannerAd = context.watch<AdmobProvider>().bannerAd!;
-              return Positioned(
-                    left: 20,
-                    right: 20,
-                    bottom: 30,
-                    child: SizedBox(
-                      width: bannerAd.size.width.toDouble(),
-                      height: bannerAd.size.height.toDouble(),
-                      child: AdWidget(
-                        ad: bannerAd,
-                      ),
-                    ));
-              }
-            )
-          ]),
-        ),
+                  bottom: 30,
+                  child: SizedBox(
+                    width: bannerAd.size.width.toDouble(),
+                    height: bannerAd.size.height.toDouble(),
+                    child: AdWidget(
+                      ad: bannerAd,
+                    ),
+                  ));
+            }
+          )
+        ]),
       ),
     );
   }
@@ -172,6 +171,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
         ),
         const Gap(10),
         SizedBox(
+          height: 300,
             width: 500,
             child: CalendarDatePicker2(
                 config: CalendarDatePicker2Config(
@@ -185,7 +185,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                       _dates = list;
                     }))),
         SizedBox(
-            height: 50,
+            height: 30,
             child: _dates.isNotEmpty
                 ? Text(
                     "${DateUtil.dateToString(_dates.first ?? DateTime.now())} "
