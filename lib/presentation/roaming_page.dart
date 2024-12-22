@@ -1,16 +1,18 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
-import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/roaming_model/roaming_period_model.dart';
 
 import '../provider/Roaming_provider.dart';
+import '../provider/admob_provider.dart';
 
 class RoamingPage extends StatefulWidget {
   final int planId;
@@ -53,6 +55,7 @@ class _RoamingPageState extends State<RoamingPage> {
     final String address = context.watch<RoamingProvider>().dpAddress;
     final RoamingPeriodModel period = context.watch<RoamingProvider>().period;
 
+    context.read<AdmobProvider>().loadAdBanner();
     if (address.isNotEmpty) {
       dpAddressController.text = address;
     }
@@ -77,24 +80,50 @@ class _RoamingPageState extends State<RoamingPage> {
         appBar: AppBar(
           title: const Text("로밍 & ESIM"),
         ),
-        body: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            width: MediaQuery.of(context).size.width,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _voucherImageSection(context, list),
-                const Gap(10),
-                const Divider(),
-                _dpAddressSection(context, address),
-                _activeCodeSection(context, code),
-                const Divider(),
-                const Gap(10),
-                _periodSection(context, period, startDate, useDuration, remainDuration, totalDuration)
-              ],
+        body: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) => Stack(children: [
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                width: constraints.maxWidth <= 600 ? MediaQuery.sizeOf(context).width : 600,
+                height: MediaQuery.sizeOf(context).height -100,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _voucherImageSection(context, list),
+                      const Gap(10),
+                      const Divider(),
+                      _dpAddressSection(context, address),
+                      _activeCodeSection(context, code),
+                      const Divider(),
+                      const Gap(10),
+                      _periodSection(context, period, startDate, useDuration, remainDuration, totalDuration)
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ),
+              Builder(builder: (context) {
+                final BannerAd? bannerAd = context.watch<AdmobProvider>().bannerAd;
+                if (bannerAd != null) {
+                  return Positioned(
+                      left: 20,
+                      right: 20,
+                      bottom: 30,
+                      child: SizedBox(
+                        width: bannerAd.size.width.toDouble(),
+                        height: bannerAd.size.height.toDouble(),
+                        child: AdWidget(
+                          ad: bannerAd,
+                        ),
+                      ));
+                }else{
+                  log("banner is null on roaming page");
+                  return const SizedBox();
+                }
+              })
+          ]),
         ),
       ),
     );
@@ -153,7 +182,7 @@ class _RoamingPageState extends State<RoamingPage> {
                     )),
               SizedBox(
                 height: 100,
-                width: (list.length * 110) + 100 < Get.width ? 100 : 50,
+                width: (list.length * 110) + 100 < MediaQuery.sizeOf(context).width ? 100 : 50,
                 child: ElevatedButton(
                     onPressed: () async {
                       _showImageSourceDialog();
@@ -448,7 +477,7 @@ class _RoamingPageState extends State<RoamingPage> {
       BuildContext context, RoamingPeriodModel period, DateTime startDate, Duration useDuration, Duration remainDuration, totalDuration) {
     int? selectedValue = period.period!;
     return SizedBox(
-      height: 220,
+      // height: 220,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

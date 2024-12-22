@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +43,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
       _debounce?.cancel();
     }
     _debounce = Timer(const Duration(milliseconds: 500), () {
-      print(value);
+      log(value);
     });
   }
 
@@ -81,9 +82,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
   @override
   Widget build(BuildContext context) {
     final list = context.watch<AccommodationProvider>().accommodation;
-    if (kReleaseMode) {
-      context.read<AdmobProvider>().loadAdBanner();
-    }
+    context.read<AdmobProvider>().loadAdBanner();
     int month = widget.plan.schedule!.first!.month;
     int day = widget.plan.schedule!.first!.day;
 
@@ -97,28 +96,36 @@ class _AccommodationPageState extends State<AccommodationPage> {
           title: const Text("숙소정보"),
         ),
         body: Stack(children: [
-          Container(
-              padding: const EdgeInsets.all(20),
-              child: list?.isEmpty == true || list == null
-                  ? SizedBox(
-                      height: Get.height - 150,
-                      child: const Center(child: Text("숙소 정보가 없습니다.")),
+          LayoutBuilder(
+            builder:(BuildContext context, BoxConstraints constraints) => Container(
+                padding: const EdgeInsets.all(20),
+                child: list?.isEmpty == true || list == null
+                    ? Center(
+                      child: SizedBox(
+                          height: MediaQuery.sizeOf(context).height - 150,
+                          child: const Center(child: Text("숙소 정보가 없습니다.")),
+                        ),
                     )
-                  : SizedBox(height: Get.height - 150, child: SingleChildScrollView(child: _accordionSection(context, list)))),
-          if(kReleaseMode)
+                    : Center(child: SizedBox(height: MediaQuery.sizeOf(context).height - 150, width: constraints.maxWidth <=600 ? MediaQuery.sizeOf(context).width : 600, child: SingleChildScrollView(child: _accordionSection(context, list))))),
+          ),
           Builder(builder: (context) {
-            final BannerAd bannerAd = context.watch<AdmobProvider>().bannerAd!;
-            return Positioned(
-                left: 20,
-                right: 20,
-                bottom: 30,
-                child: SizedBox(
-                  width: bannerAd.size.width.toDouble(),
-                  height: bannerAd.size.height.toDouble(),
-                  child: AdWidget(
-                    ad: bannerAd,
-                  ),
-                ));
+            final BannerAd? bannerAd = context.watch<AdmobProvider>().bannerAd;
+            if (bannerAd != null) {
+              return Positioned(
+                  left: 20,
+                  right: 20,
+                  bottom: 30,
+                  child: SizedBox(
+                    width: bannerAd.size.width.toDouble(),
+                    height: bannerAd.size.height.toDouble(),
+                    child: AdWidget(
+                      ad: bannerAd,
+                    ),
+                  ));
+            }else{
+              log("banner is null on accommodation page");
+              return const SizedBox();
+            }
           })
         ]),
         floatingActionButton: FloatingActionButton(
@@ -152,7 +159,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                     children: [
                       // info field
                       SizedBox(
-                        width: Get.width - 40,
+                        width: MediaQuery.sizeOf(context).width - 40,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -308,7 +315,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                           const Gap(10),
                           SizedBox(
                             height: 50,
-                            width: Get.width,
+                            width: MediaQuery.sizeOf(context).width,
                             child: Row(
                               children: [
                                 const SizedBox(width: 70, child: Text("체크인 : ")),
@@ -332,7 +339,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                           const Gap(10),
                           SizedBox(
                             height: 50,
-                            width: Get.width,
+                            width: MediaQuery.sizeOf(context).width,
                             child: Row(
                               children: [
                                 const SizedBox(width: 70, child: Text("체크아웃 : ")),
@@ -361,7 +368,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                       // buttons
                       SizedBox(
                         height: 50,
-                        width: Get.width,
+                        width: MediaQuery.sizeOf(context).width,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -497,8 +504,8 @@ class _AccommodationPageState extends State<AccommodationPage> {
                     ),
                   ],
                 ),
-                content: Container(
-                    width: Get.width,
+                content: SizedBox(
+                    width: MediaQuery.sizeOf(context).width,
                     height: 300,
                     child: Column(
                       children: [
@@ -553,7 +560,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                         ),
                         const Gap(10),
                         SizedBox(
-                          width: Get.width,
+                          width: MediaQuery.sizeOf(context).width,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -576,7 +583,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                         ),
                         const Gap(10),
                         SizedBox(
-                          width: Get.width,
+                          width: MediaQuery.sizeOf(context).width,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [

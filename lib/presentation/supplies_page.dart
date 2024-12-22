@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/supply_model/supply_model.dart';
 
+import '../provider/admob_provider.dart';
 import '../provider/supplies_provider.dart';
 
 class SuppliesPage extends StatefulWidget {
@@ -40,73 +43,103 @@ class _SuppliesPageState extends State<SuppliesPage> {
   @override
   Widget build(BuildContext context) {
     final list = context.watch<SuppliesProvider>().suppliesList;
+    context.read<AdmobProvider>().loadAdBanner();
     return Scaffold(
       appBar: AppBar(
         title: const Text("준비물"),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 40),
-          child: list.isEmpty
-              ? SizedBox(
-                  height: Get.height - 200,
-                  child: const Center(
-                    child: Text("목록을 추가해 주세요"),
-                  ),
-                )
-              : ListView.separated(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemBuilder: (context, idx) {
-                    return SizedBox(
-                      height: 40,
-                      child: TextButton(
-                          onPressed: () {
-                            context.read<SuppliesProvider>().updateItemState(idx, widget.planId);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                "${idx + 1}. ${list[idx].item}",
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    color: list[idx].isCheck == true ? Colors.grey : Theme.of(context).colorScheme.primary,
-                                    decoration: list[idx].isCheck == true ? TextDecoration.lineThrough : TextDecoration.none),
-                              ),
-                              PopupMenuButton(
-                                padding: EdgeInsets.zero,
-                                itemBuilder: (context) => [
-                                  const PopupMenuItem(
-                                      value: "edit",
-                                      child: Text(
-                                        "수정",
-                                      )),
-                                  const PopupMenuItem(
-                                      value: "delete",
-                                      child: Text(
-                                        "삭제",
-                                      )),
-                                ],
-                                onSelected: (value) {
-                                  switch (value) {
-                                    case "edit":
-                                      _controller.text = list[idx].item!;
-                                      _itemEditDialog(context, idx);
-                                    case "delete":
-                                      context.read<SuppliesProvider>().removeItem(idx, widget.planId);
-                                  }
+      body: Stack(children: [
+        SingleChildScrollView(
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) => Center(
+              child: Container(
+                width: constraints.maxWidth <= 600 ? MediaQuery.sizeOf(context).width : 600,
+                height: constraints.maxWidth <= 600 ? MediaQuery.sizeOf(context).height -100 : null,
+                padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 40),
+                child: list.isEmpty
+                    ? SizedBox(
+                        height: MediaQuery.sizeOf(context).height - 200,
+                        child: const Center(
+                          child: Text("목록을 추가해 주세요"),
+                        ),
+                      )
+                    : ListView.separated(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemBuilder: (context, idx) {
+                          return SizedBox(
+                            height: 40,
+                            child: TextButton(
+                                onPressed: () {
+                                  context.read<SuppliesProvider>().updateItemState(idx, widget.planId);
                                 },
-                              )
-                            ],
-                          )),
-                    );
-                  },
-                  separatorBuilder: (context, idx) => const Gap(5),
-                  itemCount: list.length),
+                                style: TextButton.styleFrom(
+                                    side: const BorderSide(), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), elevation: 1),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "${idx + 1}. ${list[idx].item}",
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          color: list[idx].isCheck == true ? Colors.grey : Theme.of(context).colorScheme.primary,
+                                          decoration: list[idx].isCheck == true ? TextDecoration.lineThrough : TextDecoration.none),
+                                    ),
+                                    PopupMenuButton(
+                                      padding: EdgeInsets.zero,
+                                      itemBuilder: (context) => [
+                                        const PopupMenuItem(
+                                            value: "edit",
+                                            child: Text(
+                                              "수정",
+                                            )),
+                                        const PopupMenuItem(
+                                            value: "delete",
+                                            child: Text(
+                                              "삭제",
+                                            )),
+                                      ],
+                                      onSelected: (value) {
+                                        switch (value) {
+                                          case "edit":
+                                            _controller.text = list[idx].item!;
+                                            _itemEditDialog(context, idx);
+                                          case "delete":
+                                            context.read<SuppliesProvider>().removeItem(idx, widget.planId);
+                                        }
+                                      },
+                                    )
+                                  ],
+                                )),
+                          );
+                        },
+                        separatorBuilder: (context, idx) => const Gap(5),
+                        itemCount: list.length),
+              ),
+            ),
+          ),
         ),
-      ),
+          Builder(builder: (context) {
+            final BannerAd? bannerAd = context.watch<AdmobProvider>().bannerAd;
+            if (bannerAd != null) {
+              return Positioned(
+                  left: 20,
+                  right: 20,
+                  bottom: 30,
+                  child: SizedBox(
+                    width: bannerAd.size.width.toDouble(),
+                    height: bannerAd.size.height.toDouble(),
+                    child: AdWidget(
+                      ad: bannerAd,
+                    ),
+                  ));
+            }else{
+              log("banner is null on supplies page");
+              return const SizedBox();
+            }
+          })
+      ]),
       floatingActionButton: FloatingActionButton(
         foregroundColor: Theme.of(context).colorScheme.surface,
         backgroundColor: Theme.of(context).colorScheme.secondary,
@@ -128,7 +161,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
         builder: (context) => Dialog(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               surfaceTintColor: Colors.white12,
-              child: Container(
+              child: SizedBox(
                 width: 600,
                 height: 200,
                 child: Column(
@@ -232,7 +265,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
         context: context,
         builder: (context) => Dialog(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              child: Container(
+              child: SizedBox(
                 width: 600,
                 height: 200,
                 child: Column(

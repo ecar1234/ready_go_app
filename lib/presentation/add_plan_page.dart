@@ -1,9 +1,9 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/provider/admob_provider.dart';
@@ -30,7 +30,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
       _debounce?.cancel();
     }
     _debounce = Timer(const Duration(milliseconds: 500), () {
-      print(value);
+      log(value);
     });
   }
 
@@ -53,88 +53,107 @@ class _AddPlanPageState extends State<AddPlanPage> {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          title: const Text(
-            "여행 계획 추가",
-            style: TextStyle(fontWeight: FontWeight.w600),
-          ),
-        ),
-        body: Stack(children: [
-          SingleChildScrollView(
-            child: Container(
-              height: Get.height,
-              padding: const EdgeInsets.only(top: 20, right: 20, left: 20, bottom: 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  _titleSection(),
-                  const Gap(20),
-                  _calendarSection(),
-                  const Gap(20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 150,
-                        height: 50,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (nationController.text.isEmpty) {
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                content: Text("국가명을 입력해 주세요."),
-                                duration: Duration(seconds: 1),
-                              ));
-                              return;
-                            }
-                            if (_dates.length > 2 || _dates.isEmpty) {
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                content: Text("일정을 선택해 주세요"),
-                                duration: Duration(seconds: 1),
-                              ));
-                              return;
-                            }
-                            try {
-                              PlanModel plan = PlanModel(id: idNum + 1, nation: nationController.text, schedule: _dates);
-                              context.read<PlanListProvider>().addPlanList(plan);
-                            } catch (ex) {
-                              throw (ex).toString();
-                            }
-                            Navigator.pop(context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                              // backgroundColor: Colors.black87,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                          child: const Text(
-                            "생성",
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+          resizeToAvoidBottomInset: false,
+          appBar: AppBar(
+            title: const Text(
+              "여행 계획 추가",
+              style: TextStyle(fontWeight: FontWeight.w600),
             ),
           ),
-          Builder(
-            builder:(context) {
-              final BannerAd bannerAd = context.watch<AdmobProvider>().bannerAd!;
-            return Positioned(
-                  left: 20,
+          body: SizedBox(
+            height: MediaQuery.sizeOf(context).height -100,
+            child: Stack(
+              children: [
+                LayoutBuilder(
+                    builder: (BuildContext context, BoxConstraints constraints) => SingleChildScrollView(
+                          child: Center(
+                            child: Container(
+                              // height: MediaQuery.sizeOf(context).height - 100,
+                              width: constraints.maxWidth <= 600 ? MediaQuery.sizeOf(context).width : 600,
+                              padding: const EdgeInsets.only(top: 20, right: 20, left: 20, bottom: 0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  _titleSection(),
+                                  const Gap(20),
+                                  Container(
+                                      width: constraints.maxWidth <= 600 ? MediaQuery.sizeOf(context).width : 840,
+                                      padding: const EdgeInsets.all(20),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(),
+                                        borderRadius: BorderRadius.circular(10)
+                                      ),
+                                      child: _calendarSection()),
+                                  const Gap(30),
+                                  // create button
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: 150,
+                                        height: 50,
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            if (nationController.text.isEmpty) {
+                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                                content: Text("국가명을 입력해 주세요."),
+                                                duration: Duration(seconds: 1),
+                                              ));
+                                              return;
+                                            }
+                                            if (_dates.length > 2 || _dates.isEmpty) {
+                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                                content: Text("일정을 선택해 주세요"),
+                                                duration: Duration(seconds: 1),
+                                              ));
+                                              return;
+                                            }
+                                            try {
+                                              PlanModel plan = PlanModel(id: idNum + 1, nation: nationController.text, schedule: _dates);
+                                              context.read<PlanListProvider>().addPlanList(plan);
+                                            } catch (ex) {
+                                              throw (ex).toString();
+                                            }
+                                            Navigator.pop(context);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                              // backgroundColor: Colors.black87,
+                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                                          child: const Text(
+                                            "생성",
+                                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        )),
+                Builder(builder: (context) {
+                  final BannerAd? bannerAd = context.watch<AdmobProvider>().bannerAd;
+                  if(bannerAd != null){
+                    return Positioned(
+                        left: 20,
+                        bottom: 30,
+                        child: SizedBox(
+                          width: bannerAd.size.width.toDouble(),
+                          height: bannerAd.size.height.toDouble(),
+                          child: AdWidget(
+                            ad: bannerAd,
+                          ),
+                        ));
+                  }else {
+                    log("banner is null on add plan page");
+                    return const SizedBox();
+                  }
 
-                  bottom: 30,
-                  child: SizedBox(
-                    width: bannerAd.size.width.toDouble(),
-                    height: bannerAd.size.height.toDouble(),
-                    child: AdWidget(
-                      ad: bannerAd,
-                    ),
-                  ));
-            }
-          )
-        ]),
-      ),
+                })
+              ],
+            ),
+          )),
     );
   }
 
@@ -164,6 +183,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
 
   Widget _calendarSection() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Text(
           "일정",
@@ -171,7 +191,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
         ),
         const Gap(10),
         SizedBox(
-          height: 300,
+            height: 300,
             width: 500,
             child: CalendarDatePicker2(
                 config: CalendarDatePicker2Config(

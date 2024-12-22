@@ -24,10 +24,9 @@ AnalyticsPreference get pref => AnalyticsPreference.singleton;
 
 Future<void> serviceLocator() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  if (kReleaseMode) {
-    await pref.checkIsFirst();
-    await MobileAds.instance.initialize();
-  }
+
+  await pref.checkIsFirst();
+  await MobileAds.instance.initialize();
 
   //useCases
   _getIt.registerSingleton<AccommodationUseCase>(AccommodationUseCase());

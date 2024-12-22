@@ -1,5 +1,7 @@
+
+import 'dart:developer';
+
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -127,9 +129,9 @@ class _MainPage2State extends State<MainPage2> {
   Widget build(BuildContext context) {
     final list = context.watch<PlanListProvider>().planList;
     bool isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
-    if (kReleaseMode) {
-      context.read<AdmobProvider>().loadAdBanner();
-    }
+
+    context.read<AdmobProvider>().loadAdBanner();
+
     return BlocBuilder<DataBloc, DataState>(builder: (context, state) {
       if (state.state == DataStatus.beforePlanList) {
         context.read<PlanListProvider>().getPlanList();
@@ -151,34 +153,62 @@ class _MainPage2State extends State<MainPage2> {
           ],
         ),
         body: Stack(children: [
-          Container(
-              width: Get.width,
-              height: Get.height - 120,
-              padding: const EdgeInsets.all(20),
-              child: list.isEmpty
-                  ? const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text("생성된 여행이 없습니다."),
-                        ],
-                      ),
-                    )
-                  : SingleChildScrollView(
-                      child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [_planListSection(context, list, isDarkMode, state)]))),
-          if(kReleaseMode)
+          LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+            if (constraints.maxWidth <= 600) {
+              return Container(
+                  width: MediaQuery.sizeOf(context).width,
+                  height: MediaQuery.sizeOf(context).height - 120,
+                  padding: const EdgeInsets.all(20),
+                  child: list.isEmpty
+                      ? const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text("생성된 여행이 없습니다."),
+                            ],
+                          ),
+                        )
+                      : SingleChildScrollView(
+                          child:
+                              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [_planListSection(context, list, isDarkMode, state)])));
+            } else {
+              return Center(
+                child: Container(
+                    width: 840,
+                    height: MediaQuery.sizeOf(context).height - 120,
+                    padding: const EdgeInsets.all(20),
+                    child: list.isEmpty
+                        ? const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text("생성된 여행이 없습니다."),
+                            ],
+                          )
+                        : SingleChildScrollView(
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center, children: [_planListSection(context, list, isDarkMode, state)]))),
+              );
+            }
+          }),
+          // if (kReleaseMode)
           Builder(builder: (context) {
-            final BannerAd bannerAd = context.watch<AdmobProvider>().bannerAd!;
-            return Positioned(
-                right: 20,
-                left: 20,
-                bottom: 30,
-                child: SizedBox(
-                  height: bannerAd.size.height.toDouble(),
-                  width: bannerAd.size.width.toDouble(),
-                  child: AdWidget(ad: bannerAd),
-                ));
+            final BannerAd? bannerAd = context.watch<AdmobProvider>().bannerAd;
+            if (bannerAd != null) {
+              return Positioned(
+                  right: 20,
+                  left: 20,
+                  bottom: 30,
+                  child: SizedBox(
+                    height: bannerAd.size.height.toDouble(),
+                    width: bannerAd.size.width.toDouble(),
+                    child: AdWidget(ad: bannerAd),
+                  ));
+            } else {
+              log("banner is null on main page");
+              return const SizedBox();
+            }
           })
         ]),
         floatingActionButton: FloatingActionButton(

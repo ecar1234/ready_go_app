@@ -1,12 +1,14 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
 
+import '../provider/admob_provider.dart';
 import '../provider/images_provider.dart';
 
 class AirTicketPage extends StatefulWidget {
@@ -25,17 +27,47 @@ class _AirTicketPageState extends State<AirTicketPage> {
   Widget build(BuildContext context) {
     final departureList = context.watch<ImagesProvider>().departureImg;
     final arrivalList = context.watch<ImagesProvider>().arrivalImg;
+    context.read<AdmobProvider>().loadAdBanner();
     return Scaffold(
       appBar: AppBar(),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [_departureSection(context, departureList), const Gap(20), _arrivalSection(context, arrivalList)],
+      body: Stack(children: [
+        LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraint) => SingleChildScrollView(
+            child: Container(
+              width: MediaQuery.sizeOf(context).width,
+              height: constraint.maxWidth <= 600 ? MediaQuery.sizeOf(context).height - 100 : null,
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 150, child: _departureSection(context, departureList)),
+                  const Gap(20),
+                  SizedBox(height: 150, child: _arrivalSection(context, arrivalList))
+                ],
+              ),
+            ),
           ),
         ),
-      ),
+        Builder(builder: (context) {
+          final BannerAd? bannerAd = context.watch<AdmobProvider>().bannerAd;
+          if (bannerAd != null) {
+            return Positioned(
+                left: 20,
+                right: 20,
+                bottom: 30,
+                child: SizedBox(
+                  width: bannerAd.size.width.toDouble(),
+                  height: bannerAd.size.height.toDouble(),
+                  child: AdWidget(
+                    ad: bannerAd,
+                  ),
+                ));
+          } else {
+            log("banner is null on images page");
+            return const SizedBox();
+          }
+        })
+      ]),
     );
   }
 
@@ -69,10 +101,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
                                   Container(
                                     width: 100,
                                     height: 100,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all()
-                                    ),
+                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all()),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(10),
                                       child: Image.file(
@@ -97,7 +126,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
                       ),
                     ),
               SizedBox(
-                  width: (list.length * 110)+100 < Get.width ? 100 : 50,
+                  width: (list.length * 110) + 100 < MediaQuery.sizeOf(context).width ? 100 : 50,
                   height: 100,
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -147,9 +176,9 @@ class _AirTicketPageState extends State<AirTicketPage> {
                 Navigator.of(context).pop(); // 다이얼로그 닫기
                 final XFile? image = await picker.pickImage(source: ImageSource.gallery); // 갤러리에서 이미지 선택
                 if (image != null) {
-                  if(type == "departure"){
+                  if (type == "departure") {
                     imgProvider.addDepartureImage(image, widget.planId);
-                  } else if(type == "arrival"){
+                  } else if (type == "arrival") {
                     imgProvider.addArrivalImage(image, widget.planId);
                   }
                 }
@@ -171,7 +200,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
         ),
         SizedBox(
-          width: list.isEmpty ? 100 : (list.length * 110)+100,
+          width: list.isEmpty ? 100 : (list.length * 110) + 100,
           height: 120,
           child: Row(
             children: [
@@ -191,10 +220,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
                                   Container(
                                     width: 100,
                                     height: 100,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        border: Border.all()
-                                    ),
+                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all()),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(10),
                                       child: Image.file(
@@ -219,7 +245,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
                       ),
                     ),
               SizedBox(
-                  width: (list.length * 110)+100 < Get.width ? 100 : 50,
+                  width: (list.length * 110) + 100 < MediaQuery.sizeOf(context).width ? 100 : 50,
                   height: 100,
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
