@@ -78,7 +78,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                                   const Gap(20),
                                   Container(
                                       width: constraints.maxWidth <= 600 ? MediaQuery.sizeOf(context).width : 840,
-                                      padding: const EdgeInsets.all(20),
+                                      padding: const EdgeInsets.symmetric(vertical: 20),
                                       decoration: BoxDecoration(
                                         border: Border.all(),
                                         borderRadius: BorderRadius.circular(10)
