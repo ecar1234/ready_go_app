@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.readyGoProject</string>
+	<string>com.jk.readygo.app</string>
 	<key>PROJECT_ID</key>
 	<string>readygoapp-5d7c7</string>
 	<key>STORAGE_BUCKET</key>

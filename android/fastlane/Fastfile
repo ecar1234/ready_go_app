@@ -33,7 +33,7 @@ platform :android do
     versionName
   end
 
-  def build_aab
+  lane :build_aab do
     code = get_version_code
     name = get_version_name
 
@@ -86,9 +86,10 @@ platform :android do
     )
   end
 
-  desc "Deploy a new version to the Google Play"
+  desc "Deploy a new version to the Google Play but not used"
   lane :deploy do
-    gradle(task: "clean bundleRelease")
+    build_aab
+
     upload_to_play_store(
 
     )

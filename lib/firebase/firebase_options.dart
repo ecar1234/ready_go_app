@@ -63,6 +63,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1060786139450',
     projectId: 'readygoapp-5d7c7',
     storageBucket: 'readygoapp-5d7c7.firebasestorage.app',
-    iosBundleId: 'com.readyGoProject',
+    iosBundleId: 'com.jk.readygo.app',
   );
 }
