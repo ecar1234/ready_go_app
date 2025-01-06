@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -13,7 +14,9 @@ import '../data/models/plan_model/plan_model.dart';
 import '../provider/plan_list_provider.dart';
 
 class AddPlanPage extends StatefulWidget {
-  const AddPlanPage({super.key});
+  final PlanModel? plan;
+
+  const AddPlanPage({super.key, this.plan});
 
   @override
   State<AddPlanPage> createState() => _AddPlanPageState();
@@ -30,8 +33,20 @@ class _AddPlanPageState extends State<AddPlanPage> {
       _debounce?.cancel();
     }
     _debounce = Timer(const Duration(milliseconds: 500), () {
-      log(value);
+      if (kDebugMode) {
+        log(value);
+      }
     });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (widget.plan != null) {
+      nationController.text = widget.plan!.nation!;
+      _dates = widget.plan!.schedule!;
+    }
   }
 
   @override
@@ -61,7 +76,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
             ),
           ),
           body: SizedBox(
-            height: MediaQuery.sizeOf(context).height -100,
+            height: MediaQuery.sizeOf(context).height - 100,
             child: Stack(
               children: [
                 LayoutBuilder(
@@ -79,10 +94,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                                   Container(
                                       width: constraints.maxWidth <= 600 ? MediaQuery.sizeOf(context).width : 840,
                                       padding: const EdgeInsets.symmetric(vertical: 20),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(),
-                                        borderRadius: BorderRadius.circular(10)
-                                      ),
+                                      decoration: BoxDecoration(border: Border.all(), borderRadius: BorderRadius.circular(10)),
                                       child: _calendarSection()),
                                   const Gap(30),
                                   // create button
@@ -94,23 +106,45 @@ class _AddPlanPageState extends State<AddPlanPage> {
                                         height: 50,
                                         child: ElevatedButton(
                                           onPressed: () {
-                                            if (nationController.text.isEmpty) {
-                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                                content: Text("국가명을 입력해 주세요."),
-                                                duration: Duration(seconds: 1),
-                                              ));
-                                              return;
-                                            }
-                                            if (_dates.length > 2 || _dates.isEmpty) {
-                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                                content: Text("일정을 선택해 주세요"),
-                                                duration: Duration(seconds: 1),
-                                              ));
-                                              return;
+                                            if (widget.plan != null) {
+                                              if (widget.plan!.nation! == nationController.text && widget.plan!.schedule! == _dates) {
+                                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                                  content: Text("변경 사항이 존재 하지 않습니다."),
+                                                  duration: Duration(seconds: 1),
+                                                ));
+                                                return;
+                                              } else {}
+                                            } else {
+                                              if (nationController.text.isEmpty) {
+                                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                                  content: Text("여행 제목을 입력해 주세요."),
+                                                  duration: Duration(seconds: 1),
+                                                ));
+                                                return;
+                                              }
+                                              if (_dates.length > 2 || _dates.isEmpty) {
+                                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                                  content: Text("일정을 선택해 주세요"),
+                                                  duration: Duration(seconds: 1),
+                                                ));
+                                                return;
+                                              }
                                             }
                                             try {
-                                              PlanModel plan = PlanModel(id: idNum + 1, nation: nationController.text, schedule: _dates);
-                                              context.read<PlanListProvider>().addPlanList(plan);
+                                              PlanModel plan = PlanModel();
+                                              if (widget.plan != null) {
+                                                plan
+                                                  ..id = widget.plan!.id
+                                                  ..schedule = _dates
+                                                  ..nation = nationController.text;
+                                                context.read<PlanListProvider>().changePlan(plan);
+                                              } else {
+                                                plan
+                                                ..id = idNum + 1
+                                                ..nation = nationController.text
+                                                ..schedule = _dates;
+                                                context.read<PlanListProvider>().addPlanList(plan);
+                                              }
                                             } catch (ex) {
                                               throw (ex).toString();
                                             }
@@ -119,9 +153,9 @@ class _AddPlanPageState extends State<AddPlanPage> {
                                           style: ElevatedButton.styleFrom(
                                               // backgroundColor: Colors.black87,
                                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                          child: const Text(
-                                            "생성",
-                                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                                          child: Text(
+                                            widget.plan != null ? "수정" : "생성",
+                                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                                           ),
                                         ),
                                       ),
@@ -134,7 +168,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                         )),
                 Builder(builder: (context) {
                   final BannerAd? bannerAd = context.watch<AdmobProvider>().bannerAd;
-                  if(bannerAd != null){
+                  if (bannerAd != null) {
                     return Positioned(
                         left: 20,
                         bottom: 30,
@@ -145,11 +179,10 @@ class _AddPlanPageState extends State<AddPlanPage> {
                             ad: bannerAd,
                           ),
                         ));
-                  }else {
+                  } else {
                     log("banner is null on add plan page");
                     return const SizedBox();
                   }
-
                 })
               ],
             ),
@@ -162,7 +195,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "여행 국가",
+          "여행 제목",
           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
         ),
         const Gap(10),
@@ -172,6 +205,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
             controller: nationController,
             onChanged: _onChanged,
             decoration: const InputDecoration(
+                hintText: "국가명 or 친목여행 등..",
                 border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black87), borderRadius: BorderRadius.all(Radius.circular(10))),
                 focusedBorder:
                     OutlineInputBorder(borderSide: BorderSide(color: Colors.black87), borderRadius: BorderRadius.all(Radius.circular(10)))),

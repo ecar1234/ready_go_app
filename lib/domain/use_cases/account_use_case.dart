@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get_it/get_it.dart';
 import 'package:ready_go_project/data/models/account_model/account_model.dart';
 import 'package:ready_go_project/data/models/account_model/amount_model.dart';
@@ -13,7 +15,7 @@ class AccountUseCase {
       var res = await _getIt.get<AccountEntity>().getAccountInfo(id);
       return res;
     } catch (ex) {
-      print(ex.toString());
+      log(ex.toString());
       rethrow;
     }
   }
@@ -57,7 +59,7 @@ class AccountUseCase {
 
       await _getIt.get<AccountEntity>().updateAccountInfo(account, id);
     } catch (ex) {
-      print(ex.toString());
+      log(ex.toString());
       rethrow;
     }
 
@@ -131,15 +133,15 @@ class AccountUseCase {
 
             history.sort((a, b) => int.tryParse(a!.first.id!)!.compareTo(int.parse(b!.first.id!)));
           } on Exception catch (e) {
-            print(e.toString());
+            log(e.toString());
             rethrow;
           }
         } on Exception catch (e) {
-          print(e.toString());
+          log(e.toString());
           rethrow;
         }
       } on Exception catch (e) {
-        print(e.toString());
+        log(e.toString());
         rethrow;
       }
 
@@ -147,7 +149,7 @@ class AccountUseCase {
 
       return account;
     } catch (ex) {
-      print(ex.toString());
+      log(ex.toString());
       rethrow;
     }
   }
@@ -179,7 +181,7 @@ class AccountUseCase {
       await _getIt.get<AccountEntity>().updateAccountInfo(account, id);
       return account;
     } on Exception catch (e) {
-      print(e.toString());
+      log(e.toString());
       rethrow;
     }
   }
@@ -214,7 +216,7 @@ class AccountUseCase {
       await _getIt.get<AccountEntity>().updateAccountInfo(account, id);
       return account;
     } on Exception catch (e) {
-      print(e.toString());
+      log(e.toString());
       rethrow;
     }
   }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:ready_go_project/data/models/account_model/account_model.dart';
@@ -16,7 +18,7 @@ class AccountProvider with ChangeNotifier {
       _accountInfo = accountInfo;
       // throw Exception("get Account info failed!");
     }catch(ex){
-      print("exception : ${ex.toString()}");
+      log("exception : ${ex.toString()}");
       rethrow;
     }
     notifyListeners();
@@ -26,7 +28,7 @@ class AccountProvider with ChangeNotifier {
       var account = await _getIt.get<AccountUseCase>().addAmount(amount, day, id);
       _accountInfo = account;
     }catch(ex){
-      print(ex.toString());
+      log(ex.toString());
       rethrow;
     }
 
@@ -38,7 +40,7 @@ class AccountProvider with ChangeNotifier {
      var account =  await _getIt.get<AccountUseCase>().addTotalAmount(total, day, id);
      _accountInfo = account;
    }catch(ex){
-     print(ex.toString());
+     log(ex.toString());
      rethrow;
    }
 

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:ready_go_project/data/models/roaming_model/roaming_model.dart';
@@ -37,7 +38,7 @@ class RoamingPreference {
         );
       }
     } on Exception catch (e) {
-      print(e.toString());
+      log(e.toString());
       rethrow;
     }
   }
@@ -61,7 +62,7 @@ class RoamingPreference {
         return list;
       }
     } on Exception catch (e) {
-      print(e.toString());
+      log(e.toString());
       rethrow;
     }
   }
@@ -85,7 +86,7 @@ class RoamingPreference {
         return addr;
       }
     } on Exception catch (e) {
-      print(e.toString());
+      log(e.toString());
       rethrow;
     }
   }
@@ -110,7 +111,7 @@ class RoamingPreference {
         return code;
       }
     } on Exception catch (e) {
-      print(e.toString());
+      log(e.toString());
       rethrow;
     }
   }
@@ -135,7 +136,7 @@ class RoamingPreference {
         return period;
       }
     } on Exception catch (e) {
-      print(e.toString());
+      log(e.toString());
       rethrow;
     }
   }
@@ -148,7 +149,7 @@ class RoamingPreference {
       String? json = jsonEncode(dataJson);
       pref.setString("roaming$id", json);
     } on Exception catch (e) {
-      print(e.toString());
+      log(e.toString());
       rethrow;
     }
   }

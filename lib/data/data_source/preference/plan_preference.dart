@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:developer';
+
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,7 +25,7 @@ class PlanPreference {
         return [];
       }
     } on Exception catch (e) {
-      print(e.toString());
+      log(e.toString());
       rethrow;
     }
   }
@@ -36,7 +38,7 @@ class PlanPreference {
       String? json = jsonEncode(jsonList);
       pref.setString("planList", json);
     } on Exception catch (e) {
-      print(e.toString());
+      log(e.toString());
       rethrow;
     }
   }

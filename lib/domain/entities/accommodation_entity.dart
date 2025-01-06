@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:ready_go_project/data/data_source/preference/accommodation_preference.dart';
 import 'package:ready_go_project/data/models/accommodation_model/accommodation_model.dart';
 import 'package:ready_go_project/domain/repositories/accommodation_local_data_repo.dart';
@@ -12,7 +14,7 @@ class AccommodationEntity implements AccommodationLocalDateRepo{
       var list = await pref.getAccommodationList(id);
       return list;
     }catch(ex){
-      print(ex.toString());
+      log(ex.toString());
       rethrow;
     }
   }
@@ -22,7 +24,7 @@ class AccommodationEntity implements AccommodationLocalDateRepo{
     try{
       await pref.updateAccommodationList(list, id);
     }catch(ex){
-      print(ex.toString());
+      log(ex.toString());
       rethrow;
     }
   }

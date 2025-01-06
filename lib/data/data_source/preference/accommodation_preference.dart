@@ -1,6 +1,7 @@
 
 
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,7 +25,7 @@ class AccommodationPreference {
         return [];
       }
     }catch(ex){
-      print(ex.toString());
+      log(ex.toString());
       rethrow;
     }
   }
@@ -36,7 +37,7 @@ class AccommodationPreference {
       String? json = jsonEncode(jsonList);
       pref.setString("accommodation$id", json);
     }catch(ex){
-      print(ex.toString());
+      log(ex.toString());
       rethrow;
     }
   }

@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ready_go_project/domain/entities/image_entity.dart';
@@ -17,7 +19,7 @@ class ImageUseCase {
       imgList.add(departureImg);
       imgList.add(arrivalImg);
     }catch(ex){
-      print(ex.toString());
+      log(ex.toString());
       rethrow;
     }
     return imgList;
@@ -30,7 +32,7 @@ class ImageUseCase {
      var list = await _getIt.get<ImageEntity>().addArrivalImage(image, id);
      return list;
    }catch(ex){
-     print(ex.toString());
+     log(ex.toString());
      rethrow;
    }
   }
@@ -41,7 +43,7 @@ class ImageUseCase {
      var list = await _getIt.get<ImageEntity>().addDepartureImage(image, id);
      return list;
    }catch(ex){
-     print(ex.toString());
+     log(ex.toString());
      rethrow;
    }
   }
@@ -52,7 +54,7 @@ class ImageUseCase {
       var list = await _getIt.get<ImageEntity>().removeArrivalImage(image, id);
       return list;
     }catch(ex){
-      print(ex.toString());
+      log(ex.toString());
       rethrow;
     }
   }
@@ -63,7 +65,7 @@ class ImageUseCase {
       var list = await _getIt.get<ImageEntity>().removeDepartureImage(image, id);
       return list;
     }catch(ex){
-      print(ex.toString());
+      log(ex.toString());
       rethrow;
     }
   }

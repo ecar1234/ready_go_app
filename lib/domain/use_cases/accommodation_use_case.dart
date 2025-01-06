@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:get_it/get_it.dart';
 import 'package:ready_go_project/domain/entities/accommodation_entity.dart';
 
@@ -11,7 +13,7 @@ class AccommodationUseCase {
       var list = _getIt.get<AccommodationEntity>().getAccommodationList(id);
       return list;
     }catch(ex){
-      print(ex.toString());
+      log(ex.toString());
       rethrow;
     }
   }
@@ -25,7 +27,7 @@ class AccommodationUseCase {
 
       await _getIt.get<AccommodationEntity>().updateAccommodationList(list, id);
     }catch(ex){
-      print(ex.toString());
+      log(ex.toString());
       rethrow;
     }
     return list;
@@ -40,7 +42,7 @@ class AccommodationUseCase {
       await _getIt.get<AccommodationEntity>().updateAccommodationList(list, id);
 
     }catch(ex){
-      print(ex.toString());
+      log(ex.toString());
       rethrow;
     }
       return list;

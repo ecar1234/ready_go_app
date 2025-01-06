@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get_it/get_it.dart';
 
 import 'package:ready_go_project/domain/entities/plan_entity.dart';
@@ -19,9 +21,26 @@ class PlanUseCase {
       list.add(plan);
       await _getIt.get<PlanEntity>().updatePlanList(list);
     } on Exception catch (e) {
-      print(e.toString());
+      log(e.toString());
       rethrow;
     }
+    return list;
+  }
+
+  Future<List<PlanModel>> changePlan(PlanModel plan) async {
+    List<PlanModel> list = [];
+
+    try {
+      list = await _getIt.get<PlanEntity>().getLocalList();
+      int index = list.indexWhere((item) => item.id == plan.id);
+      list[index] = plan;
+      await _getIt.get<PlanEntity>().updatePlanList(list);
+
+    } on Exception catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+
     return list;
   }
 
@@ -34,7 +53,7 @@ class PlanUseCase {
       await _getIt.get<PlanEntity>().updatePlanList(list);
 
     } on Exception catch (e) {
-      print(e.toString());
+      log(e.toString());
       rethrow;
     }
 

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
@@ -18,7 +20,7 @@ class ImagesProvider with ChangeNotifier {
       _departureImage = imgList[0];
       _arrivalImage = imgList[1];
     } catch (ex) {
-      print(ex.toString());
+      log(ex.toString());
       rethrow;
     }
 
@@ -30,7 +32,7 @@ class ImagesProvider with ChangeNotifier {
       List<XFile> list = await GetIt.I.get<ImageUseCase>().addDepartureImg(image, id);
       _departureImage = list;
     } on Exception catch (e) {
-      print(e.toString());
+      log(e.toString());
       rethrow;
     }
     notifyListeners();
@@ -41,7 +43,7 @@ class ImagesProvider with ChangeNotifier {
       List<XFile> list = await GetIt.I.get<ImageUseCase>().addArrivalImg(image, id);
       _arrivalImage = list;
     } on Exception catch (e) {
-      print(e.toString());
+      log(e.toString());
       rethrow;
     }
     notifyListeners();
@@ -52,7 +54,7 @@ class ImagesProvider with ChangeNotifier {
       List<XFile> list = await GetIt.I.get<ImageUseCase>().removeDepartureImg(image, id);
       _departureImage = list;
     } on Exception catch (e) {
-      print(e.toString());
+      log(e.toString());
       rethrow;
     }
     notifyListeners();
@@ -63,7 +65,7 @@ class ImagesProvider with ChangeNotifier {
       List<XFile> list = await GetIt.I.get<ImageUseCase>().removeArrivalImg(image, id);
       _arrivalImage = list;
     } on Exception catch (e) {
-      print(e.toString());
+      log(e.toString());
       rethrow;
     }
     notifyListeners();

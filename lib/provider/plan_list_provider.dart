@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:ready_go_project/domain/use_cases/plan_use_case.dart';
@@ -17,7 +19,7 @@ class PlanListProvider with ChangeNotifier {
       var list = await _getIt.get<PlanUseCase>().getLocalList();
       _planList = list;
     } catch (ex) {
-      print(ex.toString());
+      log(ex.toString());
       rethrow;
     }
     notifyListeners();
@@ -28,7 +30,17 @@ class PlanListProvider with ChangeNotifier {
       var list = await _getIt.get<PlanUseCase>().addToPlanList(plan);
       _planList = list;
     } catch (ex) {
-      print(ex.toString());
+      log(ex.toString());
+      rethrow;
+    }
+    notifyListeners();
+  }
+  Future<void> changePlan(PlanModel plan) async {
+    try {
+      var list = await _getIt.get<PlanUseCase>().changePlan(plan);
+      _planList = list;
+    } catch (ex) {
+      log(ex.toString());
       rethrow;
     }
     notifyListeners();
@@ -39,7 +51,7 @@ class PlanListProvider with ChangeNotifier {
       var list = await _getIt.get<PlanUseCase>().removePlan(id);
       _planList = list;
     } catch (ex) {
-      print(ex.toString());
+      log(ex.toString());
       rethrow;
     }
     notifyListeners();

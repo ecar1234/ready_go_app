@@ -17,7 +17,7 @@ import 'package:ready_go_project/provider/theme_mode_provider.dart';
 // import 'package:ready_go_project/presentation/tour_page.dart';
 
 import '../data/models/plan_model/plan_model.dart';
-import '../provider/Roaming_provider.dart';
+import '../provider/roaming_provider.dart';
 import '../provider/accommodation_provider.dart';
 import '../provider/account_provider.dart';
 import '../provider/images_provider.dart';
@@ -64,7 +64,7 @@ class _PlanPageState extends State<PlanPage> {
             Get.back();
             context.read<DataBloc>().add(DataResetEvent());
           },
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_ios),
         ),
       ),
       body: Stack(children: [

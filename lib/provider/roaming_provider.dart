@@ -1,3 +1,4 @@
+import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
@@ -33,7 +34,7 @@ class RoamingProvider with ChangeNotifier {
       _code = data.activeCode;
       _period = data.period;
     } on Exception catch (e) {
-      print(e.toString());
+      log(e.toString());
       rethrow;
     }
 

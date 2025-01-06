@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:ready_go_project/data/models/supply_model/supply_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,7 +27,7 @@ class SuppliesPreference {
         return list;
       }
     } on Exception catch (e) {
-      print(e.toString());
+      log(e.toString());
       rethrow;
     }
   }
@@ -38,7 +39,7 @@ class SuppliesPreference {
       String? json = jsonEncode(listToJson);
       pref.setString("supplies$id", json);
     } on Exception catch (e) {
-      print(e.toString());
+      log(e.toString());
       rethrow;
     }
   }

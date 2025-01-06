@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,7 +24,7 @@ class ImagePreference {
         return [];
       }
     } catch (ex) {
-      print(ex.toString());
+      log(ex.toString());
       rethrow;
     }
   }
@@ -40,7 +41,7 @@ class ImagePreference {
         return [];
       }
     } catch (ex) {
-      print(ex.toString());
+      log(ex.toString());
       rethrow;
     }
   }
@@ -64,7 +65,7 @@ class ImagePreference {
         return [image];
       }
     } on Exception catch (e) {
-      print(e.toString());
+      log(e.toString());
       rethrow;
     }
   }
@@ -89,7 +90,7 @@ class ImagePreference {
         return [image];
       }
     } on Exception catch (e) {
-      print(e.toString());
+      log(e.toString());
       rethrow;
     }
   }
@@ -109,7 +110,7 @@ class ImagePreference {
         return [];
       }
     } on Exception catch (e) {
-      print(e.toString());
+      log(e.toString());
       rethrow;
     }
   }
@@ -129,7 +130,7 @@ class ImagePreference {
         return [];
       }
     } on Exception catch (e) {
-      print(e.toString());
+      log(e.toString());
       rethrow;
     }
   }

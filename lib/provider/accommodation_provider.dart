@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:ready_go_project/data/models/accommodation_model/accommodation_model.dart';
@@ -13,7 +15,7 @@ class AccommodationProvider with ChangeNotifier {
       List<AccommodationModel> list = await GetIt.I.get<AccommodationUseCase>().getAccommodationList(id);
       _accommodation = list;
     } catch (ex) {
-      print(ex.toString());
+      log(ex.toString());
       rethrow;
     }
 
@@ -25,7 +27,7 @@ class AccommodationProvider with ChangeNotifier {
       var list = await GetIt.I.get<AccommodationUseCase>().addAccommodation(info, id);
       _accommodation = list;
     } catch (ex) {
-      print(ex.toString());
+      log(ex.toString());
       rethrow;
     }
 
@@ -37,7 +39,7 @@ class AccommodationProvider with ChangeNotifier {
       var list = await GetIt.I.get<AccommodationUseCase>().removeAccommodation(idx, id);
       _accommodation = list;
     }catch(ex){
-      print(ex.toString());
+      log(ex.toString());
       rethrow;
     }
 

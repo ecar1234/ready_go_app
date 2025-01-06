@@ -1,4 +1,3 @@
-
 import 'dart:developer';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -12,7 +11,7 @@ import 'package:ready_go_project/bloc/data_bloc.dart';
 import 'package:ready_go_project/presentation/add_plan_page.dart';
 import 'package:ready_go_project/presentation/option_page.dart';
 import 'package:ready_go_project/presentation/plan_page.dart';
-import 'package:ready_go_project/provider/Roaming_provider.dart';
+import 'package:ready_go_project/provider/roaming_provider.dart';
 import 'package:ready_go_project/provider/accommodation_provider.dart';
 import 'package:ready_go_project/provider/account_provider.dart';
 import 'package:ready_go_project/provider/admob_provider.dart';
@@ -38,7 +37,11 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.microtask(() => {context.read<ThemeModeProvider>().getThemeMode()});
+    Future.microtask(() => {loadTheme()});
+  }
+
+  void loadTheme() {
+    context.read<ThemeModeProvider>().getThemeMode();
   }
 
   @override
@@ -243,11 +246,20 @@ class _MainPage2State extends State<MainPage2> {
               Get.to(() => PlanPage(plan: list[idx]));
             },
             child: Slidable(
-              endActionPane: ActionPane(extentRatio: 0.25, motion: const ScrollMotion(), children: [
+              endActionPane: ActionPane(extentRatio: 0.5, motion: const ScrollMotion(), children: [
+                SlidableAction(
+                    icon: Icons.edit_calendar,
+                    label: "수정",
+                    foregroundColor: Theme.of(context).colorScheme.primary,
+                    backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                    borderRadius: BorderRadius.circular(10),
+                    onPressed: (context) {
+                      Get.to(() => AddPlanPage(plan: list[idx],));
+                    }),
                 SlidableAction(
                     icon: Icons.delete,
                     label: "삭제",
-                    foregroundColor: Colors.white,
+                    foregroundColor: Theme.of(context).colorScheme.primary,
                     backgroundColor: Colors.redAccent,
                     borderRadius: BorderRadius.circular(10),
                     onPressed: (context) {
@@ -257,7 +269,7 @@ class _MainPage2State extends State<MainPage2> {
                       context.read<ImagesProvider>().removeAllData(list[idx].id!);
                       context.read<RoamingProvider>().removeAllData(list[idx].id!);
                       context.read<SuppliesProvider>().removeAllData(list[idx].id!);
-                    })
+                    }),
               ]),
               child: Center(
                 child: Container(

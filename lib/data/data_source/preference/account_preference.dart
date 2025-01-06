@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -30,7 +31,7 @@ class AccountPreference {
         );
       }
     }catch(ex){
-      print(ex.toString());
+      log(ex.toString());
       rethrow;
     }
   }

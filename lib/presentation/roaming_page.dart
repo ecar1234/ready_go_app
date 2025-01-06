@@ -5,13 +5,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/roaming_model/roaming_period_model.dart';
 
-import '../provider/Roaming_provider.dart';
+import '../provider/roaming_provider.dart';
 import '../provider/admob_provider.dart';
 
 class RoamingPage extends StatefulWidget {
@@ -86,7 +87,7 @@ class _RoamingPageState extends State<RoamingPage> {
               child: Container(
                 padding: const EdgeInsets.all(20),
                 width: constraints.maxWidth <= 600 ? MediaQuery.sizeOf(context).width : 600,
-                height: MediaQuery.sizeOf(context).height -100,
+                height: MediaQuery.sizeOf(context).height - 100,
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,8 +95,9 @@ class _RoamingPageState extends State<RoamingPage> {
                       _voucherImageSection(context, list),
                       const Gap(10),
                       const Divider(),
-                      _dpAddressSection(context, address),
-                      _activeCodeSection(context, code),
+                      _codeSection(context, address, code),
+                      // _dpAddressSection(context, address),
+                      // _activeCodeSection(context, code),
                       const Divider(),
                       const Gap(10),
                       _periodSection(context, period, startDate, useDuration, remainDuration, totalDuration)
@@ -104,25 +106,25 @@ class _RoamingPageState extends State<RoamingPage> {
                 ),
               ),
             ),
-              Builder(builder: (context) {
-                final BannerAd? bannerAd = context.watch<AdmobProvider>().bannerAd;
-                if (bannerAd != null) {
-                  return Positioned(
-                      left: 20,
-                      right: 20,
-                      bottom: 30,
-                      child: SizedBox(
-                        width: bannerAd.size.width.toDouble(),
-                        height: bannerAd.size.height.toDouble(),
-                        child: AdWidget(
-                          ad: bannerAd,
-                        ),
-                      ));
-                }else{
-                  log("banner is null on roaming page");
-                  return const SizedBox();
-                }
-              })
+            Builder(builder: (context) {
+              final BannerAd? bannerAd = context.watch<AdmobProvider>().bannerAd;
+              if (bannerAd != null) {
+                return Positioned(
+                    left: 20,
+                    right: 20,
+                    bottom: 30,
+                    child: SizedBox(
+                      width: bannerAd.size.width.toDouble(),
+                      height: bannerAd.size.height.toDouble(),
+                      child: AdWidget(
+                        ad: bannerAd,
+                      ),
+                    ));
+              } else {
+                log("banner is null on roaming page");
+                return const SizedBox();
+              }
+            })
           ]),
         ),
       ),
@@ -185,7 +187,7 @@ class _RoamingPageState extends State<RoamingPage> {
                 width: (list.length * 110) + 100 < MediaQuery.sizeOf(context).width ? 100 : 50,
                 child: ElevatedButton(
                     onPressed: () async {
-                      _showImageSourceDialog();
+                      _showImageSourceDialog(context);
                       // final imgProvider = context.read<RoamingProvider>();
                       // final XFile? image = await picker.pickImage(source: ImageSource.gallery);
                       // if (image != null) {
@@ -206,266 +208,230 @@ class _RoamingPageState extends State<RoamingPage> {
     );
   }
 
-  Widget _dpAddressSection(BuildContext context, String address) {
+  Widget _codeSection(BuildContext context, String address, String code) {
     return SizedBox(
-      height: 120,
       child: Column(
         children: [
+          //title
+          SizedBox(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "활성화 코드",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                ),
+                if (code.isEmpty || address.isEmpty)
+                  SizedBox(
+                      height: 40,
+                      child: TextButton(
+                          onPressed: () {
+                            _showSetCodeDialog(context);
+                          },
+                          child: const Text("입력하기")))
+                else
+                  SizedBox(
+                    height: 40,
+                    child: TextButton(
+                      onPressed: () {
+                        _showSetCodeDialog(context);
+                      },
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                      ),
+                      child: const Text("수정하기"),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          const Gap(10),
+          // info
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                height: 50,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
                       "SM-DP주소",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                      style: TextStyle(fontWeight: FontWeight.w600),
                     ),
-                    address.isNotEmpty
-                        ? SizedBox(
-                            width: 150,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 50,
-                                  child: TextButton(
-                                    onPressed: () {
-                                      if (dpAddressController.text.isEmpty) {
-                                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("SM-DP주소가 비어있습니다.")));
-                                        return;
-                                      }
-                                      Clipboard.setData(ClipboardData(text: dpAddressController.text));
-                                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("SM-DP주소가 복사 되었습니다.")));
-                                    },
-                                    style: TextButton.styleFrom(
-                                      padding: EdgeInsets.zero,
-                                    ),
-                                    child: const Text("복사"),
-                                  ),
+                    if (address.isNotEmpty)
+                      SizedBox(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 50,
+                              child: TextButton(
+                                onPressed: () {
+                                  if (dpAddressController.text.isEmpty) {
+                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("SM-DP주소가 비어있습니다.")));
+                                    return;
+                                  }
+                                  Clipboard.setData(ClipboardData(text: dpAddressController.text));
+                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("SM-DP주소가 복사 되었습니다.")));
+                                },
+                                style: TextButton.styleFrom(
+                                  padding: EdgeInsets.zero,
                                 ),
-                                SizedBox(
-                                  width: 50,
-                                  child: TextButton(
-                                    onPressed: () {
-                                      if (dpAddressController.text.isEmpty) {
-                                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("수정 할 SM-DP주소를 입력해 주세요")));
-                                        return;
-                                      }
-                                      if (dpAddressController.text == address) {
-                                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("변경 할 내용을 확인해 주세요")));
-                                        return;
-                                      }
-                                      String addr = dpAddressController.text;
-                                      context.read<RoamingProvider>().enterAddress(addr, widget.planId);
-                                    },
-                                    style: TextButton.styleFrom(
-                                      padding: EdgeInsets.zero,
-                                    ),
-                                    child: const Text("수정"),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 50,
-                                  child: TextButton(
-                                    onPressed: () {
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) => AlertDialog(
-                                                actionsAlignment: MainAxisAlignment.center,
-                                                content: const Text("삭제 하시겠습니까?"),
-                                                actions: [
-                                                  SizedBox(
-                                                    child: ElevatedButton(
-                                                        onPressed: () {
-                                                          Navigator.of(context).pop();
-                                                        },
-                                                        child: const Text("취소")),
-                                                  ),
-                                                  SizedBox(
-                                                    child: ElevatedButton(
-                                                      onPressed: () {
-                                                        dpAddressController.text = "";
-                                                        context.read<RoamingProvider>().removeAddress(widget.planId);
-                                                        Navigator.of(context).pop();
-                                                      },
-                                                      child: const Text("삭제"),
-                                                    ),
-                                                  )
-                                                ],
-                                              ));
-                                    },
-                                    style: TextButton.styleFrom(
-                                      padding: EdgeInsets.zero,
-                                    ),
-                                    child: const Text("삭제"),
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
-                        : SizedBox(
-                            width: 100,
-                            child: TextButton(
-                              onPressed: () {
-                                if (dpAddressController.text.isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("빈 값은 입력 할 수 없습니다.")));
-                                  return;
-                                }
-                                String newAddress = dpAddressController.text;
-                                context.read<RoamingProvider>().enterAddress(newAddress, widget.planId);
-                              },
-                              style: TextButton.styleFrom(
-                                padding: EdgeInsets.zero,
+                                child: const Text("복사"),
                               ),
-                              child: const Text("입력하기"),
                             ),
-                          )
+                            SizedBox(
+                              width: 50,
+                              child: TextButton(
+                                onPressed: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                            actionsAlignment: MainAxisAlignment.center,
+                                            content: const Text("삭제 하시겠습니까?"),
+                                            actions: [
+                                              SizedBox(
+                                                child: ElevatedButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                    style: ElevatedButton.styleFrom(
+                                                      foregroundColor: Theme.of(context).colorScheme.onSurface,
+                                                      backgroundColor: Theme.of(context).colorScheme.surface,
+                                                      shape: RoundedRectangleBorder(
+                                                        borderRadius: BorderRadius.circular(10)
+                                                      )
+                                                    ),
+                                                    child: const Text("취소")),
+                                              ),
+                                              SizedBox(
+                                                child: ElevatedButton(
+                                                  onPressed: () {
+                                                    dpAddressController.text = "";
+                                                    context.read<RoamingProvider>().removeAddress(widget.planId);
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  style: ElevatedButton.styleFrom(
+                                                    foregroundColor: Theme.of(context).colorScheme.onSecondary,
+                                                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(10)
+                                                    )
+                                                  ),
+                                                  child: const Text("삭제"),
+                                                ),
+                                              )
+                                            ],
+                                          ));
+                                },
+                                style: TextButton.styleFrom(
+                                  padding: EdgeInsets.zero,
+                                ),
+                                child: const Text("삭제"),
+                              ),
+                            )
+                          ],
+                        ),
+                      )
                   ],
                 ),
               ),
               SizedBox(
-                height: 60,
-                child: TextField(
-                  controller: dpAddressController,
-                  onChanged: _onChanged,
-                  style: const TextStyle(fontSize: 16),
-                ),
-              )
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _activeCodeSection(BuildContext context, String code) {
-    return SizedBox(
-      height: 120,
-      child: Column(
-        children: [
-          Column(
-            children: [
+                  child: Text(
+                address.isEmpty ? "SM-DP 주소를 등록해 주세요" : address,
+                textAlign: TextAlign.start,
+              )),
+              const Gap(5),
               SizedBox(
-                height: 50,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
                       "활성화 코드",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                      style: TextStyle(fontWeight: FontWeight.w600),
                     ),
-                    code.isNotEmpty
-                        ? SizedBox(
-                            width: 150,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 50,
-                                  child: TextButton(
-                                    onPressed: () {
-                                      if (activeCodeController.text.isEmpty) {
-                                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("활성화 코드가 비어있습니다.")));
-                                        return;
-                                      }
-                                      Clipboard.setData(ClipboardData(text: activeCodeController.text));
-                                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("활성화 코드가 복사 되었습니다..")));
-                                    },
-                                    style: TextButton.styleFrom(
-                                      padding: EdgeInsets.zero,
-                                    ),
-                                    child: const Text("복사"),
-                                  ),
+                    if (code.isNotEmpty)
+                      SizedBox(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 50,
+                              child: TextButton(
+                                onPressed: () {
+                                  if (activeCodeController.text.isEmpty) {
+                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("활성화 코드가 비어있습니다.")));
+                                    return;
+                                  }
+                                  Clipboard.setData(ClipboardData(text: activeCodeController.text));
+                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("활성화 코드가 복사 되었습니다..")));
+                                },
+                                style: TextButton.styleFrom(
+                                  padding: EdgeInsets.zero,
                                 ),
-                                SizedBox(
-                                  width: 50,
-                                  child: TextButton(
-                                    onPressed: () {
-                                      if (activeCodeController.text.isEmpty) {
-                                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("수정 할 활성화 코드를 입력해 주세요")));
-                                        return;
-                                      }
-                                      if (activeCodeController.text == code) {
-                                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("변경 할 내용을 확인해 주세요")));
-                                        return;
-                                      }
-                                      String newCode = activeCodeController.text;
-                                      context.read<RoamingProvider>().enterCode(newCode, widget.planId);
-                                    },
-                                    style: TextButton.styleFrom(
-                                      padding: EdgeInsets.zero,
-                                    ),
-                                    child: const Text("수정"),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 50,
-                                  child: TextButton(
-                                    onPressed: () {
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) => AlertDialog(
-                                                content: const Text("삭제 하시겠습니까?"),
-                                                actions: [
-                                                  SizedBox(
-                                                    child: ElevatedButton(
-                                                      onPressed: () {
-                                                        Navigator.of(context).pop();
-                                                      },
-                                                      child: const Text("취소"),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    child: ElevatedButton(
-                                                        onPressed: () {
-                                                          activeCodeController.text = "";
-                                                          context.read<RoamingProvider>().removeCode(widget.planId);
-                                                          Navigator.of(context).pop();
-                                                        },
-                                                        child: const Text("삭제")),
-                                                  )
-                                                ],
-                                              ));
-                                    },
-                                    style: TextButton.styleFrom(
-                                      padding: EdgeInsets.zero,
-                                    ),
-                                    child: const Text("삭제"),
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
-                        : SizedBox(
-                            width: 100,
-                            child: TextButton(
-                              onPressed: () {
-                                if (activeCodeController.text.isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("빈 값은 입력 할 수 없습니다.")));
-                                  return;
-                                }
-                                String newCode = activeCodeController.text;
-                                context.read<RoamingProvider>().enterCode(newCode, widget.planId);
-                              },
-                              style: TextButton.styleFrom(
-                                padding: EdgeInsets.zero,
+                                child: const Text("복사"),
                               ),
-                              child: const Text("입력하기"),
                             ),
-                          )
+                            SizedBox(
+                              width: 50,
+                              child: TextButton(
+                                onPressed: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                            content: const Text("삭제 하시겠습니까?"),
+                                            actions: [
+                                              SizedBox(
+                                                child: ElevatedButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  style: ElevatedButton.styleFrom(
+                                                      foregroundColor: Theme.of(context).colorScheme.onSurface,
+                                                      backgroundColor: Theme.of(context).colorScheme.surface,
+                                                      shape: RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.circular(10)
+                                                      )
+                                                  ),
+                                                  child: const Text("취소"),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                child: ElevatedButton(
+                                                    onPressed: () {
+                                                      activeCodeController.text = "";
+                                                      context.read<RoamingProvider>().removeCode(widget.planId);
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                    style: ElevatedButton.styleFrom(
+                                                        foregroundColor: Theme.of(context).colorScheme.onSecondary,
+                                                        backgroundColor: Theme.of(context).colorScheme.secondary,
+                                                        shape: RoundedRectangleBorder(
+                                                            borderRadius: BorderRadius.circular(10)
+                                                        )
+                                                    ),
+                                                    child: const Text("삭제")),
+                                              )
+                                            ],
+                                          ));
+                                },
+                                style: TextButton.styleFrom(
+                                  padding: EdgeInsets.zero,
+                                ),
+                                child: const Text("삭제"),
+                              ),
+                            )
+                          ],
+                        ),
+                      )
                   ],
                 ),
               ),
               SizedBox(
-                height: 60,
-                child: TextField(
-                  controller: activeCodeController,
-                  onChanged: _onChanged,
-                  style: const TextStyle(fontSize: 16),
-                ),
-              )
+                  child: Text(
+                code.isEmpty ? "활성화 코드를 등록해 주세요" : code,
+                textAlign: TextAlign.start,
+              )),
             ],
           ),
         ],
@@ -486,17 +452,21 @@ class _RoamingPageState extends State<RoamingPage> {
             child: Row(
               children: [
                 const Text(
-                  "사용시간 설정",
+                  "사용기간 설정",
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
                 ),
                 const Gap(20),
                 DropdownMenu(
                   enabled: period.isActive == false,
                   initialSelection: selectedValue,
-                  hintText: "기간 선택",
                   width: 120,
                   menuHeight: 300,
-                  dropdownMenuEntries: List.generate(31, (idx) => DropdownMenuEntry(value: idx + 1, label: "${idx + 1}일")),
+                  dropdownMenuEntries: List.generate(31, (idx) {
+                    if(idx == 0){
+                      return DropdownMenuEntry(value: idx , label: "기간 선택");
+                    }
+                    return DropdownMenuEntry(value: idx , label: "$idx일");
+                  }),
                   onSelected: (value) {
                     if (period.isActive == true) {
                       showDialog(
@@ -558,9 +528,44 @@ class _RoamingPageState extends State<RoamingPage> {
                               side: const BorderSide(color: Colors.grey),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                           onPressed: () {
-                            context.read<RoamingProvider>().resetPeriod(widget.planId);
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text(("데이터가 초기화 되었습니다"))));
-                            selectedValue = period.period;
+                            showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  content: const SizedBox(
+                                    height: 150,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [Text("데이터 초기화"), Text("사용 정보가 초가화 됩니다."), Gap(10), Text("변경 하시겠습니까?")],
+                                    ),
+                                  ),
+                                  actions: [
+                                    SizedBox(
+                                      width: 120,
+                                      height: 40,
+                                      child: ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            // context.read<RoamingProvider>().setPeriodDate(period.period!, widget.planId);
+                                            // selectedValue = period.period;
+                                          },
+                                          child: const Text("취소")),
+                                    ),
+                                    SizedBox(
+                                      width: 120,
+                                      height: 40,
+                                      child: ElevatedButton(
+                                          onPressed: () {
+                                            // context.read<RoamingProvider>().setPeriodDate(value!, widget.planId);
+                                            selectedValue = period.period;
+                                            context.read<RoamingProvider>().resetPeriod(widget.planId);
+                                            Navigator.of(context).pop();
+                                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text(("데이터가 초기화 되었습니다"))));
+                                          },
+                                          child: const Text("확인")),
+                                    )
+                                  ],
+                                ));
                           },
                           child: const Text(
                             "초기화",
@@ -636,9 +641,8 @@ class _RoamingPageState extends State<RoamingPage> {
     );
   }
 
-  void _showImageSourceDialog() {
+  void _showImageSourceDialog(BuildContext context) {
     final roamingProvider = context.read<RoamingProvider>();
-
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -670,5 +674,133 @@ class _RoamingPageState extends State<RoamingPage> {
         );
       },
     );
+  }
+
+  void _showSetCodeDialog(BuildContext context) {
+    String code = context.read<RoamingProvider>().code;
+    String address = context.read<RoamingProvider>().dpAddress;
+    showModalBottomSheet(
+        context: context,
+        builder: (context) => SizedBox(
+              height: MediaQuery.sizeOf(context).height / 2,
+              child: Container(
+                width: MediaQuery.sizeOf(context).width,
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 50,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "활성화 정보 입력",
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(),
+                    // address info
+                    SizedBox(
+                      child: Column(
+                        children: [
+                          const SizedBox(
+                              height: 40,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "SM-DP + 주소",
+                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                  ),
+                                ],
+                              )),
+                          SizedBox(
+                            height: 60,
+                            child: TextField(
+                              controller: dpAddressController,
+                              onChanged: _onChanged,
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    //code info
+                    SizedBox(
+                      child: Column(
+                        children: [
+                          const SizedBox(
+                              height: 40,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "활성화 코드",
+                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                  ),
+                                ],
+                              )),
+                          SizedBox(
+                            height: 60,
+                            child: TextField(
+                              controller: activeCodeController,
+                              onChanged: _onChanged,
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    const Gap(10),
+                    // button
+                    SizedBox(
+                      height: 50,
+                      width: 100,
+                      child: ElevatedButton(
+                          onPressed: () {
+                            if (dpAddressController.text.isEmpty) {
+                              Get.snackbar(
+                                "입력정보 확인",
+                                "SM-DP 주소를 입력해 주세요",
+                              );
+                              return;
+                            }
+                            if (activeCodeController.text.isEmpty) {
+                              Get.snackbar("입력정보 확인", "활성화 코드를 입력해 주세요");
+                              return;
+                            }
+
+                            if (activeCodeController.text == code && dpAddressController.text == address) {
+                              Get.snackbar("입력정보 확인", "변경 내용이 없습니다.");
+                              return;
+                            }
+
+                            try {
+                              String newAddress = dpAddressController.text;
+                              String newCode = activeCodeController.text;
+                              context.read<RoamingProvider>().enterAddress(newAddress, widget.planId);
+                              context.read<RoamingProvider>().enterCode(newCode, widget.planId);
+                            } on Exception catch (e) {
+                              log(e.toString());
+                              rethrow;
+                            }
+                            Get.back();
+                          },
+                          style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              foregroundColor: Theme.of(context).colorScheme.surface,
+                              backgroundColor: Theme.of(context).colorScheme.onSurface,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                          child: const Text(
+                            "입력하기",
+                            style: TextStyle(fontSize: 16),
+                          )),
+                    )
+                  ],
+                ),
+              ),
+            ));
   }
 }

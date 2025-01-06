@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,7 +16,7 @@ class AnalyticsPreference {
     bool? isFirst = pref.getBool("is_first_run");
     if(isFirst == null || isFirst){
       await FirebaseAnalytics.instance.logEvent(name: "fire_run", parameters: {"time_stamp" : DateTime.now().toString()});
-      print("first run logged");
+      log("first run logged");
       pref.setBool("is_first_run", false);
     }
   }
