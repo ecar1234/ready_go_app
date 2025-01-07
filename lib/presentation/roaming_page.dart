@@ -77,7 +77,7 @@ class _RoamingPageState extends State<RoamingPage> {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: true,
         appBar: AppBar(
           title: const Text("로밍 & ESIM"),
         ),
@@ -251,6 +251,7 @@ class _RoamingPageState extends State<RoamingPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
+                height: 40,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -267,12 +268,13 @@ class _RoamingPageState extends State<RoamingPage> {
                               width: 50,
                               child: TextButton(
                                 onPressed: () {
-                                  if (dpAddressController.text.isEmpty) {
-                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("SM-DP주소가 비어있습니다.")));
-                                    return;
-                                  }
+                                  // if (dpAddressController.text.isEmpty) {
+                                  //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("SM-DP주소가 비어있습니다.")));
+                                  //   return;
+                                  // }
                                   Clipboard.setData(ClipboardData(text: dpAddressController.text));
-                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("SM-DP주소가 복사 되었습니다.")));
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(const SnackBar(content: Text("SM-DP주소가 복사 되었습니다."), duration: Duration(milliseconds: 500)));
                                 },
                                 style: TextButton.styleFrom(
                                   padding: EdgeInsets.zero,
@@ -296,12 +298,9 @@ class _RoamingPageState extends State<RoamingPage> {
                                                       Navigator.of(context).pop();
                                                     },
                                                     style: ElevatedButton.styleFrom(
-                                                      foregroundColor: Theme.of(context).colorScheme.onSurface,
-                                                      backgroundColor: Theme.of(context).colorScheme.surface,
-                                                      shape: RoundedRectangleBorder(
-                                                        borderRadius: BorderRadius.circular(10)
-                                                      )
-                                                    ),
+                                                        foregroundColor: Theme.of(context).colorScheme.onSurface,
+                                                        backgroundColor: Theme.of(context).colorScheme.surface,
+                                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                                                     child: const Text("취소")),
                                               ),
                                               SizedBox(
@@ -312,12 +311,9 @@ class _RoamingPageState extends State<RoamingPage> {
                                                     Navigator.of(context).pop();
                                                   },
                                                   style: ElevatedButton.styleFrom(
-                                                    foregroundColor: Theme.of(context).colorScheme.onSecondary,
-                                                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(10)
-                                                    )
-                                                  ),
+                                                      foregroundColor: Theme.of(context).colorScheme.onSecondary,
+                                                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                                                   child: const Text("삭제"),
                                                 ),
                                               )
@@ -340,9 +336,12 @@ class _RoamingPageState extends State<RoamingPage> {
                   child: Text(
                 address.isEmpty ? "SM-DP 주소를 등록해 주세요" : address,
                 textAlign: TextAlign.start,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               )),
               const Gap(5),
               SizedBox(
+                height: 40,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -359,12 +358,15 @@ class _RoamingPageState extends State<RoamingPage> {
                               width: 50,
                               child: TextButton(
                                 onPressed: () {
-                                  if (activeCodeController.text.isEmpty) {
-                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("활성화 코드가 비어있습니다.")));
-                                    return;
-                                  }
+                                  // if (activeCodeController.text.isEmpty) {
+                                  //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("활성화 코드가 비어있습니다.")));
+                                  //   return;
+                                  // }
                                   Clipboard.setData(ClipboardData(text: activeCodeController.text));
-                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("활성화 코드가 복사 되었습니다..")));
+                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                    content: Text("활성화 코드가 복사 되었습니다.."),
+                                    duration: Duration(milliseconds: 500),
+                                  ));
                                 },
                                 style: TextButton.styleFrom(
                                   padding: EdgeInsets.zero,
@@ -389,10 +391,7 @@ class _RoamingPageState extends State<RoamingPage> {
                                                   style: ElevatedButton.styleFrom(
                                                       foregroundColor: Theme.of(context).colorScheme.onSurface,
                                                       backgroundColor: Theme.of(context).colorScheme.surface,
-                                                      shape: RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.circular(10)
-                                                      )
-                                                  ),
+                                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                                                   child: const Text("취소"),
                                                 ),
                                               ),
@@ -406,10 +405,7 @@ class _RoamingPageState extends State<RoamingPage> {
                                                     style: ElevatedButton.styleFrom(
                                                         foregroundColor: Theme.of(context).colorScheme.onSecondary,
                                                         backgroundColor: Theme.of(context).colorScheme.secondary,
-                                                        shape: RoundedRectangleBorder(
-                                                            borderRadius: BorderRadius.circular(10)
-                                                        )
-                                                    ),
+                                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                                                     child: const Text("삭제")),
                                               )
                                             ],
@@ -431,6 +427,8 @@ class _RoamingPageState extends State<RoamingPage> {
                   child: Text(
                 code.isEmpty ? "활성화 코드를 등록해 주세요" : code,
                 textAlign: TextAlign.start,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               )),
             ],
           ),
@@ -462,10 +460,10 @@ class _RoamingPageState extends State<RoamingPage> {
                   width: 120,
                   menuHeight: 300,
                   dropdownMenuEntries: List.generate(31, (idx) {
-                    if(idx == 0){
-                      return DropdownMenuEntry(value: idx , label: "기간 선택");
+                    if (idx == 0) {
+                      return DropdownMenuEntry(value: idx, label: "기간 선택");
                     }
-                    return DropdownMenuEntry(value: idx , label: "$idx일");
+                    return DropdownMenuEntry(value: idx, label: "$idx일");
                   }),
                   onSelected: (value) {
                     if (period.isActive == true) {
@@ -531,41 +529,41 @@ class _RoamingPageState extends State<RoamingPage> {
                             showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(
-                                  content: const SizedBox(
-                                    height: 150,
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [Text("데이터 초기화"), Text("사용 정보가 초가화 됩니다."), Gap(10), Text("변경 하시겠습니까?")],
-                                    ),
-                                  ),
-                                  actions: [
-                                    SizedBox(
-                                      width: 120,
-                                      height: 40,
-                                      child: ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                            // context.read<RoamingProvider>().setPeriodDate(period.period!, widget.planId);
-                                            // selectedValue = period.period;
-                                          },
-                                          child: const Text("취소")),
-                                    ),
-                                    SizedBox(
-                                      width: 120,
-                                      height: 40,
-                                      child: ElevatedButton(
-                                          onPressed: () {
-                                            // context.read<RoamingProvider>().setPeriodDate(value!, widget.planId);
-                                            selectedValue = period.period;
-                                            context.read<RoamingProvider>().resetPeriod(widget.planId);
-                                            Navigator.of(context).pop();
-                                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text(("데이터가 초기화 되었습니다"))));
-                                          },
-                                          child: const Text("확인")),
-                                    )
-                                  ],
-                                ));
+                                      content: const SizedBox(
+                                        height: 150,
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [Text("데이터 초기화"), Text("사용 정보가 초가화 됩니다."), Gap(10), Text("변경 하시겠습니까?")],
+                                        ),
+                                      ),
+                                      actions: [
+                                        SizedBox(
+                                          width: 120,
+                                          height: 40,
+                                          child: ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                                // context.read<RoamingProvider>().setPeriodDate(period.period!, widget.planId);
+                                                // selectedValue = period.period;
+                                              },
+                                              child: const Text("취소")),
+                                        ),
+                                        SizedBox(
+                                          width: 120,
+                                          height: 40,
+                                          child: ElevatedButton(
+                                              onPressed: () {
+                                                // context.read<RoamingProvider>().setPeriodDate(value!, widget.planId);
+                                                selectedValue = period.period;
+                                                context.read<RoamingProvider>().resetPeriod(widget.planId);
+                                                Navigator.of(context).pop();
+                                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text(("데이터가 초기화 되었습니다"))));
+                                              },
+                                              child: const Text("확인")),
+                                        )
+                                      ],
+                                    ));
                           },
                           child: const Text(
                             "초기화",
@@ -679,128 +677,191 @@ class _RoamingPageState extends State<RoamingPage> {
   void _showSetCodeDialog(BuildContext context) {
     String code = context.read<RoamingProvider>().code;
     String address = context.read<RoamingProvider>().dpAddress;
+
     showModalBottomSheet(
         context: context,
+        isScrollControlled: true,
         builder: (context) => SizedBox(
-              height: MediaQuery.sizeOf(context).height / 2,
-              child: Container(
-                width: MediaQuery.sizeOf(context).width,
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  children: [
-                    const SizedBox(
-                      height: 50,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "활성화 정보 입력",
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            height: MediaQuery.sizeOf(context).height / 2,
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  const SizedBox(
+                    height: 50,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "활성화 정보 입력",
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(),
+                  // address info
+                  SizedBox(
+                    child: Column(
+                      children: [
+                        const SizedBox(
+                            height: 40,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "SM-DP + 주소",
+                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                ),
+                              ],
+                            )),
+                        SizedBox(
+                          height: 80,
+                          child: TextField(
+                            controller: dpAddressController,
+                            readOnly: true,
+                            maxLength: 60,
+                            onTap: () {
+                              final RenderBox renderBox = context.findRenderObject() as RenderBox;
+                              final localPosition = renderBox.globalToLocal(Offset(0, MediaQuery.sizeOf(context).height));
+                              log("dp : ${localPosition.dy}");
+                              showMenu(
+                                  context: context,
+                                  position: RelativeRect.fromLTRB(localPosition.dx, localPosition.dy + 50, localPosition.dx, localPosition.dy),
+                                  items: [
+                                    if (dpAddressController.text.isEmpty)
+                                      PopupMenuItem(
+                                          child: TextButton(
+                                              onPressed: () async {
+                                                final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
+                                                if (clipboardData != null && clipboardData.text != null) {
+                                                  dpAddressController.text = clipboardData.text!; // 올바른 할당 연산자 사용
+                                                }
+                                                Get.back();
+                                              },
+                                              child: const Text("붙여넣기")))
+                                    else
+                                      PopupMenuItem(
+                                          child: TextButton(
+                                              onPressed: () {
+                                                dpAddressController.text = ""; // 올바른 할당 연산자 사용
+                                                Get.back();
+                                              },
+                                              child: const Text("삭제하기")))
+                                  ]);
+                            },
+                            onChanged: _onChanged,
+                            style: const TextStyle(fontSize: 16),
                           ),
-                        ],
-                      ),
+                        )
+                      ],
                     ),
-                    const Divider(),
-                    // address info
-                    SizedBox(
-                      child: Column(
-                        children: [
-                          const SizedBox(
-                              height: 40,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "SM-DP + 주소",
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                                  ),
-                                ],
-                              )),
-                          SizedBox(
-                            height: 60,
-                            child: TextField(
-                              controller: dpAddressController,
-                              onChanged: _onChanged,
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                          )
-                        ],
-                      ),
+                  ),
+                  //code info
+                  SizedBox(
+                    child: Column(
+                      children: [
+                        const SizedBox(
+                            height: 40,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "활성화 코드",
+                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                ),
+                              ],
+                            )),
+                        SizedBox(
+                          height: 80,
+                          child: TextField(
+                            controller: activeCodeController,
+                            maxLength: 60,
+                            readOnly: true,
+                            onTap: () {
+                              final RenderBox render = context.findRenderObject() as RenderBox;
+                              final localPosition = render.globalToLocal(Offset(0, MediaQuery.sizeOf(context).height));
+                              log("code : ${localPosition.dy}");
+                              showMenu(
+                                  context: context,
+                                  position: RelativeRect.fromLTRB(localPosition.dx, localPosition.dy + 150, localPosition.dx, localPosition.dy),
+                                  items: [
+                                    if (activeCodeController.text.isEmpty)
+                                      PopupMenuItem(
+                                          child: TextButton(
+                                              onPressed: () async {
+                                                final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
+                                                if (clipboardData != null && clipboardData.text != null) {
+                                                  activeCodeController.text = clipboardData.text!; // 올바른 할당 연산자 사용
+                                                }
+                                                Get.back();
+                                              },
+                                              child: const Text("붙여넣기")))
+                                    else
+                                      PopupMenuItem(
+                                          child: TextButton(
+                                              onPressed: () {
+                                                activeCodeController.text = ""; // 올바른 할당 연산자 사용
+                                                Get.back();
+                                              },
+                                              child: const Text("삭제하기")))
+                                  ]);
+                            },
+                            onChanged: _onChanged,
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        )
+                      ],
                     ),
-                    //code info
-                    SizedBox(
-                      child: Column(
-                        children: [
-                          const SizedBox(
-                              height: 40,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "활성화 코드",
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                                  ),
-                                ],
-                              )),
-                          SizedBox(
-                            height: 60,
-                            child: TextField(
-                              controller: activeCodeController,
-                              onChanged: _onChanged,
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    const Gap(10),
-                    // button
-                    SizedBox(
-                      height: 50,
-                      width: 100,
-                      child: ElevatedButton(
-                          onPressed: () {
-                            if (dpAddressController.text.isEmpty) {
-                              Get.snackbar(
-                                "입력정보 확인",
-                                "SM-DP 주소를 입력해 주세요",
-                              );
-                              return;
-                            }
-                            if (activeCodeController.text.isEmpty) {
-                              Get.snackbar("입력정보 확인", "활성화 코드를 입력해 주세요");
-                              return;
-                            }
+                  ),
+                  const Gap(10),
+                  // button
+                  SizedBox(
+                    height: 50,
+                    width: 100,
+                    child: ElevatedButton(
+                        onPressed: () {
+                          if (dpAddressController.text.isEmpty) {
+                            Get.snackbar(
+                              "입력정보 확인",
+                              "SM-DP 주소를 입력해 주세요",
+                                colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface
+                            );
+                            return;
+                          }
+                          if (activeCodeController.text.isEmpty) {
+                            Get.snackbar("입력정보 확인", "활성화 코드를 입력해 주세요", colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
+                            return;
+                          }
 
-                            if (activeCodeController.text == code && dpAddressController.text == address) {
-                              Get.snackbar("입력정보 확인", "변경 내용이 없습니다.");
-                              return;
-                            }
+                          if (activeCodeController.text == code && dpAddressController.text == address) {
+                            Get.snackbar("입력정보 확인", "변경 내용이 없습니다.", colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
+                            return;
+                          }
 
-                            try {
-                              String newAddress = dpAddressController.text;
-                              String newCode = activeCodeController.text;
-                              context.read<RoamingProvider>().enterAddress(newAddress, widget.planId);
-                              context.read<RoamingProvider>().enterCode(newCode, widget.planId);
-                            } on Exception catch (e) {
-                              log(e.toString());
-                              rethrow;
-                            }
-                            Get.back();
-                          },
-                          style: ElevatedButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              foregroundColor: Theme.of(context).colorScheme.surface,
-                              backgroundColor: Theme.of(context).colorScheme.onSurface,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                          child: const Text(
-                            "입력하기",
-                            style: TextStyle(fontSize: 16),
-                          )),
-                    )
-                  ],
-                ),
+                          try {
+                            String newAddress = dpAddressController.text;
+                            String newCode = activeCodeController.text;
+                            context.read<RoamingProvider>().enterAddress(newAddress, widget.planId);
+                            context.read<RoamingProvider>().enterCode(newCode, widget.planId);
+                          } on Exception catch (e) {
+                            log(e.toString());
+                            rethrow;
+                          }
+                          Get.back();
+                        },
+                        style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            foregroundColor: Theme.of(context).colorScheme.surface,
+                            backgroundColor: Theme.of(context).colorScheme.onSurface,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                        child: const Text(
+                          "입력하기",
+                          style: TextStyle(fontSize: 16),
+                        )),
+                  )
+                ],
               ),
-            ));
+            )));
   }
 }

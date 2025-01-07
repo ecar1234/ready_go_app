@@ -763,15 +763,15 @@ class _AccountBookPageState extends State<AccountBookPage> {
                               child: ElevatedButton(
                                   onPressed: () {
                                     if (_daysController.text.isEmpty) {
-                                      Get.snackbar("데이터 입력 확인", "사용 일차를 확인해 주세요", backgroundColor: Colors.white);
+                                      Get.snackbar("데이터 입력 확인", "사용 일차를 확인해 주세요", colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
                                       return;
                                     }
                                     if (_titleController.text.isEmpty) {
-                                      Get.snackbar("데이터 입력 확인", "제목을 확인해 주세요", backgroundColor: Colors.white);
+                                      Get.snackbar("데이터 입력 확인", "제목을 확인해 주세요", colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
                                       return;
                                     }
                                     if (_payAmountController.text.isEmpty) {
-                                      Get.snackbar("데이터 입력 확인", "사용 금액을 확인해 주세요", backgroundColor: Colors.white);
+                                      Get.snackbar("데이터 입력 확인", "사용 금액을 확인해 주세요", colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
                                       return;
                                     }
                                     newAmount.id = _daysController.text;
@@ -900,7 +900,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                             child: ElevatedButton(
                                 onPressed: () {
                                   if (_totalAmountController.text.isEmpty) {
-                                    Get.snackbar("데이터 입력 확인", "추가 금액을 확인해 주세요", backgroundColor: Colors.white);
+                                    Get.snackbar("데이터 입력 확인", "추가 금액을 확인해 주세요", colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
                                     return;
                                   }
                                   int amount = int.tryParse(_totalAmountController.text) ?? 0;
@@ -1016,67 +1016,76 @@ class _AccountBookPageState extends State<AccountBookPage> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: [
-                                  ElevatedButton(
-                                      onPressed: () {
-                                        categoryController.dispose();
-                                        amountController.dispose();
-                                        detailController.dispose();
-                                        Get.back();
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                          padding: EdgeInsets.zero, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                      child: const Text("닫기")),
-                                  ElevatedButton(
-                                      onPressed: () {
-                                        AmountModel newAmount = AmountModel();
-                                        newAmount.id = amount.id;
-                                        newAmount.amount = int.tryParse(amountController.text);
-                                        newAmount.category = categoryController.text == "환전" ? 0 : 2;
-                                        newAmount.title = detailController.text;
-                                        newAmount.type = amount.type;
-                                        newAmount.usageTime = amount.usageTime;
+                                  SizedBox(
+                                    width: 80,
+                                    child: ElevatedButton(
+                                        onPressed: () {
+                                          categoryController.dispose();
+                                          amountController.dispose();
+                                          detailController.dispose();
+                                          Get.back();
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                            padding: EdgeInsets.zero, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                                        child: const Text("닫기")),
+                                  ),
+                                  SizedBox(
+                                    width: 80,
+                                    child: ElevatedButton(
+                                        onPressed: () {
+                                          AmountModel newAmount = AmountModel();
+                                          newAmount.id = amount.id;
+                                          newAmount.amount = int.tryParse(amountController.text);
+                                          newAmount.category = categoryController.text == "환전" ? 0 : 2;
+                                          newAmount.title = detailController.text;
+                                          newAmount.type = amount.type;
+                                          newAmount.usageTime = amount.usageTime;
 
-                                        if (newAmount.title == amount.title &&
-                                            newAmount.amount == amount.amount &&
-                                            newAmount.category == amount.category) {
-                                          Get.snackbar("수정 내용을 확인해 주세요", "변경 사항이 존재하지 않아 수정 할 수 없습니다.");
-                                          return;
-                                        }
+                                          if (newAmount.title == amount.title &&
+                                              newAmount.amount == amount.amount &&
+                                              newAmount.category == amount.category) {
+                                            Get.snackbar("수정 내용을 확인해 주세요", "변경 사항이 존재하지 않아 수정 할 수 없습니다.", colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
+                                            return;
+                                          }
 
-                                        context.read<AccountProvider>().editeAmountItem(fIdx, sInd, newAmount, widget.plan.id!);
+                                          context.read<AccountProvider>().editeAmountItem(fIdx, sInd, newAmount, widget.plan.id!);
 
-                                        // categoryController.dispose();
-                                        // amountController.dispose();
-                                        // detailController.dispose();
+                                          // categoryController.dispose();
+                                          // amountController.dispose();
+                                          // detailController.dispose();
 
-                                        Get.back();
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                          padding: EdgeInsets.zero,
-                                          backgroundColor: Colors.black87,
-                                          side: BorderSide(color: Theme.of(context).colorScheme.secondary),
-                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                      child: const Text(
-                                        "수정",
-                                        style: TextStyle(color: Colors.white),
-                                      )),
-                                  ElevatedButton(
-                                      onPressed: () {
-                                        context.read<AccountProvider>().removeAmountItem(fIdx, sInd, widget.plan.id!);
-                                        categoryController.dispose();
-                                        amountController.dispose();
-                                        detailController.dispose();
-                                        Get.back();
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                          padding: EdgeInsets.zero,
-                                          backgroundColor: Theme.of(context).colorScheme.secondary,
-                                          side: BorderSide(color: Theme.of(context).colorScheme.secondary),
-                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                      child: Text(
-                                        "삭제",
-                                        style: TextStyle(color: Theme.of(context).colorScheme.surface),
-                                      )),
+                                          Get.back();
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                            padding: EdgeInsets.zero,
+                                            backgroundColor: Colors.black87,
+                                            side: BorderSide(color: Theme.of(context).colorScheme.secondary),
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                                        child: const Text(
+                                          "수정",
+                                          style: TextStyle(color: Colors.white),
+                                        )),
+                                  ),
+                                  SizedBox(
+                                    width: 80,
+                                    child: ElevatedButton(
+                                        onPressed: () {
+                                          context.read<AccountProvider>().removeAmountItem(fIdx, sInd, widget.plan.id!);
+                                          categoryController.dispose();
+                                          amountController.dispose();
+                                          detailController.dispose();
+                                          Get.back();
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                            padding: EdgeInsets.zero,
+                                            backgroundColor: Theme.of(context).colorScheme.secondary,
+                                            side: BorderSide(color: Theme.of(context).colorScheme.secondary),
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                                        child: Text(
+                                          "삭제",
+                                          style: TextStyle(color: Theme.of(context).colorScheme.surface),
+                                        )),
+                                  ),
                                 ],
                               ),
                             )

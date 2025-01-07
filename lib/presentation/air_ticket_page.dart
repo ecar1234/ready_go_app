@@ -136,12 +136,6 @@ class _AirTicketPageState extends State<AirTicketPage> {
                           )),
                       onPressed: () async {
                         _showImageSourceDialog("departure");
-
-                        // final imgProvider = context.read<ImagesProvider>();
-                        // final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-                        // if (image != null) {
-                        //   imgProvider.addDepartureImage(image, widget.planId);
-                        // }
                       },
                       child: const Icon(Icons.add)))
             ],
@@ -166,7 +160,11 @@ class _AirTicketPageState extends State<AirTicketPage> {
                 Navigator.of(context).pop(); // 다이얼로그 닫기
                 final XFile? image = await picker.pickImage(source: ImageSource.camera); // 카메라에서 이미지 선택
                 if (image != null) {
-                  imgProvider.addDepartureImage(image, widget.planId);
+                  if(type == "departure"){
+                    imgProvider.addDepartureImage(image, widget.planId);
+                  }else if(type == "arrival"){
+                    imgProvider.addArrivalImage(image, widget.planId);
+                  }
                 }
               },
               child: const Text("카메라"),
@@ -255,11 +253,6 @@ class _AirTicketPageState extends State<AirTicketPage> {
                           )),
                       onPressed: () async {
                         _showImageSourceDialog("arrival");
-                        // final imgProvider = context.read<ImagesProvider>();
-                        // final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-                        // if (image != null) {
-                        //   imgProvider.addArrivalImage(image, widget.planId);
-                        // }
                       },
                       child: const Icon(Icons.add)))
             ],

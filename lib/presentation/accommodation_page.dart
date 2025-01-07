@@ -199,12 +199,15 @@ class _AccommodationPageState extends State<AccommodationPage> {
                               child: TextField(
                                 controller: _paymentController,
                                 onChanged: _onChanged,
+                                maxLines: 1,
+                                maxLength: 8,
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                 decoration: const InputDecoration(
                                   label: Text(
                                     "결제금액",
                                   ),
+                                  counterText: ""
                                 ),
                               ),
                             )
@@ -289,11 +292,14 @@ class _AccommodationPageState extends State<AccommodationPage> {
                             child: TextField(
                               controller: _periodController,
                               onChanged: _onChanged,
+                              maxLines: 1,
+                              maxLength: 2,
                               keyboardType: TextInputType.number,
                               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                               textAlign: TextAlign.end,
                               decoration: const InputDecoration(
                                 label: Text("일정"),
+                                counterText: ""
                               ),
                             ),
                           ),
@@ -324,10 +330,13 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                   child: TextField(
                                     controller: _checkInController,
                                     onChanged: _onChanged,
+                                    maxLines: 1,
+                                    maxLength: 2,
                                     textAlign: TextAlign.end,
                                     keyboardType: TextInputType.number,
                                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                     decoration: InputDecoration(
+                                      counterText: "",
                                         border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10))),
                                   ),
                                 ),
@@ -348,10 +357,13 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                   child: TextField(
                                     controller: _checkOutController,
                                     onChanged: _onChanged,
+                                    maxLines: 1,
+                                    maxLength: 2,
                                     textAlign: TextAlign.end,
                                     keyboardType: TextInputType.number,
                                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                     decoration: InputDecoration(
+                                      counterText: "",
                                         border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10))),
                                   ),
                                 ),
@@ -393,37 +405,37 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                   onPressed: () {
                                     if (_nameController.text.isEmpty) {
                                       Get.snackbar("입력 정보 확인", "숙소명을 입력해 주세요",
-                                          colorText: Colors.white, backgroundColor: Colors.black87, snackPosition: SnackPosition.BOTTOM);
+                                          colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface, snackPosition: SnackPosition.BOTTOM);
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("여행 종료일 보다 이후 날짜로 설정 할 수 없습니다.")));
                                       return;
                                     }
                                     if (_addressController.text.isEmpty) {
                                       Get.snackbar("입력 정보 확인", "주소를 입력해 주세요.",
-                                          colorText: Colors.white, backgroundColor: Colors.black87, snackPosition: SnackPosition.BOTTOM);
+                                          colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface, snackPosition: SnackPosition.BOTTOM);
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("숙소 주소를 확인해 주세요")));
                                       return;
                                     }
                                     if (_paymentController.text.isEmpty) {
                                       Get.snackbar("입력 정보 확인", "숙박 가격을 입력해 주세요.",
-                                          colorText: Colors.white, backgroundColor: Colors.black87, snackPosition: SnackPosition.BOTTOM);
+                                          colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface, snackPosition: SnackPosition.BOTTOM);
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("숙소 가격을 확인해 주세요")));
                                       return;
                                     }
                                     if (_periodController.text.isEmpty) {
                                       Get.snackbar("입력 정보 확인", "숙박 일 수를 입력해 주세요.",
-                                          colorText: Colors.white, backgroundColor: Colors.black87, snackPosition: SnackPosition.BOTTOM);
+                                          colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface, snackPosition: SnackPosition.BOTTOM);
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("숙박 기간을 확인해 주세요")));
                                       return;
                                     }
                                     if (_checkInController.text.isEmpty) {
                                       Get.snackbar("입력 정보 확인", "체크인 시간을 입력해 주세요.",
-                                          colorText: Colors.white, backgroundColor: Colors.black87, snackPosition: SnackPosition.BOTTOM);
+                                          colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface, snackPosition: SnackPosition.BOTTOM);
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("체크인 시간을 확인해 주세요")));
                                       return;
                                     }
                                     if (_checkOutController.text.isEmpty) {
                                       Get.snackbar("입력 정보 확인", "체크 아웃 시간을 입력해 주세요.",
-                                          colorText: Colors.white, backgroundColor: Colors.black87, snackPosition: SnackPosition.BOTTOM);
+                                          colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface, snackPosition: SnackPosition.BOTTOM);
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("체크아웃 시간을 확인해 주세요")));
                                       return;
                                     }
