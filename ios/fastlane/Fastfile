@@ -61,12 +61,11 @@ platform :ios do
 
   desc "Deploy testFlight"
   lane :beta do
-    clean
     build
     upload_to_testFlight(
       apple_id: "38DCD6F7UP",
       app_identifier: "com.jk.readygo.app",
-      ipa: "../build/ios",
+      ipa: "./ready_go_project/build/ios",
       skip_waiting_for_build_processing: true
     )
   end

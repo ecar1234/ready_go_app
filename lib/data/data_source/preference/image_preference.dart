@@ -140,4 +140,32 @@ class ImagePreference {
     pref.remove("arrivalImg$id");
     pref.remove("departureImg$id");
   }
+
+  Future<XFile?> getPassImg()async{
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    try {
+      String? path = pref.getString("passportImg");
+      if(path != null){
+        XFile? img = XFile(path);
+        return img;
+      }else {
+        return null;
+      }
+    } on Exception catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+  }
+  Future<int> setPassImg(String path)async{
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+    try {
+      pref.setString("passportImg", path);
+      return 200;
+    } on Exception catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+
+  }
 }

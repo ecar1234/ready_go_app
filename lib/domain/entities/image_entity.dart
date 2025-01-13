@@ -78,5 +78,15 @@ class ImageEntity implements ImageLocalDataRepo {
     await pref.removeAllData(id);
   }
 
+  @override
+  Future<XFile?> getPassportImg() async {
+    XFile? pass = await pref.getPassImg();
+    return pass;
+  }
 
+  @override
+  Future<int> setPassportImg(String path) async{
+    int result = await pref.setPassImg(path);
+    return result;
+  }
 }

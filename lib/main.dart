@@ -3,6 +3,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/presentation/main_page.dart';
 import 'package:ready_go_project/provider/admob_provider.dart';
+import 'package:ready_go_project/provider/passport_provider.dart';
 import 'package:ready_go_project/provider/theme_mode_provider.dart';
 import 'package:ready_go_project/service_locator.dart';
 
@@ -27,7 +28,8 @@ void main() async {
       ChangeNotifierProvider(create: (_) => AccountProvider()),
       ChangeNotifierProvider(create: (_) => AccommodationProvider()),
       ChangeNotifierProvider(create: (_) => ThemeModeProvider()),
-      ChangeNotifierProvider(create: (_) => AdmobProvider())
+      ChangeNotifierProvider(create: (_) => AdmobProvider()),
+      ChangeNotifierProvider(create: (_) => PassportProvider())
     ],
     child: const MainPage(),)
   );

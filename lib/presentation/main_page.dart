@@ -7,10 +7,13 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:open_file/open_file.dart';
 import 'package:ready_go_project/bloc/data_bloc.dart';
 import 'package:ready_go_project/presentation/add_plan_page.dart';
 import 'package:ready_go_project/presentation/option_page.dart';
 import 'package:ready_go_project/presentation/plan_page.dart';
+import 'package:ready_go_project/provider/passport_provider.dart';
 import 'package:ready_go_project/provider/roaming_provider.dart';
 import 'package:ready_go_project/provider/accommodation_provider.dart';
 import 'package:ready_go_project/provider/account_provider.dart';
@@ -128,23 +131,99 @@ class MainPage2 extends StatefulWidget {
 }
 
 class _MainPage2State extends State<MainPage2> {
+  ImagePicker picker = ImagePicker();
   @override
   Widget build(BuildContext context) {
     final list = context.watch<PlanListProvider>().planList;
     bool isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
-
+    XFile? passImg = context.watch<PassportProvider>().passport;
     context.read<AdmobProvider>().loadAdBanner();
 
     return BlocBuilder<DataBloc, DataState>(builder: (context, state) {
       if (state.state == DataStatus.beforePlanList) {
         context.read<PlanListProvider>().getPlanList();
         context.read<DataBloc>().add(DataLoadingPlanListEvent());
+        context.read<PassportProvider>().getPassImg();
       }
       return Scaffold(
         appBar: AppBar(
           leading: IconButton(onPressed: () {}, icon: Image.asset('assets/images/logo_white.png')),
           leadingWidth: 120,
           actions: [
+            Stack(children: [
+              IconButton(
+                  onPressed: () {
+                    final render = context.findRenderObject() as RenderBox;
+                    final local = render.globalToLocal(const Offset(0, 0));
+                    showMenu(context: context, position: RelativeRect.fromLTRB(local.dy + 40, local.dy + 110, local.dx, local.dy), items: [
+                      PopupMenuItem(
+                        child: Text("여권 등록 및 수정"),
+                        onTap: () {
+                          final provider = context.read<PassportProvider>();
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text("이미지 선택"),
+                                content: const Text("갤러리 또는 카메라 중 하나를 선택하세요."),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () async {
+                                      Navigator.of(context).pop(); // 다이얼로그 닫기
+                                      final XFile? image = await picker.pickImage(source: ImageSource.camera); // 카메라에서 이미지 선택
+                                      if (image != null) {
+                                        provider.setPassImg(image);
+                                      }
+                                    },
+                                    child: const Text("카메라"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      Navigator.of(context).pop(); // 다이얼로그 닫기
+                                      final XFile? image = await picker.pickImage(source: ImageSource.gallery); // 갤러리에서 이미지 선택
+                                      if (image != null) {
+                                        provider.setPassImg(image);
+                                      }
+                                    },
+                                    child: const Text("갤러리"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+                      PopupMenuItem(
+                        child: Text("여권 보기"),
+                        onTap: () {
+                          if(passImg != null){
+                            OpenFile.open(passImg.path);
+                          }else {
+                            Get.snackbar("여권 이미지 확인", "여권 이미지가 저장된 상황에서만 가능합니다.");
+                          }
+                        },
+                      ),
+                      // PopupMenuItem(
+                      //   child: Text("여권 삭제"),
+                      //   onTap: () {
+                      //     context.read<PassportProvider>().deleteTest();
+                      //   },
+                      // ),
+                    ]);
+                  },
+                  icon: const Icon(Icons.person_pin_rounded)),
+              Positioned(
+                  top: 10,
+                  left: 10,
+                  child: Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(50), color: passImg == null ? Colors.redAccent : Colors.green),
+                  ))
+            ]),
+            const SizedBox(
+              width: 10,
+            ),
             IconButton(
                 onPressed: () {
                   Get.to(() => const OptionPage());
@@ -254,7 +333,9 @@ class _MainPage2State extends State<MainPage2> {
                     backgroundColor: Theme.of(context).colorScheme.onPrimary,
                     borderRadius: BorderRadius.circular(10),
                     onPressed: (context) {
-                      Get.to(() => AddPlanPage(plan: list[idx],));
+                      Get.to(() => AddPlanPage(
+                            plan: list[idx],
+                          ));
                     }),
                 SlidableAction(
                     icon: Icons.delete,

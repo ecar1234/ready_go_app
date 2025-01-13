@@ -8,5 +8,7 @@ mixin ImageLocalDataRepo {
   Future<List<XFile>> addArrivalImage(XFile image, int id);
   Future<List<XFile>> removeDepartureImage(XFile image, int id);
   Future<List<XFile>> removeArrivalImage(XFile image, int id);
+  Future<XFile?> getPassportImg();
+  Future<int> setPassportImg(String path);
   Future<void> removeAllData(int id);
 }

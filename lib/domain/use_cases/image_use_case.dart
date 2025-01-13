@@ -75,4 +75,13 @@ class ImageUseCase {
     return[[],[]];
   }
 
+  Future<int> setPassportImg(String path)async{
+    int result = await _getIt.get<ImageEntity>().setPassportImg(path);
+    return result;
+  }
+  Future<XFile?> getPassportImg()async{
+    XFile? img = await _getIt.get<ImageEntity>().getPassportImg();
+    return img;
+  }
+
 }
