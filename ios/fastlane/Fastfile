@@ -65,7 +65,7 @@ platform :ios do
     upload_to_testFlight(
       apple_id: "38DCD6F7UP",
       app_identifier: "com.jk.readygo.app",
-      ipa: "./ready_go_project/build/ios",
+      ipa: "./ready_go_project/build/ios/Runner.ipa",
       skip_waiting_for_build_processing: true
     )
   end

@@ -58,6 +58,7 @@ dependencies:
   firebase_remote_config: ^5.1.5
   google_mobile_ads: ^5.2.0
   grpc: ^4.0.1
+  path_provider: ^2.1.5
 
 
 

@@ -24,8 +24,7 @@ class PassportProvider with ChangeNotifier {
   }
 
   Future<void> setPassImg(XFile img) async {
-    String path = img.path;
-    int result = await _getIt.get<ImageUseCase>().setPassportImg(path);
+    int result = await _getIt.get<ImageUseCase>().setPassportImg(img);
     if (result == 200) {
       _passImg = img;
       log("set passport img result code : $result");

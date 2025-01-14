@@ -1,9 +1,12 @@
 
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:ready_go_project/domain/entities/image_entity.dart';
+
 
 
 class ImageUseCase {
@@ -75,7 +78,9 @@ class ImageUseCase {
     return[[],[]];
   }
 
-  Future<int> setPassportImg(String path)async{
+  Future<int> setPassportImg(XFile img)async{
+    Directory dir = await getApplicationDocumentsDirectory();
+    String path = "${dir.path}/${img.name}";
     int result = await _getIt.get<ImageEntity>().setPassportImg(path);
     return result;
   }
