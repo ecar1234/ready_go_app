@@ -290,7 +290,7 @@ class _RoamingPageState extends State<RoamingPage> {
                                       context: context,
                                       builder: (context) => AlertDialog(
                                             actionsAlignment: MainAxisAlignment.center,
-                                            content: const Text("삭제 하시겠습니까?"),
+                                            content: const Text("SM-DP주소를 삭제 하시겠습니까?",textAlign: TextAlign.center,),
                                             actions: [
                                               SizedBox(
                                                 child: ElevatedButton(
@@ -381,7 +381,8 @@ class _RoamingPageState extends State<RoamingPage> {
                                   showDialog(
                                       context: context,
                                       builder: (context) => AlertDialog(
-                                            content: const Text("삭제 하시겠습니까?"),
+                                            content: const Text("활성화 코드를 삭제 하시겠습니까?",textAlign: TextAlign.center),
+                                            actionsAlignment: MainAxisAlignment.center,
                                             actions: [
                                               SizedBox(
                                                 child: ElevatedButton(
@@ -822,20 +823,19 @@ class _RoamingPageState extends State<RoamingPage> {
                     child: ElevatedButton(
                         onPressed: () {
                           if (dpAddressController.text.isEmpty) {
-                            Get.snackbar(
-                              "입력정보 확인",
-                              "SM-DP 주소를 입력해 주세요",
-                                colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface
-                            );
+                            Get.snackbar("입력정보 확인", "SM-DP 주소를 입력해 주세요",
+                                colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
                             return;
                           }
                           if (activeCodeController.text.isEmpty) {
-                            Get.snackbar("입력정보 확인", "활성화 코드를 입력해 주세요", colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
+                            Get.snackbar("입력정보 확인", "활성화 코드를 입력해 주세요",
+                                colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
                             return;
                           }
 
                           if (activeCodeController.text == code && dpAddressController.text == address) {
-                            Get.snackbar("입력정보 확인", "변경 내용이 없습니다.", colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
+                            Get.snackbar("입력정보 확인", "변경 내용이 없습니다.",
+                                colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
                             return;
                           }
 

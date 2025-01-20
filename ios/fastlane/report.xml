@@ -5,12 +5,47 @@
     
     
       
-      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000325">
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000315">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="1: upload_to_testflight" time="86.459608">
+      <testcase classname="fastlane.lanes" name="1: Switch to ios build lane" time="0.000551">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="2: Switch to ios get_version_code lane" time="0.000135">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="3: Switch to ios get_version_name lane" time="0.000138">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="4: flutter clean" time="13.809775">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="5: flutter pub get" time="5.364965">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="6: flutter build ios --release --build-number\=138 --build-name\=0.138" time="112.710063">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="7: build_app" time="178.406917">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="8: upload_to_testflight" time="82.810739">
         
       </testcase>
     
