@@ -377,7 +377,7 @@ class _MainPage2State extends State<MainPage2> {
                             Text(
                                 "${DateUtil.dateToString(list[idx].schedule?.first ?? DateTime.now())} ~ ${DateUtil.dateToString(list[idx].schedule?.last ?? DateTime.now())}"),
                             const Gap(10),
-                            list[idx].schedule!.last!.isAfter(DateTime.now()) ? const Text("(준비중)") : const Text("(완료)")
+                           DateUtil.isSameDay(DateTime.now(), list[idx].schedule!.first!) ? const Text("(여행중)") : (list[idx].schedule!.last!.isAfter(DateTime.now()) ? const Text("(준비중)") : const Text("(완료)"))
                           ],
                         ),
                       )
