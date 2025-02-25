@@ -1,12 +1,14 @@
-import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:ready_go_project/domain/use_cases/image_use_case.dart';
+import 'package:logger/logger.dart';
+
+import '../../repositories/image_repo.dart';
 
 class ImagesProvider with ChangeNotifier {
   final GetIt _getIt = GetIt.I;
+  final logger = Logger();
   late List<XFile> _departureImage;
   late List<XFile> _arrivalImage;
 
@@ -14,13 +16,14 @@ class ImagesProvider with ChangeNotifier {
 
   List<XFile> get arrivalImg => _arrivalImage;
 
+
   Future<void> getImgList(int id) async {
     try {
-      var imgList = await _getIt.get<ImageUseCase>().getImageList(id);
+      var imgList = await _getIt.get<ImageRepo>().getImageList(id);
       _departureImage = imgList[0];
       _arrivalImage = imgList[1];
     } catch (ex) {
-      log(ex.toString());
+      logger.e(ex.toString());
       rethrow;
     }
 
@@ -29,10 +32,10 @@ class ImagesProvider with ChangeNotifier {
 
   Future<void> addDepartureImage(XFile image, int id) async {
     try {
-      List<XFile> list = await GetIt.I.get<ImageUseCase>().addDepartureImg(image, id);
+      List<XFile> list = await GetIt.I.get<ImageRepo>().addDepartureImg(image, id);
       _departureImage = list;
     } on Exception catch (e) {
-      log(e.toString());
+      logger.e(e.toString());
       rethrow;
     }
     notifyListeners();
@@ -40,10 +43,10 @@ class ImagesProvider with ChangeNotifier {
 
   Future<void> addArrivalImage(XFile image, int id) async {
     try {
-      List<XFile> list = await GetIt.I.get<ImageUseCase>().addArrivalImg(image, id);
+      List<XFile> list = await GetIt.I.get<ImageRepo>().addArrivalImg(image, id);
       _arrivalImage = list;
     } on Exception catch (e) {
-      log(e.toString());
+      logger.e(e.toString());
       rethrow;
     }
     notifyListeners();
@@ -51,10 +54,14 @@ class ImagesProvider with ChangeNotifier {
 
   Future<void> removeDepartureImage(XFile image, int id) async {
     try {
-      List<XFile> list = await GetIt.I.get<ImageUseCase>().removeDepartureImg(image, id);
-      _departureImage = list;
+      List<XFile>? list = await GetIt.I.get<ImageRepo>().removeDepartureImg(image, id);
+      if(list != null){
+        _departureImage = list;
+      }else {
+        _departureImage = [];
+      }
     } on Exception catch (e) {
-      log(e.toString());
+      logger.e(e.toString());
       rethrow;
     }
     notifyListeners();
@@ -62,17 +69,21 @@ class ImagesProvider with ChangeNotifier {
 
   Future<void> removeArrivalImage(XFile image, int id) async {
     try {
-      List<XFile> list = await GetIt.I.get<ImageUseCase>().removeArrivalImg(image, id);
-      _arrivalImage = list;
+      List<XFile>? list = await GetIt.I.get<ImageRepo>().removeArrivalImg(image, id);
+      if(list != null){
+        _arrivalImage = list;
+      }else {
+        _arrivalImage = [];
+      }
     } on Exception catch (e) {
-      log(e.toString());
+      logger.e(e.toString());
       rethrow;
     }
     notifyListeners();
   }
 
   Future<void> removeAllData(int id)async{
-    await _getIt.get<ImageUseCase>().removeAllData(id);
+    await _getIt.get<ImageRepo>().removeAllData(id);
     _arrivalImage = [];
     _departureImage = [];
 

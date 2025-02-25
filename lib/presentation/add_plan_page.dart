@@ -1,17 +1,19 @@
 import 'dart:async';
-import 'dart:developer';
+
 
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
-import 'package:ready_go_project/provider/admob_provider.dart';
+
 import 'package:ready_go_project/util/date_util.dart';
 
 import '../data/models/plan_model/plan_model.dart';
-import '../provider/plan_list_provider.dart';
+import '../domain/entities/provider/admob_provider.dart';
+import '../domain/entities/provider/plan_list_provider.dart';
 
 class AddPlanPage extends StatefulWidget {
   final PlanModel? plan;
@@ -23,6 +25,7 @@ class AddPlanPage extends StatefulWidget {
 }
 
 class _AddPlanPageState extends State<AddPlanPage> {
+  final logger = Logger();
   TextEditingController nationController = TextEditingController();
   List<DateTime?> _dates = [];
 
@@ -34,7 +37,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
     }
     _debounce = Timer(const Duration(milliseconds: 500), () {
       if (kDebugMode) {
-        log(value);
+        logger.d(value);
       }
     });
   }
@@ -180,7 +183,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                           ),
                         ));
                   } else {
-                    log("banner is null on add plan page");
+                    logger.d("banner is null on add plan page");
                     return const SizedBox();
                   }
                 })

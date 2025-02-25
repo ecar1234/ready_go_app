@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -6,22 +5,23 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:logger/logger.dart';
 import 'package:ready_go_project/bloc/data_bloc.dart';
 import 'package:ready_go_project/presentation/accommodation_page.dart';
 import 'package:ready_go_project/presentation/account_book_page.dart';
 import 'package:ready_go_project/presentation/air_ticket_page.dart';
 import 'package:ready_go_project/presentation/roaming_page.dart';
 import 'package:ready_go_project/presentation/supplies_page.dart';
-import 'package:ready_go_project/provider/admob_provider.dart';
-import 'package:ready_go_project/provider/theme_mode_provider.dart';
-// import 'package:ready_go_project/presentation/tour_page.dart';
+
 
 import '../data/models/plan_model/plan_model.dart';
-import '../provider/roaming_provider.dart';
-import '../provider/accommodation_provider.dart';
-import '../provider/account_provider.dart';
-import '../provider/images_provider.dart';
-import '../provider/supplies_provider.dart';
+import '../domain/entities/provider/accommodation_provider.dart';
+import '../domain/entities/provider/account_provider.dart';
+import '../domain/entities/provider/admob_provider.dart';
+import '../domain/entities/provider/images_provider.dart';
+import '../domain/entities/provider/roaming_provider.dart';
+import '../domain/entities/provider/supplies_provider.dart';
+import '../domain/entities/provider/theme_mode_provider.dart';
 import '../util/date_util.dart';
 
 class PlanPage extends StatefulWidget {
@@ -140,6 +140,7 @@ class _PlanPageState extends State<PlanPage> {
         ),
         Builder(builder: (context) {
           final BannerAd? bannerAd = context.watch<AdmobProvider>().bannerAd;
+          final logger = Logger();
           if(bannerAd != null){
             return Positioned(
                 left: 20,
@@ -153,7 +154,7 @@ class _PlanPageState extends State<PlanPage> {
                   ),
                 ));
           }else{
-            log("banner is null on plan page");
+            logger.d("banner is null on plan page");
             return const SizedBox();
           }
         })

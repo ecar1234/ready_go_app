@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'dart:developer';
 
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/account_model/account_model.dart';
@@ -10,6 +10,7 @@ class AccountPreference {
   static final AccountPreference _singleton = AccountPreference._internal();
   static AccountPreference get singleton => _singleton;
 
+  final logger = Logger();
   // account
   Future<AccountModel> getAccountInfo(int id)async{
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -31,7 +32,7 @@ class AccountPreference {
         );
       }
     }catch(ex){
-      log(ex.toString());
+      logger.e(ex.toString());
       rethrow;
     }
   }

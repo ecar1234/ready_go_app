@@ -1,40 +1,41 @@
-import 'dart:developer';
-
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:logger/logger.dart';
 import 'package:ready_go_project/data/models/roaming_model/roaming_period_model.dart';
+import 'package:ready_go_project/domain/repositories/roaming_repo.dart';
 import 'package:ready_go_project/domain/use_cases/roaming_use_case.dart';
 
 class RoamingProvider with ChangeNotifier {
   final GetIt _getIt = GetIt.I;
+  final logger = Logger();
 
   List<XFile>? _imageList = [];
   String? _dpAddress;
   String? _code;
   RoamingPeriodModel? _period;
 
-  List<XFile> get imageList => _imageList!;
+  List<XFile>? get imageList => _imageList;
 
-  String get dpAddress => _dpAddress!;
+  String? get dpAddress => _dpAddress;
 
-  String get code => _code!;
+  String? get code => _code;
 
-  RoamingPeriodModel get period => _period!;
+  RoamingPeriodModel? get period => _period;
 
   Future<void> getRoamingDate(int id) async {
     try {
-      var data = await _getIt.get<RoamingUseCase>().getRoamingData(id);
-      if (data.imgList!.isEmpty) {
+      var data = await _getIt.get<RoamingRepo>().getRoamingData(id);
+      if(data.imgList != null && data.imgList!.isNotEmpty){
+        _imageList = data.imgList!.map((path) => XFile(path)).toList();
+      }else{
         _imageList = [];
-      } else {
-        _imageList = data.imgList!.map((img) => XFile(img)).toList();
       }
       _dpAddress = data.dpAddress;
       _code = data.activeCode;
       _period = data.period;
     } on Exception catch (e) {
-      log(e.toString());
+      logger.e(e.toString());
       rethrow;
     }
 
@@ -42,70 +43,72 @@ class RoamingProvider with ChangeNotifier {
   }
 
   Future<void> addImage(XFile image, int id) async {
-    var list = await _getIt.get<RoamingUseCase>().addImage(image, id);
+    var list = await _getIt.get<RoamingRepo>().addRoamingImage(image, id);
     _imageList = list;
     notifyListeners();
   }
 
   Future<void> removeImage(XFile image, int id) async {
-    var list = await _getIt.get<RoamingUseCase>().removeImage(image, id);
+    var list = await _getIt.get<RoamingRepo>().removeRoamingImage(image, id);
     _imageList = list;
     notifyListeners();
   }
 
   Future<void> enterAddress(String addr, int id) async {
     _dpAddress = addr;
-    await _getIt.get<RoamingUseCase>().enterAddress(addr, id);
+    await _getIt.get<RoamingRepo>().enterAddress(addr, id);
 
     notifyListeners();
   }
 
   Future<void> removeAddress(int id) async {
     _dpAddress = "";
-    await _getIt.get<RoamingUseCase>().removeAddress(id);
+    await _getIt.get<RoamingRepo>().removeAddress(id);
 
     notifyListeners();
   }
 
   Future<void> enterCode(String code, int id) async {
     _code = code;
-    await _getIt.get<RoamingUseCase>().enterCode(code, id);
+    await _getIt.get<RoamingRepo>().enterCode(code, id);
 
     notifyListeners();
   }
 
-
   Future<void> removeCode(int id) async {
     _code = "";
-    await _getIt.get<RoamingUseCase>().removeCode(id);
+    await _getIt.get<RoamingRepo>().removeCode(id);
 
     notifyListeners();
   }
 
   Future<void> setPeriodDate(int day, int id) async {
-    var periodData = await _getIt.get<RoamingUseCase>().setPeriodDate(day, id);
-    _period = periodData;
-
-    notifyListeners();
+    final periodData = await _getIt.get<RoamingRepo>().setPeriodDate(day, id);
+    if (periodData != null) {
+      _period = periodData;
+      notifyListeners();
+    } else {
+      logger.e("set period return is null");
+    }
   }
 
   Future<void> startPeriod(int id) async {
-    var periodData = await _getIt.get<RoamingUseCase>().startPeriod(id);
+    var periodData = await _getIt.get<RoamingRepo>().startPeriod(id);
     _period = periodData;
 
     notifyListeners();
   }
 
   Future<void> resetPeriod(int id) async {
-    var periodData = await _getIt.get<RoamingUseCase>().resetPeriod(id);
+    var periodData = await _getIt.get<RoamingRepo>().resetPeriod(id);
     _period = periodData;
     notifyListeners();
   }
 
-  Future<void> removeAllData(int id)async{
-    await _getIt.get<RoamingUseCase>().removeAllData(id);
+  Future<void> removeAllData(int id) async {
+    await _getIt.get<RoamingRepo>().removeAllData(id);
     _imageList = null;
-    _dpAddress =null;
+    _dpAddress = null;
     _code = null;
     _period = null;
 

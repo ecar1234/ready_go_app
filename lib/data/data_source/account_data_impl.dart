@@ -1,9 +1,9 @@
 
 import 'package:ready_go_project/data/data_source/preference/account_preference.dart';
 import 'package:ready_go_project/data/models/account_model/account_model.dart';
-import 'package:ready_go_project/domain/repositories/account_local_data_repo.dart';
+import 'package:ready_go_project/data/repositories/account_local_data_repo.dart';
 
-class AccountEntity implements AccountLocalDataRepo {
+class AccountDataImpl implements AccountLocalDataRepo {
   AccountPreference get pref => AccountPreference.singleton;
 
   @override

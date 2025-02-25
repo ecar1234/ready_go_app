@@ -1,15 +1,16 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/supply_model/supply_model.dart';
 
-import '../provider/admob_provider.dart';
-import '../provider/supplies_provider.dart';
+import '../domain/entities/provider/admob_provider.dart';
+import '../domain/entities/provider/supplies_provider.dart';
+
 
 class SuppliesPage extends StatefulWidget {
   final int planId;
@@ -122,6 +123,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
         ),
           Builder(builder: (context) {
             final BannerAd? bannerAd = context.watch<AdmobProvider>().bannerAd;
+            final logger = Logger();
             if (bannerAd != null) {
               return Positioned(
                   left: 20,
@@ -135,7 +137,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
                     ),
                   ));
             }else{
-              log("banner is null on supplies page");
+              logger.d("banner is null on supplies page");
               return const SizedBox();
             }
           })

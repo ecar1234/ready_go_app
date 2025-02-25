@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -8,12 +7,13 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:logger/logger.dart';
 import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/roaming_model/roaming_period_model.dart';
 
-import '../provider/roaming_provider.dart';
-import '../provider/admob_provider.dart';
+import '../domain/entities/provider/admob_provider.dart';
+import '../domain/entities/provider/roaming_provider.dart';
 
 class RoamingPage extends StatefulWidget {
   final int planId;
@@ -28,7 +28,7 @@ class _RoamingPageState extends State<RoamingPage> {
   ImagePicker picker = ImagePicker();
   TextEditingController dpAddressController = TextEditingController();
   TextEditingController activeCodeController = TextEditingController();
-
+  final logger = Logger();
   int? selectedValue;
 
   Timer? _debounce;
@@ -51,27 +51,21 @@ class _RoamingPageState extends State<RoamingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<XFile> list = context.watch<RoamingProvider>().imageList;
-    final String code = context.watch<RoamingProvider>().code;
-    final String address = context.watch<RoamingProvider>().dpAddress;
-    final RoamingPeriodModel period = context.watch<RoamingProvider>().period;
+    final list = context.watch<RoamingProvider>().imageList;
+    final code = context.watch<RoamingProvider>().code;
+    final address = context.watch<RoamingProvider>().dpAddress;
+    final period = context.watch<RoamingProvider>().period??RoamingPeriodModel();
 
-    context.read<AdmobProvider>().loadAdBanner();
-    if (address.isNotEmpty) {
+    if (address != null && address.isNotEmpty) {
       dpAddressController.text = address;
     }
-    if (code.isNotEmpty) {
+    if (code != null && code.isNotEmpty) {
       activeCodeController.text = code;
     }
 
-    DateTime startDate = period.startDate!;
-    DateTime endDate = period.endDate!;
-    DateTime now = DateTime.now();
-    // Duration currentDuration = now.difference(startDate);
-    Duration useDuration = now.difference(startDate);
-    Duration remainDuration = endDate.difference(now);
-    Duration totalDuration = endDate.difference(startDate);
 
+
+    context.read<AdmobProvider>().loadAdBanner();
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
@@ -100,7 +94,7 @@ class _RoamingPageState extends State<RoamingPage> {
                       // _activeCodeSection(context, code),
                       const Divider(),
                       const Gap(10),
-                      _periodSection(context, period, startDate, useDuration, remainDuration, totalDuration)
+                      _periodSection(context, period)
                     ],
                   ),
                 ),
@@ -121,7 +115,7 @@ class _RoamingPageState extends State<RoamingPage> {
                       ),
                     ));
               } else {
-                log("banner is null on roaming page");
+                logger.d("banner is null on roaming page");
                 return const SizedBox();
               }
             })
@@ -131,7 +125,7 @@ class _RoamingPageState extends State<RoamingPage> {
     );
   }
 
-  Widget _voucherImageSection(BuildContext context, List<XFile> list) {
+  Widget _voucherImageSection(BuildContext context, List<XFile>? list) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -140,7 +134,7 @@ class _RoamingPageState extends State<RoamingPage> {
           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
         ),
         SizedBox(
-          width: list.isEmpty ? 100 : (list.length * 110) + 100,
+          width: list!.isEmpty ? 100 : (list.length * 110) + 100,
           height: 120,
           child: Row(
             children: [
@@ -187,7 +181,7 @@ class _RoamingPageState extends State<RoamingPage> {
                 width: (list.length * 110) + 100 < MediaQuery.sizeOf(context).width ? 100 : 50,
                 child: ElevatedButton(
                     onPressed: () async {
-                      _showImageSourceDialog(context);
+                      await _showImageSourceDialog(context);
                       // final imgProvider = context.read<RoamingProvider>();
                       // final XFile? image = await picker.pickImage(source: ImageSource.gallery);
                       // if (image != null) {
@@ -208,7 +202,7 @@ class _RoamingPageState extends State<RoamingPage> {
     );
   }
 
-  Widget _codeSection(BuildContext context, String address, String code) {
+  Widget _codeSection(BuildContext context, String? address, String? code) {
     return SizedBox(
       child: Column(
         children: [
@@ -221,7 +215,7 @@ class _RoamingPageState extends State<RoamingPage> {
                   "활성화 코드",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
-                if (code.isEmpty || address.isEmpty)
+                if ((code != null && code.isEmpty) || (address != null && address.isEmpty))
                   SizedBox(
                       height: 40,
                       child: TextButton(
@@ -259,7 +253,7 @@ class _RoamingPageState extends State<RoamingPage> {
                       "SM-DP주소",
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
-                    if (address.isNotEmpty)
+                    if (address != null && address.isNotEmpty)
                       SizedBox(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -290,7 +284,10 @@ class _RoamingPageState extends State<RoamingPage> {
                                       context: context,
                                       builder: (context) => AlertDialog(
                                             actionsAlignment: MainAxisAlignment.center,
-                                            content: const Text("SM-DP주소를 삭제 하시겠습니까?",textAlign: TextAlign.center,),
+                                            content: const Text(
+                                              "SM-DP주소를 삭제 하시겠습니까?",
+                                              textAlign: TextAlign.center,
+                                            ),
                                             actions: [
                                               SizedBox(
                                                 child: ElevatedButton(
@@ -334,7 +331,7 @@ class _RoamingPageState extends State<RoamingPage> {
               ),
               SizedBox(
                   child: Text(
-                address.isEmpty ? "SM-DP 주소를 등록해 주세요" : address,
+                address != null && address.isNotEmpty  ? address : "SM-DP 주소를 등록해 주세요",
                 textAlign: TextAlign.start,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -349,7 +346,7 @@ class _RoamingPageState extends State<RoamingPage> {
                       "활성화 코드",
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
-                    if (code.isNotEmpty)
+                    if (code != null && code.isNotEmpty)
                       SizedBox(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -381,7 +378,7 @@ class _RoamingPageState extends State<RoamingPage> {
                                   showDialog(
                                       context: context,
                                       builder: (context) => AlertDialog(
-                                            content: const Text("활성화 코드를 삭제 하시겠습니까?",textAlign: TextAlign.center),
+                                            content: const Text("활성화 코드를 삭제 하시겠습니까?", textAlign: TextAlign.center),
                                             actionsAlignment: MainAxisAlignment.center,
                                             actions: [
                                               SizedBox(
@@ -426,7 +423,7 @@ class _RoamingPageState extends State<RoamingPage> {
               ),
               SizedBox(
                   child: Text(
-                code.isEmpty ? "활성화 코드를 등록해 주세요" : code,
+                code != null && code.isNotEmpty ? code : "활성화 코드를 등록해 주세요",
                 textAlign: TextAlign.start,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -438,9 +435,17 @@ class _RoamingPageState extends State<RoamingPage> {
     );
   }
 
-  Widget _periodSection(
-      BuildContext context, RoamingPeriodModel period, DateTime startDate, Duration useDuration, Duration remainDuration, totalDuration) {
-    int? selectedValue = period.period!;
+  Widget _periodSection(BuildContext context, RoamingPeriodModel period,) {
+    int? selectedValue = period.period ?? 0;
+    DateTime startDate = period.startDate??DateTime.now();
+    DateTime endDate = period.endDate??DateTime.now();
+    DateTime now = DateTime.now();
+
+    final useDuration = now.difference(startDate!);
+    final remainDuration = endDate.difference(now);
+    final totalDuration = endDate.difference(startDate!);
+
+
     return SizedBox(
       // height: 220,
       child: Column(
@@ -456,7 +461,7 @@ class _RoamingPageState extends State<RoamingPage> {
                 ),
                 const Gap(20),
                 DropdownMenu(
-                  enabled: period.isActive == false,
+                  enabled: period.isActive == null || period.isActive == false,
                   initialSelection: selectedValue,
                   width: 120,
                   menuHeight: 300,
@@ -592,17 +597,28 @@ class _RoamingPageState extends State<RoamingPage> {
                           )),
                     ),
               const Gap(10),
-              period.isActive == true
-                  ? Text(
-                      "시작시간: ${startDate.month}월 ${startDate.day}일 ${startDate.hour}시 ${startDate.minute}분",
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                    )
-                  : const SizedBox()
+              if(period.isActive == true)
+                  SizedBox(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                            "시작: ${startDate.month}월 ${startDate.day}일 ${startDate.hour}시 ${startDate.minute}분",
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                          ),
+                        Text(
+                          "종료: ${endDate.month}월 ${endDate.day}일 ${endDate.hour}시 ${endDate.minute}분",
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                    ),
+                  )
+
             ],
           ),
           const Gap(10),
-          period.isActive == true
-              ? Column(
+         if( period.isActive == true)
+               Column(
                   children: [
                     SizedBox(
                       height: 30,
@@ -634,13 +650,13 @@ class _RoamingPageState extends State<RoamingPage> {
                     ),
                   ],
                 )
-              : const SizedBox()
+
         ],
       ),
     );
   }
 
-  void _showImageSourceDialog(BuildContext context) {
+ Future<void> _showImageSourceDialog(BuildContext context) async {
     final roamingProvider = context.read<RoamingProvider>();
     showDialog(
       context: context,
@@ -675,9 +691,9 @@ class _RoamingPageState extends State<RoamingPage> {
     );
   }
 
-  void _showSetCodeDialog(BuildContext context) {
-    String code = context.read<RoamingProvider>().code;
-    String address = context.read<RoamingProvider>().dpAddress;
+  Future<void> _showSetCodeDialog(BuildContext context) async {
+    String? code = context.read<RoamingProvider>().code;
+    String? address = context.read<RoamingProvider>().dpAddress;
 
     showModalBottomSheet(
         context: context,
@@ -725,7 +741,7 @@ class _RoamingPageState extends State<RoamingPage> {
                             onTap: () {
                               final RenderBox renderBox = context.findRenderObject() as RenderBox;
                               final localPosition = renderBox.globalToLocal(Offset(0, MediaQuery.sizeOf(context).height));
-                              log("dp : ${localPosition.dy}");
+                              logger.d("dp : ${localPosition.dy}");
                               showMenu(
                                   context: context,
                                   position: RelativeRect.fromLTRB(localPosition.dx, localPosition.dy + 50, localPosition.dx, localPosition.dy),
@@ -782,7 +798,7 @@ class _RoamingPageState extends State<RoamingPage> {
                             onTap: () {
                               final RenderBox render = context.findRenderObject() as RenderBox;
                               final localPosition = render.globalToLocal(Offset(0, MediaQuery.sizeOf(context).height));
-                              log("code : ${localPosition.dy}");
+                              logger.d("code : ${localPosition.dy}");
                               showMenu(
                                   context: context,
                                   position: RelativeRect.fromLTRB(localPosition.dx, localPosition.dy + 150, localPosition.dx, localPosition.dy),
@@ -845,7 +861,7 @@ class _RoamingPageState extends State<RoamingPage> {
                             context.read<RoamingProvider>().enterAddress(newAddress, widget.planId);
                             context.read<RoamingProvider>().enterCode(newCode, widget.planId);
                           } on Exception catch (e) {
-                            log(e.toString());
+                            logger.e(e.toString());
                             rethrow;
                           }
                           Get.back();

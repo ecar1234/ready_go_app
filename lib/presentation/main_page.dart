@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -8,23 +7,25 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:logger/logger.dart';
 import 'package:open_file/open_file.dart';
 import 'package:ready_go_project/bloc/data_bloc.dart';
 import 'package:ready_go_project/presentation/add_plan_page.dart';
 import 'package:ready_go_project/presentation/option_page.dart';
 import 'package:ready_go_project/presentation/plan_page.dart';
-import 'package:ready_go_project/provider/passport_provider.dart';
-import 'package:ready_go_project/provider/roaming_provider.dart';
-import 'package:ready_go_project/provider/accommodation_provider.dart';
-import 'package:ready_go_project/provider/account_provider.dart';
-import 'package:ready_go_project/provider/admob_provider.dart';
-import 'package:ready_go_project/provider/images_provider.dart';
-import 'package:ready_go_project/provider/supplies_provider.dart';
-import 'package:ready_go_project/provider/theme_mode_provider.dart';
 import 'package:ready_go_project/util/date_util.dart';
 
 import '../data/models/plan_model/plan_model.dart';
-import '../provider/plan_list_provider.dart';
+import '../domain/entities/provider/accommodation_provider.dart';
+import '../domain/entities/provider/account_provider.dart';
+import '../domain/entities/provider/admob_provider.dart';
+import '../domain/entities/provider/images_provider.dart';
+import '../domain/entities/provider/passport_provider.dart';
+import '../domain/entities/provider/plan_list_provider.dart';
+import '../domain/entities/provider/roaming_provider.dart';
+import '../domain/entities/provider/supplies_provider.dart';
+import '../domain/entities/provider/theme_mode_provider.dart';
+
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -277,6 +278,7 @@ class _MainPage2State extends State<MainPage2> {
           // if (kReleaseMode)
           Builder(builder: (context) {
             final BannerAd? bannerAd = context.watch<AdmobProvider>().bannerAd;
+            final logger = Logger();
             if (bannerAd != null) {
               return Positioned(
                   right: 20,
@@ -288,7 +290,7 @@ class _MainPage2State extends State<MainPage2> {
                     child: AdWidget(ad: bannerAd),
                   ));
             } else {
-              log("banner is null on main page");
+              logger.d("banner is null on main page");
               return const SizedBox();
             }
           })

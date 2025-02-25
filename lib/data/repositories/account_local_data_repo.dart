@@ -1,5 +1,5 @@
 
-import '../../data/models/account_model/account_model.dart';
+import '../models/account_model/account_model.dart';
 
 mixin AccountLocalDataRepo {
   Future<AccountModel> getAccountInfo(int id);

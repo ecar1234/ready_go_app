@@ -1,10 +1,10 @@
-import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
+import 'package:logger/logger.dart';
 import 'package:ready_go_project/data/models/account_model/account_model.dart';
 import 'package:ready_go_project/data/models/account_model/amount_model.dart';
-import 'package:ready_go_project/domain/use_cases/account_use_case.dart';
+import 'package:ready_go_project/domain/repositories/account_repo.dart';
 
 GetIt _getIt = GetIt.I;
 class AccountProvider with ChangeNotifier {
@@ -12,23 +12,25 @@ class AccountProvider with ChangeNotifier {
 
   AccountModel? get accountInfo => _accountInfo;
 
+  final logger = Logger();
+
   Future<void> getAccountInfo(int id)async{
     try{
-      var accountInfo = await GetIt.I.get<AccountUseCase>().getAccountInfo(id);
+      var accountInfo = await GetIt.I.get<AccountRepo>().getAccountInfo(id);
       _accountInfo = accountInfo;
       // throw Exception("get Account info failed!");
     }catch(ex){
-      log("exception : ${ex.toString()}");
+      logger.e("exception : ${ex.toString()}");
       rethrow;
     }
     notifyListeners();
   }
   Future<void> addAmount(AmountModel amount, int day, int id)async{
     try{
-      var account = await _getIt.get<AccountUseCase>().addAmount(amount, day, id);
+      var account = await _getIt.get<AccountRepo>().addAmount(amount, day, id);
       _accountInfo = account;
     }catch(ex){
-      log(ex.toString());
+      logger.e(ex.toString());
       rethrow;
     }
 
@@ -37,28 +39,28 @@ class AccountProvider with ChangeNotifier {
 
   Future<void> addTotalAmount(int total, int day, int id)async {
    try{
-     var account =  await _getIt.get<AccountUseCase>().addTotalAmount(total, day, id);
+     var account =  await _getIt.get<AccountRepo>().addTotalAmount(total, day, id);
      _accountInfo = account;
    }catch(ex){
-     log(ex.toString());
+     logger.e(ex.toString());
      rethrow;
    }
 
     notifyListeners();
   }
   Future<void> removeAmountItem(int firstIdx, secondIdx, int id)async{
-    var account = await _getIt.get<AccountUseCase>().removeAmountItem(firstIdx, secondIdx, id);
+    var account = await _getIt.get<AccountRepo>().removeAmountItem(firstIdx, secondIdx, id);
     _accountInfo = account;
     notifyListeners();
   }
   Future<void> editeAmountItem(int firstIdx, int secondIdx, AmountModel newAmount, int id)async{
-    var account = await _getIt.get<AccountUseCase>().editAmountItem(firstIdx, secondIdx, newAmount, id);
+    var account = await _getIt.get<AccountRepo>().editAmountItem(firstIdx, secondIdx, newAmount, id);
     _accountInfo = account;
     notifyListeners();
   }
 
   Future<void> removeAllData(int id)async{
-    var account =  await _getIt.get<AccountUseCase>().removeAllData(id);
+    var account =  await _getIt.get<AccountRepo>().removeAllData(id);
     _accountInfo = account;
     notifyListeners();
   }

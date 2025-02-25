@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'dart:developer';
 
+import 'package:logger/logger.dart';
 import 'package:ready_go_project/data/models/supply_model/supply_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,6 +11,7 @@ class SuppliesPreference {
 
   static SuppliesPreference get singleton => _singleton;
 
+  final logger = Logger();
   //supplies
   Future<List<SupplyModel>> getSuppliesList(int id) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -27,7 +28,7 @@ class SuppliesPreference {
         return list;
       }
     } on Exception catch (e) {
-      log(e.toString());
+      logger.e(e.toString());
       rethrow;
     }
   }
@@ -39,7 +40,7 @@ class SuppliesPreference {
       String? json = jsonEncode(listToJson);
       pref.setString("supplies$id", json);
     } on Exception catch (e) {
-      log(e.toString());
+      logger.e(e.toString());
       rethrow;
     }
   }

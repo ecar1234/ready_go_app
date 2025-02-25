@@ -1,30 +1,37 @@
-import 'dart:developer';
 
 import 'package:get_it/get_it.dart';
+import 'package:logger/logger.dart';
 import 'package:ready_go_project/data/models/account_model/account_model.dart';
 import 'package:ready_go_project/data/models/account_model/amount_model.dart';
 import 'package:ready_go_project/data/models/plan_model/plan_model.dart';
-import 'package:ready_go_project/domain/entities/account_entity.dart';
+import 'package:ready_go_project/domain/repositories/account_repo.dart';
 import 'package:ready_go_project/domain/use_cases/plan_use_case.dart';
 
-GetIt _getIt = GetIt.I;
+import '../../data/repositories/account_local_data_repo.dart';
 
-class AccountUseCase {
+
+
+class AccountUseCase with  AccountRepo{
+  final _getIt = GetIt.I;
+  final logger = Logger();
+
+  @override
   Future<AccountModel> getAccountInfo(int id) async {
     try {
-      var res = await _getIt.get<AccountEntity>().getAccountInfo(id);
+      var res = await _getIt.get<AccountLocalDataRepo>().getAccountInfo(id);
       return res;
     } catch (ex) {
-      log(ex.toString());
+      logger.e(ex.toString());
       rethrow;
     }
   }
 
+  @override
   Future<AccountModel> addAmount(AmountModel amount, int day, int id) async {
     AccountModel account = AccountModel();
 
     try {
-      account = await _getIt.get<AccountEntity>().getAccountInfo(id);
+      account = await _getIt.get<AccountLocalDataRepo>().getAccountInfo(id);
       List<List<AmountModel>?> history = account.usageHistory!;
 
       switch (amount.category) {
@@ -57,18 +64,19 @@ class AccountUseCase {
       }
       history.sort((a, b) => int.tryParse(a!.first.id!)!.compareTo(int.parse(b!.first.id!)));
 
-      await _getIt.get<AccountEntity>().updateAccountInfo(account, id);
+      await _getIt.get<AccountLocalDataRepo>().updateAccountInfo(account, id);
     } catch (ex) {
-      log(ex.toString());
+      logger.e(ex.toString());
       rethrow;
     }
 
     return account;
   }
 
+  @override
   Future<AccountModel> addTotalAmount(int total, int day, int id) async {
     try {
-      AccountModel account = await _getIt.get<AccountEntity>().getAccountInfo(id);
+      AccountModel account = await _getIt.get<AccountLocalDataRepo>().getAccountInfo(id);
       account.totalExchangeAccount = account.totalExchangeAccount! + total;
       account.totalUseAccount = account.totalExchangeAccount! - account.exchange!;
 
@@ -133,30 +141,31 @@ class AccountUseCase {
 
             history.sort((a, b) => int.tryParse(a!.first.id!)!.compareTo(int.parse(b!.first.id!)));
           } on Exception catch (e) {
-            log(e.toString());
+            logger.e(e.toString());
             rethrow;
           }
         } on Exception catch (e) {
-          log(e.toString());
+          logger.e(e.toString());
           rethrow;
         }
       } on Exception catch (e) {
-        log(e.toString());
+        logger.e(e.toString());
         rethrow;
       }
 
-      await _getIt.get<AccountEntity>().updateAccountInfo(account, id);
+      await _getIt.get<AccountLocalDataRepo>().updateAccountInfo(account, id);
 
       return account;
     } catch (ex) {
-      log(ex.toString());
+      logger.e(ex.toString());
       rethrow;
     }
   }
 
+  @override
   Future<AccountModel> removeAmountItem(int firstIdx, int secondIdx, int id) async {
     try {
-      var account = await _getIt.get<AccountEntity>().getAccountInfo(id);
+      var account = await _getIt.get<AccountLocalDataRepo>().getAccountInfo(id);
       var history = account.usageHistory!;
       var removeItem = history[firstIdx]![secondIdx];
 
@@ -178,17 +187,18 @@ class AccountUseCase {
         account.usageHistory!.removeAt(firstIdx);
       }
 
-      await _getIt.get<AccountEntity>().updateAccountInfo(account, id);
+      await _getIt.get<AccountLocalDataRepo>().updateAccountInfo(account, id);
       return account;
     } on Exception catch (e) {
-      log(e.toString());
+      logger.e(e.toString());
       rethrow;
     }
   }
 
+  @override
   Future<AccountModel> editAmountItem(int firstIdx, int secondIdx, AmountModel newAmount, int id) async {
     try {
-      var account = await _getIt.get<AccountEntity>().getAccountInfo(id);
+      var account = await _getIt.get<AccountLocalDataRepo>().getAccountInfo(id);
       var history = account.usageHistory!;
       var item = history[firstIdx]![secondIdx];
 
@@ -213,16 +223,17 @@ class AccountUseCase {
       }
       account.usageHistory![firstIdx]![secondIdx] = newAmount;
 
-      await _getIt.get<AccountEntity>().updateAccountInfo(account, id);
+      await _getIt.get<AccountLocalDataRepo>().updateAccountInfo(account, id);
       return account;
     } on Exception catch (e) {
-      log(e.toString());
+      logger.e(e.toString());
       rethrow;
     }
   }
 
+  @override
   Future<AccountModel> removeAllData(int id) async {
-    await _getIt.get<AccountEntity>().removeAllData(id);
+    await _getIt.get<AccountLocalDataRepo>().removeAllData(id);
     return AccountModel();
   }
 }

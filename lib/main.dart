@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/presentation/main_page.dart';
-import 'package:ready_go_project/provider/admob_provider.dart';
-import 'package:ready_go_project/provider/passport_provider.dart';
-import 'package:ready_go_project/provider/theme_mode_provider.dart';
-import 'package:ready_go_project/service_locator.dart';
 
-import 'provider/roaming_provider.dart';
-import 'provider/accommodation_provider.dart';
-import 'provider/account_provider.dart';
-import 'provider/images_provider.dart';
-import 'provider/plan_list_provider.dart';
-import 'provider/supplies_provider.dart';
+import 'domain/entities/provider/accommodation_provider.dart';
+import 'domain/entities/provider/account_provider.dart';
+import 'domain/entities/provider/admob_provider.dart';
+import 'domain/entities/provider/images_provider.dart';
+import 'domain/entities/provider/passport_provider.dart';
+import 'domain/entities/provider/plan_list_provider.dart';
+import 'domain/entities/provider/roaming_provider.dart';
+import 'domain/entities/provider/supplies_provider.dart';
+import 'domain/entities/provider/theme_mode_provider.dart';
+import 'service_locator.dart';
+
 
 
 void main() async {

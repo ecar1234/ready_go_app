@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ready_go_project/provider/theme_mode_provider.dart';
+
+import '../domain/entities/provider/theme_mode_provider.dart';
+
 
 class OptionPage extends StatefulWidget {
   const OptionPage({super.key});

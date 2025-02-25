@@ -1,8 +1,10 @@
 import 'package:ready_go_project/data/data_source/preference/supplies_preference.dart';
 import 'package:ready_go_project/data/models/supply_model/supply_model.dart';
-import 'package:ready_go_project/domain/repositories/supplies_local_data_repo.dart';
 
-class SuppliesEntity implements SuppliesLocalDataRepo {
+import '../repositories/supplies_local_data_repo.dart';
+
+
+class SuppliesDataImpl implements SuppliesLocalDataRepo {
   SuppliesPreference get pref => SuppliesPreference.singleton;
 
   @override

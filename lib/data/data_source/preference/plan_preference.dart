@@ -1,7 +1,6 @@
 import 'dart:convert';
-import 'dart:developer';
 
-
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/plan_model/plan_model.dart';
@@ -10,7 +9,7 @@ class PlanPreference {
   PlanPreference._internal();
   static final PlanPreference _singleton = PlanPreference._internal();
   static PlanPreference get singleton => _singleton;
-
+  final logger = Logger();
   // plan provider
   Future<List<PlanModel>> getPlanList() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -25,7 +24,7 @@ class PlanPreference {
         return [];
       }
     } on Exception catch (e) {
-      log(e.toString());
+      logger.e(e.toString());
       rethrow;
     }
   }
@@ -38,7 +37,7 @@ class PlanPreference {
       String? json = jsonEncode(jsonList);
       pref.setString("planList", json);
     } on Exception catch (e) {
-      log(e.toString());
+      logger.e(e.toString());
       rethrow;
     }
   }

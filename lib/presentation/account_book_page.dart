@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
@@ -7,14 +6,15 @@ import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/account_model/account_model.dart';
 import 'package:ready_go_project/data/models/account_model/amount_model.dart';
 import 'package:ready_go_project/util/intl_utils.dart';
 
 import '../data/models/plan_model/plan_model.dart';
-import '../provider/account_provider.dart';
-import '../provider/admob_provider.dart';
+import '../domain/entities/provider/account_provider.dart';
+import '../domain/entities/provider/admob_provider.dart';
 
 class AccountBookPage extends StatefulWidget {
   final PlanModel plan;
@@ -31,7 +31,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _payAmountController = TextEditingController();
   final TextEditingController _totalAmountController = TextEditingController();
-
+  final logger = Logger();
   // final TextEditingController _editDetailController = TextEditingController(text: amount.title);
   // final TextEditingController _editAmountController = TextEditingController(text: amount.amount.toString());
   // final TextEditingController _editCategoryController = TextEditingController();
@@ -90,7 +90,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                   ),
                 ));
           } else {
-            log("Banner Ad is null on account page");
+            logger.d("Banner Ad is null on account page");
             return const SizedBox();
           }
         })

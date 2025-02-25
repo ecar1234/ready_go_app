@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,17 +6,18 @@ import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/accommodation_model/accommodation_model.dart';
 import 'package:accordion/accordion.dart';
 
-import 'package:ready_go_project/provider/accommodation_provider.dart';
-import 'package:ready_go_project/provider/admob_provider.dart';
-import 'package:ready_go_project/provider/theme_mode_provider.dart';
 import 'package:ready_go_project/util/intl_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../data/models/plan_model/plan_model.dart';
+import '../domain/entities/provider/accommodation_provider.dart';
+import '../domain/entities/provider/admob_provider.dart';
+import '../domain/entities/provider/theme_mode_provider.dart';
 
 class AccommodationPage extends StatefulWidget {
   final PlanModel plan;
@@ -35,7 +35,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
   final TextEditingController _paymentController = TextEditingController();
   final TextEditingController _checkInController = TextEditingController();
   final TextEditingController _checkOutController = TextEditingController();
-
+  final logger = Logger();
   Timer? _debounce;
 
   _onChanged(String value) {
@@ -43,7 +43,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
       _debounce?.cancel();
     }
     _debounce = Timer(const Duration(milliseconds: 500), () {
-      log(value);
+      logger.d(value);
     });
   }
 
@@ -123,7 +123,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                     ),
                   ));
             }else{
-              log("banner is null on accommodation page");
+              logger.d("banner is null on accommodation page");
               return const SizedBox();
             }
           })

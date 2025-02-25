@@ -1,15 +1,16 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:logger/logger.dart';
 import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
 
-import '../provider/admob_provider.dart';
-import '../provider/images_provider.dart';
+import '../domain/entities/provider/admob_provider.dart';
+import '../domain/entities/provider/images_provider.dart';
+
 
 class AirTicketPage extends StatefulWidget {
   final int planId;
@@ -22,7 +23,7 @@ class AirTicketPage extends StatefulWidget {
 
 class _AirTicketPageState extends State<AirTicketPage> {
   ImagePicker picker = ImagePicker();
-
+  final logger = Logger();
   @override
   Widget build(BuildContext context) {
     final departureList = context.watch<ImagesProvider>().departureImg;
@@ -63,7 +64,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
                   ),
                 ));
           } else {
-            log("banner is null on images page");
+            logger.d("banner is null on images page");
             return const SizedBox();
           }
         })

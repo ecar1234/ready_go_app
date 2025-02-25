@@ -1,8 +1,8 @@
 
 
 import 'dart:convert';
-import 'dart:developer';
 
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/accommodation_model/accommodation_model.dart';
@@ -11,10 +11,10 @@ class AccommodationPreference {
   AccommodationPreference._internal();
   static final AccommodationPreference  _singleton = AccommodationPreference._internal();
   static AccommodationPreference get singleton => _singleton;
+  final logger = Logger();
 
   Future<List<AccommodationModel>> getAccommodationList(int id)async{
     SharedPreferences pref = await SharedPreferences.getInstance();
-
     try{
       String? stringJson = pref.getString("accommodation$id");
       if(stringJson != null){
@@ -25,7 +25,7 @@ class AccommodationPreference {
         return [];
       }
     }catch(ex){
-      log(ex.toString());
+      logger.e(ex.toString());
       rethrow;
     }
   }
@@ -37,7 +37,7 @@ class AccommodationPreference {
       String? json = jsonEncode(jsonList);
       pref.setString("accommodation$id", json);
     }catch(ex){
-      log(ex.toString());
+      logger.e(ex.toString());
       rethrow;
     }
   }
