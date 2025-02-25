@@ -60,6 +60,8 @@ dependencies:
   grpc: ^4.0.1
   path_provider: ^2.1.5
   logger: ^2.5.0
+  dotted_border: ^2.1.0
+  dotted_line: ^3.2.3
 
 
 

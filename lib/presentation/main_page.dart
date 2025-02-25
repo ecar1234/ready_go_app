@@ -1,4 +1,5 @@
-
+import 'package:dotted_border/dotted_border.dart';
+import 'package:dotted_line/dotted_line.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,7 +26,6 @@ import '../domain/entities/provider/plan_list_provider.dart';
 import '../domain/entities/provider/roaming_provider.dart';
 import '../domain/entities/provider/supplies_provider.dart';
 import '../domain/entities/provider/theme_mode_provider.dart';
-
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -133,6 +133,7 @@ class MainPage2 extends StatefulWidget {
 
 class _MainPage2State extends State<MainPage2> {
   ImagePicker picker = ImagePicker();
+
   @override
   Widget build(BuildContext context) {
     final list = context.watch<PlanListProvider>().planList;
@@ -197,9 +198,9 @@ class _MainPage2State extends State<MainPage2> {
                       PopupMenuItem(
                         child: Text("여권 보기"),
                         onTap: () {
-                          if(passImg != null){
+                          if (passImg != null) {
                             OpenFile.open(passImg.path);
-                          }else {
+                          } else {
                             Get.snackbar("여권 이미지 확인", "여권 이미지가 저장된 상황에서만 가능합니다.");
                           }
                         },
@@ -354,35 +355,105 @@ class _MainPage2State extends State<MainPage2> {
                       context.read<SuppliesProvider>().removeAllData(list[idx].id!);
                     }),
               ]),
-              child: Center(
-                child: Container(
-                  width: 600,
-                  height: 100,
-                  padding: const EdgeInsets.all(20),
-                  decoration:
-                      BoxDecoration(border: Border.all(color: isDarkMode ? Colors.white : Colors.black87), borderRadius: BorderRadius.circular(10)),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                          child: Text(
-                        "${list[idx].nation}",
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                      )),
-                      SizedBox(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Container(
+                width: MediaQuery.sizeOf(context).width - 36,
+                height: 120,
+                decoration:
+                    BoxDecoration(border: Border.all(color: isDarkMode ? Colors.white : Colors.black87), borderRadius: BorderRadius.circular(10)),
+                child: Row(
+                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.sizeOf(context).width - 122,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: 30,
+                            width: MediaQuery.sizeOf(context).width - 122,
+                            padding: const EdgeInsets.only(left: 5),
+                            decoration: const BoxDecoration(
+                                color: Colors.cyan, 
+                                borderRadius: BorderRadius.only(topLeft: Radius.circular(10))),
+                            child:const  Row(
+                              children: [
+                                SizedBox(
+                                  width: 30,
+                                  height: 30,
+                                  child: Icon(Icons.local_airport, color: Color(0xff444444),),
+                                ),
+                                const Gap(6),
+                                const Text("TRAVEL", style: TextStyle(color: Color(0xff444444), fontWeight: FontWeight.w600),)
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                      child: Text(
+                                    "${list[idx].nation}",
+                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                  )),
+                                  SizedBox(
+                                    child: Text(
+                                        "${DateUtil.dateToString(list[idx].schedule?.first ?? DateTime.now())} ~ ${DateUtil.dateToString(list[idx].schedule?.last ?? DateTime.now())}"),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      width: 80,
+                      height: 140,
+                      child: Stack(children: [
+                        Column(
                           children: [
-                            Text(
-                                "${DateUtil.dateToString(list[idx].schedule?.first ?? DateTime.now())} ~ ${DateUtil.dateToString(list[idx].schedule?.last ?? DateTime.now())}"),
-                            const Gap(10),
-                           DateUtil.isSameDay(DateTime.now(), list[idx].schedule!.first!) ? const Text("(여행중)") : (list[idx].schedule!.last!.isAfter(DateTime.now()) ? const Text("(준비중)") : const Text("(완료)"))
+                            Container(
+                              height: 30,
+                              decoration: const BoxDecoration(color: Colors.cyan, borderRadius: BorderRadius.only(topRight: Radius.circular(10))),
+                              child: const Center(
+                                child: Text(
+                                  "Departure",
+                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Center(
+                                child: Text(
+                                  planState(list[idx].schedule!.first!, list[idx].schedule!.last!),
+                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
-                      )
-                    ],
-                  ),
+                        const Positioned(
+                            left: 0,
+                            child: SizedBox(
+                              height: 140,
+                              child: DottedLine(
+                                direction: Axis.vertical,
+                                alignment: WrapAlignment.center,
+                                lineLength: double.infinity,
+                                lineThickness: 1.0,
+                                dashLength: 4.0,
+                                dashColor: Colors.black,
+                                dashRadius: 0.0,
+                                dashGapLength: 4.0,
+                              ),
+                            ))
+                      ]),
+                    )
+                  ],
                 ),
               ),
             ),
@@ -390,5 +461,21 @@ class _MainPage2State extends State<MainPage2> {
         },
         separatorBuilder: (context, idx) => const Gap(20),
         itemCount: list.length);
+  }
+
+  String planState(DateTime first, DateTime end) {
+    if (DateUtil.isSameDay(first, DateTime.now())) {
+      return "D-Day";
+    }
+    if (first.isAfter(DateTime.now())) {
+      return "D-${first.difference(DateTime.now()).inDays}";
+    }
+    if (first.isBefore(DateTime.now()) && DateTime.now().isBefore(end)) {
+      return "여행중";
+    }
+    if (DateTime.now().isAfter(end)) {
+      return "여행종료";
+    }
+    return "알 수 없음";
   }
 }
