@@ -368,25 +368,31 @@ class _MainPage2State extends State<MainPage2> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // 상단 바
                           Container(
                             height: 30,
                             width: MediaQuery.sizeOf(context).width - 122,
                             padding: const EdgeInsets.only(left: 5),
-                            decoration: const BoxDecoration(
-                                color: Colors.cyan, 
-                                borderRadius: BorderRadius.only(topLeft: Radius.circular(10))),
-                            child:const  Row(
+                            decoration: const BoxDecoration(color: Colors.cyan, borderRadius: BorderRadius.only(topLeft: Radius.circular(10))),
+                            child: const Row(
                               children: [
                                 SizedBox(
                                   width: 30,
                                   height: 30,
-                                  child: Icon(Icons.local_airport, color: Color(0xff444444),),
+                                  child: Icon(
+                                    Icons.local_airport,
+                                    color: Color(0xff444444),
+                                  ),
                                 ),
                                 const Gap(6),
-                                const Text("TRAVEL", style: TextStyle(color: Color(0xff444444), fontWeight: FontWeight.w600),)
+                                const Text(
+                                  "TRAVEL",
+                                  style: TextStyle(color: Color(0xff444444), fontWeight: FontWeight.w600),
+                                )
                               ],
                             ),
                           ),
+                          // 여행 목적 / 여행 기간
                           Expanded(
                             child: Container(
                               padding: const EdgeInsets.all(10),
@@ -410,12 +416,14 @@ class _MainPage2State extends State<MainPage2> {
                         ],
                       ),
                     ),
+                    // D-Day / Departure
                     SizedBox(
                       width: 80,
                       height: 140,
                       child: Stack(children: [
                         Column(
                           children: [
+                            // 상단 바
                             Container(
                               height: 30,
                               decoration: const BoxDecoration(color: Colors.cyan, borderRadius: BorderRadius.only(topRight: Radius.circular(10))),
@@ -426,6 +434,7 @@ class _MainPage2State extends State<MainPage2> {
                                 ),
                               ),
                             ),
+                            // D-Day
                             Expanded(
                               child: Center(
                                 child: Text(
@@ -436,6 +445,7 @@ class _MainPage2State extends State<MainPage2> {
                             ),
                           ],
                         ),
+                        // 점선
                         const Positioned(
                             left: 0,
                             child: SizedBox(
