@@ -15,6 +15,12 @@ class RoamingProvider with ChangeNotifier {
   String? _code;
   RoamingPeriodModel? _period;
 
+  String _tempCode = "";
+  String _tempAddress = "";
+
+  String get tempCode => _tempCode;
+  String get tempAddress => _tempAddress;
+
   List<XFile>? get imageList => _imageList;
 
   String? get dpAddress => _dpAddress;
@@ -112,6 +118,15 @@ class RoamingProvider with ChangeNotifier {
     _code = "";
     _period = null;
 
+    notifyListeners();
+  }
+
+  void updateTempCode(String code){
+    _tempCode = code;
+    notifyListeners();
+  }
+  void updateTempAddress(String address){
+    _tempAddress = address;
     notifyListeners();
   }
 }

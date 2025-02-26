@@ -752,7 +752,11 @@ class _RoamingPageState extends State<RoamingPage> {
                                                 onPressed: () async {
                                                   final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
                                                   if (clipboardData != null && clipboardData.text != null) {
-                                                    dpAddressController.text = clipboardData.text!; // 올바른 할당 연산자 사용
+                                                    if (mounted) {
+                                                      Provider.of<RoamingProvider>(context, listen: false)
+                                                          .updateTempAddress(clipboardData.text ?? "");
+                                                      dpAddressController.text = Provider.of<RoamingProvider>(context).tempAddress;
+                                                    }
                                                   }
                                                   Get.back();
                                                 },
@@ -809,7 +813,10 @@ class _RoamingPageState extends State<RoamingPage> {
                                                 onPressed: () async {
                                                   final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
                                                   if (clipboardData != null && clipboardData.text != null) {
-                                                    activeCodeController.text = clipboardData.text!; // 올바른 할당 연산자 사용
+                                                    if (mounted) {
+                                                      Provider.of<RoamingProvider>(context, listen: false).updateTempCode(clipboardData.text ?? "");
+                                                      activeCodeController.text = Provider.of<RoamingProvider>(context).tempCode;
+                                                    }
                                                   }
                                                   Get.back();
                                                 },
@@ -818,7 +825,8 @@ class _RoamingPageState extends State<RoamingPage> {
                                         PopupMenuItem(
                                             child: TextButton(
                                                 onPressed: () {
-                                                  activeCodeController.text = ""; // 올바른 할당 연산자 사용
+                                                  Provider.of<RoamingProvider>(context, listen: false).updateTempCode("");
+                                                  activeCodeController.text = Provider.of<RoamingProvider>(context).tempCode;
                                                   Get.back();
                                                 },
                                                 child: const Text("삭제하기")))
@@ -856,14 +864,16 @@ class _RoamingPageState extends State<RoamingPage> {
                             }
 
                             try {
-                              String newAddress = dpAddressController.text;
-                              String newCode = activeCodeController.text;
+                              String newAddress = Provider.of<RoamingProvider>(context).tempAddress;
+                              String newCode = Provider.of<RoamingProvider>(context).tempCode;
                               context.read<RoamingProvider>().enterCode(newAddress, newCode, widget.planId);
                               // context.read<RoamingProvider>().enterCode(newCode, widget.planId);
                             } on Exception catch (e) {
                               logger.e(e.toString());
                               rethrow;
                             }
+                            Provider.of<RoamingProvider>(context, listen: false).updateTempCode("");
+                            Provider.of<RoamingProvider>(context, listen: false).updateTempAddress("");
                             Get.back();
                           },
                           style: ElevatedButton.styleFrom(
