@@ -8,9 +8,9 @@ mixin RoamingRepo {
   Future<RoamingModel> getRoamingData(int id);
   Future<List<XFile>> addRoamingImage(XFile image, int id);
   Future<List<XFile>> removeRoamingImage(XFile image, int id);
-  Future<void> enterAddress(String addr, int id);
+  // Future<void> enterAddress(String addr, int id);
   Future<void> removeAddress(int id);
-  Future<void> enterCode(String code, int id);
+  Future<void> enterCode(String address, String code, int id);
   Future<void> removeCode(int id);
   Future<RoamingPeriodModel?> setPeriodDate(int day, int id);
   Future<RoamingPeriodModel?> startPeriod(int id);

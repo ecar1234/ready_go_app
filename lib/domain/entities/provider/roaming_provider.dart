@@ -54,12 +54,12 @@ class RoamingProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> enterAddress(String addr, int id) async {
-    _dpAddress = addr;
-    await _getIt.get<RoamingRepo>().enterAddress(addr, id);
-
-    notifyListeners();
-  }
+  // Future<void> enterAddress(String addr, int id) async {
+  //   await _getIt.get<RoamingRepo>().enterAddress(addr, id);
+  //   _dpAddress = addr;
+  //
+  //   notifyListeners();
+  // }
 
   Future<void> removeAddress(int id) async {
     _dpAddress = "";
@@ -68,16 +68,16 @@ class RoamingProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> enterCode(String code, int id) async {
+  Future<void> enterCode(String address, String code, int id) async {
+    await _getIt.get<RoamingRepo>().enterCode(address, code, id);
     _code = code;
-    await _getIt.get<RoamingRepo>().enterCode(code, id);
 
     notifyListeners();
   }
 
   Future<void> removeCode(int id) async {
-    _code = "";
     await _getIt.get<RoamingRepo>().removeCode(id);
+    _code = "";
 
     notifyListeners();
   }
@@ -107,9 +107,9 @@ class RoamingProvider with ChangeNotifier {
 
   Future<void> removeAllData(int id) async {
     await _getIt.get<RoamingRepo>().removeAllData(id);
-    _imageList = null;
-    _dpAddress = null;
-    _code = null;
+    _imageList = [];
+    _dpAddress = "";
+    _code = "";
     _period = null;
 
     notifyListeners();

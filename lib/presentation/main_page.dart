@@ -363,8 +363,8 @@ class _MainPage2State extends State<MainPage2> {
                 child: Row(
                   // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SizedBox(
-                      width: MediaQuery.sizeOf(context).width - 122,
+                    Flexible(
+                      flex: 3,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -417,9 +417,8 @@ class _MainPage2State extends State<MainPage2> {
                       ),
                     ),
                     // D-Day / Departure
-                    SizedBox(
-                      width: 80,
-                      height: 140,
+                    Flexible(
+                      flex: 1,
                       child: Stack(children: [
                         Column(
                           children: [
@@ -430,7 +429,7 @@ class _MainPage2State extends State<MainPage2> {
                               child: const Center(
                                 child: Text(
                                   "Departure",
-                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                                  style: TextStyle(color: Color(0xff444444), fontSize: 12, fontWeight: FontWeight.w500),
                                 ),
                               ),
                             ),
@@ -446,7 +445,7 @@ class _MainPage2State extends State<MainPage2> {
                           ],
                         ),
                         // 점선
-                        const Positioned(
+                        Positioned(
                             left: 0,
                             child: SizedBox(
                               height: 140,
@@ -456,7 +455,7 @@ class _MainPage2State extends State<MainPage2> {
                                 lineLength: double.infinity,
                                 lineThickness: 1.0,
                                 dashLength: 4.0,
-                                dashColor: Colors.black,
+                                dashColor: isDarkMode ? Colors.white : Colors.black,
                                 dashRadius: 0.0,
                                 dashGapLength: 4.0,
                               ),

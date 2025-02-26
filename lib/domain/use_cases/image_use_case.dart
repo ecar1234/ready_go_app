@@ -45,20 +45,20 @@ class ImageUseCase with ImageRepo{
     List<String> list = await _getIt.get<ImageLocalDataRepo>().getArrivalImgList(id);
       Directory dir = await getApplicationDocumentsDirectory();
       String imgPath = "${dir.path}/arrivalImages$id${image.name}";
-      // logger.d("departure to save path : $path");
-      File file = File(imgPath);
-      if(await file.exists()){
-        logger.w("arrival image is already exists.");
-      }else {
-        await file.writeAsBytes(await image.readAsBytes());
-        logger.d("saved ArrivalImg");
-      }
 
-      if(list.any((path) => path == imgPath)){
+      await File(image.path).copy(imgPath);
+      // if(await file.exists()){
+      //   logger.w("arrival image is already exists.");
+      // }else {
+      //   await file.writeAsBytes(await image.readAsBytes());
+      //   logger.d("saved ArrivalImg");
+      // }
+
+      if(list.any((name) => name == image.name)){
         logger.w("arrival image path is already exists.");
       }else{
         list.add(imgPath);
-        _getIt.get<ImageLocalDataRepo>().addArrivalImage(list, id);
+        await _getIt.get<ImageLocalDataRepo>().addArrivalImage(list, id);
       }
       return list.map((path) => XFile(path)).toList();
     }catch(ex){
@@ -73,20 +73,20 @@ class ImageUseCase with ImageRepo{
     List<String> list = await _getIt.get<ImageLocalDataRepo>().getDepartureImgList(id);
      Directory dir = await getApplicationDocumentsDirectory();
      String imgPath = "${dir.path}/departureImages$id${image.name}";
-     // logger.d("departure to save path : $path");
-     File file = File(imgPath);
-     if(await file.exists()){
-       logger.w("departure image is already exists.");
-     }else {
-       await file.writeAsBytes(await image.readAsBytes());
-       logger.d("saved DepartureImg");
-     }
+
+     await File(image.path).copy(imgPath);
+     // if(await file.exists()){
+     //   logger.w("departure image is already exists.");
+     // }else {
+     //   await file.writeAsBytes(await image.readAsBytes());
+     //   logger.d("saved DepartureImg");
+     // }
 
      if(list.any((path) => path == imgPath)){
        logger.w("departure image path is already exists.");
      }else{
        list.add(imgPath);
-       _getIt.get<ImageLocalDataRepo>().addDepartureImage(list, id);
+       await _getIt.get<ImageLocalDataRepo>().addDepartureImage(list, id);
      }
      return list.map((path) => XFile(path)).toList();
    }catch(ex){
@@ -158,16 +158,18 @@ class ImageUseCase with ImageRepo{
   @override
   Future<int> setPassportImg(XFile img)async{
     try {
-      String? imgPath = await _getIt.get<ImageLocalDataRepo>().getPassportImg();
+      // String? imgPath = await _getIt.get<ImageLocalDataRepo>().getPassportImg();
 
       Directory dir = await getApplicationDocumentsDirectory();
       String newPath = "${dir.path}/passportImage${img.name}";
-      if(imgPath != null && imgPath.isNotEmpty){
-        File file = File(imgPath);
-        await file.delete();
-      }
-      File newFile = File(newPath);
-      await newFile.writeAsBytes(await img.readAsBytes());
+
+      await File(img.path).copy(newPath);
+      // if(imgPath != null && imgPath.isNotEmpty){
+      //   File file = File(imgPath);
+      //   await file.delete();
+      // }
+      // File newFile = File(newPath);
+      // await newFile.writeAsBytes(await img.readAsBytes());
 
       final res = await _getIt.get<ImageLocalDataRepo>().setPassportImg(newPath);
       return res;

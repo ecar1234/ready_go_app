@@ -41,6 +41,13 @@ class _RoamingPageState extends State<RoamingPage> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
+  }
+
+  @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
@@ -54,18 +61,10 @@ class _RoamingPageState extends State<RoamingPage> {
     final list = context.watch<RoamingProvider>().imageList;
     final code = context.watch<RoamingProvider>().code;
     final address = context.watch<RoamingProvider>().dpAddress;
-    final period = context.watch<RoamingProvider>().period??RoamingPeriodModel();
-
-    if (address != null && address.isNotEmpty) {
-      dpAddressController.text = address;
-    }
-    if (code != null && code.isNotEmpty) {
-      activeCodeController.text = code;
-    }
-
-
+    final period = context.watch<RoamingProvider>().period ?? RoamingPeriodModel();
 
     context.read<AdmobProvider>().loadAdBanner();
+
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
@@ -331,7 +330,7 @@ class _RoamingPageState extends State<RoamingPage> {
               ),
               SizedBox(
                   child: Text(
-                address != null && address.isNotEmpty  ? address : "SM-DP 주소를 등록해 주세요",
+                address != null && address.isNotEmpty ? address : "SM-DP 주소를 등록해 주세요",
                 textAlign: TextAlign.start,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -435,16 +434,18 @@ class _RoamingPageState extends State<RoamingPage> {
     );
   }
 
-  Widget _periodSection(BuildContext context, RoamingPeriodModel period,) {
+  Widget _periodSection(
+    BuildContext context,
+    RoamingPeriodModel period,
+  ) {
     int? selectedValue = period.period ?? 0;
-    DateTime startDate = period.startDate??DateTime.now();
-    DateTime endDate = period.endDate??DateTime.now();
+    DateTime startDate = period.startDate ?? DateTime.now();
+    DateTime endDate = period.endDate ?? DateTime.now();
     DateTime now = DateTime.now();
 
     final useDuration = now.difference(startDate!);
     final remainDuration = endDate.difference(now);
     final totalDuration = endDate.difference(startDate!);
-
 
     return SizedBox(
       // height: 220,
@@ -597,66 +598,62 @@ class _RoamingPageState extends State<RoamingPage> {
                           )),
                     ),
               const Gap(10),
-              if(period.isActive == true)
-                  SizedBox(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                            "시작: ${startDate.month}월 ${startDate.day}일 ${startDate.hour}시 ${startDate.minute}분",
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                          ),
-                        Text(
-                          "종료: ${endDate.month}월 ${endDate.day}일 ${endDate.hour}시 ${endDate.minute}분",
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                        ),
-                      ],
-                    ),
-                  )
-
+              if (period.isActive == true)
+                SizedBox(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "시작: ${startDate.month}월 ${startDate.day}일 ${startDate.hour}시 ${startDate.minute}분",
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        "종료: ${endDate.month}월 ${endDate.day}일 ${endDate.hour}시 ${endDate.minute}분",
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
+                )
             ],
           ),
           const Gap(10),
-         if( period.isActive == true)
-               Column(
-                  children: [
-                    SizedBox(
-                      height: 30,
-                      child: Row(
-                        children: [
-                          useDuration.inSeconds < totalDuration.inSeconds
-                              ? Text("사용시간(분): ${useDuration.inMinutes}분")
-                              : Text("사용시간(분): ${totalDuration.inMinutes}분"),
-                          const Gap(10),
-                          const Text("/"),
-                          const Gap(10),
-                          useDuration.inSeconds < totalDuration.inSeconds
-                              ? Text("잔여시간(분): ${remainDuration.inMinutes}분")
-                              : const Text("잔여시간(분): 사용완료")
-                        ],
-                      ),
-                    ),
-                    const Gap(10),
-                    SizedBox(
-                      height: 20,
-                      child: LinearProgressIndicator(
-                        value: useDuration.inSeconds / totalDuration.inSeconds,
-                        // 사용량을 비율로 변환
-                        backgroundColor: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(10),
-                        valueColor: const AlwaysStoppedAnimation<Color>(Colors.orangeAccent),
-                        minHeight: 10,
-                      ),
-                    ),
-                  ],
-                )
-
+          if (period.isActive == true)
+            Column(
+              children: [
+                SizedBox(
+                  height: 30,
+                  child: Row(
+                    children: [
+                      useDuration.inSeconds < totalDuration.inSeconds
+                          ? Text("사용시간(분): ${useDuration.inMinutes}분")
+                          : Text("사용시간(분): ${totalDuration.inMinutes}분"),
+                      const Gap(10),
+                      const Text("/"),
+                      const Gap(10),
+                      useDuration.inSeconds < totalDuration.inSeconds ? Text("잔여시간(분): ${remainDuration.inMinutes}분") : const Text("잔여시간(분): 사용완료")
+                    ],
+                  ),
+                ),
+                const Gap(10),
+                SizedBox(
+                  height: 20,
+                  child: LinearProgressIndicator(
+                    value: useDuration.inSeconds / totalDuration.inSeconds,
+                    // 사용량을 비율로 변환
+                    backgroundColor: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(10),
+                    valueColor: const AlwaysStoppedAnimation<Color>(Colors.orangeAccent),
+                    minHeight: 10,
+                  ),
+                ),
+              ],
+            )
         ],
       ),
     );
   }
 
- Future<void> _showImageSourceDialog(BuildContext context) async {
+  Future<void> _showImageSourceDialog(BuildContext context) async {
     final roamingProvider = context.read<RoamingProvider>();
     showDialog(
       context: context,
@@ -698,186 +695,190 @@ class _RoamingPageState extends State<RoamingPage> {
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
-        builder: (context) => SizedBox(
-            height: MediaQuery.sizeOf(context).height / 2,
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: 50,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "활성화 정보 입력",
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Divider(),
-                  // address info
-                  SizedBox(
-                    child: Column(
-                      children: [
-                        const SizedBox(
-                            height: 40,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "SM-DP + 주소",
-                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                                ),
-                              ],
-                            )),
-                        SizedBox(
-                          height: 80,
-                          child: TextField(
-                            controller: dpAddressController,
-                            readOnly: true,
-                            maxLength: 60,
-                            onTap: () {
-                              final RenderBox renderBox = context.findRenderObject() as RenderBox;
-                              final localPosition = renderBox.globalToLocal(Offset(0, MediaQuery.sizeOf(context).height));
-                              logger.d("dp : ${localPosition.dy}");
-                              showMenu(
-                                  context: context,
-                                  position: RelativeRect.fromLTRB(localPosition.dx, localPosition.dy + 50, localPosition.dx, localPosition.dy),
-                                  items: [
-                                    if (dpAddressController.text.isEmpty)
-                                      PopupMenuItem(
-                                          child: TextButton(
-                                              onPressed: () async {
-                                                final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
-                                                if (clipboardData != null && clipboardData.text != null) {
-                                                  dpAddressController.text = clipboardData.text!; // 올바른 할당 연산자 사용
-                                                }
-                                                Get.back();
-                                              },
-                                              child: const Text("붙여넣기")))
-                                    else
-                                      PopupMenuItem(
-                                          child: TextButton(
-                                              onPressed: () {
-                                                dpAddressController.text = ""; // 올바른 할당 연산자 사용
-                                                Get.back();
-                                              },
-                                              child: const Text("삭제하기")))
-                                  ]);
-                            },
-                            onChanged: _onChanged,
-                            style: const TextStyle(fontSize: 16),
+        builder: (context) {
+          activeCodeController.text = code!;
+          dpAddressController.text = address!;
+          return SizedBox(
+              height: MediaQuery.sizeOf(context).height / 2,
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 50,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "활성화 정보 입력",
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                           ),
-                        )
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  //code info
-                  SizedBox(
-                    child: Column(
-                      children: [
-                        const SizedBox(
-                            height: 40,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "활성화 코드",
-                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                                ),
-                              ],
-                            )),
-                        SizedBox(
-                          height: 80,
-                          child: TextField(
-                            controller: activeCodeController,
-                            maxLength: 60,
-                            readOnly: true,
-                            onTap: () {
-                              final RenderBox render = context.findRenderObject() as RenderBox;
-                              final localPosition = render.globalToLocal(Offset(0, MediaQuery.sizeOf(context).height));
-                              logger.d("code : ${localPosition.dy}");
-                              showMenu(
-                                  context: context,
-                                  position: RelativeRect.fromLTRB(localPosition.dx, localPosition.dy + 150, localPosition.dx, localPosition.dy),
-                                  items: [
-                                    if (activeCodeController.text.isEmpty)
-                                      PopupMenuItem(
-                                          child: TextButton(
-                                              onPressed: () async {
-                                                final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
-                                                if (clipboardData != null && clipboardData.text != null) {
-                                                  activeCodeController.text = clipboardData.text!; // 올바른 할당 연산자 사용
-                                                }
-                                                Get.back();
-                                              },
-                                              child: const Text("붙여넣기")))
-                                    else
-                                      PopupMenuItem(
-                                          child: TextButton(
-                                              onPressed: () {
-                                                activeCodeController.text = ""; // 올바른 할당 연산자 사용
-                                                Get.back();
-                                              },
-                                              child: const Text("삭제하기")))
-                                  ]);
-                            },
-                            onChanged: _onChanged,
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                        )
-                      ],
+                    const Divider(),
+                    // address info
+                    SizedBox(
+                      child: Column(
+                        children: [
+                          const SizedBox(
+                              height: 40,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "SM-DP + 주소",
+                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                  ),
+                                ],
+                              )),
+                          SizedBox(
+                            height: 80,
+                            child: TextField(
+                              controller: dpAddressController,
+                              readOnly: true,
+                              maxLength: 60,
+                              onTap: () {
+                                final RenderBox renderBox = context.findRenderObject() as RenderBox;
+                                final localPosition = renderBox.globalToLocal(Offset(0, MediaQuery.sizeOf(context).height));
+                                logger.d("dp : ${localPosition.dy}");
+                                showMenu(
+                                    context: context,
+                                    position: RelativeRect.fromLTRB(localPosition.dx, localPosition.dy + 50, localPosition.dx, localPosition.dy),
+                                    items: [
+                                      if (dpAddressController.text.isEmpty)
+                                        PopupMenuItem(
+                                            child: TextButton(
+                                                onPressed: () async {
+                                                  final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
+                                                  if (clipboardData != null && clipboardData.text != null) {
+                                                    dpAddressController.text = clipboardData.text!; // 올바른 할당 연산자 사용
+                                                  }
+                                                  Get.back();
+                                                },
+                                                child: const Text("붙여넣기")))
+                                      else
+                                        PopupMenuItem(
+                                            child: TextButton(
+                                                onPressed: () {
+                                                  dpAddressController.text = ""; // 올바른 할당 연산자 사용
+                                                  Get.back();
+                                                },
+                                                child: const Text("삭제하기")))
+                                    ]);
+                              },
+                              onChanged: _onChanged,
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                  const Gap(10),
-                  // button
-                  SizedBox(
-                    height: 50,
-                    width: 100,
-                    child: ElevatedButton(
-                        onPressed: () {
-                          if (dpAddressController.text.isEmpty) {
-                            Get.snackbar("입력정보 확인", "SM-DP 주소를 입력해 주세요",
-                                colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
-                            return;
-                          }
-                          if (activeCodeController.text.isEmpty) {
-                            Get.snackbar("입력정보 확인", "활성화 코드를 입력해 주세요",
-                                colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
-                            return;
-                          }
+                    //code info
+                    SizedBox(
+                      child: Column(
+                        children: [
+                          const SizedBox(
+                              height: 40,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "활성화 코드",
+                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                  ),
+                                ],
+                              )),
+                          SizedBox(
+                            height: 80,
+                            child: TextField(
+                              controller: activeCodeController,
+                              maxLength: 60,
+                              readOnly: true,
+                              onTap: () {
+                                final RenderBox render = context.findRenderObject() as RenderBox;
+                                final localPosition = render.globalToLocal(Offset(0, MediaQuery.sizeOf(context).height));
+                                logger.d("code : ${localPosition.dy}");
+                                showMenu(
+                                    context: context,
+                                    position: RelativeRect.fromLTRB(localPosition.dx, localPosition.dy + 150, localPosition.dx, localPosition.dy),
+                                    items: [
+                                      if (activeCodeController.text.isEmpty)
+                                        PopupMenuItem(
+                                            child: TextButton(
+                                                onPressed: () async {
+                                                  final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
+                                                  if (clipboardData != null && clipboardData.text != null) {
+                                                    activeCodeController.text = clipboardData.text!; // 올바른 할당 연산자 사용
+                                                  }
+                                                  Get.back();
+                                                },
+                                                child: const Text("붙여넣기")))
+                                      else
+                                        PopupMenuItem(
+                                            child: TextButton(
+                                                onPressed: () {
+                                                  activeCodeController.text = ""; // 올바른 할당 연산자 사용
+                                                  Get.back();
+                                                },
+                                                child: const Text("삭제하기")))
+                                    ]);
+                              },
+                              onChanged: _onChanged,
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    const Gap(10),
+                    // button
+                    SizedBox(
+                      height: 50,
+                      width: 100,
+                      child: ElevatedButton(
+                          onPressed: () {
+                            if (dpAddressController.text.isEmpty) {
+                              Get.snackbar("입력정보 확인", "SM-DP 주소를 입력해 주세요",
+                                  colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
+                              return;
+                            }
+                            if (activeCodeController.text.isEmpty) {
+                              Get.snackbar("입력정보 확인", "활성화 코드를 입력해 주세요",
+                                  colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
+                              return;
+                            }
 
-                          if (activeCodeController.text == code && dpAddressController.text == address) {
-                            Get.snackbar("입력정보 확인", "변경 내용이 없습니다.",
-                                colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
-                            return;
-                          }
+                            if (activeCodeController.text == code && dpAddressController.text == address) {
+                              Get.snackbar("입력정보 확인", "변경 내용이 없습니다.",
+                                  colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
+                              return;
+                            }
 
-                          try {
-                            String newAddress = dpAddressController.text;
-                            String newCode = activeCodeController.text;
-                            context.read<RoamingProvider>().enterAddress(newAddress, widget.planId);
-                            context.read<RoamingProvider>().enterCode(newCode, widget.planId);
-                          } on Exception catch (e) {
-                            logger.e(e.toString());
-                            rethrow;
-                          }
-                          Get.back();
-                        },
-                        style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.zero,
-                            foregroundColor: Theme.of(context).colorScheme.surface,
-                            backgroundColor: Theme.of(context).colorScheme.onSurface,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                        child: const Text(
-                          "입력하기",
-                          style: TextStyle(fontSize: 16),
-                        )),
-                  )
-                ],
-              ),
-            )));
+                            try {
+                              String newAddress = dpAddressController.text;
+                              String newCode = activeCodeController.text;
+                              context.read<RoamingProvider>().enterCode(newAddress, newCode, widget.planId);
+                              // context.read<RoamingProvider>().enterCode(newCode, widget.planId);
+                            } on Exception catch (e) {
+                              logger.e(e.toString());
+                              rethrow;
+                            }
+                            Get.back();
+                          },
+                          style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              foregroundColor: Theme.of(context).colorScheme.surface,
+                              backgroundColor: Theme.of(context).colorScheme.onSurface,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                          child: const Text(
+                            "입력하기",
+                            style: TextStyle(fontSize: 16),
+                          )),
+                    )
+                  ],
+                ),
+              ));
+        });
   }
 }

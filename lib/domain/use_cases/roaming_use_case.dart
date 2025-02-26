@@ -26,16 +26,16 @@ class RoamingUseCase with RoamingRepo {
 
     Directory dir = await getApplicationDocumentsDirectory();
     String imgPath = "${dir.path}/roamingImages$id${image.name}";
-    File file = File(imgPath);
+    await File(image.path).copy(imgPath);
 
-    if (await file.exists()) {
-      logger.w("roaming Image file already exists.");
-    } else {
-      await file.writeAsBytes(await image.readAsBytes());
-    }
+    // if (await file.exists()) {
+    //   logger.w("roaming Image file already exists.");
+    // } else {
+    //   await file.writeAsBytes(await image.readAsBytes());
+    // }
 
-    if (res != null && res.imgList != null) {
-      if (!res.imgList!.any((path) => path == imgPath)) {
+    if (res.imgList != null) {
+      if (!res.imgList!.any((name) => name == image.name)) {
         res.imgList!.add(imgPath);
         await _getIt.get<RoamingLocalDataRepo>().setRoamingImgList(res.imgList!, id);
         return res.imgList!.map((path) => XFile(path)).toList();
@@ -55,7 +55,6 @@ class RoamingUseCase with RoamingRepo {
   Future<List<XFile>> removeRoamingImage(XFile image, int id) async {
     RoamingModel? res = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
 
-    Directory dir = await getApplicationDocumentsDirectory();
     String imgPath = image.path;
     File file = File(imgPath);
 
@@ -65,8 +64,8 @@ class RoamingUseCase with RoamingRepo {
       logger.w("roaming Image file not found.");
     }
 
-    if (res != null && res.imgList != null) {
-      if (res.imgList!.any((path) => path == imgPath)) {
+    if (res.imgList != null) {
+      if (res.imgList!.any((name) => name == imgPath)) {
         res.imgList!.remove(imgPath);
         await _getIt.get<RoamingLocalDataRepo>().setRoamingImgList(res.imgList!, id);
         return res.imgList!.map((path) => XFile(path)).toList();
@@ -82,62 +81,45 @@ class RoamingUseCase with RoamingRepo {
     }
   }
 
-  @override
-  Future<void> enterAddress(String addr, int id) async {
-    RoamingModel? res = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
-    if (res != null && res.dpAddress != null) {
-      res.dpAddress = addr;
-      _getIt.get<RoamingLocalDataRepo>().setRoamingAddress(res, id);
-    } else {
-      RoamingModel? newData = RoamingModel()..dpAddress = addr;
-      _getIt.get<RoamingLocalDataRepo>().setRoamingAddress(newData, id);
-    }
-  }
+  // @override
+  // Future<void> enterAddress(String addr, int id) async {
+  //   RoamingModel? res = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
+  //   res.dpAddress = addr;
+  //   await _getIt.get<RoamingLocalDataRepo>().setRoamingData(res, id);
+  // }
 
   @override
   Future<void> removeAddress(int id) async {
     RoamingModel? res = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
-    if (res != null) {
-      res.dpAddress = null;
-      _getIt.get<RoamingLocalDataRepo>().setRoamingAddress(res, id);
-    }
+    res.dpAddress = "";
+    await _getIt.get<RoamingLocalDataRepo>().setRoamingData(res, id);
   }
 
   @override
-  Future<void> enterCode(String code, int id) async {
+  Future<void> enterCode(String address, String code, int id) async {
     RoamingModel? res = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
-    if (res != null && res.dpAddress != null) {
-      res.activeCode = code;
-      _getIt.get<RoamingLocalDataRepo>().setRoamingAddress(res, id);
-    } else {
-      RoamingModel? newData = RoamingModel()..activeCode = code;
-      _getIt.get<RoamingLocalDataRepo>().setRoamingAddress(newData, id);
-    }
+    res.activeCode = code;
+    res.dpAddress = address;
+    await _getIt.get<RoamingLocalDataRepo>().setRoamingData(res, id);
   }
 
   @override
   Future<void> removeCode(int id) async {
     RoamingModel? res = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
-    if (res != null) {
-      res.activeCode = null;
-      _getIt.get<RoamingLocalDataRepo>().setRoamingAddress(res, id);
-    }
+    res.activeCode = "";
+    await _getIt.get<RoamingLocalDataRepo>().setRoamingData(res, id);
   }
 
   @override
   Future<RoamingPeriodModel?> setPeriodDate(int day, int id) async {
     try {
       RoamingModel? res = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
-      if(res != null){
-        final period = RoamingPeriodModel()
-          ..period = day
-          ..isActive = false;
-        res.period = period;
-        _getIt.get<RoamingLocalDataRepo>().setRoamingPeriod(res, id);
-        return period;
-      }else {
-        throw Exception("Roaming data is null");
-      }
+      final period = RoamingPeriodModel()
+        ..period = day
+        ..isActive = false;
+      res.period = period;
+      await _getIt.get<RoamingLocalDataRepo>().setRoamingData(res, id);
+      return period;
 
     } on Exception catch (e) {
       logger.e(e.toString());
@@ -149,15 +131,13 @@ class RoamingUseCase with RoamingRepo {
   Future<RoamingPeriodModel?> startPeriod(int id) async {
     try {
       RoamingModel? res = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
-      if (res == null) {
-        return null;
-      }
+
       final period = RoamingPeriodModel()
         ..isActive = true
         ..startDate = DateTime.now()
         ..endDate = DateTime.now().add(Duration(days: res.period!.period!));
       res.period = period;
-      _getIt.get<RoamingLocalDataRepo>().setRoamingPeriod(res, id);
+      await _getIt.get<RoamingLocalDataRepo>().setRoamingData(res, id);
       return period;
     } on Exception catch (e) {
       logger.e(e.toString());
@@ -169,18 +149,14 @@ class RoamingUseCase with RoamingRepo {
   Future<RoamingPeriodModel?> resetPeriod(int id) async {
     try {
       RoamingModel? res = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
-      if (res == null) {
-        return RoamingPeriodModel()
-        ..period = 0
-        ..isActive = false;
-      }
+
       final period = RoamingPeriodModel()
         ..period = 0
         ..isActive = false
         ..startDate = null
         ..endDate = null;
       res.period = period;
-      _getIt.get<RoamingLocalDataRepo>().setRoamingPeriod(res, id);
+      await _getIt.get<RoamingLocalDataRepo>().setRoamingData(res, id);
       return period;
     } on Exception catch (e) {
       logger.e(e.toString());

@@ -31,14 +31,11 @@ class RoamingDataImpl implements RoamingLocalDataRepo {
   }
 
   @override
-  Future<void> setRoamingAddress(RoamingModel newData, int id) async {
+  Future<void> setRoamingData(RoamingModel newData, int id) async {
     await pref.setRoamingData(newData, id);
   }
 
-  @override
-  Future<void> setRoamingCode(RoamingModel newData, int id) async {
-    await pref.setRoamingData(newData, id);
-  }
+
 
   @override
   Future<void> setRoamingImgList(List<String> paths, int id) async {
@@ -52,10 +49,7 @@ class RoamingDataImpl implements RoamingLocalDataRepo {
     }
   }
 
-  @override
-  Future<void> setRoamingPeriod(RoamingModel newData, int id) async {
-    await pref.setRoamingData(newData, id);
-  }
+
 
   @override
   Future<void> removeAllData(int id) async {
