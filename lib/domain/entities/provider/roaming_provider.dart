@@ -77,7 +77,7 @@ class RoamingProvider with ChangeNotifier {
   Future<void> enterCode(String address, String code, int id) async {
     await _getIt.get<RoamingRepo>().enterCode(address, code, id);
     _code = code;
-
+    _dpAddress = address;
     notifyListeners();
   }
 

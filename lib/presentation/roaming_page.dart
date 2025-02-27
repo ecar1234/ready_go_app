@@ -40,12 +40,6 @@ class _RoamingPageState extends State<RoamingPage> {
     _debounce = Timer(const Duration(milliseconds: 500), () {});
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {});
-  }
 
   @override
   void dispose() {
@@ -443,9 +437,9 @@ class _RoamingPageState extends State<RoamingPage> {
     DateTime endDate = period.endDate ?? DateTime.now();
     DateTime now = DateTime.now();
 
-    final useDuration = now.difference(startDate!);
+    final useDuration = now.difference(startDate);
     final remainDuration = endDate.difference(now);
-    final totalDuration = endDate.difference(startDate!);
+    final totalDuration = endDate.difference(startDate);
 
     return SizedBox(
       // height: 220,
@@ -689,15 +683,19 @@ class _RoamingPageState extends State<RoamingPage> {
   }
 
   Future<void> _showSetCodeDialog(BuildContext context) async {
-    String? code = context.read<RoamingProvider>().code;
-    String? address = context.read<RoamingProvider>().dpAddress;
-
-    showModalBottomSheet(
+    await showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         builder: (context) {
-          activeCodeController.text = code!;
-          dpAddressController.text = address!;
+          String code = context.read<RoamingProvider>().code!;
+          String address = context.read<RoamingProvider>().dpAddress!;
+          if(code.isNotEmpty){
+            activeCodeController.text = context.read<RoamingProvider>().code!;
+          }
+          if(address.isNotEmpty){
+            dpAddressController.text = context.read<RoamingProvider>().dpAddress!;
+          }
+
           return SizedBox(
               height: MediaQuery.sizeOf(context).height / 2,
               child: Container(
@@ -753,9 +751,9 @@ class _RoamingPageState extends State<RoamingPage> {
                                                   final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
                                                   if (clipboardData != null && clipboardData.text != null) {
                                                     if (mounted) {
-                                                      Provider.of<RoamingProvider>(context, listen: false)
+                                                      context.read<RoamingProvider>()
                                                           .updateTempAddress(clipboardData.text ?? "");
-                                                      dpAddressController.text = Provider.of<RoamingProvider>(context).tempAddress;
+                                                      dpAddressController.text = context.read<RoamingProvider>().tempAddress;
                                                     }
                                                   }
                                                   Get.back();
@@ -771,7 +769,7 @@ class _RoamingPageState extends State<RoamingPage> {
                                                 child: const Text("삭제하기")))
                                     ]);
                               },
-                              onChanged: _onChanged,
+                              // onChanged: _onChanged,
                               style: const TextStyle(fontSize: 16),
                             ),
                           )
@@ -812,11 +810,10 @@ class _RoamingPageState extends State<RoamingPage> {
                                             child: TextButton(
                                                 onPressed: () async {
                                                   final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
-                                                  if (clipboardData != null && clipboardData.text != null) {
-                                                    if (mounted) {
-                                                      Provider.of<RoamingProvider>(context, listen: false).updateTempCode(clipboardData.text ?? "");
-                                                      activeCodeController.text = Provider.of<RoamingProvider>(context).tempCode;
-                                                    }
+
+                                                  if (mounted) {
+                                                    context.read<RoamingProvider>().updateTempCode(clipboardData!.text ?? "");
+                                                    activeCodeController.text = context.read<RoamingProvider>().tempCode;
                                                   }
                                                   Get.back();
                                                 },
@@ -825,14 +822,14 @@ class _RoamingPageState extends State<RoamingPage> {
                                         PopupMenuItem(
                                             child: TextButton(
                                                 onPressed: () {
-                                                  Provider.of<RoamingProvider>(context, listen: false).updateTempCode("");
-                                                  activeCodeController.text = Provider.of<RoamingProvider>(context).tempCode;
+                                                  context.read<RoamingProvider>().updateTempCode("");
+                                                  activeCodeController.text = context.read<RoamingProvider>().tempCode;
                                                   Get.back();
                                                 },
                                                 child: const Text("삭제하기")))
                                     ]);
                               },
-                              onChanged: _onChanged,
+                              // onChanged: _onChanged,
                               style: const TextStyle(fontSize: 16),
                             ),
                           )
@@ -857,23 +854,23 @@ class _RoamingPageState extends State<RoamingPage> {
                               return;
                             }
 
-                            if (activeCodeController.text == code && dpAddressController.text == address) {
+                            if (activeCodeController.text == context.read<RoamingProvider>().code && dpAddressController.text == context.read<RoamingProvider>().dpAddress) {
                               Get.snackbar("입력정보 확인", "변경 내용이 없습니다.",
                                   colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
                               return;
                             }
 
                             try {
-                              String newAddress = Provider.of<RoamingProvider>(context).tempAddress;
-                              String newCode = Provider.of<RoamingProvider>(context).tempCode;
+                              String newAddress = context.read<RoamingProvider>().tempAddress;
+                              String newCode = context.read<RoamingProvider>().tempCode;
                               context.read<RoamingProvider>().enterCode(newAddress, newCode, widget.planId);
                               // context.read<RoamingProvider>().enterCode(newCode, widget.planId);
                             } on Exception catch (e) {
                               logger.e(e.toString());
                               rethrow;
                             }
-                            Provider.of<RoamingProvider>(context, listen: false).updateTempCode("");
-                            Provider.of<RoamingProvider>(context, listen: false).updateTempAddress("");
+                            context.read<RoamingProvider>().updateTempCode("");
+                            context.read<RoamingProvider>().updateTempAddress("");
                             Get.back();
                           },
                           style: ElevatedButton.styleFrom(

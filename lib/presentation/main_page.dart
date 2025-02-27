@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dotted_border/dotted_border.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -15,6 +17,7 @@ import 'package:ready_go_project/presentation/add_plan_page.dart';
 import 'package:ready_go_project/presentation/option_page.dart';
 import 'package:ready_go_project/presentation/plan_page.dart';
 import 'package:ready_go_project/util/date_util.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../data/models/plan_model/plan_model.dart';
 import '../domain/entities/provider/accommodation_provider.dart';
@@ -138,7 +141,7 @@ class _MainPage2State extends State<MainPage2> {
   Widget build(BuildContext context) {
     final list = context.watch<PlanListProvider>().planList;
     bool isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
-    XFile? passImg = context.watch<PassportProvider>().passport;
+    File? passImg = context.watch<PassportProvider>().passport;
     context.read<AdmobProvider>().loadAdBanner();
 
     return BlocBuilder<DataBloc, DataState>(builder: (context, state) {
@@ -159,7 +162,7 @@ class _MainPage2State extends State<MainPage2> {
                     final local = render.globalToLocal(const Offset(0, 0));
                     showMenu(context: context, position: RelativeRect.fromLTRB(local.dy + 40, local.dy + 110, local.dx, local.dy), items: [
                       PopupMenuItem(
-                        child: Text("여권 등록 및 수정"),
+                        child: const Text("여권 등록 및 수정"),
                         onTap: () {
                           final provider = context.read<PassportProvider>();
                           showDialog(
@@ -196,10 +199,11 @@ class _MainPage2State extends State<MainPage2> {
                         },
                       ),
                       PopupMenuItem(
-                        child: Text("여권 보기"),
-                        onTap: () {
+                        child: const Text("여권 보기"),
+                        onTap: () async{
                           if (passImg != null) {
                             OpenFile.open(passImg.path);
+
                           } else {
                             Get.snackbar("여권 이미지 확인", "여권 이미지가 저장된 상황에서만 가능합니다.");
                           }

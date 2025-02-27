@@ -72,7 +72,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
     );
   }
 
-  Widget _departureSection(BuildContext context, List<XFile> list) {
+  Widget _departureSection(BuildContext context, List<File> list) {
     final list = context.watch<ImagesProvider>().departureImg;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,7 +106,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(10),
                                       child: Image.file(
-                                        File(list[idx].path),
+                                        list[idx],
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -190,7 +190,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
     );
   }
 
-  Widget _arrivalSection(BuildContext context, List<XFile> list) {
+  Widget _arrivalSection(BuildContext context, List<File> list) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -223,7 +223,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(10),
                                       child: Image.file(
-                                        File(list[idx].path),
+                                        list[idx],
                                         fit: BoxFit.cover,
                                       ),
                                     ),

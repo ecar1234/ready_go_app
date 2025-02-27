@@ -1,3 +1,4 @@
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
@@ -9,13 +10,12 @@ import '../../repositories/image_repo.dart';
 class ImagesProvider with ChangeNotifier {
   final GetIt _getIt = GetIt.I;
   final logger = Logger();
-  late List<XFile> _departureImage;
-  late List<XFile> _arrivalImage;
+  late List<File> _departureImage;
+  late List<File> _arrivalImage;
 
-  List<XFile> get departureImg => _departureImage;
+  List<File> get departureImg => _departureImage;
 
-  List<XFile> get arrivalImg => _arrivalImage;
-
+  List<File> get arrivalImg => _arrivalImage;
 
   Future<void> getImgList(int id) async {
     try {
@@ -32,7 +32,7 @@ class ImagesProvider with ChangeNotifier {
 
   Future<void> addDepartureImage(XFile image, int id) async {
     try {
-      List<XFile> list = await GetIt.I.get<ImageRepo>().addDepartureImg(image, id);
+      final list = await GetIt.I.get<ImageRepo>().addDepartureImg(image, id);
       _departureImage = list;
     } on Exception catch (e) {
       logger.e(e.toString());
@@ -43,7 +43,7 @@ class ImagesProvider with ChangeNotifier {
 
   Future<void> addArrivalImage(XFile image, int id) async {
     try {
-      List<XFile> list = await GetIt.I.get<ImageRepo>().addArrivalImg(image, id);
+      final list = await GetIt.I.get<ImageRepo>().addArrivalImg(image, id);
       _arrivalImage = list;
     } on Exception catch (e) {
       logger.e(e.toString());
@@ -52,14 +52,10 @@ class ImagesProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> removeDepartureImage(XFile image, int id) async {
+  Future<void> removeDepartureImage(File image, int id) async {
     try {
-      List<XFile>? list = await GetIt.I.get<ImageRepo>().removeDepartureImg(image, id);
-      if(list != null){
-        _departureImage = list;
-      }else {
-        _departureImage = [];
-      }
+      final list = await GetIt.I.get<ImageRepo>().removeDepartureImg(image, id);
+      _departureImage = list;
     } on Exception catch (e) {
       logger.e(e.toString());
       rethrow;
@@ -67,14 +63,11 @@ class ImagesProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> removeArrivalImage(XFile image, int id) async {
+  Future<void> removeArrivalImage(File image, int id) async {
     try {
-      List<XFile>? list = await GetIt.I.get<ImageRepo>().removeArrivalImg(image, id);
-      if(list != null){
-        _arrivalImage = list;
-      }else {
-        _arrivalImage = [];
-      }
+      final list = await GetIt.I.get<ImageRepo>().removeArrivalImg(image, id);
+
+      _arrivalImage = list;
     } on Exception catch (e) {
       logger.e(e.toString());
       rethrow;
@@ -82,7 +75,7 @@ class ImagesProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> removeAllData(int id)async{
+  Future<void> removeAllData(int id) async {
     await _getIt.get<ImageRepo>().removeAllData(id);
     _arrivalImage = [];
     _departureImage = [];
