@@ -17,67 +17,61 @@ class RoamingUseCase with RoamingRepo {
   @override
   Future<RoamingModel> getRoamingData(int id) async {
     final data = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
+
+    Directory dir = await getApplicationDocumentsDirectory();
+    List<FileSystemEntity> imgFileList = Directory(dir.path).listSync();
+    List<String> roamingImgList = imgFileList.where((file) => file is File && file.path.contains("roamingImages$id")).map((file) => file.path).toList();
+
+    if(data.imgList!.isNotEmpty){
+      final setDeparturePath = data.imgList!.toSet();
+      final roamingFilePathSet = roamingImgList.map((path) => path).toSet();
+      bool isAllSame =
+          setDeparturePath.length == roamingFilePathSet.length && setDeparturePath.difference(roamingFilePathSet).isEmpty;
+      if (!isAllSame) {
+        data.imgList = roamingImgList;
+        await _getIt.get<RoamingLocalDataRepo>().setRoamingImgList(roamingImgList, id);
+      }
+      return data;
+    }
+    data.imgList = roamingImgList;
     return data;
   }
 
   @override
-  Future<List<XFile>> addRoamingImage(XFile image, int id) async {
+  Future<List<File>> addRoamingImage(XFile image, int id) async {
     RoamingModel? res = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
 
     Directory dir = await getApplicationDocumentsDirectory();
     String imgPath = "${dir.path}/roamingImages$id${image.name}";
-    await File(image.path).copy(imgPath);
-
-    // if (await file.exists()) {
-    //   logger.w("roaming Image file already exists.");
-    // } else {
-    //   await file.writeAsBytes(await image.readAsBytes());
-    // }
-
-    if (res.imgList != null) {
-      if (!res.imgList!.any((name) => name == image.name)) {
+    if(await File(image.path).exists()){
+      await File(image.path).copy(imgPath);
+      if(await File(imgPath).exists()){
         res.imgList!.add(imgPath);
         await _getIt.get<RoamingLocalDataRepo>().setRoamingImgList(res.imgList!, id);
-        return res.imgList!.map((path) => XFile(path)).toList();
-      } else {
-        logger.w("roaming Image path already exists.");
-        return res.imgList!.map((path) => XFile(path)).toList();
+        return res.imgList!.map((path) => File(path)).toList();
+      }else{
+        logger.e("roaming image copy failed");
+        throw Exception("");
       }
-    } else {
-      List<String> list = [];
-      list.add(imgPath);
-      await _getIt.get<RoamingLocalDataRepo>().setRoamingImgList(list, id);
-      return [XFile(imgPath)];
+    }else {
+      logger.e("the pick up roaming image path is no exists.");
+      throw Exception("");
     }
   }
 
   @override
-  Future<List<XFile>> removeRoamingImage(XFile image, int id) async {
+  Future<List<File>> removeRoamingImage(File image, int id) async {
     RoamingModel? res = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
+    String? targetPath = res.imgList!.firstWhere((path) => path.contains(image.path.split("/").last), orElse: () => "");
 
-    String imgPath = image.path;
-    File file = File(imgPath);
-
-    if (await file.exists()) {
-      await file.delete();
-    } else {
-      logger.w("roaming Image file not found.");
-    }
-
-    if (res.imgList != null) {
-      if (res.imgList!.any((name) => name == imgPath)) {
-        res.imgList!.remove(imgPath);
-        await _getIt.get<RoamingLocalDataRepo>().setRoamingImgList(res.imgList!, id);
-        return res.imgList!.map((path) => XFile(path)).toList();
-      } else {
-        logger.w("roaming Image path already exists.");
-        return res.imgList!.map((path) => XFile(path)).toList();
-      }
-    } else {
-      List<String> list = [];
-      list.add(imgPath);
-      await _getIt.get<RoamingLocalDataRepo>().setRoamingImgList(list, id);
-      return [XFile(imgPath)];
+    if(await File(targetPath).exists()){
+      await File(targetPath).delete();
+      res.imgList!.removeWhere((path) => path == targetPath);
+      await _getIt.get<RoamingLocalDataRepo>().setRoamingImgList(res.imgList!, id);
+      return res.imgList!.map((path) => File(path)).toList();
+    }else {
+      logger.e("The file requested for deletion does not exist.");
+      throw Exception("");
     }
   }
 

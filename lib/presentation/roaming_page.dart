@@ -118,7 +118,7 @@ class _RoamingPageState extends State<RoamingPage> {
     );
   }
 
-  Widget _voucherImageSection(BuildContext context, List<XFile>? list) {
+  Widget _voucherImageSection(BuildContext context, List<File>? list) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

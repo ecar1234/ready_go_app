@@ -95,16 +95,16 @@ class _AccountBookPageState extends State<AccountBookPage> {
           }
         })
       ]),
-      floatingActionButton: FloatingActionButton(
-        foregroundColor: Theme.of(context).colorScheme.surface,
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        onPressed: () {
-          _addAmountDialog(context, info);
-        },
-        child: const Icon(
-          Icons.add,
-        ),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   foregroundColor: Theme.of(context).colorScheme.surface,
+      //   backgroundColor: Theme.of(context).colorScheme.secondary,
+      //   onPressed: () {
+      //     _addAmountDialog(context, info);
+      //   },
+      //   child: const Icon(
+      //     Icons.add,
+      //   ),
+      // ),
     );
   }
 
@@ -214,7 +214,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                       style: TextStyle(color: Theme.of(context).colorScheme.surface, fontWeight: FontWeight.w600),
                                     ),
                                     Text(
-                                      "(환저)",
+                                      "(환전)",
                                       style: TextStyle(color: Theme.of(context).colorScheme.surface, fontWeight: FontWeight.w600),
                                     )
                                   ],
@@ -239,7 +239,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                 ],
               ),
             ),
-            const Gap(30),
+            const Gap(10),
             info.usageHistory == null || info.usageHistory!.isEmpty
                 ? SizedBox(
                     width: MediaQuery.sizeOf(context).width,
@@ -252,6 +252,30 @@ class _AccountBookPageState extends State<AccountBookPage> {
                     height: MediaQuery.sizeOf(context).height - 300,
                     child: Column(
                       children: [
+                        Container(
+                          height: 40,
+                          decoration: BoxDecoration(
+                            border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.secondary,))
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                             const Text("사용내역", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),),
+                              TextButton.icon(
+                                onPressed: (){
+                                  _addAmountDialog(context, info);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  padding: EdgeInsets.zero,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)
+                                  )
+                                ),
+                                label: const Text("지출"), icon: const Icon(Icons.add),iconAlignment: IconAlignment.end,)
+                            ],
+                          ),
+                        ),
+                        const Gap(20),
                         Expanded(
                           child: ListView.separated(
                             shrinkWrap: true,
@@ -409,8 +433,11 @@ class _AccountBookPageState extends State<AccountBookPage> {
 
   List<Widget> _totalInfoSection(BuildContext context, AccountModel info) {
     return [
-      SizedBox(
+      Container(
         height: 40,
+        decoration:  BoxDecoration(
+          border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.secondary,))
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -419,22 +446,42 @@ class _AccountBookPageState extends State<AccountBookPage> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
             SizedBox(
-              width: 100,
+              width: 150,
               height: 40,
-              child: ElevatedButton(
-                  onPressed: () {
-                    _setTotalAmountDialog(context, info);
-                  },
-                  style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.zero, side: const BorderSide(), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
-                  child: const Text(
-                    "총 경비 추가",
-                  )),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton.icon(
+                      onPressed: () {
+                        _setTotalAmountDialog(context, info);
+                      },
+                      style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.zero,),
+                      label: const Text(
+                        "총 경비",
+                      ),
+                    icon: const Icon(Icons.add),
+                    iconAlignment: IconAlignment.end,
+                  ),
+                  TextButton.icon(
+                    onPressed: () {
+                      _addAmountDialog(context, info);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.zero,),
+                    label: const Text(
+                      "지출",
+                    ),
+                    icon: const Icon(Icons.add),
+                    iconAlignment: IconAlignment.end,
+                  ),
+                ],
+              ),
             )
           ],
         ),
       ),
-      const Gap(20),
+      const Gap(15),
       Container(
         width: MediaQuery.sizeOf(context).width,
         height: 282,
@@ -444,16 +491,13 @@ class _AccountBookPageState extends State<AccountBookPage> {
             Container(
               height: 40,
               decoration: BoxDecoration(
-                  // color: Colors.black87,
+                  color: Theme.of(context).colorScheme.secondary,
                   border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
                   borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
-              child: GestureDetector(
-                onTap: () {},
-                child: const Center(
-                  child: Text(
-                    "여행 경비 내역",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
+              child:  Center(
+                child: Text(
+                  "여행 경비 내역",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.surface,),
                 ),
               ),
             ),

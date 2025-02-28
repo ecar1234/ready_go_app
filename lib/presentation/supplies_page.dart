@@ -48,6 +48,13 @@ class _SuppliesPageState extends State<SuppliesPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("준비물"),
+        actions: [
+          IconButton(onPressed: (){
+            _itemAddDialog(context);
+          }, style: IconButton.styleFrom(
+            padding: EdgeInsets.zero
+          ), icon: const Icon(Icons.add))
+        ],
       ),
       body: Stack(children: [
         SingleChildScrollView(
@@ -142,18 +149,18 @@ class _SuppliesPageState extends State<SuppliesPage> {
             }
           })
       ]),
-      floatingActionButton: FloatingActionButton(
-        foregroundColor: Theme.of(context).colorScheme.surface,
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        onPressed: () {
-          _itemAddDialog(context);
-        },
-        child: const Center(
-          child: Icon(
-            Icons.add,
-          ),
-        ),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   foregroundColor: Theme.of(context).colorScheme.surface,
+      //   backgroundColor: Theme.of(context).colorScheme.secondary,
+      //   onPressed: () {
+      //     _itemAddDialog(context);
+      //   },
+      //   child: const Center(
+      //     child: Icon(
+      //       Icons.add,
+      //     ),
+      //   ),
+      // ),
     );
   }
 

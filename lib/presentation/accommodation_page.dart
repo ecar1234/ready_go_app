@@ -94,6 +94,17 @@ class _AccommodationPageState extends State<AccommodationPage> {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: const Text("숙소정보"),
+          actions: [
+            SizedBox(
+              width: 70,
+              child: IconButton(onPressed: (){
+                _addAccommodation(context, month, day);
+              }, style: IconButton.styleFrom(
+                padding: EdgeInsets.zero
+              ),
+                  icon: const Icon(Icons.add)),
+            )
+          ],
         ),
         body: Stack(children: [
           LayoutBuilder(
@@ -128,14 +139,14 @@ class _AccommodationPageState extends State<AccommodationPage> {
             }
           })
         ]),
-        floatingActionButton: FloatingActionButton(
-          foregroundColor: Theme.of(context).colorScheme.surface,
-          backgroundColor: Theme.of(context).colorScheme.secondary,
-          onPressed: () {
-            _addAccommodation(context, month, day);
-          },
-          child: const Icon(Icons.add),
-        ),
+        // floatingActionButton: FloatingActionButton(
+        //   foregroundColor: Theme.of(context).colorScheme.surface,
+        //   backgroundColor: Theme.of(context).colorScheme.secondary,
+        //   onPressed: () {
+        //     _addAccommodation(context, month, day);
+        //   },
+        //   child: const Icon(Icons.add),
+        // ),
       ),
     );
   }

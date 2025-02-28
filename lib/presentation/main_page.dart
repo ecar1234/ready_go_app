@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:dotted_border/dotted_border.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +16,6 @@ import 'package:ready_go_project/presentation/add_plan_page.dart';
 import 'package:ready_go_project/presentation/option_page.dart';
 import 'package:ready_go_project/presentation/plan_page.dart';
 import 'package:ready_go_project/util/date_util.dart';
-import 'package:url_launcher/url_launcher.dart';
-
 import '../data/models/plan_model/plan_model.dart';
 import '../domain/entities/provider/accommodation_provider.dart';
 import '../domain/entities/provider/account_provider.dart';
@@ -200,10 +197,9 @@ class _MainPage2State extends State<MainPage2> {
                       ),
                       PopupMenuItem(
                         child: const Text("여권 보기"),
-                        onTap: () async{
+                        onTap: () async {
                           if (passImg != null) {
                             OpenFile.open(passImg.path);
-
                           } else {
                             Get.snackbar("여권 이미지 확인", "여권 이미지가 저장된 상황에서만 가능합니다.");
                           }
@@ -257,9 +253,41 @@ class _MainPage2State extends State<MainPage2> {
                             ],
                           ),
                         )
-                      : SingleChildScrollView(
-                          child:
-                              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [_planListSection(context, list, isDarkMode, state)])));
+                      : Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                      Container(
+                        width: MediaQuery.sizeOf(context).width,
+                        height: 40,
+                        decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xff666666)))),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "여행기록",
+                              style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.w600, fontSize: 18),
+                            ),
+                            TextButton.icon(
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (context) => const AddPlanPage()),
+                                );
+                              },
+                              style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                              label: Text(
+                                "기록추가",
+                                style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                              ),
+                              icon: Icon(
+                                Icons.add,
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                              iconAlignment: IconAlignment.end,
+                            )
+                          ],
+                        ),
+                      ),
+                      const Gap(10),
+                      _planListSection(context, list, isDarkMode, state)
+                                              ]));
             } else {
               return Center(
                 child: Container(
@@ -300,180 +328,182 @@ class _MainPage2State extends State<MainPage2> {
             }
           })
         ]),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Theme.of(context).colorScheme.secondary,
-          foregroundColor: Theme.of(context).colorScheme.surface,
-          child: const Icon(
-            Icons.add,
-            // color: Colors.white,
-          ),
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const AddPlanPage()),
-            );
-          },
-        ),
+        // floatingActionButton: FloatingActionButton(
+        //   backgroundColor: Theme.of(context).colorScheme.secondary,
+        //   foregroundColor: Theme.of(context).colorScheme.surface,
+        //   child: const Icon(
+        //     Icons.add,
+        //     // color: Colors.white,
+        //   ),
+        //   onPressed: () {
+        //     Navigator.of(context).push(
+        //       MaterialPageRoute(builder: (context) => const AddPlanPage()),
+        //     );
+        //   },
+        // ),
       );
     });
   }
 
   Widget _planListSection(BuildContext context, List<PlanModel> list, bool isDarkMode, DataState state) {
-    return ListView.separated(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        primary: false,
-        itemBuilder: (context, idx) {
-          return InkWell(
-            onTap: () {
-              // Navigator.of(context).push(MaterialPageRoute(builder: (context) => const PlanPage(), settings: RouteSettings(arguments: list[idx])));
-              if (state.state == DataStatus.endPlan) {
-                context.read<DataBloc>().add(DataLoadingPlanListEvent());
-              }
-              Get.to(() => PlanPage(plan: list[idx]));
-            },
-            child: Slidable(
-              endActionPane: ActionPane(extentRatio: 0.5, motion: const ScrollMotion(), children: [
-                SlidableAction(
-                    icon: Icons.edit_calendar,
-                    label: "수정",
-                    foregroundColor: Theme.of(context).colorScheme.primary,
-                    backgroundColor: Theme.of(context).colorScheme.onPrimary,
-                    borderRadius: BorderRadius.circular(10),
-                    onPressed: (context) {
-                      Get.to(() => AddPlanPage(
-                            plan: list[idx],
-                          ));
-                    }),
-                SlidableAction(
-                    icon: Icons.delete,
-                    label: "삭제",
-                    foregroundColor: Theme.of(context).colorScheme.primary,
-                    backgroundColor: Colors.redAccent,
-                    borderRadius: BorderRadius.circular(10),
-                    onPressed: (context) {
-                      context.read<PlanListProvider>().removePlanList(list[idx].id!);
-                      context.read<AccommodationProvider>().removeAllData(list[idx].id!);
-                      context.read<AccountProvider>().removeAllData(list[idx].id!);
-                      context.read<ImagesProvider>().removeAllData(list[idx].id!);
-                      context.read<RoamingProvider>().removeAllData(list[idx].id!);
-                      context.read<SuppliesProvider>().removeAllData(list[idx].id!);
-                    }),
-              ]),
-              child: Container(
-                width: MediaQuery.sizeOf(context).width - 36,
-                height: 120,
-                decoration:
-                    BoxDecoration(border: Border.all(color: isDarkMode ? Colors.white : Colors.black87), borderRadius: BorderRadius.circular(10)),
-                child: Row(
-                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      flex: 3,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // 상단 바
-                          Container(
-                            height: 30,
-                            width: MediaQuery.sizeOf(context).width - 122,
-                            padding: const EdgeInsets.only(left: 5),
-                            decoration: const BoxDecoration(color: Colors.cyan, borderRadius: BorderRadius.only(topLeft: Radius.circular(10))),
-                            child: const Row(
-                              children: [
-                                SizedBox(
-                                  width: 30,
-                                  height: 30,
-                                  child: Icon(
-                                    Icons.local_airport,
-                                    color: Color(0xff444444),
-                                  ),
-                                ),
-                                const Gap(6),
-                                const Text(
-                                  "TRAVEL",
-                                  style: TextStyle(color: Color(0xff444444), fontWeight: FontWeight.w600),
-                                )
-                              ],
-                            ),
-                          ),
-                          // 여행 목적 / 여행 기간
-                          Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.all(10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                      child: Text(
-                                    "${list[idx].nation}",
-                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                                  )),
-                                  SizedBox(
-                                    child: Text(
-                                        "${DateUtil.dateToString(list[idx].schedule?.first ?? DateTime.now())} ~ ${DateUtil.dateToString(list[idx].schedule?.last ?? DateTime.now())}"),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // D-Day / Departure
-                    Flexible(
-                      flex: 1,
-                      child: Stack(children: [
-                        Column(
+    return SingleChildScrollView(
+      child: ListView.separated(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          primary: false,
+          itemBuilder: (context, idx) {
+            return InkWell(
+              onTap: () {
+                // Navigator.of(context).push(MaterialPageRoute(builder: (context) => const PlanPage(), settings: RouteSettings(arguments: list[idx])));
+                if (state.state == DataStatus.endPlan) {
+                  context.read<DataBloc>().add(DataLoadingPlanListEvent());
+                }
+                Get.to(() => PlanPage(plan: list[idx]));
+              },
+              child: Slidable(
+                endActionPane: ActionPane(extentRatio: 0.5, motion: const ScrollMotion(), children: [
+                  SlidableAction(
+                      icon: Icons.edit_calendar,
+                      label: "수정",
+                      foregroundColor: Theme.of(context).colorScheme.primary,
+                      backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                      borderRadius: BorderRadius.circular(10),
+                      onPressed: (context) {
+                        Get.to(() => AddPlanPage(
+                              plan: list[idx],
+                            ));
+                      }),
+                  SlidableAction(
+                      icon: Icons.delete,
+                      label: "삭제",
+                      foregroundColor: Theme.of(context).colorScheme.primary,
+                      backgroundColor: Colors.redAccent,
+                      borderRadius: BorderRadius.circular(10),
+                      onPressed: (context) {
+                        context.read<PlanListProvider>().removePlanList(list[idx].id!);
+                        context.read<AccommodationProvider>().removeAllData(list[idx].id!);
+                        context.read<AccountProvider>().removeAllData(list[idx].id!);
+                        context.read<ImagesProvider>().removeAllData(list[idx].id!);
+                        context.read<RoamingProvider>().removeAllData(list[idx].id!);
+                        context.read<SuppliesProvider>().removeAllData(list[idx].id!);
+                      }),
+                ]),
+                child: Container(
+                  width: MediaQuery.sizeOf(context).width - 36,
+                  height: 120,
+                  decoration:
+                      BoxDecoration(border: Border.all(color: isDarkMode ? Colors.white : Colors.black87), borderRadius: BorderRadius.circular(10)),
+                  child: Row(
+                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        flex: 3,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // 상단 바
                             Container(
                               height: 30,
-                              decoration: const BoxDecoration(color: Colors.cyan, borderRadius: BorderRadius.only(topRight: Radius.circular(10))),
-                              child: const Center(
-                                child: Text(
-                                  "Departure",
-                                  style: TextStyle(color: Color(0xff444444), fontSize: 12, fontWeight: FontWeight.w500),
-                                ),
+                              width: MediaQuery.sizeOf(context).width - 122,
+                              padding: const EdgeInsets.only(left: 5),
+                              decoration: const BoxDecoration(color: Colors.cyan, borderRadius: BorderRadius.only(topLeft: Radius.circular(10))),
+                              child: const Row(
+                                children: [
+                                  SizedBox(
+                                    width: 30,
+                                    height: 30,
+                                    child: Icon(
+                                      Icons.local_airport,
+                                      color: Color(0xff444444),
+                                    ),
+                                  ),
+                                  const Gap(6),
+                                  const Text(
+                                    "TRAVEL",
+                                    style: TextStyle(color: Color(0xff444444), fontWeight: FontWeight.w600),
+                                  )
+                                ],
                               ),
                             ),
-                            // D-Day
+                            // 여행 목적 / 여행 기간
                             Expanded(
-                              child: Center(
-                                child: Text(
-                                  planState(list[idx].schedule!.first!, list[idx].schedule!.last!),
-                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                              child: Container(
+                                padding: const EdgeInsets.all(10),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                        child: Text(
+                                      "${list[idx].nation}",
+                                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                    )),
+                                    SizedBox(
+                                      child: Text(
+                                          "${DateUtil.dateToString(list[idx].schedule?.first ?? DateTime.now())} ~ ${DateUtil.dateToString(list[idx].schedule?.last ?? DateTime.now())}"),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
                           ],
                         ),
-                        // 점선
-                        Positioned(
-                            left: 0,
-                            child: SizedBox(
-                              height: 140,
-                              child: DottedLine(
-                                direction: Axis.vertical,
-                                alignment: WrapAlignment.center,
-                                lineLength: double.infinity,
-                                lineThickness: 1.0,
-                                dashLength: 4.0,
-                                dashColor: isDarkMode ? Colors.white : Colors.black,
-                                dashRadius: 0.0,
-                                dashGapLength: 4.0,
+                      ),
+                      // D-Day / Departure
+                      Flexible(
+                        flex: 1,
+                        child: Stack(children: [
+                          Column(
+                            children: [
+                              // 상단 바
+                              Container(
+                                height: 30,
+                                decoration: const BoxDecoration(color: Colors.cyan, borderRadius: BorderRadius.only(topRight: Radius.circular(10))),
+                                child: const Center(
+                                  child: Text(
+                                    "Departure",
+                                    style: TextStyle(color: Color(0xff444444), fontSize: 12, fontWeight: FontWeight.w500),
+                                  ),
+                                ),
                               ),
-                            ))
-                      ]),
-                    )
-                  ],
+                              // D-Day
+                              Expanded(
+                                child: Center(
+                                  child: Text(
+                                    planState(list[idx].schedule!.first!, list[idx].schedule!.last!),
+                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          // 점선
+                          Positioned(
+                              left: 0,
+                              child: SizedBox(
+                                height: 140,
+                                child: DottedLine(
+                                  direction: Axis.vertical,
+                                  alignment: WrapAlignment.center,
+                                  lineLength: double.infinity,
+                                  lineThickness: 1.0,
+                                  dashLength: 4.0,
+                                  dashColor: isDarkMode ? Colors.white : Colors.black,
+                                  dashRadius: 0.0,
+                                  dashGapLength: 4.0,
+                                ),
+                              ))
+                        ]),
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        },
-        separatorBuilder: (context, idx) => const Gap(20),
-        itemCount: list.length);
+            );
+          },
+          separatorBuilder: (context, idx) => const Gap(20),
+          itemCount: list.length),
+    );
   }
 
   String planState(DateTime first, DateTime end) {

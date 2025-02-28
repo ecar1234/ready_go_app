@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,7 +12,7 @@ class RoamingProvider with ChangeNotifier {
   final GetIt _getIt = GetIt.I;
   final logger = Logger();
 
-  List<XFile>? _imageList = [];
+  List<File>? _imageList = [];
   String? _dpAddress;
   String? _code;
   RoamingPeriodModel? _period;
@@ -21,7 +23,7 @@ class RoamingProvider with ChangeNotifier {
   String get tempCode => _tempCode;
   String get tempAddress => _tempAddress;
 
-  List<XFile>? get imageList => _imageList;
+  List<File>? get imageList => _imageList;
 
   String? get dpAddress => _dpAddress;
 
@@ -33,7 +35,7 @@ class RoamingProvider with ChangeNotifier {
     try {
       var data = await _getIt.get<RoamingRepo>().getRoamingData(id);
       if(data.imgList != null && data.imgList!.isNotEmpty){
-        _imageList = data.imgList!.map((path) => XFile(path)).toList();
+        _imageList = data.imgList!.map((path) => File(path)).toList();
       }else{
         _imageList = [];
       }
@@ -49,13 +51,13 @@ class RoamingProvider with ChangeNotifier {
   }
 
   Future<void> addImage(XFile image, int id) async {
-    var list = await _getIt.get<RoamingRepo>().addRoamingImage(image, id);
+    final list = await _getIt.get<RoamingRepo>().addRoamingImage(image, id);
     _imageList = list;
     notifyListeners();
   }
 
-  Future<void> removeImage(XFile image, int id) async {
-    var list = await _getIt.get<RoamingRepo>().removeRoamingImage(image, id);
+  Future<void> removeImage(File image, int id) async {
+    final list = await _getIt.get<RoamingRepo>().removeRoamingImage(image, id);
     _imageList = list;
     notifyListeners();
   }

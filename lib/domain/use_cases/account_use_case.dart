@@ -5,6 +5,7 @@ import 'package:ready_go_project/data/models/account_model/account_model.dart';
 import 'package:ready_go_project/data/models/account_model/amount_model.dart';
 import 'package:ready_go_project/data/models/plan_model/plan_model.dart';
 import 'package:ready_go_project/domain/repositories/account_repo.dart';
+import 'package:ready_go_project/domain/repositories/plan_repo.dart';
 import 'package:ready_go_project/domain/use_cases/plan_use_case.dart';
 
 import '../../data/repositories/account_local_data_repo.dart';
@@ -81,7 +82,7 @@ class AccountUseCase with  AccountRepo{
       account.totalUseAccount = account.totalExchangeAccount! - account.exchange!;
 
       try {
-        var planList = await _getIt.get<PlanUseCase>().getLocalList();
+        var planList = await _getIt.get<PlanRepo>().getLocalList();
         PlanModel? plan = PlanModel();
         for (var item in planList) {
           if (item.id == id) {
