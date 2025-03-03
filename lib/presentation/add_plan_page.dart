@@ -28,7 +28,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
   final logger = Logger();
   TextEditingController nationController = TextEditingController();
   List<DateTime?> _dates = [];
-
+  InterstitialAd? _interstitialAd;
   Timer? _debounce;
 
   _onChanged(String value) {
@@ -49,6 +49,13 @@ class _AddPlanPageState extends State<AddPlanPage> {
     if (widget.plan != null) {
       nationController.text = widget.plan!.nation!;
       _dates = widget.plan!.schedule!;
+    }
+
+    if(mounted){
+      _interstitialAd = context.read<AdmobProvider>().interstitialAd;
+      if(_interstitialAd != null){
+        _interstitialAd?.show();
+      }
     }
   }
 

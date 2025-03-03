@@ -238,7 +238,7 @@ class _MainPage2State extends State<MainPage2> {
         ),
         body: Stack(children: [
           LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-            if (constraints.maxWidth <= 600) {
+            if (constraints.maxWidth <= 660) {
               return Container(
                   width: MediaQuery.sizeOf(context).width,
                   height: MediaQuery.sizeOf(context).height - 120,
@@ -267,6 +267,7 @@ class _MainPage2State extends State<MainPage2> {
                             ),
                             TextButton.icon(
                               onPressed: () {
+                                context.read<AdmobProvider>().loadAdInterstitialAd();
                                 Navigator.of(context).push(
                                   MaterialPageRoute(builder: (context) => const AddPlanPage()),
                                 );
@@ -302,9 +303,7 @@ class _MainPage2State extends State<MainPage2> {
                               Text("생성된 여행이 없습니다."),
                             ],
                           )
-                        : SingleChildScrollView(
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center, children: [_planListSection(context, list, isDarkMode, state)]))),
+                        : Scrollbar(child: _planListSection(context, list, isDarkMode, state))),
               );
             }
           }),
@@ -346,9 +345,10 @@ class _MainPage2State extends State<MainPage2> {
   }
 
   Widget _planListSection(BuildContext context, List<PlanModel> list, bool isDarkMode, DataState state) {
-    return SingleChildScrollView(
+    return SizedBox(
+      height: MediaQuery.sizeOf(context).height -280,
       child: ListView.separated(
-          physics: const NeverScrollableScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           shrinkWrap: true,
           primary: false,
           itemBuilder: (context, idx) {

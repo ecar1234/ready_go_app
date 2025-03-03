@@ -2,11 +2,17 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:logger/logger.dart';
 
 class AdmobProvider with ChangeNotifier {
+  final logger = Logger();
   BannerAd? _bannerAd;
+  InterstitialAd? _interstitialAd;
+
+  AdRequest adRequest = const AdRequest();
 
   BannerAd? get bannerAd => _bannerAd;
+  InterstitialAd? get interstitialAd => _interstitialAd;
 
   void loadAdBanner() {
     late String adUnitId;
@@ -33,13 +39,37 @@ class AdmobProvider with ChangeNotifier {
           },
         ),
         request: const AdRequest())
-    ..load();
+      ..load();
   }
 
-  void bannerAdDispose(){
+  void loadAdInterstitialAd() {
+    late String interstitialAd;
+    if (Platform.isAndroid) {
+      if (kReleaseMode) {
+        interstitialAd = "ca-app-pub-6057371989804889/7457638448";
+      } else {
+        interstitialAd = "ca-app-pub-3940256099942544/1033173712";
+      }
+    } else if (Platform.isIOS) {
+      if (kReleaseMode) {
+        interstitialAd = "ca-app-pub-6057371989804889/3672400120";
+      } else {
+        interstitialAd = "ca-app-pub-3940256099942544/4411468910";
+      }
+    }
+    InterstitialAd.load(
+        adUnitId: interstitialAd,
+        request: adRequest,
+        adLoadCallback: InterstitialAdLoadCallback(onAdLoaded: (InterstitialAd ad) {
+          _interstitialAd = ad;
+        }, onAdFailedToLoad: (LoadAdError error) {
+          logger.e("full screen AD loading failed");
+        }));
+  }
+
+  void bannerAdDispose() {
     _bannerAd?.dispose();
     _bannerAd = null;
     notifyListeners();
-
   }
 }

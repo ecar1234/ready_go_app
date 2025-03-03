@@ -22,6 +22,7 @@ class PlanUseCase with PlanRepo{
     try {
       list = await _getIt.get<PlanLocalDataRepo>().getLocalList();
       list.add(plan);
+      list.sort((a, b) => a.schedule![0]!.compareTo(b.schedule![0]!));
       await _getIt.get<PlanLocalDataRepo>().updatePlanList(list);
     } on Exception catch (e) {
       logger.e(e.toString());
@@ -38,6 +39,7 @@ class PlanUseCase with PlanRepo{
       list = await _getIt.get<PlanLocalDataRepo>().getLocalList();
       int index = list.indexWhere((item) => item.id == plan.id);
       list[index] = plan;
+      list.sort((a, b) => a.schedule![0]!.compareTo(b.schedule![0]!));
       await _getIt.get<PlanLocalDataRepo>().updatePlanList(list);
 
     } on Exception catch (e) {
@@ -55,6 +57,7 @@ class PlanUseCase with PlanRepo{
     try {
       list = await _getIt.get<PlanLocalDataRepo>().getLocalList();
       list.removeWhere((plan) => plan.id == id);
+      list.sort((a, b) => a.schedule![0]!.compareTo(b.schedule![0]!));
       await _getIt.get<PlanLocalDataRepo>().updatePlanList(list);
 
     } on Exception catch (e) {

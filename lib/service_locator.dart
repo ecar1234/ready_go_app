@@ -55,6 +55,7 @@ Future<void> serviceLocator() async {
   _getIt.registerLazySingleton<PlanLocalDataRepo>(() => PlanDataImpl());
   _getIt.registerLazySingleton<RoamingLocalDataRepo>(() => RoamingDataImpl());
   _getIt.registerLazySingleton<SuppliesLocalDataRepo>(() => SuppliesDataImpl());
+  Future.delayed(const Duration(seconds: 2));
 
   FlutterNativeSplash.remove();
 }
