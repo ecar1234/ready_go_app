@@ -243,17 +243,8 @@ class _MainPage2State extends State<MainPage2> {
                   width: MediaQuery.sizeOf(context).width,
                   height: MediaQuery.sizeOf(context).height - 120,
                   padding: const EdgeInsets.all(20),
-                  child: list.isEmpty
-                      ? const Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text("생성된 여행이 없습니다."),
-                            ],
-                          ),
-                        )
-                      : Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                  child: Column(
+                    children: [
                       Container(
                         width: MediaQuery.sizeOf(context).width,
                         height: 40,
@@ -287,23 +278,65 @@ class _MainPage2State extends State<MainPage2> {
                         ),
                       ),
                       const Gap(10),
-                      _planListSection(context, list, isDarkMode, state)
-                                              ]));
+                      list.isEmpty
+                        ? SizedBox(
+                        height: MediaQuery.sizeOf(context).height -300,
+                          child: const Center(child: Text("생성된 여행이 없습니다.")),
+                        )
+                        : _planListSection(context, list, isDarkMode, state),]
+                  ));
             } else {
               return Center(
                 child: Container(
                     width: 840,
                     height: MediaQuery.sizeOf(context).height - 120,
                     padding: const EdgeInsets.all(20),
-                    child: list.isEmpty
-                        ? const Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                    child: Column(
+                      children: [
+                        Container(
+                          width: MediaQuery.sizeOf(context).width,
+                          height: 40,
+                          decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xff666666)))),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("생성된 여행이 없습니다."),
+                              Text(
+                                "여행기록",
+                                style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.w600, fontSize: 18),
+                              ),
+                              TextButton.icon(
+                                onPressed: () {
+                                  context.read<AdmobProvider>().loadAdInterstitialAd();
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(builder: (context) => const AddPlanPage()),
+                                  );
+                                },
+                                style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                                label: Text(
+                                  "기록추가",
+                                  style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                                ),
+                                icon: Icon(
+                                  Icons.add,
+                                  color: Theme.of(context).colorScheme.secondary,
+                                ),
+                                iconAlignment: IconAlignment.end,
+                              )
                             ],
-                          )
-                        : Scrollbar(child: _planListSection(context, list, isDarkMode, state))),
+                          ),
+                        ),
+                        const Gap(10),
+                        list.isEmpty
+                            ? const Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text("생성된 여행이 없습니다."),
+                                ],
+                              )
+                            : Scrollbar(child: _planListSection(context, list, isDarkMode, state)),
+                      ],
+                    )),
               );
             }
           }),
