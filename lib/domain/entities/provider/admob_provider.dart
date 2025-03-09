@@ -6,41 +6,49 @@ import 'package:logger/logger.dart';
 
 class AdmobProvider with ChangeNotifier {
   final logger = Logger();
-  BannerAd? _bannerAd;
+
+  // BannerAd? _bannerAd;
   InterstitialAd? _interstitialAd;
+  // bool _isLoaded = false;
 
-  AdRequest adRequest = const AdRequest();
-
-  BannerAd? get bannerAd => _bannerAd;
+  // BannerAd? get bannerAd => _bannerAd;
   InterstitialAd? get interstitialAd => _interstitialAd;
+  // bool get isLoaded => _isLoaded;
 
-  void loadAdBanner() {
-    late String adUnitId;
-    if (Platform.isAndroid) {
-      if (kReleaseMode) {
-        adUnitId = "ca-app-pub-6057371989804889/7587250556";
-      } else {
-        adUnitId = "ca-app-pub-3940256099942544/9214589741";
-      }
-    } else if (Platform.isIOS) {
-      if (kReleaseMode) {
-        adUnitId = "ca-app-pub-6057371989804889/2808834070";
-      } else {
-        adUnitId = "ca-app-pub-3940256099942544/2435281174";
-      }
-    }
 
-    _bannerAd = BannerAd(
-        size: AdSize.banner,
-        adUnitId: adUnitId,
-        listener: BannerAdListener(
-          onAdLoaded: (ad) {
-            notifyListeners();
-          },
-        ),
-        request: const AdRequest())
-      ..load();
-  }
+  // void loadAdBanner() {
+  //   late String adUnitId;
+  //   if (Platform.isAndroid) {
+  //     if (kReleaseMode) {
+  //       adUnitId = "ca-app-pub-6057371989804889/7587250556";
+  //     } else {
+  //       adUnitId = "ca-app-pub-3940256099942544/9214589741";
+  //     }
+  //   } else if (Platform.isIOS) {
+  //     if (kReleaseMode) {
+  //       adUnitId = "ca-app-pub-6057371989804889/2808834070";
+  //     } else {
+  //       adUnitId = "ca-app-pub-3940256099942544/2435281174";
+  //     }
+  //
+  //     _bannerAd = BannerAd(
+  //         size: AdSize.banner,
+  //         adUnitId: adUnitId,
+  //         listener: BannerAdListener(
+  //           onAdLoaded: (ad) {
+  //             _isLoaded = true;
+  //             notifyListeners();
+  //           },
+  //           onAdFailedToLoad: (ad, error) {
+  //             ad.dispose();
+  //             _bannerAd = null;
+  //             _isLoaded = false;
+  //             notifyListeners();
+  //           },
+  //         ),
+  //         request: const AdRequest())..load();
+  //   }
+  // }
 
   void loadAdInterstitialAd() {
     late String interstitialAd;
@@ -59,7 +67,7 @@ class AdmobProvider with ChangeNotifier {
     }
     InterstitialAd.load(
         adUnitId: interstitialAd,
-        request: adRequest,
+        request: const AdRequest(),
         adLoadCallback: InterstitialAdLoadCallback(onAdLoaded: (InterstitialAd ad) {
           _interstitialAd = ad;
         }, onAdFailedToLoad: (LoadAdError error) {
@@ -67,9 +75,10 @@ class AdmobProvider with ChangeNotifier {
         }));
   }
 
-  void bannerAdDispose() {
-    _bannerAd?.dispose();
-    _bannerAd = null;
-    notifyListeners();
+
+  void interstitialAdDispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _interstitialAd?.dispose();
   }
 }

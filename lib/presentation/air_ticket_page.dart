@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 
 import '../domain/entities/provider/admob_provider.dart';
 import '../domain/entities/provider/images_provider.dart';
-
+import '../util/admob_util.dart';
 
 class AirTicketPage extends StatefulWidget {
   final int planId;
@@ -24,51 +24,68 @@ class AirTicketPage extends StatefulWidget {
 class _AirTicketPageState extends State<AirTicketPage> {
   ImagePicker picker = ImagePicker();
   final logger = Logger();
+  final AdmobUtil _admobUtil = AdmobUtil();
+  bool _isLoaded = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // WidgetsBinding.instance.addPostFrameCallback((_) => context.read<AdmobProvider>().loadAdBanner());
+    _admobUtil.loadBannerAd(onAdLoaded: () {
+      setState(() {
+        _isLoaded = true;
+      });
+    }, onAdFailed: () {
+      setState(() {
+        _isLoaded = false;
+      });
+    });
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _admobUtil.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     final departureList = context.watch<ImagesProvider>().departureImg;
     final arrivalList = context.watch<ImagesProvider>().arrivalImg;
-    context.read<AdmobProvider>().loadAdBanner();
-    return Scaffold(
-      appBar: AppBar(),
-      body: Stack(children: [
-        LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraint) => SingleChildScrollView(
-            child: Container(
-              width: MediaQuery.sizeOf(context).width,
-              height: constraint.maxWidth <= 600 ? MediaQuery.sizeOf(context).height - 100 : null,
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 150, child: _departureSection(context, departureList)),
-                  const Gap(20),
-                  SizedBox(height: 150, child: _arrivalSection(context, arrivalList))
-                ],
+
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("항공권(E-ticket"),
+        ),
+        body: Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraint) => SingleChildScrollView(
+                child: SizedBox(
+                  width: MediaQuery.sizeOf(context).width,
+                  // height: constraint.maxWidth <= 600 ? MediaQuery.sizeOf(context).height - 100 : null,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 150, child: _departureSection(context, departureList)),
+                      const Gap(20),
+                      SizedBox(height: 150, child: _arrivalSection(context, arrivalList))
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
+            if (_isLoaded && _admobUtil.bannerAd != null)
+              SizedBox(
+                height: _admobUtil.bannerAd!.size.height.toDouble(),
+                width: _admobUtil.bannerAd!.size.width.toDouble(),
+                child: AdWidget(ad: _admobUtil.bannerAd!),
+              )
+          ]),
         ),
-        Builder(builder: (context) {
-          final BannerAd? bannerAd = context.watch<AdmobProvider>().bannerAd;
-          if (bannerAd != null) {
-            return Positioned(
-                left: 20,
-                right: 20,
-                bottom: 30,
-                child: SizedBox(
-                  width: bannerAd.size.width.toDouble(),
-                  height: bannerAd.size.height.toDouble(),
-                  child: AdWidget(
-                    ad: bannerAd,
-                  ),
-                ));
-          } else {
-            logger.d("banner is null on images page");
-            return const SizedBox();
-          }
-        })
-      ]),
+      ),
     );
   }
 
@@ -161,9 +178,9 @@ class _AirTicketPageState extends State<AirTicketPage> {
                 Navigator.of(context).pop(); // 다이얼로그 닫기
                 final XFile? image = await picker.pickImage(source: ImageSource.camera); // 카메라에서 이미지 선택
                 if (image != null) {
-                  if(type == "departure"){
+                  if (type == "departure") {
                     imgProvider.addDepartureImage(image, widget.planId);
-                  }else if(type == "arrival"){
+                  } else if (type == "arrival") {
                     imgProvider.addArrivalImage(image, widget.planId);
                   }
                 }

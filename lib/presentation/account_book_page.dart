@@ -15,6 +15,7 @@ import 'package:ready_go_project/util/intl_utils.dart';
 import '../data/models/plan_model/plan_model.dart';
 import '../domain/entities/provider/account_provider.dart';
 import '../domain/entities/provider/admob_provider.dart';
+import '../util/admob_util.dart';
 
 class AccountBookPage extends StatefulWidget {
   final PlanModel plan;
@@ -36,7 +37,8 @@ class _AccountBookPageState extends State<AccountBookPage> {
   // final TextEditingController _editAmountController = TextEditingController(text: amount.amount.toString());
   // final TextEditingController _editCategoryController = TextEditingController();
   final PageController _expandController = PageController(initialPage: 0);
-
+  final AdmobUtil _admobUtil = AdmobUtil();
+  bool _isLoaded = false;
   Timer? _debounce;
 
   _onChanged(String value) {
@@ -44,6 +46,21 @@ class _AccountBookPageState extends State<AccountBookPage> {
       _debounce?.cancel();
     }
     _debounce = Timer(const Duration(milliseconds: 500), () {});
+  }
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // WidgetsBinding.instance.addPostFrameCallback((_) => context.read<AdmobProvider>().loadAdBanner());
+    _admobUtil.loadBannerAd(onAdLoaded: () {
+      setState(() {
+        _isLoaded = true;
+      });
+    }, onAdFailed: () {
+      setState(() {
+        _isLoaded = false;
+      });
+    });
   }
 
   @override
@@ -58,59 +75,52 @@ class _AccountBookPageState extends State<AccountBookPage> {
     _totalDaysController.dispose();
 
     _debounce?.cancel();
+    _admobUtil.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final AccountModel info = context.watch<AccountProvider>().accountInfo!;
-    context.read<AdmobProvider>().loadAdBanner();
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("여행경비"),
-      ),
-      body: Stack(children: [
-        SizedBox(
-          width: MediaQuery.sizeOf(context).width,
-          height: MediaQuery.sizeOf(context).height - 100,
-          child: ExpandablePageView(
-              controller: _expandController, physics: const BouncingScrollPhysics(), children: [_page1(context, info), _page2(context, info)]),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("여행경비"),
         ),
-        Builder(builder: (context) {
-          final BannerAd? bannerAd = context.watch<AdmobProvider>().bannerAd;
-          if (bannerAd != null) {
-            return Positioned(
-                left: 20,
-                right: 20,
-                bottom: 30,
-                child: SizedBox(
-                  width: bannerAd.size.width.toDouble(),
-                  height: bannerAd.size.height.toDouble(),
-                  child: AdWidget(
-                    ad: bannerAd,
-                  ),
-                ));
-          } else {
-            logger.d("Banner Ad is null on account page");
-            return const SizedBox();
-          }
-        })
-      ]),
-      // floatingActionButton: FloatingActionButton(
-      //   foregroundColor: Theme.of(context).colorScheme.surface,
-      //   backgroundColor: Theme.of(context).colorScheme.secondary,
-      //   onPressed: () {
-      //     _addAmountDialog(context, info);
-      //   },
-      //   child: const Icon(
-      //     Icons.add,
-      //   ),
-      // ),
+        body: Container(
+          width: MediaQuery.sizeOf(context).width,
+          height: MediaQuery.sizeOf(context).height - 120,
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+            SizedBox(
+              child: ExpandablePageView(
+                  controller: _expandController, physics: const BouncingScrollPhysics(), children: [_page1(context, info), _page2(context, info)]),
+            ),
+                if (_isLoaded && _admobUtil.bannerAd != null)
+                  SizedBox(
+                    height: _admobUtil.bannerAd!.size.height.toDouble(),
+                    width: _admobUtil.bannerAd!.size.width.toDouble(),
+                    child: AdWidget(ad: _admobUtil.bannerAd!),
+                  )
+          ]),
+        ),
+        // floatingActionButton: FloatingActionButton(
+        //   foregroundColor: Theme.of(context).colorScheme.surface,
+        //   backgroundColor: Theme.of(context).colorScheme.secondary,
+        //   onPressed: () {
+        //     _addAmountDialog(context, info);
+        //   },
+        //   child: const Icon(
+        //     Icons.add,
+        //   ),
+        // ),
+      ),
     );
   }
 
   Widget _page1(BuildContext context, AccountModel info) {
-    return Container(
-      padding: const EdgeInsets.all(20),
+    return SizedBox(
       child: Column(
         children: [
           ..._totalInfoSection(context, info),
@@ -137,8 +147,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
   }
 
   Widget _page2(BuildContext context, AccountModel info) {
-    return Container(
-        padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 100),
+    return SizedBox(
         child: Column(
           children: [
             Container(

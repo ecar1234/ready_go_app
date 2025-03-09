@@ -14,6 +14,7 @@ import 'package:ready_go_project/data/models/roaming_model/roaming_period_model.
 
 import '../domain/entities/provider/admob_provider.dart';
 import '../domain/entities/provider/roaming_provider.dart';
+import '../util/admob_util.dart';
 
 class RoamingPage extends StatefulWidget {
   final int planId;
@@ -26,20 +27,36 @@ class RoamingPage extends StatefulWidget {
 
 class _RoamingPageState extends State<RoamingPage> {
   ImagePicker picker = ImagePicker();
+  final AdmobUtil _admobUtil = AdmobUtil();
+  bool _isLoaded = false;
   TextEditingController dpAddressController = TextEditingController();
   TextEditingController activeCodeController = TextEditingController();
   final logger = Logger();
   int? selectedValue;
 
-  Timer? _debounce;
+  // Timer? _debounce;
 
-  _onChanged(String value) {
-    if (_debounce?.isActive ?? false) {
-      _debounce?.cancel();
-    }
-    _debounce = Timer(const Duration(milliseconds: 500), () {});
+  // _onChanged(String value) {
+  //   if (_debounce?.isActive ?? false) {
+  //     _debounce?.cancel();
+  //   }
+  //   _debounce = Timer(const Duration(milliseconds: 500), () {});
+  // }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // WidgetsBinding.instance.addPostFrameCallback((_) => context.read<AdmobProvider>().loadAdBanner());
+    _admobUtil.loadBannerAd(onAdLoaded: () {
+      setState(() {
+        _isLoaded = true;
+      });
+    }, onAdFailed: () {
+      setState(() {
+        _isLoaded = false;
+      });
+    });
   }
-
 
   @override
   void dispose() {
@@ -47,78 +64,71 @@ class _RoamingPageState extends State<RoamingPage> {
     super.dispose();
     dpAddressController.dispose();
     activeCodeController.dispose();
-    _debounce?.cancel();
+    _admobUtil.dispose();
+    // _debounce?.cancel();
   }
 
   @override
   Widget build(BuildContext context) {
-    final list = context.watch<RoamingProvider>().imageList;
-    final code = context.watch<RoamingProvider>().code;
-    final address = context.watch<RoamingProvider>().dpAddress;
-    final period = context.watch<RoamingProvider>().period ?? RoamingPeriodModel();
-
-    context.read<AdmobProvider>().loadAdBanner();
-
+    final roamingData = context.watch<RoamingProvider>().roamingData;
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
       },
-      child: Scaffold(
-        resizeToAvoidBottomInset: true,
-        appBar: AppBar(
-          title: const Text("로밍 & ESIM"),
-        ),
-        body: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) => Stack(children: [
-            Center(
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                width: constraints.maxWidth <= 600 ? MediaQuery.sizeOf(context).width : 600,
-                height: MediaQuery.sizeOf(context).height - 100,
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _voucherImageSection(context, list),
-                      const Gap(10),
-                      const Divider(),
-                      _codeSection(context, address, code),
-                      // _dpAddressSection(context, address),
-                      // _activeCodeSection(context, code),
-                      const Divider(),
-                      const Gap(10),
-                      _periodSection(context, period)
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Builder(builder: (context) {
-              final BannerAd? bannerAd = context.watch<AdmobProvider>().bannerAd;
-              if (bannerAd != null) {
-                return Positioned(
-                    left: 20,
-                    right: 20,
-                    bottom: 30,
-                    child: SizedBox(
-                      width: bannerAd.size.width.toDouble(),
-                      height: bannerAd.size.height.toDouble(),
-                      child: AdWidget(
-                        ad: bannerAd,
+      child: SafeArea(
+        child: Scaffold(
+          resizeToAvoidBottomInset: true,
+          appBar: AppBar(
+            title: const Text("로밍 & ESIM"),
+          ),
+          body: Container(
+            height: MediaQuery.sizeOf(context).height - 120,
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints constraints) => Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                    SizedBox(
+                      width: constraints.maxWidth <= 600 ? MediaQuery.sizeOf(context).width : 600,
+                      // height: MediaQuery.sizeOf(context).height - 280,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _voucherImageSection(context, roamingData!.imgList!),
+                            const Gap(10),
+                            const Divider(),
+                            _codeSection(context, roamingData.activeCode!, roamingData.dpAddress!),
+                            // _dpAddressSection(context, address),
+                            // _activeCodeSection(context, code),
+                            const Divider(),
+                            const Gap(10),
+                            _periodSection(context, roamingData.period!)
+                          ],
+                        ),
                       ),
-                    ));
-              } else {
-                logger.d("banner is null on roaming page");
-                return const SizedBox();
-              }
-            })
-          ]),
+                    ),
+                  ]),
+                ),
+                if (_isLoaded && _admobUtil.bannerAd != null)
+                  SizedBox(
+                    height: _admobUtil.bannerAd!.size.height.toDouble(),
+                    width: _admobUtil.bannerAd!.size.width.toDouble(),
+                    child: AdWidget(ad: _admobUtil.bannerAd!),
+                  )
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget _voucherImageSection(BuildContext context, List<File>? list) {
+  Widget _voucherImageSection(BuildContext context, List<String> imgPath) {
+    List<File> list = imgPath.map((path) => File(path)).toList();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -127,7 +137,7 @@ class _RoamingPageState extends State<RoamingPage> {
           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
         ),
         SizedBox(
-          width: list!.isEmpty ? 100 : (list.length * 110) + 100,
+          width: list.isEmpty ? 100 : (list.length * 110) + 100,
           height: 120,
           child: Row(
             children: [
@@ -195,7 +205,8 @@ class _RoamingPageState extends State<RoamingPage> {
     );
   }
 
-  Widget _codeSection(BuildContext context, String? address, String? code) {
+  Widget _codeSection(BuildContext context, String code, String address) {
+
     return SizedBox(
       child: Column(
         children: [
@@ -208,12 +219,12 @@ class _RoamingPageState extends State<RoamingPage> {
                   "활성화 코드",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
-                if ((code != null && code.isEmpty) || (address != null && address.isEmpty))
+                if (code.isEmpty|| address.isEmpty)
                   SizedBox(
                       height: 40,
                       child: TextButton(
                           onPressed: () {
-                            _showSetCodeDialog(context);
+                            _showSetCodeDialog(context,code, address);
                           },
                           child: const Text("입력하기")))
                 else
@@ -221,7 +232,7 @@ class _RoamingPageState extends State<RoamingPage> {
                     height: 40,
                     child: TextButton(
                       onPressed: () {
-                        _showSetCodeDialog(context);
+                        _showSetCodeDialog(context, code, address);
                       },
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.zero,
@@ -246,7 +257,7 @@ class _RoamingPageState extends State<RoamingPage> {
                       "SM-DP주소",
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
-                    if (address != null && address.isNotEmpty)
+                    if (address.isNotEmpty)
                       SizedBox(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -324,7 +335,7 @@ class _RoamingPageState extends State<RoamingPage> {
               ),
               SizedBox(
                   child: Text(
-                address != null && address.isNotEmpty ? address : "SM-DP 주소를 등록해 주세요",
+                address.isNotEmpty ? address : "SM-DP 주소를 등록해 주세요",
                 textAlign: TextAlign.start,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -339,7 +350,7 @@ class _RoamingPageState extends State<RoamingPage> {
                       "활성화 코드",
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
-                    if (code != null && code.isNotEmpty)
+                    if (code.isNotEmpty)
                       SizedBox(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -416,7 +427,7 @@ class _RoamingPageState extends State<RoamingPage> {
               ),
               SizedBox(
                   child: Text(
-                code != null && code.isNotEmpty ? code : "활성화 코드를 등록해 주세요",
+                code.isNotEmpty ? code : "활성화 코드를 등록해 주세요",
                 textAlign: TextAlign.start,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -428,10 +439,8 @@ class _RoamingPageState extends State<RoamingPage> {
     );
   }
 
-  Widget _periodSection(
-    BuildContext context,
-    RoamingPeriodModel period,
-  ) {
+  Widget _periodSection(BuildContext context, RoamingPeriodModel period) {
+
     int? selectedValue = period.period ?? 0;
     DateTime startDate = period.startDate ?? DateTime.now();
     DateTime endDate = period.endDate ?? DateTime.now();
@@ -682,18 +691,18 @@ class _RoamingPageState extends State<RoamingPage> {
     );
   }
 
-  Future<void> _showSetCodeDialog(BuildContext context) async {
+  Future<void> _showSetCodeDialog(BuildContext context, String? code, String? address) async {
     await showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         builder: (context) {
-          String code = context.read<RoamingProvider>().code!;
-          String address = context.read<RoamingProvider>().dpAddress!;
-          if(code.isNotEmpty){
-            activeCodeController.text = context.read<RoamingProvider>().code!;
+          // String code = context.read<RoamingProvider>().code!;
+          // String address = context.read<RoamingProvider>().dpAddress!;
+          if (code != null && code.isNotEmpty) {
+            activeCodeController.text = code;
           }
-          if(address.isNotEmpty){
-            dpAddressController.text = context.read<RoamingProvider>().dpAddress!;
+          if (address != null && address.isNotEmpty) {
+            dpAddressController.text = address;
           }
 
           return SizedBox(
@@ -751,8 +760,7 @@ class _RoamingPageState extends State<RoamingPage> {
                                                   final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
                                                   if (clipboardData != null && clipboardData.text != null) {
                                                     if (mounted) {
-                                                      context.read<RoamingProvider>()
-                                                          .updateTempAddress(clipboardData.text ?? "");
+                                                      context.read<RoamingProvider>().updateTempAddress(clipboardData.text ?? "");
                                                       dpAddressController.text = context.read<RoamingProvider>().tempAddress;
                                                     }
                                                   }
@@ -854,7 +862,8 @@ class _RoamingPageState extends State<RoamingPage> {
                               return;
                             }
 
-                            if (activeCodeController.text == context.read<RoamingProvider>().code && dpAddressController.text == context.read<RoamingProvider>().dpAddress) {
+                            if (activeCodeController.text == code &&
+                                dpAddressController.text == address) {
                               Get.snackbar("입력정보 확인", "변경 내용이 없습니다.",
                                   colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
                               return;

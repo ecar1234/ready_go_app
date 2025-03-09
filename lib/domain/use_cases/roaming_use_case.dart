@@ -38,7 +38,7 @@ class RoamingUseCase with RoamingRepo {
   }
 
   @override
-  Future<List<File>> addRoamingImage(XFile image, int id) async {
+  Future<RoamingModel> addRoamingImage(XFile image, int id) async {
     RoamingModel? res = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
 
     Directory dir = await getApplicationDocumentsDirectory();
@@ -48,7 +48,8 @@ class RoamingUseCase with RoamingRepo {
       if(await File(imgPath).exists()){
         res.imgList!.add(imgPath);
         await _getIt.get<RoamingLocalDataRepo>().setRoamingImgList(res.imgList!, id);
-        return res.imgList!.map((path) => File(path)).toList();
+        res.imgList!.map((path) => File(path)).toList();
+        return res;
       }else{
         logger.e("roaming image copy failed");
         throw Exception("");
@@ -60,7 +61,7 @@ class RoamingUseCase with RoamingRepo {
   }
 
   @override
-  Future<List<File>> removeRoamingImage(File image, int id) async {
+  Future<RoamingModel> removeRoamingImage(File image, int id) async {
     RoamingModel? res = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
     String? targetPath = res.imgList!.firstWhere((path) => path.contains(image.path.split("/").last), orElse: () => "");
 
@@ -68,7 +69,8 @@ class RoamingUseCase with RoamingRepo {
       await File(targetPath).delete();
       res.imgList!.removeWhere((path) => path == targetPath);
       await _getIt.get<RoamingLocalDataRepo>().setRoamingImgList(res.imgList!, id);
-      return res.imgList!.map((path) => File(path)).toList();
+      res.imgList!.map((path) => File(path)).toList();
+      return res;
     }else {
       logger.e("The file requested for deletion does not exist.");
       throw Exception("");
@@ -105,7 +107,7 @@ class RoamingUseCase with RoamingRepo {
   }
 
   @override
-  Future<RoamingPeriodModel?> setPeriodDate(int day, int id) async {
+  Future<RoamingModel> setPeriodDate(int day, int id) async {
     try {
       RoamingModel? res = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
       final period = RoamingPeriodModel()
@@ -113,7 +115,7 @@ class RoamingUseCase with RoamingRepo {
         ..isActive = false;
       res.period = period;
       await _getIt.get<RoamingLocalDataRepo>().setRoamingData(res, id);
-      return period;
+      return res;
 
     } on Exception catch (e) {
       logger.e(e.toString());
@@ -122,17 +124,17 @@ class RoamingUseCase with RoamingRepo {
   }
 
   @override
-  Future<RoamingPeriodModel?> startPeriod(int id) async {
+  Future<RoamingModel> startPeriod(int id) async {
     try {
       RoamingModel? res = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
 
-      final period = RoamingPeriodModel()
+      res.period!
         ..isActive = true
         ..startDate = DateTime.now()
         ..endDate = DateTime.now().add(Duration(days: res.period!.period!));
-      res.period = period;
+
       await _getIt.get<RoamingLocalDataRepo>().setRoamingData(res, id);
-      return period;
+      return res;
     } on Exception catch (e) {
       logger.e(e.toString());
       rethrow;
@@ -140,7 +142,7 @@ class RoamingUseCase with RoamingRepo {
   }
 
   @override
-  Future<RoamingPeriodModel?> resetPeriod(int id) async {
+  Future<RoamingModel> resetPeriod(int id) async {
     try {
       RoamingModel? res = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
 
@@ -151,7 +153,7 @@ class RoamingUseCase with RoamingRepo {
         ..endDate = null;
       res.period = period;
       await _getIt.get<RoamingLocalDataRepo>().setRoamingData(res, id);
-      return period;
+      return res;
     } on Exception catch (e) {
       logger.e(e.toString());
       rethrow;
