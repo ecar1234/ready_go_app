@@ -1,6 +1,7 @@
 
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
+import 'package:ready_go_project/domain/entities/provider/plan_favorites_provider.dart';
 import 'package:ready_go_project/domain/repositories/plan_repo.dart';
 
 import '../../data/models/plan_model/plan_model.dart';
@@ -12,7 +13,10 @@ class PlanUseCase with PlanRepo{
 
   @override
   Future<List<PlanModel>> getLocalList() async {
-    var list = await _getIt.get<PlanLocalDataRepo>().getLocalList();
+    final list = await _getIt.get<PlanLocalDataRepo>().getLocalList();
+    List<PlanModel> favorite = list.where((item) => item.favorites == true).toList();
+    _getIt.get<PlanFavoritesProvider>().setFavoriteList(favorite);
+
     return list;
   }
 
@@ -40,7 +44,12 @@ class PlanUseCase with PlanRepo{
       int index = list.indexWhere((item) => item.id == plan.id);
       list[index] = plan;
       list.sort((a, b) => a.schedule![0]!.compareTo(b.schedule![0]!));
+
+      List<PlanModel> favorite = list.where((item) => item.favorites == true).toList();
+      _getIt.get<PlanFavoritesProvider>().setFavoriteList(favorite);
+
       await _getIt.get<PlanLocalDataRepo>().updatePlanList(list);
+      return list;
 
     } on Exception catch (e) {
       logger.e(e.toString());
@@ -58,6 +67,10 @@ class PlanUseCase with PlanRepo{
       list = await _getIt.get<PlanLocalDataRepo>().getLocalList();
       list.removeWhere((plan) => plan.id == id);
       list.sort((a, b) => a.schedule![0]!.compareTo(b.schedule![0]!));
+
+      List<PlanModel> favorite = list.where((item) => item.favorites == true).toList();
+      _getIt.get<PlanFavoritesProvider>().setFavoriteList(favorite);
+
       await _getIt.get<PlanLocalDataRepo>().updatePlanList(list);
 
     } on Exception catch (e) {

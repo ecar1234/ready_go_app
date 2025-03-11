@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
+import 'package:ready_go_project/domain/entities/provider/plan_favorites_provider.dart';
 import 'package:ready_go_project/presentation/main_page.dart';
 
 import 'domain/entities/provider/accommodation_provider.dart';
@@ -30,7 +31,8 @@ void main() async {
       ChangeNotifierProvider(create: (_) => AccommodationProvider()),
       ChangeNotifierProvider(create: (_) => ThemeModeProvider()),
       ChangeNotifierProvider(create: (_) => AdmobProvider()),
-      ChangeNotifierProvider(create: (_) => PassportProvider())
+      ChangeNotifierProvider(create: (_) => PassportProvider()),
+      // ChangeNotifierProvider(create: (_) => PlanFavoritesProvider())
     ],
     child: const MainPage(),)
   );

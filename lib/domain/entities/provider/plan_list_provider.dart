@@ -58,4 +58,8 @@ class PlanListProvider with ChangeNotifier {
     }
     notifyListeners();
   }
+
+  Future<void> addFavoriteList(PlanModel plan)async{
+    _getIt.get<PlanRepo>().changePlan(plan);
+  }
 }

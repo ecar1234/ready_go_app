@@ -166,13 +166,15 @@ class _AddPlanPageState extends State<AddPlanPage> {
                                                       plan
                                                         ..id = widget.plan!.id
                                                         ..schedule = _dates
-                                                        ..nation = nationController.text;
+                                                        ..nation = nationController.text
+                                                        ..favorites = widget.plan!.favorites;
                                                       context.read<PlanListProvider>().changePlan(plan);
                                                     } else {
                                                       plan
                                                         ..id = idNum + 1
                                                         ..nation = nationController.text
-                                                        ..schedule = _dates;
+                                                        ..schedule = _dates
+                                                        ..favorites = false;
                                                       context.read<PlanListProvider>().addPlanList(plan);
                                                     }
                                                   } catch (ex) {

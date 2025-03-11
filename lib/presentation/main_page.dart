@@ -7,12 +7,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:get_it/get_it.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/bloc/data_bloc.dart';
+import 'package:ready_go_project/domain/entities/provider/plan_favorites_provider.dart';
 import 'package:ready_go_project/presentation/add_plan_page.dart';
 import 'package:ready_go_project/presentation/option_page.dart';
 import 'package:ready_go_project/presentation/plan_page.dart';
@@ -175,7 +177,8 @@ class _MainPage2State extends State<MainPage2> {
         context.read<DataBloc>().add(DataLoadingPlanListEvent());
         context.read<PassportProvider>().getPassImg();
       }
-
+      final list = context.watch<PlanListProvider>().planList;
+      final favoriteList = GetIt.I.get<PlanFavoritesProvider>().favoriteList;
       return SafeArea(
         child: Scaffold(
           appBar: AppBar(
@@ -264,6 +267,7 @@ class _MainPage2State extends State<MainPage2> {
             padding: const EdgeInsets.all(20),
             child: Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Column(children: [
+                _favoritePlanListContainer(context, favoriteList, isDarkMode, state),
                 Container(
                   width: MediaQuery.sizeOf(context).width,
                   height: 40,
@@ -296,14 +300,13 @@ class _MainPage2State extends State<MainPage2> {
                     ],
                   ),
                 ),
-                const Gap(10),
+                const Gap(20),
                 LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-                  final list = context.select<PlanListProvider, List<PlanModel>?>((p) => p.planList);
                   if (constraints.maxWidth <= 660) {
                     return SizedBox(
                         width: MediaQuery.sizeOf(context).width,
-                        height: 550,
-                        child: list!.isEmpty
+                        height: favoriteList.isEmpty ? 550 : 550 - ((favoriteList.length * 120)+80),
+                        child: list.isEmpty
                             ? SizedBox(
                                 height: MediaQuery.sizeOf(context).height - 300,
                                 child: const Center(child: Text("생성된 여행이 없습니다.")),
@@ -313,7 +316,7 @@ class _MainPage2State extends State<MainPage2> {
                     return SizedBox(
                         width: 840,
                         height: 540,
-                        child: list!.isEmpty
+                        child: list.isEmpty
                             ? const Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -337,6 +340,184 @@ class _MainPage2State extends State<MainPage2> {
         ),
       );
     });
+  }
+
+  Widget _favoritePlanListContainer(BuildContext context, List<PlanModel> favoriteList, bool isDarkMode, DataState state) {
+    if(favoriteList.isEmpty){
+      return const SizedBox();
+    }
+    return SizedBox(
+      child: Column(
+        children: [
+          Container(
+            width: MediaQuery.sizeOf(context).width,
+            height: 40,
+            decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xff666666)))),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "즐겨찾기",
+                  style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.w600, fontSize: 18),
+                ),
+                SizedBox(
+                  child: Text("${favoriteList.length} / 2"),
+                )
+              ],
+            ),
+          ),
+          const Gap(10),
+          ListView.separated(
+            shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context, idx){
+            return GestureDetector(
+              onTap: (){
+                if (state.state == DataStatus.endPlan) {
+                  context.read<DataBloc>().add(DataLoadingPlanListEvent());
+                }
+                Get.to(() => PlanPage(plan: favoriteList[idx]));
+              },
+              child: Container(
+                // width: MediaQuery.sizeOf(context).width - 36,
+                height: 120,
+                decoration:
+                BoxDecoration(border: Border.all(color: isDarkMode ? Colors.white : Colors.black87), borderRadius: BorderRadius.circular(10)),
+                child: Row(
+                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      flex: 3,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // 상단 바
+                          Container(
+                            height: 30,
+                            width: MediaQuery.sizeOf(context).width - 122,
+                            padding: const EdgeInsets.only(left: 5),
+                            decoration: const BoxDecoration(color: Colors.cyan, borderRadius: BorderRadius.only(topLeft: Radius.circular(10))),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: 30,
+                                      height: 30,
+                                      child: Icon(
+                                        Icons.local_airport,
+                                        color: Color(0xff444444),
+                                      ),
+                                    ),
+                                    Gap(6),
+                                    Text(
+                                      "TRAVEL",
+                                      style: TextStyle(color: Color(0xff444444), fontWeight: FontWeight.w600),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                    height: 30,
+                                    width: 50,
+                                    child: IconButton(
+                                        onPressed: () {
+                                          final favoriteList = GetIt.I.get<PlanFavoritesProvider>().favoriteList;
+                                          final updatedPlan = favoriteList[idx];
+                                          updatedPlan.favorites = false;
+                                          context.read<PlanListProvider>().changePlan(updatedPlan);
+
+                                        },
+                                        style: IconButton.styleFrom(padding: EdgeInsets.zero),
+                                        icon: favoriteList[idx].favorites == false
+                                            ? const Icon(Icons.label_important_outline)
+                                            : const Icon(
+                                          Icons.label_important,
+                                          color: Colors.amberAccent,
+                                        )))
+                              ],
+                            ),
+                          ),
+                          // 여행 목적 / 여행 기간
+                          Container(
+                            height: 80,
+                            padding: const EdgeInsets.all(10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                SizedBox(
+                                    child: Text(
+                                      "${favoriteList[idx].nation}",
+                                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                    )),
+                                SizedBox(
+                                  child: Text(
+                                      "${DateUtil.dateToString(favoriteList[idx].schedule?.first ?? DateTime.now())} ~ ${DateUtil.dateToString(favoriteList[idx].schedule?.last ?? DateTime.now())}"),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // D-Day / Departure
+                    Flexible(
+                      flex: 1,
+                      child: Stack(children: [
+                        Column(
+                          children: [
+                            // 상단 바
+                            Container(
+                              height: 30,
+                              decoration: const BoxDecoration(color: Colors.cyan, borderRadius: BorderRadius.only(topRight: Radius.circular(10))),
+                              child: const Center(
+                                child: Text(
+                                  "Departure",
+                                  style: TextStyle(color: Color(0xff444444), fontSize: 12, fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                            ),
+                            // D-Day
+                            Expanded(
+                              child: Center(
+                                child: Text(
+                                  planState(favoriteList[idx].schedule!.first!, favoriteList[idx].schedule!.last!),
+                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        // 점선
+                        Positioned(
+                            left: 0,
+                            child: SizedBox(
+                              height: 140,
+                              child: DottedLine(
+                                direction: Axis.vertical,
+                                alignment: WrapAlignment.center,
+                                lineLength: double.infinity,
+                                lineThickness: 1.0,
+                                dashLength: 4.0,
+                                dashColor: isDarkMode ? Colors.white : Colors.black,
+                                dashRadius: 0.0,
+                                dashGapLength: 4.0,
+                              ),
+                            ))
+                      ]),
+                    )
+                  ],
+                ),
+              ),
+            );
+          }, separatorBuilder: (context, idx) => const Gap(10), itemCount: favoriteList.length),
+          const Gap(20),
+        ],
+      ),
+    );
   }
 
   Widget _planListSection(BuildContext context, List<PlanModel> list, bool isDarkMode, DataState state) {
@@ -383,7 +564,7 @@ class _MainPage2State extends State<MainPage2> {
                       }),
                 ]),
                 child: Container(
-                  width: MediaQuery.sizeOf(context).width - 36,
+                  // width: MediaQuery.sizeOf(context).width - 36,
                   height: 120,
                   decoration:
                       BoxDecoration(border: Border.all(color: isDarkMode ? Colors.white : Colors.black87), borderRadius: BorderRadius.circular(10)),
@@ -401,43 +582,76 @@ class _MainPage2State extends State<MainPage2> {
                               width: MediaQuery.sizeOf(context).width - 122,
                               padding: const EdgeInsets.only(left: 5),
                               decoration: const BoxDecoration(color: Colors.cyan, borderRadius: BorderRadius.only(topLeft: Radius.circular(10))),
-                              child: const Row(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  SizedBox(
-                                    width: 30,
-                                    height: 30,
-                                    child: Icon(
-                                      Icons.local_airport,
-                                      color: Color(0xff444444),
-                                    ),
+                                  const Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        width: 30,
+                                        height: 30,
+                                        child: Icon(
+                                          Icons.local_airport,
+                                          color: Color(0xff444444),
+                                        ),
+                                      ),
+                                      Gap(6),
+                                      Text(
+                                        "TRAVEL",
+                                        style: TextStyle(color: Color(0xff444444), fontWeight: FontWeight.w600),
+                                      ),
+                                    ],
                                   ),
-                                  const Gap(6),
-                                  const Text(
-                                    "TRAVEL",
-                                    style: TextStyle(color: Color(0xff444444), fontWeight: FontWeight.w600),
-                                  )
+                                  SizedBox(
+                                      height: 30,
+                                      width: 50,
+                                      child: IconButton(
+                                          onPressed: () {
+                                            final favoriteList = GetIt.I.get<PlanFavoritesProvider>().favoriteList;
+                                            final updatedPlan = list[idx];
+                                            if(list[idx].favorites == true){
+                                              updatedPlan.favorites = false;
+                                              context.read<PlanListProvider>().changePlan(updatedPlan);
+                                            }else {
+                                              if(favoriteList.length == 2){
+                                                Get.snackbar("즐겨찾기에 추가 할 수 없습니다.", "즐겨찾기는 최대 2개의 플랜만 추가가 가능합니다.",
+                                                    backgroundColor: Theme.of(context).colorScheme.surface);
+                                                return;
+                                              }
+                                              updatedPlan.favorites = true;
+                                              context.read<PlanListProvider>().changePlan(updatedPlan);
+                                            }
+                                          },
+                                          style: IconButton.styleFrom(padding: EdgeInsets.zero),
+                                          icon: list[idx].favorites == false
+                                              ? const Icon(Icons.label_important_outline)
+                                              : const Icon(
+                                                  Icons.label_important,
+                                                  color: Colors.amberAccent,
+                                                )))
                                 ],
                               ),
                             ),
                             // 여행 목적 / 여행 기간
-                            Expanded(
-                              child: Container(
-                                padding: const EdgeInsets.all(10),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                        child: Text(
-                                      "${list[idx].nation}",
-                                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                                    )),
-                                    SizedBox(
+                            Container(
+                              height: 80,
+                              padding: const EdgeInsets.all(10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  SizedBox(
                                       child: Text(
-                                          "${DateUtil.dateToString(list[idx].schedule?.first ?? DateTime.now())} ~ ${DateUtil.dateToString(list[idx].schedule?.last ?? DateTime.now())}"),
-                                    ),
-                                  ],
-                                ),
+                                    "${list[idx].nation}",
+                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                  )),
+                                  SizedBox(
+                                    child: Text(
+                                        "${DateUtil.dateToString(list[idx].schedule?.first ?? DateTime.now())} ~ ${DateUtil.dateToString(list[idx].schedule?.last ?? DateTime.now())}"),
+                                  ),
+                                ],
                               ),
                             ),
                           ],

@@ -1,23 +1,17 @@
+
+import 'package:json_annotation/json_annotation.dart';
+part 'plan_model.g.dart';
+
+@JsonSerializable()
 class PlanModel {
   int? id;
   String? nation;
   List<DateTime?>? schedule;
+  bool? favorites;
 
-  PlanModel({this.id, this.nation, this.schedule});
+  PlanModel({this.id, this.nation, this.schedule, this.favorites});
 
-  factory PlanModel.fromJson(Map<String, dynamic>json){
-    return PlanModel(
-      id: json['id']??"",
-      nation: json['nation']??"",
-      schedule: (json['schedule'] as List).map((date) => DateTime.parse(date)).toList()
-    );
-  }
+  factory PlanModel.fromJson(Map<String, dynamic> json) => _$PlanModelFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'nation':nation,
-      'schedule':schedule?.map((e) => e?.toIso8601String()).toList()
-    };
-  }
+  Map<String, dynamic> toJson() => _$PlanModelToJson(this);
 }
