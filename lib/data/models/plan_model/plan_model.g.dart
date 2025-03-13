@@ -12,7 +12,8 @@ PlanModel _$PlanModelFromJson(Map<String, dynamic> json) => PlanModel(
       schedule: (json['schedule'] as List<dynamic>?)
           ?.map((e) => e == null ? null : DateTime.parse(e as String))
           .toList(),
-    )..favorites = json['favorites'] as bool?;
+      favorites: json['favorites'] as bool?,
+    );
 
 Map<String, dynamic> _$PlanModelToJson(PlanModel instance) => <String, dynamic>{
       'id': instance.id,

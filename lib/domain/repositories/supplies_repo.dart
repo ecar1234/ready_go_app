@@ -7,4 +7,5 @@ mixin SuppliesRepo {
   Future<List<SupplyModel>> removeSuppliesItem(int idx, int id);
   Future<List<SupplyModel>> updateSupplyState(int idx, int id);
   Future<List<SupplyModel>> removeAllData(int id);
+  Future<void> addTemplateList(List<SupplyModel> list, int id);
 }

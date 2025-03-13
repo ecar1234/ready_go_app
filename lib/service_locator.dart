@@ -9,12 +9,14 @@ import 'package:ready_go_project/data/data_source/account_data_impl.dart';
 import 'package:ready_go_project/data/data_source/image_data_impl.dart';
 import 'package:ready_go_project/data/data_source/roaming_data_impl.dart';
 import 'package:ready_go_project/data/data_source/supplies_data_impl.dart';
+import 'package:ready_go_project/data/data_source/supplies_temp_data_impl.dart';
 import 'package:ready_go_project/data/repositories/accommodation_local_data_repo.dart';
 import 'package:ready_go_project/data/repositories/account_local_data_repo.dart';
 import 'package:ready_go_project/data/repositories/image_local_data_repo.dart';
 import 'package:ready_go_project/data/repositories/plan_local_data_repo.dart';
 import 'package:ready_go_project/data/repositories/roaming_local_data_repo.dart';
 import 'package:ready_go_project/data/repositories/supplies_local_data_repo.dart';
+import 'package:ready_go_project/data/repositories/supplies_temp_local_repo.dart';
 import 'package:ready_go_project/domain/entities/provider/plan_favorites_provider.dart';
 import 'package:ready_go_project/domain/repositories/accommodation_repo.dart';
 import 'package:ready_go_project/domain/repositories/account_repo.dart';
@@ -22,12 +24,14 @@ import 'package:ready_go_project/domain/repositories/image_repo.dart';
 import 'package:ready_go_project/domain/repositories/plan_repo.dart';
 import 'package:ready_go_project/domain/repositories/roaming_repo.dart';
 import 'package:ready_go_project/domain/repositories/supplies_repo.dart';
+import 'package:ready_go_project/domain/repositories/supplies_temp_repo.dart';
 
 import 'package:ready_go_project/domain/use_cases/accommodation_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/account_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/image_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/plan_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/roaming_use_case.dart';
+import 'package:ready_go_project/domain/use_cases/supplies_temp_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/supplies_use_case.dart';
 import 'package:ready_go_project/firebase/firebase_options.dart';
 
@@ -48,6 +52,7 @@ Future<void> serviceLocator() async {
   _getIt.registerSingleton<PlanRepo>(PlanUseCase());
   _getIt.registerSingleton<RoamingRepo>(RoamingUseCase());
   _getIt.registerSingleton<SuppliesRepo>(SuppliesUseCase());
+  _getIt.registerSingleton<SuppliesTempRepo>(SuppliesTempUseCase());
 
   //data
   _getIt.registerLazySingleton<AccommodationLocalDateRepo>(() => AccommodationDataImpl());
@@ -56,6 +61,7 @@ Future<void> serviceLocator() async {
   _getIt.registerLazySingleton<PlanLocalDataRepo>(() => PlanDataImpl());
   _getIt.registerLazySingleton<RoamingLocalDataRepo>(() => RoamingDataImpl());
   _getIt.registerLazySingleton<SuppliesLocalDataRepo>(() => SuppliesDataImpl());
+  _getIt.registerLazySingleton<SuppliesTempLocalRepo>(() => SuppliesTempDataImpl());
 
   // favorite
   _getIt.registerLazySingleton<PlanFavoritesProvider>(() => PlanFavoritesProvider());

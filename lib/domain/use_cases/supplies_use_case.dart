@@ -4,29 +4,29 @@ import 'package:ready_go_project/domain/repositories/supplies_repo.dart';
 import '../../data/models/supply_model/supply_model.dart';
 import '../../data/repositories/supplies_local_data_repo.dart';
 
+  final _getIt = GetIt.I.get<SuppliesLocalDataRepo>();
 class SuppliesUseCase with SuppliesRepo{
-  final GetIt _getIt = GetIt.I;
 
   @override
   Future<List<SupplyModel>> getSuppliesList(int id) async {
-    var list = await _getIt.get<SuppliesLocalDataRepo>().getSuppliesList(id);
+    var list = await _getIt.getSuppliesList(id);
     return list;
   }
 
   @override
   Future<List<SupplyModel>> addSuppliesItem(SupplyModel item, int id) async {
-    var list = await _getIt.get<SuppliesLocalDataRepo>().getSuppliesList(id);
+    var list = await _getIt.getSuppliesList(id);
     list.add(item);
-    await _getIt.get<SuppliesLocalDataRepo>().addSuppliesItem(list, id);
+    await _getIt.addSuppliesItem(list, id);
     return list;
 
   }
 
   @override
   Future<List<SupplyModel>> editSuppliesItem(int idx, String item, int id) async {
-    var list = await _getIt.get<SuppliesLocalDataRepo>().getSuppliesList(id);
+    var list = await _getIt.getSuppliesList(id);
     list[idx].item = item;
-    await _getIt.get<SuppliesLocalDataRepo>().editSuppliesItem(list, id);
+    await _getIt.editSuppliesItem(list, id);
 
     return list;
 
@@ -34,25 +34,30 @@ class SuppliesUseCase with SuppliesRepo{
 
   @override
   Future<List<SupplyModel>> removeSuppliesItem(int idx, int id) async {
-    var list = await _getIt.get<SuppliesLocalDataRepo>().getSuppliesList(id);
+    var list = await _getIt.getSuppliesList(id);
     list.removeAt(idx);
-    await _getIt.get<SuppliesLocalDataRepo>().removeSuppliesItem(list, id);
+    await _getIt.removeSuppliesItem(list, id);
     return list;
   }
 
   @override
   Future<List<SupplyModel>> updateSupplyState(int idx, int id) async {
-    var list = await _getIt.get<SuppliesLocalDataRepo>().getSuppliesList(id);
+    var list = await _getIt.getSuppliesList(id);
     list[idx].isCheck = !list[idx].isCheck!;
-    await _getIt.get<SuppliesLocalDataRepo>().updateSuppliesItem(list, id);
+    await _getIt.updateSuppliesItem(list, id);
 
     return list;
   }
 
   @override
   Future<List<SupplyModel>> removeAllData(int id)async{
-    await _getIt.get<SuppliesLocalDataRepo>().removeAllData(id);
+    await _getIt.removeAllData(id);
     return [];
+  }
+
+  @override
+  Future<void> addTemplateList(List<SupplyModel> list, int id) async{
+    await _getIt.updateSuppliesItem(list, id);
   }
 
 
