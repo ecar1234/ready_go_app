@@ -62,6 +62,7 @@ dependencies:
   logger: ^2.5.0
   dotted_border: ^2.1.0
   dotted_line: ^3.2.3
+  in_app_purchase: ^3.2.1
 
 
 
@@ -79,6 +80,7 @@ dev_dependencies:
   build_runner: ^2.4.11
   flutter_launcher_icons: ^0.14.2
   analyzer: ^7.3.0
+  in_app_purchase_platform_interface: ^1.4.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -141,11 +143,14 @@ flutter_launcher_icons:
 flutter_native_splash:
     android: true
     ios: true
-    color: "#FFFFFF"
+#    color: "#FFFFFF"
     image: "assets/images/splash.png"
+    background_image: "assets/images/splash_background.png"
+
     android_12:
       color: "#FFFFFF"
       image: "assets/images/icon.png"
-      icon_background_color: "#FFFFFF"
+#      background_image: "assets/images/splash_background.png"
+#      icon_background_color: "#FFFFFF"
 
     web: false

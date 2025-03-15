@@ -95,168 +95,170 @@ class _SuppliesPageState extends State<SuppliesPage> {
             )
           ],
         ),
-        body: Container(
-          height: MediaQuery
-              .sizeOf(context)
-              .height - 120,
-          padding: const EdgeInsets.all(20),
-          child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) =>
-                  SingleChildScrollView(
-                    child: SizedBox(
-                      // height: MediaQuery.sizeOf(context).height - 300,
-                      // height: list.isEmpty ? MediaQuery.sizeOf(context).height - 300 : (45 * list.length.toDouble()),
-                      // padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 40),
-                      child: Column(
-                        children: [
-                          Container(
-                            width: MediaQuery
-                                .sizeOf(context)
-                                .width,
-                            height: 40,
-                            decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xff666666)))),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "체크리스트",
-                                  style: TextStyle(color: Theme
-                                      .of(context)
-                                      .colorScheme
-                                      .secondary, fontWeight: FontWeight.w600, fontSize: 18),
-                                ),
-                                TextButton.icon(
-                                  onPressed: () {
-                                    _itemAddDialog(context);
-                                  },
-                                  style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                                  label: Text(
-                                    "추가",
+        body: SingleChildScrollView(
+          child: Container(
+            height: MediaQuery
+                .sizeOf(context)
+                .height - 120,
+            padding: const EdgeInsets.all(20),
+            child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) =>
+                    SingleChildScrollView(
+                      child: SizedBox(
+                        // height: MediaQuery.sizeOf(context).height - 300,
+                        // height: list.isEmpty ? MediaQuery.sizeOf(context).height - 300 : (45 * list.length.toDouble()),
+                        // padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 40),
+                        child: Column(
+                          children: [
+                            Container(
+                              width: MediaQuery
+                                  .sizeOf(context)
+                                  .width,
+                              height: 40,
+                              decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xff666666)))),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "체크리스트",
                                     style: TextStyle(color: Theme
                                         .of(context)
                                         .colorScheme
-                                        .secondary),
+                                        .secondary, fontWeight: FontWeight.w600, fontSize: 18),
                                   ),
-                                  icon: Icon(
-                                    Icons.add,
-                                    color: Theme
-                                        .of(context)
-                                        .colorScheme
-                                        .secondary,
-                                  ),
-                                  iconAlignment: IconAlignment.end,
-                                )
-                              ],
+                                  TextButton.icon(
+                                    onPressed: () {
+                                      _itemAddDialog(context);
+                                    },
+                                    style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                                    label: Text(
+                                      "추가",
+                                      style: TextStyle(color: Theme
+                                          .of(context)
+                                          .colorScheme
+                                          .secondary),
+                                    ),
+                                    icon: Icon(
+                                      Icons.add,
+                                      color: Theme
+                                          .of(context)
+                                          .colorScheme
+                                          .secondary,
+                                    ),
+                                    iconAlignment: IconAlignment.end,
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                          const Gap(10),
-                          Container(
-                              height: MediaQuery
-                                  .sizeOf(context)
-                                  .height - 300,
-                              decoration: BoxDecoration(border: Border.all(color: const Color(0xff666666)), borderRadius: BorderRadius.circular(10)),
-                              child: list.isEmpty
-                                  ? const Center(
-                                child: Text("목록을 추가해 주세요"),
-                              )
-                                  : Scrollbar(
-                                child: ListView.separated(
-                                    physics: const BouncingScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemBuilder: (context, idx) {
-                                      return SizedBox(
-                                        height: 40,
-                                        child: TextButton(
-                                            onPressed: () {
-                                              context.read<SuppliesProvider>().updateItemState(idx, widget.planId);
-                                            },
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              children: [
-                                                SizedBox(
-                                                  child: Row(
-                                                    children: [
-                                                      Container(
-                                                        height: 16,
-                                                        width: 16,
-                                                        decoration: BoxDecoration(
-                                                          border: Border.all(color: const Color(0xff666666)),
-                                                          shape: BoxShape.circle,
-                                                        ),
-                                                        child: Container(
+                            const Gap(10),
+                            Container(
+                                height: MediaQuery
+                                    .sizeOf(context)
+                                    .height - 300,
+                                decoration: BoxDecoration(border: Border.all(color: const Color(0xff666666)), borderRadius: BorderRadius.circular(10)),
+                                child: list.isEmpty
+                                    ? const Center(
+                                  child: Text("목록을 추가해 주세요"),
+                                )
+                                    : Scrollbar(
+                                  child: ListView.separated(
+                                      physics: const BouncingScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemBuilder: (context, idx) {
+                                        return SizedBox(
+                                          height: 40,
+                                          child: TextButton(
+                                              onPressed: () {
+                                                context.read<SuppliesProvider>().updateItemState(idx, widget.planId);
+                                              },
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  SizedBox(
+                                                    child: Row(
+                                                      children: [
+                                                        Container(
+                                                          height: 16,
+                                                          width: 16,
                                                           decoration: BoxDecoration(
-                                                              border: Border.all(
-                                                                  width: 1.5, color: list[idx].isCheck! ? Colors.white : Colors.transparent),
-                                                              shape: BoxShape.circle,
-                                                              color:
-                                                              list[idx].isCheck! ? Theme
+                                                            border: Border.all(color: const Color(0xff666666)),
+                                                            shape: BoxShape.circle,
+                                                          ),
+                                                          child: Container(
+                                                            decoration: BoxDecoration(
+                                                                border: Border.all(
+                                                                    width: 1.5, color: list[idx].isCheck! ? Colors.white : Colors.transparent),
+                                                                shape: BoxShape.circle,
+                                                                color:
+                                                                list[idx].isCheck! ? Theme
+                                                                    .of(context)
+                                                                    .colorScheme
+                                                                    .primary : Colors.transparent),
+                                                          ),
+                                                        ),
+                                                        const Gap(10),
+                                                        Text(
+                                                          "${list[idx].item}",
+                                                          style: TextStyle(
+                                                              fontSize: 18,
+                                                              color: list[idx].isCheck == true ? Colors.grey : Theme
                                                                   .of(context)
                                                                   .colorScheme
-                                                                  .primary : Colors.transparent),
+                                                                  .primary,
+                                                              decoration:
+                                                              list[idx].isCheck == true ? TextDecoration.lineThrough : TextDecoration.none),
+                                                          overflow: TextOverflow.ellipsis,
                                                         ),
-                                                      ),
-                                                      const Gap(10),
-                                                      Text(
-                                                        "${list[idx].item}",
-                                                        style: TextStyle(
-                                                            fontSize: 18,
-                                                            color: list[idx].isCheck == true ? Colors.grey : Theme
-                                                                .of(context)
-                                                                .colorScheme
-                                                                .primary,
-                                                            decoration:
-                                                            list[idx].isCheck == true ? TextDecoration.lineThrough : TextDecoration.none),
-                                                        overflow: TextOverflow.ellipsis,
-                                                      ),
-                                                    ],
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                                PopupMenuButton(
-                                                  padding: EdgeInsets.zero,
-                                                  itemBuilder: (context) =>
-                                                  [
-                                                    const PopupMenuItem(
-                                                        value: "edit",
-                                                        child: Text(
-                                                          "수정",
-                                                        )),
-                                                    const PopupMenuItem(
-                                                        value: "delete",
-                                                        child: Text(
-                                                          "삭제",
-                                                        )),
-                                                  ],
-                                                  onSelected: (value) {
-                                                    switch (value) {
-                                                      case "edit":
-                                                        _controller.text = list[idx].item!;
-                                                        _itemEditDialog(context, idx);
-                                                      case "delete":
-                                                        context.read<SuppliesProvider>().removeItem(idx, widget.planId);
-                                                    }
-                                                  },
-                                                )
-                                              ],
-                                            )),
-                                      );
-                                    },
-                                    separatorBuilder: (context, idx) => const Gap(5),
-                                    itemCount: list.length),
-                              )),
-                        ],
+                                                  PopupMenuButton(
+                                                    padding: EdgeInsets.zero,
+                                                    itemBuilder: (context) =>
+                                                    [
+                                                      const PopupMenuItem(
+                                                          value: "edit",
+                                                          child: Text(
+                                                            "수정",
+                                                          )),
+                                                      const PopupMenuItem(
+                                                          value: "delete",
+                                                          child: Text(
+                                                            "삭제",
+                                                          )),
+                                                    ],
+                                                    onSelected: (value) {
+                                                      switch (value) {
+                                                        case "edit":
+                                                          _controller.text = list[idx].item!;
+                                                          _itemEditDialog(context, idx);
+                                                        case "delete":
+                                                          context.read<SuppliesProvider>().removeItem(idx, widget.planId);
+                                                      }
+                                                    },
+                                                  )
+                                                ],
+                                              )),
+                                        );
+                                      },
+                                      separatorBuilder: (context, idx) => const Gap(5),
+                                      itemCount: list.length),
+                                )),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-            ),
-            if (_isLoaded && _admobUtil.bannerAd != null)
-              SizedBox(
-                height: _admobUtil.bannerAd!.size.height.toDouble(),
-                width: _admobUtil.bannerAd!.size.width.toDouble(),
-                child: AdWidget(ad: _admobUtil.bannerAd!),
-              )
-          ]),
+              ),
+              if (_isLoaded && _admobUtil.bannerAd != null)
+                SizedBox(
+                  height: _admobUtil.bannerAd!.size.height.toDouble(),
+                  width: _admobUtil.bannerAd!.size.width.toDouble(),
+                  child: AdWidget(ad: _admobUtil.bannerAd!),
+                )
+            ]),
+          ),
         ),
         // floatingActionButton: FloatingActionButton(
         //   foregroundColor: Theme.of(context).colorScheme.surface,

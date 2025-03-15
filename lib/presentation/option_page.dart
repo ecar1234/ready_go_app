@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 
 import '../domain/entities/provider/theme_mode_provider.dart';
 
@@ -12,6 +13,14 @@ class OptionPage extends StatefulWidget {
 }
 
 class _OptionPageState extends State<OptionPage> {
+  final InAppPurchase _inAppPurchase = InAppPurchase.instance;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
