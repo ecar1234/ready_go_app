@@ -15,4 +15,7 @@ class DateUtil {
   static bool isSameDay(DateTime a, DateTime b){
     return a.year == b.year && a.month == b.month && a.day == b.day;
   }
+  static int datesDifference(List<DateTime?> list){
+    return list[1]!.difference(list[0]!).inDays;
+  }
 }

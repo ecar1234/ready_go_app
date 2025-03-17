@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:get_it/get_it.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +17,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../data/models/plan_model/plan_model.dart';
 import '../domain/entities/provider/accommodation_provider.dart';
-import '../domain/entities/provider/admob_provider.dart';
+import '../domain/entities/provider/responsive_height_provider.dart';
 import '../domain/entities/provider/theme_mode_provider.dart';
 import '../util/admob_util.dart';
 
@@ -102,7 +103,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
     final list = context.watch<AccommodationProvider>().accommodation;
     int month = widget.plan.schedule!.first!.month;
     int day = widget.plan.schedule!.first!.day;
-
+    final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height -120;
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
@@ -125,18 +126,18 @@ class _AccommodationPageState extends State<AccommodationPage> {
             ],
           ),
           body: Container(
-            height: MediaQuery.sizeOf(context).height - 150,
+            height: height,
             padding: const EdgeInsets.all(20),
             child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) => SizedBox(
                     child: list?.isEmpty == true || list == null
                         ? SizedBox(
-                            height: MediaQuery.sizeOf(context).height - 250,
+                            height: height -100,
                             child: const Center(child: Text("숙소 정보가 없습니다.")),
                           )
                         : SizedBox(
-                            height: MediaQuery.sizeOf(context).height - 250,
+                            height: height -100,
                             width: constraints.maxWidth <= 600 ? MediaQuery.sizeOf(context).width : 600,
                             child: SingleChildScrollView(child: _accordionSection(context, list)))),
               ),

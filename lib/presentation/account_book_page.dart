@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:get_it/get_it.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +15,7 @@ import 'package:ready_go_project/util/intl_utils.dart';
 
 import '../data/models/plan_model/plan_model.dart';
 import '../domain/entities/provider/account_provider.dart';
-import '../domain/entities/provider/admob_provider.dart';
+import '../domain/entities/provider/responsive_height_provider.dart';
 import '../util/admob_util.dart';
 
 class AccountBookPage extends StatefulWidget {
@@ -81,6 +82,11 @@ class _AccountBookPageState extends State<AccountBookPage> {
   @override
   Widget build(BuildContext context) {
     final AccountModel info = context.watch<AccountProvider>().accountInfo!;
+    final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height -120;
+    double bannerHei = 170;
+    if(_isLoaded && _admobUtil.bannerAd != null){
+      bannerHei = _admobUtil.bannerAd!.size.height.toDouble() - 170;
+    }
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -88,12 +94,13 @@ class _AccountBookPageState extends State<AccountBookPage> {
         ),
         body: Container(
           width: MediaQuery.sizeOf(context).width,
-          height: MediaQuery.sizeOf(context).height - 120,
+          height: height,
           padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
             SizedBox(
+              height: height-100,
               child: ExpandablePageView(
                   controller: _expandController, physics: const BouncingScrollPhysics(), children: [_page1(context, info), _page2(context, info)]),
             ),
@@ -148,6 +155,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
 
   Widget _page2(BuildContext context, AccountModel info) {
     return SizedBox(
+      // height: MediaQuery.sizeOf(context).height -300,
         child: Column(
           children: [
             Container(
@@ -252,13 +260,13 @@ class _AccountBookPageState extends State<AccountBookPage> {
             info.usageHistory == null || info.usageHistory!.isEmpty
                 ? SizedBox(
                     width: MediaQuery.sizeOf(context).width,
-                    height: MediaQuery.sizeOf(context).height - 300,
+                    height: MediaQuery.sizeOf(context).height - 320,
                     child: const Center(
                       child: Text("사용내역이 없습니다."),
                     ),
                   )
                 : SizedBox(
-                    height: MediaQuery.sizeOf(context).height - 300,
+                    height: MediaQuery.sizeOf(context).height - 330,
                     child: Column(
                       children: [
                         Container(
@@ -280,7 +288,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                     borderRadius: BorderRadius.circular(10)
                                   )
                                 ),
-                                label: const Text("지출"), icon: const Icon(Icons.add),iconAlignment: IconAlignment.end,)
+                                label: const Text("지출"), icon: const Icon(Icons.remove),iconAlignment: IconAlignment.end,)
                             ],
                           ),
                         ),
@@ -416,7 +424,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                             itemCount: info.usageHistory!.length,
                           ),
                         ),
-                        const Gap(20),
+                        const Gap(10),
                         SizedBox(
                           width: 120,
                           height: 50,
@@ -451,7 +459,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text(
-              "경비 정보",
+              "사용 요약",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
             SizedBox(
@@ -481,7 +489,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                     label: const Text(
                       "지출",
                     ),
-                    icon: const Icon(Icons.add),
+                    icon: const Icon(Icons.remove),
                     iconAlignment: IconAlignment.end,
                   ),
                 ],

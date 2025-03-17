@@ -18,6 +18,7 @@ import 'package:ready_go_project/data/repositories/roaming_local_data_repo.dart'
 import 'package:ready_go_project/data/repositories/supplies_local_data_repo.dart';
 import 'package:ready_go_project/data/repositories/supplies_temp_local_repo.dart';
 import 'package:ready_go_project/domain/entities/provider/plan_favorites_provider.dart';
+import 'package:ready_go_project/domain/entities/provider/responsive_height_provider.dart';
 import 'package:ready_go_project/domain/repositories/accommodation_repo.dart';
 import 'package:ready_go_project/domain/repositories/account_repo.dart';
 import 'package:ready_go_project/domain/repositories/image_repo.dart';
@@ -65,7 +66,8 @@ Future<void> serviceLocator() async {
 
   // favorite
   _getIt.registerLazySingleton<PlanFavoritesProvider>(() => PlanFavoritesProvider());
-  Future.delayed(const Duration(seconds: 2));
+  _getIt.registerLazySingleton<ResponsiveHeightProvider>(() => ResponsiveHeightProvider());
+  await Future.delayed(const Duration(seconds: 2));
 
   FlutterNativeSplash.remove();
 }

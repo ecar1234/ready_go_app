@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:get_it/get_it.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
@@ -13,6 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/roaming_model/roaming_period_model.dart';
 
 import '../domain/entities/provider/admob_provider.dart';
+import '../domain/entities/provider/responsive_height_provider.dart';
 import '../domain/entities/provider/roaming_provider.dart';
 import '../util/admob_util.dart';
 
@@ -71,6 +73,7 @@ class _RoamingPageState extends State<RoamingPage> {
   @override
   Widget build(BuildContext context) {
     final roamingData = context.watch<RoamingProvider>().roamingData;
+    final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height -120;
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
@@ -82,7 +85,7 @@ class _RoamingPageState extends State<RoamingPage> {
             title: const Text("로밍 & ESIM"),
           ),
           body: Container(
-            height: MediaQuery.sizeOf(context).height - 120,
+            height: height,
             padding: const EdgeInsets.all(20),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -92,7 +95,7 @@ class _RoamingPageState extends State<RoamingPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                     SizedBox(
-                      width: constraints.maxWidth <= 600 ? MediaQuery.sizeOf(context).width : 600,
+                      width: height - 100,
                       // height: MediaQuery.sizeOf(context).height - 280,
                       child: SingleChildScrollView(
                         child: Column(

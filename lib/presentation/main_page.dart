@@ -15,6 +15,7 @@ import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/bloc/data_bloc.dart';
 import 'package:ready_go_project/domain/entities/provider/plan_favorites_provider.dart';
+import 'package:ready_go_project/domain/entities/provider/responsive_height_provider.dart';
 import 'package:ready_go_project/presentation/add_plan_page.dart';
 import 'package:ready_go_project/presentation/option_page.dart';
 import 'package:ready_go_project/presentation/plan_page.dart';
@@ -45,11 +46,18 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.microtask(() => {loadTheme()});
+    Future.microtask(() => {
+      loadSetting()
+    });
   }
 
-  void loadTheme() {
+  void loadSetting()async {
     context.read<ThemeModeProvider>().getThemeMode();
+    final provider = GetIt.I.get<ResponsiveHeightProvider>();
+    provider.setHeight(context);
+    while (provider.resHeight == null) {
+      await Future.delayed(const Duration(milliseconds: 10));
+    }
   }
 
   @override
@@ -138,6 +146,7 @@ class MainPage2 extends StatefulWidget {
 class _MainPage2State extends State<MainPage2> {
   ImagePicker picker = ImagePicker();
   final AdmobUtil _admobUtil = AdmobUtil();
+  final logger = Logger();
   bool _isLoaded = false;
 
   @override
@@ -170,7 +179,6 @@ class _MainPage2State extends State<MainPage2> {
   Widget build(BuildContext context) {
     bool isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
     File? passImg = context.watch<PassportProvider>().passport;
-
     return BlocBuilder<DataBloc, DataState>(builder: (context, state) {
       if (state.state == DataStatus.beforePlanList) {
         context.read<PlanListProvider>().getPlanList();
@@ -179,6 +187,8 @@ class _MainPage2State extends State<MainPage2> {
       }
       final list = context.watch<PlanListProvider>().planList;
       final favoriteList = GetIt.I.get<PlanFavoritesProvider>().favoriteList;
+      final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height -120;
+      logger.d("body height : $height");
       return SafeArea(
         child: Scaffold(
           appBar: AppBar(
@@ -264,71 +274,71 @@ class _MainPage2State extends State<MainPage2> {
             ],
           ),
           body: Container(
+              height: height,
             padding: const EdgeInsets.all(20),
-            child: Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Column(children: [
-                _favoritePlanListContainer(context, favoriteList, isDarkMode, state),
-                Container(
-                  width: MediaQuery.sizeOf(context).width,
-                  height: 40,
-                  decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xff666666)))),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "여행기록",
-                        style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.w600, fontSize: 18),
-                      ),
-                      TextButton.icon(
-                        onPressed: () {
-                          context.read<AdmobProvider>().loadAdInterstitialAd();
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) => const AddPlanPage()),
-                          );
-                        },
-                        style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                        label: Text(
-                          "기록추가",
-                          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+            child: Column(
+                // mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+              SizedBox(
+                height: height - 100,
+                child: Column(children: [
+                  _favoritePlanListContainer(context, favoriteList, isDarkMode, state),
+                  Container(
+                    width: MediaQuery.sizeOf(context).width,
+                    height: 40,
+                    decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xff666666)))),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "여행기록",
+                          style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.w600, fontSize: 18),
                         ),
-                        icon: Icon(
-                          Icons.add,
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
-                        iconAlignment: IconAlignment.end,
-                      )
-                    ],
+                        TextButton.icon(
+                          onPressed: () {
+                            context.read<AdmobProvider>().loadAdInterstitialAd();
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) => const AddPlanPage()),
+                            );
+                          },
+                          style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                          label: Text(
+                            "기록추가",
+                            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                          ),
+                          icon: Icon(
+                            Icons.add,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                          iconAlignment: IconAlignment.end,
+                        )
+                      ],
+                    ),
                   ),
-                ),
-                const Gap(20),
-                LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-                  if (constraints.maxWidth <= 660) {
-                    return SizedBox(
-                        width: MediaQuery.sizeOf(context).width,
-                        height: favoriteList.isEmpty ? 550 : 550 - ((favoriteList.length * 120)+80),
-                        child: list.isEmpty
-                            ? SizedBox(
-                                height: MediaQuery.sizeOf(context).height - 300,
-                                child: const Center(child: Text("생성된 여행이 없습니다.")),
-                              )
-                            : _planListSection(context, list, isDarkMode, state));
-                  } else {
-                    return SizedBox(
-                        width: 840,
-                        height: 540,
-                        child: list.isEmpty
-                            ? const Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text("생성된 여행이 없습니다."),
-                                ],
-                              )
-                            : _planListSection(context, list, isDarkMode, state));
-                  }
-                }),
-              ]),
-              const Gap(20),
+                  const Gap(20),
+                  LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+                    // if (constraints.maxWidth <= 660)
+                    double bannerHeight = 0;
+                    if(_isLoaded && _admobUtil.bannerAd != null){
+                      bannerHeight = _admobUtil.bannerAd!.size.height.toDouble();
+                    }
+                      return SizedBox(
+                          width: MediaQuery.sizeOf(context).width,
+                          height: favoriteList.isEmpty ? height - 160
+                              : height - 160 - ((favoriteList.length * 140)+50),
+                          child: list.isEmpty
+                              ? SizedBox(
+                                  height: height - 100,
+                                  child: const Center(child: Text("생성된 여행이 없습니다.")),
+                                )
+                              : _planListSection(context, list, isDarkMode, state, favoriteList.length));
+
+                  }),
+                ]),
+              ),
+              // if (_isLoaded && _admobUtil.bannerAd != null)
+              // const Gap(20),
               if (_isLoaded && _admobUtil.bannerAd != null)
                 SizedBox(
                   height: _admobUtil.bannerAd!.size.height.toDouble(),
@@ -347,6 +357,7 @@ class _MainPage2State extends State<MainPage2> {
       return const SizedBox();
     }
     return SizedBox(
+      height: 50 + favoriteList.length * 140,
       child: Column(
         children: [
           Container(
@@ -520,8 +531,13 @@ class _MainPage2State extends State<MainPage2> {
     );
   }
 
-  Widget _planListSection(BuildContext context, List<PlanModel> list, bool isDarkMode, DataState state) {
+  Widget _planListSection(BuildContext context, List<PlanModel> list, bool isDarkMode, DataState state, int favorite) {
+    double? height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height -120;
+    if(favorite > 0){
+      height = height - ((favorite * 120)+80) - 100;
+    }
     return SizedBox(
+      height: height,
       child: ListView.separated(
           physics: const BouncingScrollPhysics(),
           shrinkWrap: true,
@@ -644,7 +660,7 @@ class _MainPage2State extends State<MainPage2> {
                                 children: [
                                   SizedBox(
                                       child: Text(
-                                    "${list[idx].nation}",
+                                    "${list[idx].nation} (${DateUtil.datesDifference(list[idx].schedule!)+1}일)",
                                     style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                                   )),
                                   SizedBox(

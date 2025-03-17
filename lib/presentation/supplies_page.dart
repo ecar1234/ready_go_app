@@ -12,6 +12,7 @@ import 'package:ready_go_project/domain/entities/provider/supplies_template_prov
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
 import 'package:ready_go_project/presentation/supplies_page/add_template_page.dart';
 
+import '../domain/entities/provider/responsive_height_provider.dart';
 import '../domain/entities/provider/supplies_provider.dart';
 import '../util/admob_util.dart';
 
@@ -68,6 +69,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
     final list = context
         .watch<SuppliesProvider>()
         .suppliesList;
+    final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height -120;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -97,16 +99,14 @@ class _SuppliesPageState extends State<SuppliesPage> {
         ),
         body: SingleChildScrollView(
           child: Container(
-            height: MediaQuery
-                .sizeOf(context)
-                .height - 120,
+            height: height,
             padding: const EdgeInsets.all(20),
             child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) =>
                     SingleChildScrollView(
                       child: SizedBox(
-                        // height: MediaQuery.sizeOf(context).height - 300,
+                        height: height -100,
                         // height: list.isEmpty ? MediaQuery.sizeOf(context).height - 300 : (45 * list.length.toDouble()),
                         // padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 40),
                         child: Column(
@@ -153,9 +153,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
                             ),
                             const Gap(10),
                             Container(
-                                height: MediaQuery
-                                    .sizeOf(context)
-                                    .height - 300,
+                                height: height - 160,
                                 decoration: BoxDecoration(border: Border.all(color: const Color(0xff666666)), borderRadius: BorderRadius.circular(10)),
                                 child: list.isEmpty
                                     ? const Center(

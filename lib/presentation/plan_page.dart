@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:get_it/get_it.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,7 @@ import '../domain/entities/provider/accommodation_provider.dart';
 import '../domain/entities/provider/account_provider.dart';
 import '../domain/entities/provider/admob_provider.dart';
 import '../domain/entities/provider/images_provider.dart';
+import '../domain/entities/provider/responsive_height_provider.dart';
 import '../domain/entities/provider/roaming_provider.dart';
 import '../domain/entities/provider/supplies_provider.dart';
 import '../domain/entities/provider/theme_mode_provider.dart';
@@ -36,7 +38,7 @@ class PlanPage extends StatefulWidget {
 class _PlanPageState extends State<PlanPage> {
   final AdmobUtil _admobUtil = AdmobUtil();
   bool _isLoaded = false;
-  List<String> itemList = ["항공권", "준비물", "로밍 & ESIM", "여행 경비", "숙소"];
+  List<String> itemList = ["항공권", "준비물", "로밍(E-SIM)", "여행 경비", "숙소"];
 
   // List<String> itemList = ["항공권", "준비물", "로밍 & ESIM", "여행 경비", "숙소", "일정"];
 
@@ -70,7 +72,7 @@ class _PlanPageState extends State<PlanPage> {
       context.read<DataBloc>().add(DataLoadingPlanEvent());
     }
     bool isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
-
+    final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height -120;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -84,12 +86,12 @@ class _PlanPageState extends State<PlanPage> {
           ),
         ),
         body: Container(
-          // height: MediaQuery.sizeOf(context).height - 120,
+          height: height,
           padding: const EdgeInsets.all(20),
           child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) => SizedBox(
-                // height: 500,
+                height: height - 100,
                 child: Column(
                   children: [
                     Container(
@@ -129,7 +131,7 @@ class _PlanPageState extends State<PlanPage> {
                                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => AirTicketPage(planId: widget.plan.id!)));
                                     case "준비물":
                                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => SuppliesPage(planId: widget.plan.id!)));
-                                    case "로밍 & ESIM":
+                                    case "로밍(E-SIM)":
                                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => RoamingPage(planId: widget.plan.id!)));
                                     case "여행 경비":
                                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));

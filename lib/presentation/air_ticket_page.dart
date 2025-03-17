@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get_it/get_it.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
@@ -10,6 +11,7 @@ import 'package:provider/provider.dart';
 
 import '../domain/entities/provider/admob_provider.dart';
 import '../domain/entities/provider/images_provider.dart';
+import '../domain/entities/provider/responsive_height_provider.dart';
 import '../util/admob_util.dart';
 
 class AirTicketPage extends StatefulWidget {
@@ -52,20 +54,21 @@ class _AirTicketPageState extends State<AirTicketPage> {
   Widget build(BuildContext context) {
     final departureList = context.watch<ImagesProvider>().departureImg;
     final arrivalList = context.watch<ImagesProvider>().arrivalImg;
-
+    final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height -120;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("항공권(E-ticket"),
+          title: const Text("항공권(E-ticket)"),
         ),
         body: Container(
+          height: height,
           padding: const EdgeInsets.all(20),
           child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraint) => SingleChildScrollView(
                 child: SizedBox(
                   width: MediaQuery.sizeOf(context).width,
-                  // height: constraint.maxWidth <= 600 ? MediaQuery.sizeOf(context).height - 100 : null,
+                  height: height-100,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
