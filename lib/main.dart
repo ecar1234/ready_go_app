@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
-import 'package:ready_go_project/domain/entities/provider/responsive_height_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/supplies_template_provider.dart';
 import 'package:ready_go_project/presentation/main_page.dart';
 

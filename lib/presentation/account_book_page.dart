@@ -92,25 +92,27 @@ class _AccountBookPageState extends State<AccountBookPage> {
         appBar: AppBar(
           title: const Text("여행경비"),
         ),
-        body: Container(
-          width: MediaQuery.sizeOf(context).width,
-          height: height,
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-            SizedBox(
-              height: height-100,
-              child: ExpandablePageView(
-                  controller: _expandController, physics: const BouncingScrollPhysics(), children: [_page1(context, info), _page2(context, info)]),
-            ),
-                if (_isLoaded && _admobUtil.bannerAd != null)
-                  SizedBox(
-                    height: _admobUtil.bannerAd!.size.height.toDouble(),
-                    width: _admobUtil.bannerAd!.size.width.toDouble(),
-                    child: AdWidget(ad: _admobUtil.bannerAd!),
-                  )
-          ]),
+        body: SingleChildScrollView(
+          child: Container(
+            width: MediaQuery.sizeOf(context).width,
+            height: height,
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+              SizedBox(
+                height: height-100,
+                child: ExpandablePageView(
+                    controller: _expandController, physics: const BouncingScrollPhysics(), children: [_page1(context, info), _page2(context, info)]),
+              ),
+                  if (_isLoaded && _admobUtil.bannerAd != null)
+                    SizedBox(
+                      height: _admobUtil.bannerAd!.size.height.toDouble(),
+                      width: _admobUtil.bannerAd!.size.width.toDouble(),
+                      child: AdWidget(ad: _admobUtil.bannerAd!),
+                    )
+            ]),
+          ),
         ),
         // floatingActionButton: FloatingActionButton(
         //   foregroundColor: Theme.of(context).colorScheme.surface,
