@@ -11,6 +11,7 @@ import 'package:ready_go_project/bloc/data_bloc.dart';
 import 'package:ready_go_project/presentation/accommodation_page.dart';
 import 'package:ready_go_project/presentation/account_book_page.dart';
 import 'package:ready_go_project/presentation/air_ticket_page.dart';
+import 'package:ready_go_project/presentation/expectation_page.dart';
 import 'package:ready_go_project/presentation/roaming_page.dart';
 import 'package:ready_go_project/presentation/supplies_page.dart';
 
@@ -38,7 +39,7 @@ class PlanPage extends StatefulWidget {
 class _PlanPageState extends State<PlanPage> {
   final AdmobUtil _admobUtil = AdmobUtil();
   bool _isLoaded = false;
-  List<String> itemList = ["항공권", "준비물", "로밍(E-SIM)", "여행 경비", "숙소"];
+  List<String> itemList = ["예상 경비", "항공권", "준비물", "로밍(E-SIM)", "사용 경비", "숙소"];
 
   // List<String> itemList = ["항공권", "준비물", "로밍 & ESIM", "여행 경비", "숙소", "일정"];
 
@@ -137,6 +138,8 @@ class _PlanPageState extends State<PlanPage> {
                                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
                                     case "숙소":
                                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccommodationPage(plan: widget.plan)));
+                                    case "예상 경비":
+                                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => ExpectationPage(planId: widget.plan.id)));
                                     // case "일정":
                                     //   Navigator.of(context).push(MaterialPageRoute(builder: (context) => TourPage(plan: widget.plan)));
                                     default:
@@ -177,17 +180,18 @@ class _PlanPageState extends State<PlanPage> {
 
   Widget _iconSelector(int idx) {
     switch (idx) {
-      case 0:
-        return const Icon(Icons.airplane_ticket);
       case 1:
-        return const Icon(Icons.shopping_bag_rounded);
+        return const Icon(Icons.airplane_ticket);
       case 2:
-        return const Icon(Icons.sim_card);
+        return const Icon(Icons.shopping_bag_rounded);
       case 3:
-        return const Icon(Icons.attach_money);
+        return const Icon(Icons.sim_card);
       case 4:
+        return const Icon(Icons.attach_money);
+      case 5:
         return const Icon(Icons.hotel);
-
+      case 0:
+        return const Icon(Icons.bar_chart);
       default:
         return const Icon(Icons.abc);
     }

@@ -17,10 +17,12 @@ import 'package:ready_go_project/bloc/data_bloc.dart';
 import 'package:ready_go_project/domain/entities/provider/plan_favorites_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/responsive_height_provider.dart';
 import 'package:ready_go_project/presentation/add_plan_page.dart';
+import 'package:ready_go_project/presentation/components/custom_accordion_tile.dart';
 import 'package:ready_go_project/presentation/option_page.dart';
 import 'package:ready_go_project/presentation/plan_page.dart';
 import 'package:ready_go_project/util/admob_util.dart';
 import 'package:ready_go_project/util/date_util.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../data/models/plan_model/plan_model.dart';
 import '../domain/entities/provider/accommodation_provider.dart';
 import '../domain/entities/provider/account_provider.dart';
@@ -192,8 +194,14 @@ class _MainPage2State extends State<MainPage2> {
       return SafeArea(
         child: Scaffold(
           appBar: AppBar(
-            leading: IconButton(onPressed: () {}, icon: Image.asset('assets/images/logo_white.png')),
-            leadingWidth: 120,
+            leading: Builder(
+              builder: (context) {
+                return IconButton(onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                }, icon: const Icon(Icons.menu));
+              }
+            ),
+            leadingWidth: 60,
             actions: [
               Stack(children: [
                 IconButton(
@@ -272,6 +280,83 @@ class _MainPage2State extends State<MainPage2> {
                 width: 10,
               )
             ],
+          ),
+          drawer: Drawer(
+            child: ListView(
+              // Important: Remove any padding from the ListView.
+              padding: EdgeInsets.zero,
+              children: [
+                DrawerHeader(
+                  decoration: const BoxDecoration(color: Colors.cyan),
+                  child: Center(child: Column(
+                    children: [
+                      SizedBox(child: Image.asset("assets/images/logo.png")),
+                      const Text("여행 준비를 한번에", style: TextStyle(fontSize: 14),)
+                    ],
+                  )),
+                ),
+                Scrollbar(
+                  child: CustomAccordionTile(
+                      title: "항공 수화물 규정",
+                      children: [
+                        ListTile(
+                          title: const Text("인천공항 제한물품",style: TextStyle(fontSize: 13),),
+                          onTap: (){
+                            launchUrl(Uri.parse("https://www.koreanair.com/contents/plan-your-travel/baggage/checked-baggage/free-baggage"));
+                          },
+                        ),
+                        ListTile(
+                          title: const Text("대한항공",style: TextStyle(fontSize: 13),),
+                          onTap: (){
+                            launchUrl(Uri.parse("https://flyasiana.com/C/KR/KO/contents/free-baggage"));
+                          },
+                        ),
+                        ListTile(
+                          title: const Text("아시아나",style: TextStyle(fontSize: 13),),
+                          onTap: (){
+                            launchUrl(Uri.parse("https://flyasiana.com/C/KR/KO/contents/free-baggage"));
+                          },
+                        ),
+                        ListTile(
+                          title: const Text("진 에어",style: TextStyle(fontSize: 13),),
+                          onTap: (){
+                            launchUrl(Uri.parse("https://www.jinair.com/ready/freeBaggage?snsLang=ko_KR&ctrCd=KOR"));
+                          },
+                        ),
+                        ListTile(
+                          title: const Text("티웨이",style: TextStyle(fontSize: 13),),
+                          onTap: (){
+                            launchUrl(Uri.parse("https://www.twayair.com/app/serviceInfo/contents/1148"));
+                          },
+                        ),
+                        ListTile(
+                          title: const Text("에어부산",style: TextStyle(fontSize: 13),),
+                          onTap: (){
+                            launchUrl(Uri.parse("https://m.airbusan.com/mc/common/service/baggage/free"));
+                          },
+                        ),
+                        ListTile(
+                          title: const Text("에어서울",style: TextStyle(fontSize: 13),),
+                          onTap: (){
+                            launchUrl(Uri.parse("https://flyairseoul.com/CM/ko/destinations01.do"));
+                          },
+                        ),
+                        ListTile(
+                          title: const Text("제주항공",style: TextStyle(fontSize: 13),),
+                          onTap: (){
+                            launchUrl(Uri.parse("https://www.jejuair.net/ko/linkService/boardingProcessGuide/trustBaggage.do"));
+                          },
+                        ),
+                        ListTile(
+                          title: const Text("에어로 K",style: TextStyle(fontSize: 13),),
+                          onTap: (){
+                            launchUrl(Uri.parse("https://www.aerok.com/service/free"));
+                          },
+                        ),
+                      ]),
+                )
+              ],
+            ),
           ),
           body: Container(
               height: height,
