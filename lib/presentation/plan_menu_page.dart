@@ -27,16 +27,16 @@ import '../domain/entities/provider/theme_mode_provider.dart';
 import '../util/admob_util.dart';
 import '../util/date_util.dart';
 
-class PlanPage extends StatefulWidget {
+class PlanMenuPage extends StatefulWidget {
   final PlanModel plan;
 
-  const PlanPage({super.key, required this.plan});
+  const PlanMenuPage({super.key, required this.plan});
 
   @override
-  State<PlanPage> createState() => _PlanPageState();
+  State<PlanMenuPage> createState() => _PlanMenuPageState();
 }
 
-class _PlanPageState extends State<PlanPage> {
+class _PlanMenuPageState extends State<PlanMenuPage> {
   final AdmobUtil _admobUtil = AdmobUtil();
   bool _isLoaded = false;
   List<String> itemList = ["예상 경비", "항공권", "준비물", "로밍(E-SIM)", "사용 경비", "숙소"];
@@ -140,6 +140,8 @@ class _PlanPageState extends State<PlanPage> {
                                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccommodationPage(plan: widget.plan)));
                                     case "예상 경비":
                                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => ExpectationPage(planId: widget.plan.id)));
+                                    case "사용 경비":
+                                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
                                     // case "일정":
                                     //   Navigator.of(context).push(MaterialPageRoute(builder: (context) => TourPage(plan: widget.plan)));
                                     default:

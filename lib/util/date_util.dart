@@ -18,4 +18,20 @@ class DateUtil {
   static int datesDifference(List<DateTime?> list){
     return list[1]!.difference(list[0]!).inDays;
   }
+
+  static String planState(DateTime first, DateTime end) {
+    if (DateUtil.isSameDay(first, DateTime.now())) {
+      return "D-Day";
+    }
+    if (first.isAfter(DateTime.now())) {
+      return "D-${first.difference(DateTime.now()).inDays}";
+    }
+    if (first.isBefore(DateTime.now()) && DateTime.now().isBefore(end)) {
+      return "여행중";
+    }
+    if (DateTime.now().isAfter(end)) {
+      return "여행종료";
+    }
+    return "알 수 없음";
+  }
 }
