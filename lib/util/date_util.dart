@@ -24,7 +24,7 @@ class DateUtil {
       return "D-Day";
     }
     if (first.isAfter(DateTime.now())) {
-      return "D-${first.difference(DateTime.now()).inDays}";
+      return "D-${first.difference(DateTime.now()).inDays+1}";
     }
     if (first.isBefore(DateTime.now()) && DateTime.now().isBefore(end)) {
       return "여행중";

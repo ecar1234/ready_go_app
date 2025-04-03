@@ -519,9 +519,9 @@ class _AccommodationPageState extends State<AccommodationPage> {
         // headerBorderColorOpened: Colors.black87,
         headerBorderWidth: 1,
         headerPadding: const EdgeInsets.all(20),
-        headerBackgroundColor: isDarkMode ? Colors.black87 : Colors.white,
+        headerBackgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
         contentBorderColor: isDarkMode ? Colors.white : Colors.black87,
-        contentBackgroundColor: isDarkMode ? Colors.black87 : Colors.white,
+        contentBackgroundColor: isDarkMode ? Theme.of(context).colorScheme.surface  : Colors.white,
         contentVerticalPadding: 20,
         contentHorizontalPadding: 20,
         children: [
@@ -542,7 +542,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                             context.read<AccommodationProvider>().removeAccommodation(idx, widget.plan.id!);
                           },
                           style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                          child: const Text("삭제")),
+                          child: Text("삭제", style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),)),
                     ),
                   ],
                 ),

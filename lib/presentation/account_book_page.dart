@@ -11,6 +11,7 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/account_model/account_model.dart';
 import 'package:ready_go_project/data/models/account_model/amount_model.dart';
+import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
 import 'package:ready_go_project/util/intl_utils.dart';
 
 import '../data/models/plan_model/plan_model.dart';
@@ -34,6 +35,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
   final TextEditingController _payAmountController = TextEditingController();
   final TextEditingController _totalAmountController = TextEditingController();
   final logger = Logger();
+
   // final TextEditingController _editDetailController = TextEditingController(text: amount.title);
   // final TextEditingController _editAmountController = TextEditingController(text: amount.amount.toString());
   // final TextEditingController _editCategoryController = TextEditingController();
@@ -48,7 +50,8 @@ class _AccountBookPageState extends State<AccountBookPage> {
     }
     _debounce = Timer(const Duration(milliseconds: 500), () {});
   }
-@override
+
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
@@ -82,11 +85,8 @@ class _AccountBookPageState extends State<AccountBookPage> {
   @override
   Widget build(BuildContext context) {
     final AccountModel info = context.watch<AccountProvider>().accountInfo!;
-    final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height -120;
-    double bannerHei = 170;
-    if(_isLoaded && _admobUtil.bannerAd != null){
-      bannerHei = _admobUtil.bannerAd!.size.height.toDouble() - 170;
-    }
+    final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
+    final isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -97,20 +97,20 @@ class _AccountBookPageState extends State<AccountBookPage> {
             width: MediaQuery.sizeOf(context).width,
             height: height,
             padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
+            child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               SizedBox(
-                height: height-100,
+                height: height - 100,
                 child: ExpandablePageView(
-                    controller: _expandController, physics: const BouncingScrollPhysics(), children: [_page1(context, info), _page2(context, info)]),
+                    controller: _expandController,
+                    physics: const BouncingScrollPhysics(),
+                    children: [_page1(context, info, isDarkMode), _page2(context, info, isDarkMode)]),
               ),
-                  if (_isLoaded && _admobUtil.bannerAd != null)
-                    SizedBox(
-                      height: _admobUtil.bannerAd!.size.height.toDouble(),
-                      width: _admobUtil.bannerAd!.size.width.toDouble(),
-                      child: AdWidget(ad: _admobUtil.bannerAd!),
-                    )
+              if (_isLoaded && _admobUtil.bannerAd != null)
+                SizedBox(
+                  height: _admobUtil.bannerAd!.size.height.toDouble(),
+                  width: _admobUtil.bannerAd!.size.width.toDouble(),
+                  child: AdWidget(ad: _admobUtil.bannerAd!),
+                )
             ]),
           ),
         ),
@@ -128,11 +128,11 @@ class _AccountBookPageState extends State<AccountBookPage> {
     );
   }
 
-  Widget _page1(BuildContext context, AccountModel info) {
+  Widget _page1(BuildContext context, AccountModel info, bool isDarkMode) {
     return SizedBox(
       child: Column(
         children: [
-          ..._totalInfoSection(context, info),
+          ..._totalInfoSection(context, info, isDarkMode),
           const Gap(40),
           SizedBox(
             width: 140,
@@ -142,12 +142,14 @@ class _AccountBookPageState extends State<AccountBookPage> {
                   _expandController.animateToPage(1, duration: const Duration(milliseconds: 300), curve: Curves.ease);
                 },
                 style: ElevatedButton.styleFrom(
-                    side: BorderSide(color: Theme.of(context).colorScheme.secondary),
+                    backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                    side: BorderSide(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     padding: EdgeInsets.zero),
-                child: const Text(
+                child: Text(
                   "사용내역 보기",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  style:
+                      TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                 )),
           )
         ],
@@ -155,348 +157,353 @@ class _AccountBookPageState extends State<AccountBookPage> {
     );
   }
 
-  Widget _page2(BuildContext context, AccountModel info) {
+  Widget _page2(BuildContext context, AccountModel info, bool isDarkMode) {
+    final hei = GetIt.I.get<ResponsiveHeightProvider>().resHeight!;
+    final bannerHei = _admobUtil.bannerAd!.size.height;
     return SizedBox(
-      // height: MediaQuery.sizeOf(context).height -300,
+        // height: MediaQuery.sizeOf(context).height -300,
         child: Column(
-          children: [
-            Container(
-              height: 60,
-              width: MediaQuery.sizeOf(context).width,
-              decoration: BoxDecoration(border: Border.all(color: Theme.of(context).colorScheme.outline), borderRadius: BorderRadius.circular(10)),
-              child: Flex(
-                direction: Axis.horizontal,
-                children: [
-                  // 잔여 경비
-                  Expanded(
-                      flex: 1,
-                      child: Container(
-                        decoration: BoxDecoration(border: Border(right: BorderSide(color: Theme.of(context).colorScheme.outline))),
-                        child: Flex(
-                          direction: Axis.horizontal,
-                          children: [
-                            Expanded(
-                                flex: 1,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      color: Theme.of(context).colorScheme.secondary,
-                                      border: Border(right: BorderSide(color: Theme.of(context).colorScheme.outline)),
-                                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10))),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "잔액",
-                                        style: TextStyle(color: Theme.of(context).colorScheme.surface, fontWeight: FontWeight.w600),
-                                      ),
-                                      Text(
-                                        "(환전)",
-                                        style: TextStyle(color: Theme.of(context).colorScheme.surface, fontWeight: FontWeight.w600),
-                                      ),
-                                    ],
-                                  ),
-                                )),
-                            Expanded(
-                                flex: 2,
-                                child: Container(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        IntlUtils.stringIntAddComma(info.totalUseAccount!),
-                                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                                      )
-                                    ],
-                                  ),
-                                ))
-                          ],
-                        ),
-                      )),
-                  // 총 사용 금액
-                  Expanded(
-                      flex: 1,
-                      child: Flex(
-                        direction: Axis.horizontal,
-                        children: [
-                          Expanded(
-                              flex: 1,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: Theme.of(context).colorScheme.secondary,
-                                    border: Border(right: BorderSide(color: Theme.of(context).colorScheme.outline))),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "총 지출",
-                                      style: TextStyle(color: Theme.of(context).colorScheme.surface, fontWeight: FontWeight.w600),
-                                    ),
-                                    Text(
-                                      "(환전)",
-                                      style: TextStyle(color: Theme.of(context).colorScheme.surface, fontWeight: FontWeight.w600),
-                                    )
-                                  ],
-                                ),
-                              )),
-                          Expanded(
-                              flex: 2,
-                              child: Container(
-                                padding: const EdgeInsets.all(10),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      IntlUtils.stringIntAddComma(info.exchange!),
-                                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                                    )
-                                  ],
-                                ),
-                              ))
-                        ],
-                      )),
-                ],
+      children: [
+        SizedBox(
+          height: 40,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "사용내역",
+                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
               ),
-            ),
-            const Gap(10),
-            info.usageHistory == null || info.usageHistory!.isEmpty
-                ? SizedBox(
-                    width: MediaQuery.sizeOf(context).width,
-                    height: MediaQuery.sizeOf(context).height - 320,
-                    child: const Center(
-                      child: Text("사용내역이 없습니다."),
-                    ),
-                  )
-                : SizedBox(
-                    height: MediaQuery.sizeOf(context).height - 330,
-                    child: Column(
+              SizedBox(
+                width: 100,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    _addAmountDialog(context, info);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                      padding: EdgeInsets.zero,
+                  ),
+                  label: Text(
+                    "지출",
+                    style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                  ),
+                  icon: Icon(Icons.remove, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                  iconAlignment: IconAlignment.end,
+                ),
+              )
+            ],
+          ),
+        ),
+        const Gap(10),
+        Container(
+          height: 60,
+          width: MediaQuery.sizeOf(context).width,
+          decoration: BoxDecoration(border: Border.all(color: Theme.of(context).colorScheme.outline), borderRadius: BorderRadius.circular(10)),
+          child: Flex(
+            direction: Axis.horizontal,
+            children: [
+              // 잔여 경비
+              Expanded(
+                  flex: 1,
+                  child: Container(
+                    decoration: BoxDecoration(border: Border(right: BorderSide(color: Theme.of(context).colorScheme.outline))),
+                    child: Flex(
+                      direction: Axis.horizontal,
                       children: [
-                        Container(
-                          height: 40,
-                          decoration: BoxDecoration(
-                            border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.secondary,))
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                             const Text("사용내역", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),),
-                              TextButton.icon(
-                                onPressed: (){
-                                  _addAmountDialog(context, info);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  padding: EdgeInsets.zero,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)
-                                  )
-                                ),
-                                label: const Text("지출"), icon: const Icon(Icons.remove),iconAlignment: IconAlignment.end,)
-                            ],
-                          ),
-                        ),
-                        const Gap(20),
                         Expanded(
-                          child: ListView.separated(
-                            shrinkWrap: true,
-                            physics: const ClampingScrollPhysics(),
-                            itemBuilder: (context, fidx) {
-                              List<List<AmountModel>?> amountList = info.usageHistory!;
-                              return Container(
-                                width: MediaQuery.sizeOf(context).width - 40,
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: Theme.of(context).colorScheme.outline), borderRadius: BorderRadius.circular(10)),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        // date section
-                                        Container(
-                                            height: 40,
-                                            width: MediaQuery.sizeOf(context).width - 42,
-                                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                                            decoration: BoxDecoration(
-                                                color: Theme.of(context).colorScheme.secondary,
-                                                border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
-                                                borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  "${amountList[fidx]!.first.usageTime!.month}월 ${amountList[fidx]!.first.usageTime!.day}일(${amountList[fidx]!.first.id}일차)",
-                                                  style: TextStyle(
-                                                      color: Theme.of(context).colorScheme.surface, fontWeight: FontWeight.w600, fontSize: 16),
-                                                ),
-                                              ],
-                                            )),
-                                      ],
-                                    ),
-                                    // title menu
-                                    Container(
-                                      height: 40,
-                                      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline))),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                        children: [
-                                          SizedBox(
-                                              width: (MediaQuery.sizeOf(context).width - 42) * 0.2,
-                                              child: const Center(
-                                                  child: Text(
-                                                "종류",
-                                                style: TextStyle(fontWeight: FontWeight.w600),
-                                              ))),
-                                          Container(
-                                              width: (MediaQuery.sizeOf(context).width - 42) * 0.6,
-                                              decoration: BoxDecoration(
-                                                  border: Border.symmetric(vertical: BorderSide(color: Theme.of(context).colorScheme.outline))),
-                                              child: const Center(
-                                                  child: Text(
-                                                "사용 내역",
-                                                style: TextStyle(fontWeight: FontWeight.w600),
-                                              ))),
-                                          SizedBox(
-                                              width: (MediaQuery.sizeOf(context).width - 42) * 0.2,
-                                              child: const Center(
-                                                  child: Text(
-                                                "금액",
-                                                style: TextStyle(fontWeight: FontWeight.w600),
-                                              ))),
-                                        ],
-                                      ),
-                                    ),
-                                    // use detail
-                                    ListView.builder(
-                                      shrinkWrap: true,
-                                      physics: const NeverScrollableScrollPhysics(),
-                                      itemBuilder: (context, idx) {
-                                        List<AmountModel> list = amountList[fidx]!;
-                                        return Container(
-                                          decoration: BoxDecoration(border: Border(top: BorderSide(color: Theme.of(context).colorScheme.outline))),
-                                          child: Column(
-                                            children: [
-                                              Column(
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      _usedAmountEdit(context, info.usageHistory, fidx, idx);
-                                                    },
-                                                    child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                      children: [
-                                                        SizedBox(
-                                                            height: 40,
-                                                            width: (MediaQuery.sizeOf(context).width - 42) * 0.2,
-                                                            child: Center(child: Text(list[idx].category == 0 ? "현금" : "카드"))),
-                                                        Container(
-                                                            height: 40,
-                                                            width: (MediaQuery.sizeOf(context).width - 42) * 0.6,
-                                                            decoration: BoxDecoration(
-                                                                border: Border.symmetric(
-                                                                    vertical: BorderSide(color: Theme.of(context).colorScheme.outline))),
-                                                            child: Center(child: Text("${list[idx].title}"))),
-                                                        SizedBox(
-                                                            height: 40,
-                                                            width: (MediaQuery.sizeOf(context).width - 42) * 0.2,
-                                                            child: Center(
-                                                                child: Text(
-                                                              "${list[idx].amount}",
-                                                              style: TextStyle(
-                                                                  fontWeight: FontWeight.w600,
-                                                                  color: list[idx].type == AmountType.add
-                                                                      ? Colors.blueAccent
-                                                                      : (list[idx].category == 0 ? Colors.redAccent : Colors.green)),
-                                                            ))),
-                                                      ],
-                                                    ),
-                                                  )
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                      itemCount: amountList[fidx]!.length,
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                            separatorBuilder: (context, fidx) => const Gap(20),
-                            itemCount: info.usageHistory!.length,
-                          ),
-                        ),
-                        const Gap(10),
-                        SizedBox(
-                          width: 120,
-                          height: 50,
-                          child: ElevatedButton(
-                              onPressed: () {
-                                _expandController.animateToPage(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  side: BorderSide(color: Theme.of(context).colorScheme.secondary),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                  padding: EdgeInsets.zero),
-                              child: const Text(
-                                "경비내역 보기",
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                              )),
-                        ),
+                            flex: 1,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  border: Border(right: BorderSide(color: Theme.of(context).colorScheme.outline)),
+                                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10))),
+                              child: const Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                 Text(
+                                    "잔액",
+                                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                                  ),
+                                  Text(
+                                    "(환전)",
+                                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                                  ),
+                                ],
+                              ),
+                            )),
+                        Expanded(
+                            flex: 2,
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    IntlUtils.stringIntAddComma(info.totalUseAccount!),
+                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                  )
+                                ],
+                              ),
+                            ))
                       ],
                     ),
-                  ),
-          ],
-        ));
+                  )),
+              // 총 사용 금액
+              Expanded(
+                  flex: 1,
+                  child: Flex(
+                    direction: Axis.horizontal,
+                    children: [
+                      Expanded(
+                          flex: 1,
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.primary,
+                                border: Border(right: BorderSide(color: Theme.of(context).colorScheme.outline))),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "총 지출",
+                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                                ),
+                                Text(
+                                  "(환전)",
+                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                                )
+                              ],
+                            ),
+                          )),
+                      Expanded(
+                          flex: 2,
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  IntlUtils.stringIntAddComma(info.exchange!),
+                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                )
+                              ],
+                            ),
+                          ))
+                    ],
+                  )),
+            ],
+          ),
+        ),
+        const Gap(10),
+        info.usageHistory == null || info.usageHistory!.isEmpty
+            ? SizedBox(
+                width: MediaQuery.sizeOf(context).width,
+                height: MediaQuery.sizeOf(context).height - 320,
+                child: const Center(
+                  child: Text("사용내역이 없습니다."),
+                ),
+              )
+            : SizedBox(
+                height: hei - bannerHei- 170 ,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: ListView.separated(
+                        shrinkWrap: true,
+                        physics: const ClampingScrollPhysics(),
+                        itemBuilder: (context, fidx) {
+                          List<List<AmountModel>?> amountList = info.usageHistory!;
+                          return Container(
+                            width: MediaQuery.sizeOf(context).width - 40,
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Theme.of(context).colorScheme.outline), borderRadius: BorderRadius.circular(10)),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    // date section
+                                    Container(
+                                        height: 40,
+                                        width: MediaQuery.sizeOf(context).width - 42,
+                                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                                        decoration: BoxDecoration(
+                                            color: Theme.of(context).colorScheme.primary,
+                                            border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
+                                            borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "${amountList[fidx]!.first.usageTime!.month}월 ${amountList[fidx]!.first.usageTime!.day}일(${amountList[fidx]!.first.id}일차)",
+                                              style:
+                                                  const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16),
+                                            ),
+                                          ],
+                                        )),
+                                  ],
+                                ),
+                                // title menu
+                                Container(
+                                  height: 40,
+                                  decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline))),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    children: [
+                                      SizedBox(
+                                          width: (MediaQuery.sizeOf(context).width - 42) * 0.2,
+                                          child: const Center(
+                                              child: Text(
+                                            "종류",
+                                            style: TextStyle(fontWeight: FontWeight.w600),
+                                          ))),
+                                      Container(
+                                          width: (MediaQuery.sizeOf(context).width - 42) * 0.6,
+                                          decoration: BoxDecoration(
+                                              border: Border.symmetric(vertical: BorderSide(color: Theme.of(context).colorScheme.outline))),
+                                          child: const Center(
+                                              child: Text(
+                                            "사용 내역",
+                                            style: TextStyle(fontWeight: FontWeight.w600),
+                                          ))),
+                                      SizedBox(
+                                          width: (MediaQuery.sizeOf(context).width - 42) * 0.2,
+                                          child: const Center(
+                                              child: Text(
+                                            "금액",
+                                            style: TextStyle(fontWeight: FontWeight.w600),
+                                          ))),
+                                    ],
+                                  ),
+                                ),
+                                // use detail
+                                ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemBuilder: (context, idx) {
+                                    List<AmountModel> list = amountList[fidx]!;
+                                    return Container(
+                                      decoration: BoxDecoration(border: Border(top: BorderSide(color: Theme.of(context).colorScheme.outline))),
+                                      child: Column(
+                                        children: [
+                                          Column(
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () {
+                                                  _usedAmountEdit(context, info.usageHistory, fidx, idx);
+                                                },
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                  children: [
+                                                    SizedBox(
+                                                        height: 40,
+                                                        width: (MediaQuery.sizeOf(context).width - 42) * 0.2,
+                                                        child: Center(child: Text(list[idx].category == 0 ? "현금" : "카드"))),
+                                                    Container(
+                                                        height: 40,
+                                                        width: (MediaQuery.sizeOf(context).width - 42) * 0.6,
+                                                        decoration: BoxDecoration(
+                                                            border:
+                                                                Border.symmetric(vertical: BorderSide(color: Theme.of(context).colorScheme.outline))),
+                                                        child: Center(child: Text("${list[idx].title}"))),
+                                                    SizedBox(
+                                                        height: 40,
+                                                        width: (MediaQuery.sizeOf(context).width - 42) * 0.2,
+                                                        child: Center(
+                                                            child: Text(
+                                                          "${list[idx].amount}",
+                                                          style: TextStyle(
+                                                              fontWeight: FontWeight.w600,
+                                                              color: list[idx].type == AmountType.add
+                                                                  ? Colors.blueAccent
+                                                                  : (list[idx].category == 0 ? Colors.redAccent : Colors.green)),
+                                                        ))),
+                                                  ],
+                                                ),
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                  itemCount: amountList[fidx]!.length,
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        separatorBuilder: (context, fidx) => const Gap(20),
+                        itemCount: info.usageHistory!.length,
+                      ),
+                    ),
+                    const Gap(10),
+                    SizedBox(
+                      width: 120,
+                      height: 50,
+                      child: ElevatedButton(
+                          onPressed: () {
+                            _expandController.animateToPage(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+                          },
+                          style: ElevatedButton.styleFrom(
+                              side: BorderSide(color:isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              padding: EdgeInsets.zero),
+                          child: const Text(
+                            "경비내역 보기",
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                          )),
+                    ),
+                  ],
+                ),
+              ),
+      ],
+    ));
   }
 
-  List<Widget> _totalInfoSection(BuildContext context, AccountModel info) {
+  List<Widget> _totalInfoSection(BuildContext context, AccountModel info, bool isDarkMode) {
     return [
-      Container(
+      SizedBox(
         height: 40,
-        decoration:  BoxDecoration(
-          border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.secondary,))
-        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              "사용 요약",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            SizedBox(
+              width: (MediaQuery.sizeOf(context).width - 50) / 2,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  _setTotalAmountDialog(context, info);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                  padding: EdgeInsets.zero,
+                ),
+                label: Text(
+                  "총 경비",
+                  style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                ),
+                icon: Icon(Icons.add, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                iconAlignment: IconAlignment.end,
+              ),
             ),
             SizedBox(
-              width: 150,
-              height: 40,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton.icon(
-                      onPressed: () {
-                        _setTotalAmountDialog(context, info);
-                      },
-                      style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.zero,),
-                      label: const Text(
-                        "총 경비",
-                      ),
-                    icon: const Icon(Icons.add),
-                    iconAlignment: IconAlignment.end,
-                  ),
-                  TextButton.icon(
-                    onPressed: () {
-                      _addAmountDialog(context, info);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.zero,),
-                    label: const Text(
-                      "지출",
-                    ),
-                    icon: const Icon(Icons.remove),
-                    iconAlignment: IconAlignment.end,
-                  ),
-                ],
+              width: (MediaQuery.sizeOf(context).width - 50) / 2,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  _addAmountDialog(context, info);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                  padding: EdgeInsets.zero,
+                ),
+                label: Text(
+                  "지출",
+                  style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                ),
+                icon: Icon(Icons.remove, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                iconAlignment: IconAlignment.end,
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -510,13 +517,17 @@ class _AccountBookPageState extends State<AccountBookPage> {
             Container(
               height: 40,
               decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: Theme.of(context).colorScheme.primary,
                   border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
                   borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
-              child:  Center(
+              child: const Center(
                 child: Text(
                   "여행 경비 내역",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.surface,),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -610,7 +621,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                       children: [
                         Text(
                           IntlUtils.stringIntAddComma(info.exchange ?? 0),
-                          style: const TextStyle(fontSize: 16),
+                          style: const TextStyle(fontSize: 16, color: Colors.redAccent),
                         )
                       ],
                     ),
@@ -641,7 +652,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                       children: [
                         Text(
                           IntlUtils.stringIntAddComma(info.card ?? 0),
-                          style: const TextStyle(fontSize: 16),
+                          style: const TextStyle(fontSize: 16, color: Colors.green),
                         )
                       ],
                     ),
@@ -826,15 +837,18 @@ class _AccountBookPageState extends State<AccountBookPage> {
                               child: ElevatedButton(
                                   onPressed: () {
                                     if (_daysController.text.isEmpty) {
-                                      Get.snackbar("데이터 입력 확인", "사용 일차를 확인해 주세요", colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
+                                      Get.snackbar("데이터 입력 확인", "사용 일차를 확인해 주세요",
+                                          colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
                                       return;
                                     }
                                     if (_titleController.text.isEmpty) {
-                                      Get.snackbar("데이터 입력 확인", "제목을 확인해 주세요", colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
+                                      Get.snackbar("데이터 입력 확인", "제목을 확인해 주세요",
+                                          colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
                                       return;
                                     }
                                     if (_payAmountController.text.isEmpty) {
-                                      Get.snackbar("데이터 입력 확인", "사용 금액을 확인해 주세요", colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
+                                      Get.snackbar("데이터 입력 확인", "사용 금액을 확인해 주세요",
+                                          colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
                                       return;
                                     }
                                     newAmount.id = _daysController.text;
@@ -963,7 +977,8 @@ class _AccountBookPageState extends State<AccountBookPage> {
                             child: ElevatedButton(
                                 onPressed: () {
                                   if (_totalAmountController.text.isEmpty) {
-                                    Get.snackbar("데이터 입력 확인", "추가 금액을 확인해 주세요", colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
+                                    Get.snackbar("데이터 입력 확인", "추가 금액을 확인해 주세요",
+                                        colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
                                     return;
                                   }
                                   int amount = int.tryParse(_totalAmountController.text) ?? 0;
@@ -1107,7 +1122,9 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                           if (newAmount.title == amount.title &&
                                               newAmount.amount == amount.amount &&
                                               newAmount.category == amount.category) {
-                                            Get.snackbar("수정 내용을 확인해 주세요", "변경 사항이 존재하지 않아 수정 할 수 없습니다.", colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
+                                            Get.snackbar("수정 내용을 확인해 주세요", "변경 사항이 존재하지 않아 수정 할 수 없습니다.",
+                                                colorText: Theme.of(context).colorScheme.onSurface,
+                                                backgroundColor: Theme.of(context).colorScheme.surface);
                                             return;
                                           }
 

@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
+import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
 
 import '../domain/entities/provider/admob_provider.dart';
 import '../domain/entities/provider/images_provider.dart';
@@ -44,17 +45,20 @@ class _AirTicketPageState extends State<AirTicketPage> {
       });
     });
   }
+
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
     _admobUtil.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
-    final departureList = context.watch<ImagesProvider>().departureImg;
-    final arrivalList = context.watch<ImagesProvider>().arrivalImg;
-    final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height -120;
+    // final departureList = context.watch<ImagesProvider>().departureImg;
+    // final arrivalList = context.watch<ImagesProvider>().arrivalImg;
+    final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
+    final bannerHei = _admobUtil.bannerAd!.size.height;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -65,18 +69,15 @@ class _AirTicketPageState extends State<AirTicketPage> {
           padding: const EdgeInsets.all(20),
           child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraint) => SingleChildScrollView(
-                child: SizedBox(
-                  width: MediaQuery.sizeOf(context).width,
-                  height: height-100,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 150, child: _departureSection(context, departureList)),
-                      const Gap(20),
-                      SizedBox(height: 150, child: _arrivalSection(context, arrivalList))
-                    ],
-                  ),
+              builder: (BuildContext context, BoxConstraints constraint) => SizedBox(
+                width: MediaQuery.sizeOf(context).width,
+                // height: height - bannerHei - 40,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: (height - bannerHei -40) / 2, child: _departureSection(context)),
+                    SizedBox( height: (height - bannerHei- 40) / 2, child: _arrivalSection(context))
+                  ],
                 ),
               ),
             ),
@@ -92,75 +93,149 @@ class _AirTicketPageState extends State<AirTicketPage> {
     );
   }
 
-  Widget _departureSection(BuildContext context, List<File> list) {
+  Widget _departureSection(BuildContext context) {
     final list = context.watch<ImagesProvider>().departureImg;
+    final isDarkMode = context.read<ThemeModeProvider>().isDarkMode;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "출발(Departure)",
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
-        ),
         SizedBox(
-          width: list.isEmpty ? 100 : (list.length * 110) + 100,
-          height: 120,
-          child: Row(
-            children: [
-              list.isEmpty
-                  ? const SizedBox()
-                  : Expanded(
-                      child: SizedBox(
-                        height: 100,
-                        child: ListView.separated(
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, idx) {
-                              return GestureDetector(
-                                onTap: () {
-                                  OpenFile.open(list[idx].path);
-                                },
-                                child: Stack(children: [
-                                  Container(
-                                    width: 100,
-                                    height: 100,
-                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all()),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Image.file(
-                                        list[idx],
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                  Positioned(
-                                      right: 0,
-                                      top: 0,
-                                      child: IconButton(
-                                          onPressed: () {
-                                            context.read<ImagesProvider>().removeDepartureImage(list[idx], widget.planId);
-                                          },
-                                          icon: const Icon(Icons.close))),
-                                ]),
-                              );
-                            },
-                            separatorBuilder: (context, idx) => const Gap(10),
-                            itemCount: list.length),
-                      ),
-                    ),
-              SizedBox(
-                  width: (list.length * 110) + 100 < MediaQuery.sizeOf(context).width ? 100 : 50,
-                  height: 100,
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          side: const BorderSide(color: Colors.white12),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                          )),
-                      onPressed: () async {
-                        _showImageSourceDialog("departure");
-                      },
-                      child: const Icon(Icons.add)))
-            ],
+          height: 50,
+          width: MediaQuery.sizeOf(context).width,
+          child: ElevatedButton.icon(
+            onPressed: () {
+              _showImageSourceDialog("departure");
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white
+            ),
+            label: Text("출발(Departure) 이미지 추가", style: TextStyle(color: isDarkMode? Colors.white : Theme.of(context).colorScheme.primary),),
+            icon: Icon(Icons.flight_takeoff, color: isDarkMode? Colors.white : Theme.of(context).colorScheme.primary),
           ),
+        ),
+        const Gap(10),
+        Expanded(
+          child: Container(
+              child: list.isEmpty
+                  ? const SizedBox(
+                      child: Center(
+                        child: Text("등록된 출발(Departure) 이미지가 없습니다."),
+                      ),
+                    )
+                  : GridView.builder(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 10, mainAxisSpacing: 10),
+                      itemBuilder: (context, idx) {
+                        return Stack(children: [
+                          GestureDetector(
+                            onTap: () {
+                              OpenFile.open(list[idx].path);
+                            },
+                            child: AspectRatio(
+                              aspectRatio: 1.0,
+                              child: SizedBox(
+                                child: Image.file(
+                                  list[idx],
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                              top: 2,
+                              right: 2,
+                              child: Container(
+                                width: 20,
+                                height: 20,
+                                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(25)),
+                                child: IconButton(
+                                    onPressed: () {
+                                      context.read<ImagesProvider>().removeDepartureImage(list[idx], widget.planId);
+                                    },
+                                    style: IconButton.styleFrom(padding: EdgeInsets.zero),
+                                    icon: const Icon(
+                                      Icons.close,
+                                      size: 15,
+                                      color: Colors.black87,
+                                    )),
+                              ))
+                        ]);
+                      },
+                      itemCount: list.length,
+                    )),
+        )
+      ],
+    );
+  }
+
+  Widget _arrivalSection(BuildContext context) {
+    final list = context.watch<ImagesProvider>().arrivalImg;
+    final isDarkMode = context.read<ThemeModeProvider>().isDarkMode;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          height: 50,
+          width: MediaQuery.sizeOf(context).width,
+          child: ElevatedButton.icon(
+            onPressed: () {
+              _showImageSourceDialog("arrival");
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white
+            ),
+            label: Text("도착(Arrival) 이미지 추가", style: TextStyle(color: isDarkMode? Colors.white : Theme.of(context).colorScheme.primary),),
+            icon: Icon(Icons.flight_land, color: isDarkMode? Colors.white : Theme.of(context).colorScheme.primary),
+          ),
+        ),
+        const Gap(10),
+        Expanded(
+          child: Container(
+              child: list.isEmpty
+                  ? const SizedBox(
+                      child: Center(
+                        child: Text("등록된 도착(Arrival) 이미지가 없습니다."),
+                      ),
+                    )
+                  : GridView.builder(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 10, mainAxisSpacing: 10),
+                      itemBuilder: (context, idx) {
+                        return Stack(children: [
+                          GestureDetector(
+                            onTap: () {
+                              OpenFile.open(list[idx].path);
+                            },
+                            child: AspectRatio(
+                              aspectRatio: 1.0,
+                              child: SizedBox(
+                                child: Image.file(
+                                  list[idx],
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                              top: 2,
+                              right: 2,
+                              child: Container(
+                                width: 20,
+                                height: 20,
+                                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(25)),
+                                child: IconButton(
+                                    onPressed: () {
+                                      context.read<ImagesProvider>().removeArrivalImage(list[idx], widget.planId);
+                                    },
+                                    style: IconButton.styleFrom(padding: EdgeInsets.zero),
+                                    icon: const Icon(
+                                      Icons.close,
+                                      size: 15,
+                                      color: Colors.black87,
+                                    )),
+                              ))
+                        ]);
+                      },
+                      itemCount: list.length,
+                    )),
         )
       ],
     );
@@ -207,79 +282,6 @@ class _AirTicketPageState extends State<AirTicketPage> {
           ],
         );
       },
-    );
-  }
-
-  Widget _arrivalSection(BuildContext context, List<File> list) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "도착(Arrival)",
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
-        ),
-        SizedBox(
-          width: list.isEmpty ? 100 : (list.length * 110) + 100,
-          height: 120,
-          child: Row(
-            children: [
-              context.watch<ImagesProvider>().arrivalImg.isEmpty
-                  ? const SizedBox()
-                  : Expanded(
-                      child: SizedBox(
-                        height: 100,
-                        child: ListView.separated(
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, idx) {
-                              return GestureDetector(
-                                onTap: () {
-                                  OpenFile.open(list[idx].path);
-                                },
-                                child: Stack(children: [
-                                  Container(
-                                    width: 100,
-                                    height: 100,
-                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all()),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Image.file(
-                                        list[idx],
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                  Positioned(
-                                      right: 0,
-                                      top: 0,
-                                      child: IconButton(
-                                          onPressed: () {
-                                            context.read<ImagesProvider>().removeArrivalImage(list[idx], widget.planId);
-                                          },
-                                          icon: const Icon(Icons.close))),
-                                ]),
-                              );
-                            },
-                            separatorBuilder: (context, idx) => const Gap(10),
-                            itemCount: list.length),
-                      ),
-                    ),
-              SizedBox(
-                  width: (list.length * 110) + 100 < MediaQuery.sizeOf(context).width ? 100 : 50,
-                  height: 100,
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          side: const BorderSide(color: Colors.white12),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                          )),
-                      onPressed: () async {
-                        _showImageSourceDialog("arrival");
-                      },
-                      child: const Icon(Icons.add)))
-            ],
-          ),
-        )
-      ],
     );
   }
 }

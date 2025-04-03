@@ -7,7 +7,6 @@ import 'package:get_it/get_it.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/supply_model/supply_model.dart';
-import 'package:ready_go_project/data/models/supply_model/template_model.dart';
 import 'package:ready_go_project/domain/entities/provider/supplies_template_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
 import 'package:ready_go_project/presentation/supplies_page/add_template_page.dart';
@@ -66,100 +65,84 @@ class _SuppliesPageState extends State<SuppliesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final list = context
-        .watch<SuppliesProvider>()
-        .suppliesList;
-    final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height -120;
+    final list = context.watch<SuppliesProvider>().suppliesList;
+    final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
+    final bannerHei = _admobUtil.bannerAd!.size.height;
+    final isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           title: const Text("준비물"),
-          actions: [
-            SizedBox(
-              width: 100,
-              child: TextButton.icon(
-                onPressed: () {
-                  _suppliesTemplateDialog(context, list);
-                },
-                style: IconButton.styleFrom(padding: EdgeInsets.zero),
-                label: const Text(
-                  "템플릿",
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-                icon: const Icon(
-                  Icons.add,
-                  color: Colors.white,
-                ),
-                iconAlignment: IconAlignment.end,
-              ),
-            )
-          ],
         ),
-        body: SingleChildScrollView(
-          child: Container(
-            height: height,
-            padding: const EdgeInsets.all(20),
-            child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraints) =>
-                    SingleChildScrollView(
-                      child: SizedBox(
-                        height: height -100,
-                        // height: list.isEmpty ? MediaQuery.sizeOf(context).height - 300 : (45 * list.length.toDouble()),
-                        // padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 40),
-                        child: Column(
+        body: Container(
+          height: height,
+          padding: const EdgeInsets.all(20),
+          child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) => SingleChildScrollView(
+                child: SizedBox(
+                  height: height - bannerHei - 40,
+                  // height: list.isEmpty ? MediaQuery.sizeOf(context).height - 300 : (45 * list.length.toDouble()),
+                  // padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 40),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.sizeOf(context).width,
+                        height: 40,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(
-                              width: MediaQuery
-                                  .sizeOf(context)
-                                  .width,
-                              height: 40,
-                              decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xff666666)))),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "체크리스트",
-                                    style: TextStyle(color: Theme
-                                        .of(context)
-                                        .colorScheme
-                                        .secondary, fontWeight: FontWeight.w600, fontSize: 18),
-                                  ),
-                                  TextButton.icon(
-                                    onPressed: () {
-                                      _itemAddDialog(context);
-                                    },
-                                    style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                                    label: Text(
-                                      "추가",
-                                      style: TextStyle(color: Theme
-                                          .of(context)
-                                          .colorScheme
-                                          .secondary),
-                                    ),
-                                    icon: Icon(
-                                      Icons.add,
-                                      color: Theme
-                                          .of(context)
-                                          .colorScheme
-                                          .secondary,
-                                    ),
-                                    iconAlignment: IconAlignment.end,
-                                  )
-                                ],
+                            SizedBox(
+                              width: (MediaQuery.sizeOf(context).width-50) / 2,
+                              child: ElevatedButton.icon(
+                                onPressed: () {
+                                  _suppliesTemplateDialog(context, isDarkMode);
+                                },
+                                style: ElevatedButton.styleFrom(padding: EdgeInsets.zero,
+                                    backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
+                                label: Text(
+                                  "템플릿 선택",
+                                  style: TextStyle(color:  isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                                ),
+                                icon: Icon(
+                                  Icons.list,
+                                  color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
+                                ),
+                                iconAlignment: IconAlignment.end,
                               ),
                             ),
                             const Gap(10),
-                            Container(
-                                height: height - 160,
-                                decoration: BoxDecoration(border: Border.all(color: const Color(0xff666666)), borderRadius: BorderRadius.circular(10)),
-                                child: list.isEmpty
-                                    ? const Center(
+                            SizedBox(
+                              width: (MediaQuery.sizeOf(context).width-50) / 2,
+                              child: ElevatedButton.icon(
+                                onPressed: () {
+                                  _itemAddDialog(context, isDarkMode);
+                                },
+                                style: ElevatedButton.styleFrom(padding: EdgeInsets.zero,
+                                    backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
+                                label: Text(
+                                  "체크리스트 추가",
+                                  style: TextStyle(color:  isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                                ),
+                                icon: Icon(
+                                  Icons.add,
+                                  color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
+                                ),
+                                iconAlignment: IconAlignment.end,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      const Gap(10),
+                      Container(
+                          height: height - 160,
+                          decoration: BoxDecoration(border: Border.all(color: const Color(0xff666666)), borderRadius: BorderRadius.circular(10)),
+                          child: list.isEmpty
+                              ? const Center(
                                   child: Text("목록을 추가해 주세요"),
                                 )
-                                    : Scrollbar(
+                              : Scrollbar(
                                   child: ListView.separated(
                                       physics: const BouncingScrollPhysics(),
                                       shrinkWrap: true,
@@ -189,11 +172,9 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                                                 border: Border.all(
                                                                     width: 1.5, color: list[idx].isCheck! ? Colors.white : Colors.transparent),
                                                                 shape: BoxShape.circle,
-                                                                color:
-                                                                list[idx].isCheck! ? Theme
-                                                                    .of(context)
-                                                                    .colorScheme
-                                                                    .primary : Colors.transparent),
+                                                                color: list[idx].isCheck!
+                                                                    ? Theme.of(context).colorScheme.primary
+                                                                    : Colors.transparent),
                                                           ),
                                                         ),
                                                         const Gap(10),
@@ -201,21 +182,21 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                                           "${list[idx].item}",
                                                           style: TextStyle(
                                                               fontSize: 18,
-                                                              color: list[idx].isCheck == true ? Colors.grey : Theme
-                                                                  .of(context)
-                                                                  .colorScheme
-                                                                  .primary,
+                                                              color:
+                                                                  list[idx].isCheck == true ? (isDarkMode ? Colors.white : Colors.grey)
+                                                                      : (isDarkMode ? Colors.white : Colors.black87),
                                                               decoration:
-                                                              list[idx].isCheck == true ? TextDecoration.lineThrough : TextDecoration.none),
+                                                                  list[idx].isCheck == true ? TextDecoration.lineThrough : TextDecoration.none),
                                                           overflow: TextOverflow.ellipsis,
                                                         ),
                                                       ],
                                                     ),
                                                   ),
                                                   PopupMenuButton(
+                                                    iconColor: isDarkMode ? Colors.white : Colors.black87,
                                                     padding: EdgeInsets.zero,
-                                                    itemBuilder: (context) =>
-                                                    [
+                                                    color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white ,
+                                                    itemBuilder: (context) => [
                                                       const PopupMenuItem(
                                                           value: "edit",
                                                           child: Text(
@@ -231,7 +212,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                                       switch (value) {
                                                         case "edit":
                                                           _controller.text = list[idx].item!;
-                                                          _itemEditDialog(context, idx);
+                                                          _itemEditDialog(context, idx, isDarkMode);
                                                         case "delete":
                                                           context.read<SuppliesProvider>().removeItem(idx, widget.planId);
                                                       }
@@ -244,69 +225,52 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                       separatorBuilder: (context, idx) => const Gap(5),
                                       itemCount: list.length),
                                 )),
-                          ],
-                        ),
-                      ),
-                    ),
+                    ],
+                  ),
+                ),
               ),
-              if (_isLoaded && _admobUtil.bannerAd != null)
-                SizedBox(
-                  height: _admobUtil.bannerAd!.size.height.toDouble(),
-                  width: _admobUtil.bannerAd!.size.width.toDouble(),
-                  child: AdWidget(ad: _admobUtil.bannerAd!),
-                )
-            ]),
-          ),
+            ),
+            if (_isLoaded && _admobUtil.bannerAd != null)
+              SizedBox(
+                height: _admobUtil.bannerAd!.size.height.toDouble(),
+                width: _admobUtil.bannerAd!.size.width.toDouble(),
+                child: AdWidget(ad: _admobUtil.bannerAd!),
+              )
+          ]),
         ),
-        // floatingActionButton: FloatingActionButton(
-        //   foregroundColor: Theme.of(context).colorScheme.surface,
-        //   backgroundColor: Theme.of(context).colorScheme.secondary,
-        //   onPressed: () {
-        //     _itemAddDialog(context);
-        //   },
-        //   child: const Center(
-        //     child: Icon(
-        //       Icons.add,
-        //     ),
-        //   ),
-        // ),
       ),
     );
   }
 
-  Future<dynamic> _suppliesTemplateDialog(BuildContext context, List<SupplyModel> list) {
-    // final tempList = context.watch<SuppliesTemplateProvider>().tempList;
+  Future<dynamic> _suppliesTemplateDialog(BuildContext context, bool isDarkMode) {
     return showDialog(
         context: context,
-        builder: (context) =>
-            Dialog(
+        builder: (context) => Dialog(
               insetPadding: const EdgeInsets.symmetric(horizontal: 20),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              surfaceTintColor: Theme
-                  .of(context)
-                  .colorScheme
-                  .surface,
+              surfaceTintColor: isDarkMode ? const Color(0xffADD8E6) : Colors.white,
               child: Container(
                 height: 300,
                 padding: const EdgeInsets.all(10),
                 child: Column(
                   children: [
                     SizedBox(
+                      height: 50,
                       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const SizedBox(
+                            SizedBox(
                               child: Text(
                                 "템플릿 추가 & 선택",
-                                style: TextStyle(color: Color(0xff666666), fontSize: 16, fontWeight: FontWeight.w600),
+                                style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontSize: 16, fontWeight: FontWeight.w600),
                               ),
                             ),
                             const Gap(5),
                             Consumer<SuppliesTemplateProvider>(builder: (context, temp, Widget? child) {
                               return SizedBox(
-                                child: Text("(${temp.tempList!.length} / 2)"),
+                                child: Text("(${temp.tempList!.length} / 2)", style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87),),
                               );
                             })
                           ],
@@ -316,20 +280,17 @@ class _SuppliesPageState extends State<SuppliesPage> {
                           height: 40,
                           child: TextButton.icon(
                             onPressed: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => AddTemplatePage()));
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const AddTemplatePage()));
                             },
                             style: IconButton.styleFrom(padding: EdgeInsets.zero),
-                            label: const Text("생성"),
-                            icon: const Icon(Icons.add),
+                            label: Text("생성", style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87),),
+                            icon: Icon(Icons.add, color: isDarkMode ? Colors.white : Colors.black87),
                           ),
                         )
                       ]),
                     ),
-                    const Divider(),
                     Consumer<SuppliesTemplateProvider>(builder: (context, temp, child) {
-                      final isDarkMode = context
-                          .read<ThemeModeProvider>()
-                          .isDarkMode;
+                      final isDarkMode = context.read<ThemeModeProvider>().isDarkMode;
                       if (temp.tempList!.isEmpty) {
                         return const SizedBox(
                             height: 160,
@@ -355,15 +316,8 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                       },
                                       style: ElevatedButton.styleFrom(
                                           backgroundColor: temp.selectedList == temp.tempList![idx].temp
-                                              ? Theme
-                                              .of(context)
-                                              .colorScheme
-                                              .surface
-                                              : Theme
-                                              .of(context)
-                                              .colorScheme
-                                              .onSurface
-                                      ),
+                                              ? (isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary)
+                                              : (isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white)),
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
@@ -383,25 +337,22 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                                             width: 1.5,
                                                             color: temp.selectedList == temp.tempList![idx].temp ? Colors.white : Colors.transparent),
                                                         shape: BoxShape.circle,
-                                                        color:
-                                                        temp.selectedList == temp.tempList![idx].temp! ? Theme
-                                                            .of(context)
-                                                            .colorScheme
-                                                            .primary : Colors.transparent),
+                                                        color: temp.selectedList == temp.tempList![idx].temp!
+                                                            ? Theme.of(context).colorScheme.primary
+                                                            : Colors.transparent),
                                                   ),
                                                 ),
                                                 const Gap(10),
                                                 SizedBox(
-                                                  child: Text(temp.tempList![idx].tempTitle!, style: TextStyle(
-                                                      color: temp.selectedList == temp.tempList![idx].temp
-                                                          ? Theme
-                                                          .of(context)
-                                                          .colorScheme
-                                                          .onSurface
-                                                          : Theme
-                                                          .of(context)
-                                                          .colorScheme
-                                                          .surface),),
+                                                  child: Text(
+                                                    temp.tempList![idx].tempTitle!,
+                                                    style: TextStyle(
+                                                        color: temp.selectedList == temp.tempList![idx].temp
+                                                            ? (isDarkMode ? Colors.black87 : Colors.white)
+                                                            : (isDarkMode ? Colors.white : Colors.black87),
+                                                      fontWeight: FontWeight.w500
+                                                    ),
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -409,54 +360,29 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                           SizedBox(
                                               child: PopupMenuButton(
                                                   iconColor: temp.selectedList == temp.tempList![idx].temp
-                                                      ? Theme
-                                                      .of(context)
-                                                      .colorScheme
-                                                      .onSurface
-                                                      : Theme
-                                                      .of(context)
-                                                      .colorScheme
-                                                      .surface,
+                                                      ? (isDarkMode ? Colors.black87 : Colors.white)
+                                                      : (isDarkMode ? Colors.white : Colors.black87),
                                                   onSelected: (value) {
                                                     if (value == "수정") {
                                                       Navigator.push(
-                                                          context, MaterialPageRoute(
-                                                          builder: (context) => AddTemplatePage(temp: temp.tempList![idx].temp, idx: idx,)));
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) => AddTemplatePage(
+                                                                    temp: temp.tempList![idx].temp,
+                                                                    idx: idx,
+                                                                  )));
                                                     } else {
                                                       context.read<SuppliesTemplateProvider>().removeTemplate(idx);
                                                     }
-                                                  }, itemBuilder: (context) {
-                                                return <PopupMenuEntry<String>>[
-                                                  const PopupMenuItem(value: "수정", child: Text("수정")),
-                                                  const PopupMenuItem(value: "삭제", child: Text("삭제")),
-                                                ];
-                                              }))
+                                                  },
+                                                  itemBuilder: (context) {
+                                                    return <PopupMenuEntry<String>>[
+                                                      const PopupMenuItem(value: "수정", child: Text("수정")),
+                                                      const PopupMenuItem(value: "삭제", child: Text("삭제")),
+                                                    ];
+                                                  }))
                                         ],
                                       )),
-                                  // child: Row(
-                                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  //   children: [
-                                  //     SizedBox(
-                                  //         child: Text(temp.tempList![idx].tempTitle!, style: const TextStyle(fontSize: 16),)),
-                                  //     SizedBox(
-                                  //       child: PopupMenuButton(
-                                  //         onSelected: (value){
-                                  //           if(value == "수정"){
-                                  //             Navigator.push(context,
-                                  //                 MaterialPageRoute(builder: (context)=> AddTemplatePage(temp:temp.tempList![idx].temp)));
-                                  //           }else {
-                                  //             context.read<SuppliesTemplateProvider>().removeTemplate(idx);
-                                  //           }
-                                  //         },
-                                  //           itemBuilder: (context) {
-                                  //         return  <PopupMenuEntry<String>> [
-                                  //           const PopupMenuItem(value: "수정", child: Text("수정")),
-                                  //           const PopupMenuItem(value: "삭제", child: Text("삭제")),
-                                  //         ];
-                                  //       })
-                                  //     )
-                                  //   ],
-                                  // )
                                 );
                               },
                               separatorBuilder: (context, idx) => const Gap(10),
@@ -477,7 +403,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                 },
                                 style: ElevatedButton.styleFrom(
                                     padding: EdgeInsets.zero, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                child: const Text("닫기")),
+                                child: Text("닫기",style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87),)),
                           ),
                           const Gap(10),
                           SizedBox(
@@ -487,8 +413,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                 onPressed: () {
                                   final selected = context.read<SuppliesTemplateProvider>().selectedList;
                                   if (selected.isEmpty) {
-                                    Get.snackbar("탬플릿 선택", "추가 할 탬플릿을 선택해 주세요.",
-                                        backgroundColor: Theme.of(context).colorScheme.surface);
+                                    Get.snackbar("탬플릿 선택", "추가 할 탬플릿을 선택해 주세요.", backgroundColor: Theme.of(context).colorScheme.surface);
                                     return;
                                   }
                                   context.read<SuppliesProvider>().addTemplateList(selected, widget.planId);
@@ -496,7 +421,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                   Get.back();
                                 },
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.black87,
+                                    backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.black87,
                                     padding: EdgeInsets.zero,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                                 child: const Text(
@@ -513,36 +438,24 @@ class _SuppliesPageState extends State<SuppliesPage> {
             ));
   }
 
-  Future<dynamic> _itemAddDialog(BuildContext context) {
+  Future<dynamic> _itemAddDialog(BuildContext context, bool isDarkMode) {
     return showDialog(
         context: context,
-        builder: (context) =>
-            Dialog(
+        builder: (context) => Dialog(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              surfaceTintColor: Colors.white12,
+              surfaceTintColor: isDarkMode ? const Color(0xffADD8E6) : Colors.white,
               child: SizedBox(
                 width: 600,
                 height: 200,
                 child: Column(
                   children: [
-                    Stack(children: [
-                      const SizedBox(
-                        width: 600,
-                        height: 40,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "목록 추가",
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                            )
-                          ],
-                        ),
-                      ),
-                      Positioned(
-                          right: 5,
-                          top: 5,
-                          child: SizedBox(
+                    SizedBox(
+                      width: 600,
+                      height: 40,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          SizedBox(
                             width: 40,
                             height: 40,
                             child: IconButton(
@@ -551,26 +464,27 @@ class _SuppliesPageState extends State<SuppliesPage> {
                               },
                               icon: const Icon(Icons.close),
                             ),
-                          ))
-                    ]),
-                    const Divider(),
+                          ),
+                        ],
+                      ),
+                    ),
                     Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: SizedBox(
-                            height: 30,
-                            child: TextField(
-                              controller: _controller,
-                              autofocus: true,
-                              onChanged: _onChanged,
-                              style: const TextStyle(fontSize: 12),
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                                focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                              ),
-                            ),
+                      padding: const EdgeInsets.all(20.0),
+                      child: SizedBox(
+                        height: 30,
+                        child: TextField(
+                          controller: _controller,
+                          autofocus: true,
+                          onChanged: _onChanged,
+                          style: const TextStyle(fontSize: 12),
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
+                            focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
                           ),
-                        )),
+                        ),
+                      ),
+                    )),
                     SizedBox(
                       height: 60,
                       child: Row(
@@ -619,35 +533,24 @@ class _SuppliesPageState extends State<SuppliesPage> {
             ));
   }
 
-  Future<dynamic> _itemEditDialog(BuildContext context, int idx) {
+  Future<dynamic> _itemEditDialog(BuildContext context, int idx, bool isDarkMode) {
     return showDialog(
         context: context,
-        builder: (context) =>
-            Dialog(
+        builder: (context) => Dialog(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              surfaceTintColor: isDarkMode ? const Color(0xffADD8E6) : Colors.white,
               child: SizedBox(
                 width: 600,
                 height: 200,
                 child: Column(
                   children: [
-                    Stack(children: [
-                      const SizedBox(
-                        width: 600,
-                        height: 40,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "목록 추가",
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                            )
-                          ],
-                        ),
-                      ),
-                      Positioned(
-                          right: 5,
-                          top: 5,
-                          child: SizedBox(
+                    SizedBox(
+                      width: 600,
+                      height: 40,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          SizedBox(
                             width: 40,
                             height: 40,
                             child: IconButton(
@@ -656,25 +559,27 @@ class _SuppliesPageState extends State<SuppliesPage> {
                               },
                               icon: const Icon(Icons.close),
                             ),
-                          ))
-                    ]),
-                    const Divider(),
+                          ),
+                        ],
+                      ),
+                    ),
+
                     Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: SizedBox(
-                            height: 30,
-                            child: TextField(
-                              controller: _controller,
-                              onChanged: _onChanged,
-                              style: const TextStyle(fontSize: 12),
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                                focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                              ),
-                            ),
+                      padding: const EdgeInsets.all(20.0),
+                      child: SizedBox(
+                        height: 30,
+                        child: TextField(
+                          controller: _controller,
+                          onChanged: _onChanged,
+                          style: const TextStyle(fontSize: 12),
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
+                            focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
                           ),
-                        )),
+                        ),
+                      ),
+                    )),
                     SizedBox(
                       height: 60,
                       child: Row(
@@ -695,7 +600,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                   Navigator.of(context).pop();
                                 },
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.black87,
+                                    backgroundColor: Theme.of(context).colorScheme.primary,
                                     padding: EdgeInsets.zero,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                                 child: const Text(

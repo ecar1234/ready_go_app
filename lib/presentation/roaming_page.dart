@@ -104,7 +104,7 @@ class _RoamingPageState extends State<RoamingPage> {
                             _voucherImageSection(context, roamingData!.imgList!),
                             const Gap(10),
                             const Divider(),
-                            _codeSection(context, roamingData.activeCode!, roamingData.dpAddress!),
+                            _codeSection(context, roamingData.activeCode??"", roamingData.dpAddress??""),
                             // _dpAddressSection(context, address),
                             // _activeCodeSection(context, code),
                             const Divider(),
@@ -170,13 +170,24 @@ class _RoamingPageState extends State<RoamingPage> {
                                     )),
                               ),
                               Positioned(
-                                  right: 0,
-                                  top: 0,
-                                  child: IconButton(
-                                      onPressed: () {
-                                        context.read<RoamingProvider>().removeImage(list[idx], widget.planId);
-                                      },
-                                      icon: const Icon(Icons.close))),
+                                  right: 5,
+                                  top: 5,
+                                  child: Container(
+                                    width: 20,
+                                    height: 20,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(25)
+                                    ),
+                                    child: IconButton(
+                                        onPressed: () {
+                                          context.read<RoamingProvider>().removeImage(list[idx], widget.planId);
+                                        },
+                                        style: IconButton.styleFrom(
+                                          padding: EdgeInsets.zero
+                                        ),
+                                        icon: const Icon(Icons.close, size: 15, color: Colors.black87,)),
+                                  )),
                             ]);
                           },
                           separatorBuilder: (context, idx) => const Gap(10),

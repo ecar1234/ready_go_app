@@ -39,8 +39,8 @@ class PlanMenuPage extends StatefulWidget {
 class _PlanMenuPageState extends State<PlanMenuPage> {
   final AdmobUtil _admobUtil = AdmobUtil();
   bool _isLoaded = false;
-  List<String> itemList = ["예상 경비", "항공권", "준비물", "로밍(E-SIM)", "사용 경비", "숙소"];
-
+  // List<String> itemList = ["예상 경비", "항공권", "준비물", "로밍(E-SIM)", "사용 경비", "숙소"];
+  List<String> itemList = ["항공권", "준비물", "로밍(E-SIM)", "사용 경비", "숙소"];
   // List<String> itemList = ["항공권", "준비물", "로밍 & ESIM", "여행 경비", "숙소", "일정"];
 
   @override
@@ -98,7 +98,21 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
                     Container(
                       width: MediaQuery.sizeOf(context).width - 40,
                       height: 80,
-                      decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xff666666)))),
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                          border: Border.all(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                          borderRadius: BorderRadius.circular(10),
+                        boxShadow:isDarkMode ? null : [
+                          BoxShadow(
+                            offset: const Offset(0, 7.0),
+                            spreadRadius: 1.0,
+                            blurRadius: 7.0,
+                            color: Colors.grey[400]!,
+                            // blurStyle: BlurStyle.solid
+                          )
+                        ]
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -114,7 +128,7 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
                         ],
                       ),
                     ),
-                    const Gap(20),
+                    const Gap(40),
                     SizedBox(
                       height: 70 * itemList.length.toDouble(),
                       child: ListView.separated(
@@ -138,8 +152,8 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
                                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
                                     case "숙소":
                                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccommodationPage(plan: widget.plan)));
-                                    case "예상 경비":
-                                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => ExpectationPage(planId: widget.plan.id)));
+                                    // case "예상 경비":
+                                    //   Navigator.of(context).push(MaterialPageRoute(builder: (context) => ExpectationPage(planId: widget.plan.id)));
                                     case "사용 경비":
                                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
                                     // case "일정":
@@ -149,15 +163,15 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
                                   }
                                 },
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: Theme.of(context).colorScheme.surface,
-                                    side: BorderSide(color: Theme.of(context).colorScheme.primary),
+                                    backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                    side: BorderSide(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                                 label: Text(
                                   itemList[idx],
                                   style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w600),
                                 ),
                                 iconAlignment: IconAlignment.end,
-                                icon: _iconSelector(idx),
+                                icon: _iconSelector(idx, isDarkMode),
                               ),
                             );
                           },
@@ -180,22 +194,22 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
     );
   }
 
-  Widget _iconSelector(int idx) {
+  Widget _iconSelector(int idx, bool isDarkMode) {
     switch (idx) {
-      case 1:
-        return const Icon(Icons.airplane_ticket);
-      case 2:
-        return const Icon(Icons.shopping_bag_rounded);
-      case 3:
-        return const Icon(Icons.sim_card);
-      case 4:
-        return const Icon(Icons.attach_money);
-      case 5:
-        return const Icon(Icons.hotel);
       case 0:
-        return const Icon(Icons.bar_chart);
+        return  Icon(Icons.airplane_ticket, color: isDarkMode ? Colors.white : Colors.black87,);
+      case 1:
+        return  Icon(Icons.shopping_bag_rounded, color: isDarkMode ? Colors.white : Colors.black87,);
+      case 2:
+        return  Icon(Icons.sim_card, color: isDarkMode ? Colors.white : Colors.black87,);
+      case 3:
+        return  Icon(Icons.attach_money, color: isDarkMode ? Colors.white : Colors.black87,);
+      case 4:
+        return  Icon(Icons.hotel, color: isDarkMode ? Colors.white : Colors.black87,);
+      // case 0:
+      //   return  Icon(Icons.bar_chart, color: isDarkMode ? Colors.white : Colors.black87,);
       default:
-        return const Icon(Icons.abc);
+        return  Icon(Icons.abc, color: isDarkMode ? Colors.white : Colors.black87,);
     }
   }
 }
