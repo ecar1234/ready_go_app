@@ -7,6 +7,7 @@ import 'package:gap/gap.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
 import 'package:ready_go_project/util/admob_util.dart';
 
 import 'package:ready_go_project/util/date_util.dart';
@@ -86,7 +87,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
   Widget build(BuildContext context) {
     final list = context.read<PlanListProvider>().planList;
     final idNum = list.length;
-
+    final isDarkMode = context.read<ThemeModeProvider>().isDarkMode;
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
@@ -122,8 +123,10 @@ class _AddPlanPageState extends State<AddPlanPage> {
                                       Container(
                                           width: constraints.maxWidth <= 600 ? MediaQuery.sizeOf(context).width : 840,
                                           padding: const EdgeInsets.symmetric(vertical: 20),
-                                          decoration: BoxDecoration(border: Border.all(), borderRadius: BorderRadius.circular(10)),
-                                          child: _calendarSection()),
+                                          decoration: BoxDecoration(border: Border.all(), borderRadius: BorderRadius.circular(10),
+                                          color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white
+                                          ),
+                                          child: _calendarSection(isDarkMode)),
                                       const Gap(30),
                                       // create button
                                       SizedBox(
@@ -183,11 +186,14 @@ class _AddPlanPageState extends State<AddPlanPage> {
                                                   Navigator.pop(context);
                                                 },
                                                 style: ElevatedButton.styleFrom(
-                                                    // backgroundColor: Colors.black87,
+                                                    backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
                                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                                                 child: Text(
                                                   widget.plan != null ? "수정" : "생성",
-                                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                                                  style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight: FontWeight.w500,
+                                                      color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                                                 ),
                                               ),
                                             ),
@@ -241,7 +247,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
     );
   }
 
-  Widget _calendarSection() {
+  Widget _calendarSection(bool isDarkMode) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -259,6 +265,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                   firstDayOfWeek: 0,
                   calendarType: CalendarDatePicker2Type.range,
                   weekdayLabels: ["일", "월", "화", "수", "목", "금", "토"],
+                  selectedDayHighlightColor: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary
                 ),
                 value: _dates,
                 onValueChanged: (list) => setState(() {
