@@ -5,4 +5,5 @@ mixin AccountLocalDataRepo {
   Future<AccountModel> getAccountInfo(int id);
   Future<void> updateAccountInfo(AccountModel info, int id);
   Future<void> removeAllData(int id);
+  Future<List<AccountModel>> getAllAccountInfo(int planLength);
 }

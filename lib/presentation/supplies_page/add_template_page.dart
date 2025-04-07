@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:get_it/get_it.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/supply_model/supply_model.dart';
@@ -8,6 +9,8 @@ import 'package:ready_go_project/data/models/supply_model/template_model.dart';
 import 'package:ready_go_project/domain/entities/provider/supplies_template_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
 import 'package:ready_go_project/util/admob_util.dart';
+
+import '../../domain/entities/provider/responsive_height_provider.dart';
 
 class AddTemplatePage extends StatefulWidget {
   final List<SupplyModel>? temp;
@@ -22,7 +25,7 @@ class AddTemplatePage extends StatefulWidget {
 class _AddTemplatePageState extends State<AddTemplatePage> {
   final TextEditingController _textController = TextEditingController();
   final TextEditingController _tempTitleController = TextEditingController();
-  final admobUtil = AdmobUtil();
+  final _admobUtil = AdmobUtil();
   bool _isLoaded = false;
   List<String> _tempList = [];
 
@@ -30,7 +33,7 @@ class _AddTemplatePageState extends State<AddTemplatePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    admobUtil.loadBannerAd(onAdLoaded: () {
+    _admobUtil.loadBannerAd(onAdLoaded: () {
       setState(() {
         _isLoaded = true;
       });
@@ -49,12 +52,15 @@ class _AddTemplatePageState extends State<AddTemplatePage> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    admobUtil.dispose();
+    _admobUtil.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
+    final hei = GetIt.I.get<ResponsiveHeightProvider>().resHeight
+        ?? MediaQuery.sizeOf(context).height - 120;
+    final bannerHei = _admobUtil.bannerAd!.size.height;
     return SafeArea(
         child: Scaffold(
       appBar: AppBar(
@@ -66,13 +72,13 @@ class _AddTemplatePageState extends State<AddTemplatePage> {
         },
         child: Container(
           width: MediaQuery.sizeOf(context).width,
-          height: MediaQuery.sizeOf(context).height - 120,
+          height: hei,
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
               SizedBox(
                 width: MediaQuery.sizeOf(context).width,
-                height: MediaQuery.sizeOf(context).height - 260,
+                height: hei - bannerHei - 50,
                 // decoration: BoxDecoration(border: Border.all()),
                 child: Column(
                   children: [
@@ -238,9 +244,9 @@ class _AddTemplatePageState extends State<AddTemplatePage> {
               const Gap(10),
               if (_isLoaded == true)
                 SizedBox(
-                  height: admobUtil.bannerAd!.size.height.toDouble(),
-                  width: admobUtil.bannerAd!.size.width.toDouble(),
-                  child: AdWidget(ad: admobUtil.bannerAd!),
+                  height: _admobUtil.bannerAd!.size.height.toDouble(),
+                  width: _admobUtil.bannerAd!.size.width.toDouble(),
+                  child: _admobUtil.getBannerAdWidget(),
                 )
             ],
           ),

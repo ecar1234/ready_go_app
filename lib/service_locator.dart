@@ -1,7 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:ready_go_project/data/data_source/plan_data_impl.dart';
 import 'package:ready_go_project/data/data_source/preference/analytics_preference.dart';
 import 'package:ready_go_project/data/data_source/accommodation_data_impl.dart';
@@ -32,6 +34,7 @@ import 'package:ready_go_project/domain/use_cases/account_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/image_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/plan_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/roaming_use_case.dart';
+import 'package:ready_go_project/domain/use_cases/statistics_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/supplies_temp_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/supplies_use_case.dart';
 import 'package:ready_go_project/firebase/firebase_options.dart';
@@ -45,6 +48,19 @@ Future<void> serviceLocator() async {
 
   await pref.checkIsFirst();
   await MobileAds.instance.initialize();
+
+  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+  String appName = packageInfo.appName;
+  String packageName = packageInfo.packageName;
+  String version = packageInfo.version;
+  String buildNumber = packageInfo.buildNumber;
+
+  debugPrint("app name : $appName");
+  debugPrint("packageName : $packageName");
+  debugPrint("version : $version");
+  debugPrint("buildNumber : $buildNumber");
+
 
   //useCases
   _getIt.registerSingleton<AccommodationRepo>(AccommodationUseCase());
@@ -66,7 +82,10 @@ Future<void> serviceLocator() async {
 
   // favorite
   _getIt.registerLazySingleton<PlanFavoritesProvider>(() => PlanFavoritesProvider());
+  // body hei
   _getIt.registerLazySingleton<ResponsiveHeightProvider>(() => ResponsiveHeightProvider());
+  // statistics
+  // _getIt.registerLazySingleton<StatisticsUseCase>(() => StatisticsUseCase());
   await Future.delayed(const Duration(seconds: 2));
 
   FlutterNativeSplash.remove();

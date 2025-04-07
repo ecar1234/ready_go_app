@@ -21,4 +21,10 @@ class AccountDataImpl implements AccountLocalDataRepo {
   Future<void> removeAllData(int id)async {
     await pref.removeAllData(id);
   }
+
+  @override
+  Future<List<AccountModel>> getAllAccountInfo(int planLength)async {
+    final list = await pref.getAllAccountData(planLength);
+    return list;
+  }
 }

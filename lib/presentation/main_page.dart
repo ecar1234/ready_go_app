@@ -8,10 +8,12 @@ import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:open_file/open_file.dart';
 import 'package:ready_go_project/data/models/plan_model/plan_model.dart';
+import 'package:ready_go_project/domain/entities/provider/account_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/plan_favorites_provider.dart';
 import 'package:ready_go_project/presentation/home_page.dart';
 import 'package:ready_go_project/presentation/option_page.dart';
 import 'package:ready_go_project/presentation/plan_main_page.dart';
+import 'package:ready_go_project/presentation/visit_statistics_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../bloc/data_bloc.dart';
@@ -19,6 +21,7 @@ import '../domain/entities/provider/passport_provider.dart';
 import '../domain/entities/provider/plan_list_provider.dart';
 import '../domain/entities/provider/responsive_height_provider.dart';
 import '../domain/entities/provider/theme_mode_provider.dart';
+import '../domain/use_cases/statistics_use_case.dart';
 import 'components/custom_accordion_tile.dart';
 import 'components/custom_bottom_navigation_bar.dart';
 
@@ -139,7 +142,7 @@ class MainPage2 extends StatefulWidget {
 class _MainPage2State extends State<MainPage2> {
   ImagePicker picker = ImagePicker();
   int _selected = 0;
-  List<Widget> pageOption = [const HomePage(), const PlanMainPage()];
+  List<Widget> pageOption = [const HomePage(), const PlanMainPage(), const VisitStatisticsPage()];
 
   void setFavoriteList(BuildContext context) {
     List<PlanModel> list = context.read<PlanListProvider>().planList;
@@ -166,21 +169,24 @@ class _MainPage2State extends State<MainPage2> {
         context.read<PlanListProvider>().getPlanList();
         context.read<DataBloc>().add(DataLoadingPlanListEvent());
         context.read<PassportProvider>().getPassImg();
+        context.read<AccountProvider>().getTotalUseAccountInfo();
+        context.read<StatisticsUseCase>().getStatisticsData();
       }
       File? passImg = context.watch<PassportProvider>().passport;
+      bool isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
       final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
       return SafeArea(
           child: Scaffold(
         appBar: AppBar(
-          // backgroundColor: const Color(0xff192a56),
-          leading: Builder(builder: (context) {
-            return IconButton(
-                onPressed: () {
-                  Scaffold.of(context).openDrawer();
-                },
-                icon: const Icon(Icons.menu));
-          }),
-          leadingWidth: 60,
+          leading: IconButton(
+              onPressed: () {
+
+              },
+              style: IconButton.styleFrom(
+                padding: EdgeInsets.zero,
+              ),
+              icon: isDarkMode ? Image.asset('assets/images/logo_white.png', fit: BoxFit.cover,) : Image.asset('assets/images/logo.png', fit: BoxFit.cover,)),
+          leadingWidth: 120,
           actions: [
             Stack(children: [
               IconButton(
@@ -260,112 +266,6 @@ class _MainPage2State extends State<MainPage2> {
             )
           ],
         ),
-        drawer: Drawer(
-          child: ListView(
-            // Important: Remove any padding from the ListView.
-            padding: EdgeInsets.zero,
-            children: [
-              DrawerHeader(
-                decoration: const BoxDecoration(color: Colors.cyan),
-                child: Center(
-                    child: Column(
-                  children: [
-                    SizedBox(child: Image.asset("assets/images/logo.png")),
-                    const Text(
-                      "여행 준비를 한번에",
-                      style: TextStyle(fontSize: 14),
-                    )
-                  ],
-                )),
-              ),
-              Scrollbar(
-                child: CustomAccordionTile(title: "항공 수화물 규정", children: [
-                  ListTile(
-                    title: const Text(
-                      "인천공항 제한물품",
-                      style: TextStyle(fontSize: 13),
-                    ),
-                    onTap: () {
-                      launchUrl(Uri.parse("https://www.koreanair.com/contents/plan-your-travel/baggage/checked-baggage/free-baggage"));
-                    },
-                  ),
-                  ListTile(
-                    title: const Text(
-                      "대한항공",
-                      style: TextStyle(fontSize: 13),
-                    ),
-                    onTap: () {
-                      launchUrl(Uri.parse("https://flyasiana.com/C/KR/KO/contents/free-baggage"));
-                    },
-                  ),
-                  ListTile(
-                    title: const Text(
-                      "아시아나",
-                      style: TextStyle(fontSize: 13),
-                    ),
-                    onTap: () {
-                      launchUrl(Uri.parse("https://flyasiana.com/C/KR/KO/contents/free-baggage"));
-                    },
-                  ),
-                  ListTile(
-                    title: const Text(
-                      "진 에어",
-                      style: TextStyle(fontSize: 13),
-                    ),
-                    onTap: () {
-                      launchUrl(Uri.parse("https://www.jinair.com/ready/freeBaggage?snsLang=ko_KR&ctrCd=KOR"));
-                    },
-                  ),
-                  ListTile(
-                    title: const Text(
-                      "티웨이",
-                      style: TextStyle(fontSize: 13),
-                    ),
-                    onTap: () {
-                      launchUrl(Uri.parse("https://www.twayair.com/app/serviceInfo/contents/1148"));
-                    },
-                  ),
-                  ListTile(
-                    title: const Text(
-                      "에어부산",
-                      style: TextStyle(fontSize: 13),
-                    ),
-                    onTap: () {
-                      launchUrl(Uri.parse("https://m.airbusan.com/mc/common/service/baggage/free"));
-                    },
-                  ),
-                  ListTile(
-                    title: const Text(
-                      "에어서울",
-                      style: TextStyle(fontSize: 13),
-                    ),
-                    onTap: () {
-                      launchUrl(Uri.parse("https://flyairseoul.com/CM/ko/destinations01.do"));
-                    },
-                  ),
-                  ListTile(
-                    title: const Text(
-                      "제주항공",
-                      style: TextStyle(fontSize: 13),
-                    ),
-                    onTap: () {
-                      launchUrl(Uri.parse("https://www.jejuair.net/ko/linkService/boardingProcessGuide/trustBaggage.do"));
-                    },
-                  ),
-                  ListTile(
-                    title: const Text(
-                      "에어로 K",
-                      style: TextStyle(fontSize: 13),
-                    ),
-                    onTap: () {
-                      launchUrl(Uri.parse("https://www.aerok.com/service/free"));
-                    },
-                  ),
-                ]),
-              )
-            ],
-          ),
-        ),
         body: Container(
           height: height,
           padding: const EdgeInsets.only(bottom: 20),
@@ -379,9 +279,10 @@ class _MainPage2State extends State<MainPage2> {
                     _selected = idx;
                   });
                 },
-                items: [
+                items: const [
                   {"홈": Icons.home},
-                  {"여행": Icons.airplane_ticket}
+                  {"여행": Icons.airplane_ticket},
+                  {"방문통계" : Icons.pie_chart}
                 ],
               )
             ],

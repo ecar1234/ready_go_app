@@ -11,9 +11,9 @@ import 'package:ready_go_project/domain/entities/provider/supplies_template_prov
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
 import 'package:ready_go_project/presentation/supplies_page/add_template_page.dart';
 
-import '../domain/entities/provider/responsive_height_provider.dart';
-import '../domain/entities/provider/supplies_provider.dart';
-import '../util/admob_util.dart';
+import '../../domain/entities/provider/responsive_height_provider.dart';
+import '../../domain/entities/provider/supplies_provider.dart';
+import '../../util/admob_util.dart';
 
 class SuppliesPage extends StatefulWidget {
   final int planId;

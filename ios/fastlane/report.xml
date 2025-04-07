@@ -5,47 +5,47 @@
     
     
       
-      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.00031">
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000256">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="1: Switch to ios build lane" time="0.000148">
+      <testcase classname="fastlane.lanes" name="1: Switch to ios build lane" time="0.000146">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="2: Switch to ios get_version_code lane" time="0.000126">
+      <testcase classname="fastlane.lanes" name="2: Switch to ios get_version_code lane" time="0.000198">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="3: Switch to ios get_version_name lane" time="0.000144">
+      <testcase classname="fastlane.lanes" name="3: Switch to ios get_version_name lane" time="0.000134">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="4: flutter clean" time="17.40082">
+      <testcase classname="fastlane.lanes" name="4: flutter clean" time="12.949805">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="5: flutter pub get" time="5.801045">
+      <testcase classname="fastlane.lanes" name="5: flutter pub get" time="5.655025">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="6: flutter build ios --release --build-number\=902 --build-name\=0.902" time="121.100649">
+      <testcase classname="fastlane.lanes" name="6: flutter build ios --release --build-number\=904 --build-name\=0.9.904" time="115.565355">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="7: build_app" time="205.221377">
+      <testcase classname="fastlane.lanes" name="7: build_app" time="206.828519">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="8: upload_to_testflight" time="104.77809">
+      <testcase classname="fastlane.lanes" name="8: upload_to_testflight" time="90.639792">
         
       </testcase>
     

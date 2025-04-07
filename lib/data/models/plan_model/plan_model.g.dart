@@ -9,6 +9,7 @@ part of 'plan_model.dart';
 PlanModel _$PlanModelFromJson(Map<String, dynamic> json) => PlanModel(
       id: (json['id'] as num?)?.toInt(),
       nation: json['nation'] as String?,
+      subject: json['subject'] as String?,
       schedule: (json['schedule'] as List<dynamic>?)
           ?.map((e) => e == null ? null : DateTime.parse(e as String))
           .toList(),
@@ -18,6 +19,7 @@ PlanModel _$PlanModelFromJson(Map<String, dynamic> json) => PlanModel(
 Map<String, dynamic> _$PlanModelToJson(PlanModel instance) => <String, dynamic>{
       'id': instance.id,
       'nation': instance.nation,
+      'subject': instance.subject,
       'schedule': instance.schedule?.map((e) => e?.toIso8601String()).toList(),
       'favorites': instance.favorites,
     };

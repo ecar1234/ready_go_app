@@ -44,6 +44,30 @@ class AccountPreference {
     pref.setString("accountInfo$id", stringJson);
   }
 
+  Future<List<AccountModel>> getAllAccountData(int planLang)async{
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    List<AccountModel> list = [];
+    for(var i=0; i < planLang ; i ++){
+      String? stringJson = pref.getString("accountInfo$i");
+      if(stringJson != null) {
+        Map<String, dynamic> json = jsonDecode(stringJson);
+        AccountModel accountInfo = AccountModel.fromJson(json);
+        list.add(accountInfo);
+      }
+      else{
+        list.add(AccountModel(
+            totalExchangeAccount: 0,
+            exchange: 0,
+            card: 0,
+            cash: 0,
+            totalUseAccount: 0,
+            usageHistory: []
+        ));
+      }
+    }
+    return list;
+  }
+
   Future<void> removeAllData(int id)async{
     SharedPreferences pref = await SharedPreferences.getInstance();
     pref.remove("accountInfo$id");

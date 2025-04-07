@@ -13,7 +13,21 @@ class PlanUseCase with PlanRepo{
 
   @override
   Future<List<PlanModel>> getLocalList() async {
-    final list = await _getIt.get<PlanLocalDataRepo>().getLocalList();
+    List<PlanModel> list = await _getIt.get<PlanLocalDataRepo>().getLocalList();
+    try {
+      for (var item in list) {
+        if(item.nation!.isNotEmpty){
+          if(item.subject == null || item.subject!.isEmpty){
+            item.subject = item.nation;
+            item.nation = "기타";
+          }
+        }
+      }
+      _getIt.get<PlanLocalDataRepo>().updatePlanList(list);
+    } on Exception catch (e) {
+      logger.e(e.toString());
+      rethrow;
+    }
     List<PlanModel> favorite = list.where((item) => item.favorites == true).toList();
     _getIt.get<PlanFavoritesProvider>().setFavoriteList(favorite);
 

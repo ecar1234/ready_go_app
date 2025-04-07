@@ -1,18 +1,16 @@
-
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:ready_go_project/data/models/account_model/account_model.dart';
 import 'package:ready_go_project/data/models/account_model/amount_model.dart';
 import 'package:ready_go_project/data/models/plan_model/plan_model.dart';
+import 'package:ready_go_project/domain/entities/provider/plan_list_provider.dart';
 import 'package:ready_go_project/domain/repositories/account_repo.dart';
 import 'package:ready_go_project/domain/repositories/plan_repo.dart';
 import 'package:ready_go_project/domain/use_cases/plan_use_case.dart';
 
 import '../../data/repositories/account_local_data_repo.dart';
 
-
-
-class AccountUseCase with  AccountRepo{
+class AccountUseCase with AccountRepo {
   final _getIt = GetIt.I;
   final logger = Logger();
 
@@ -174,10 +172,10 @@ class AccountUseCase with  AccountRepo{
         account.totalExchangeAccount = account.totalExchangeAccount! - removeItem.amount!;
         account.totalUseAccount = account.totalExchangeAccount! - account.exchange!;
       } else if (removeItem.type == AmountType.use) {
-        if(removeItem.category == 0){
+        if (removeItem.category == 0) {
           account.totalUseAccount = account.totalUseAccount! + removeItem.amount!;
           account.exchange = account.exchange! - removeItem.amount!;
-        }else if(removeItem.category == 2){
+        } else if (removeItem.category == 2) {
           account.card = account.card! - removeItem.amount!;
         }
       }
@@ -236,5 +234,11 @@ class AccountUseCase with  AccountRepo{
   Future<AccountModel> removeAllData(int id) async {
     await _getIt.get<AccountLocalDataRepo>().removeAllData(id);
     return AccountModel();
+  }
+
+  @override
+  Future<List<AccountModel>> getTotalUseAccountInfo(int planLength) async {
+    final allAccountInfo = await _getIt.get<AccountLocalDataRepo>().getAllAccountInfo(planLength);
+    return allAccountInfo;
   }
 }

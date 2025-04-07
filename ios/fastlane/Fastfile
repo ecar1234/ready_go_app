@@ -63,7 +63,8 @@ platform :ios do
   lane :beta do
     build
     upload_to_testFlight(
-      apple_id: "38DCD6F7UP",
+      team_id: "38DCD6F7UP",
+      team_name: "DevOn Studio"
       app_identifier: "com.jk.readygo.app",
       ipa: "./ready_go_project/build/ios/Runner.ipa",
       skip_waiting_for_build_processing: true

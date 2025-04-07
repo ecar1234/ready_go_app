@@ -14,10 +14,10 @@ import 'package:ready_go_project/data/models/account_model/amount_model.dart';
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
 import 'package:ready_go_project/util/intl_utils.dart';
 
-import '../data/models/plan_model/plan_model.dart';
-import '../domain/entities/provider/account_provider.dart';
-import '../domain/entities/provider/responsive_height_provider.dart';
-import '../util/admob_util.dart';
+import '../../data/models/plan_model/plan_model.dart';
+import '../../domain/entities/provider/account_provider.dart';
+import '../../domain/entities/provider/responsive_height_provider.dart';
+import '../../util/admob_util.dart';
 
 class AccountBookPage extends StatefulWidget {
   final PlanModel plan;
@@ -85,8 +85,9 @@ class _AccountBookPageState extends State<AccountBookPage> {
   @override
   Widget build(BuildContext context) {
     final AccountModel info = context.watch<AccountProvider>().accountInfo!;
-    final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
     final isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
+    final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
+    final bannerHei = _admobUtil.bannerAd!.size.height;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -99,11 +100,11 @@ class _AccountBookPageState extends State<AccountBookPage> {
             padding: const EdgeInsets.all(20),
             child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               SizedBox(
-                height: height - 100,
+                height: height - bannerHei -40,
                 child: ExpandablePageView(
                     controller: _expandController,
                     physics: const BouncingScrollPhysics(),
-                    children: [_page1(context, info, isDarkMode), _page2(context, info, isDarkMode)]),
+                    children: [_page1(context, info, isDarkMode), _page2(context, height-bannerHei-40, info, isDarkMode)]),
               ),
               if (_isLoaded && _admobUtil.bannerAd != null)
                 SizedBox(
@@ -157,11 +158,11 @@ class _AccountBookPageState extends State<AccountBookPage> {
     );
   }
 
-  Widget _page2(BuildContext context, AccountModel info, bool isDarkMode) {
-    final hei = GetIt.I.get<ResponsiveHeightProvider>().resHeight!;
-    final bannerHei = _admobUtil.bannerAd!.size.height;
+  Widget _page2(BuildContext context, double hei, AccountModel info, bool isDarkMode) {
+    // final hei = GetIt.I.get<ResponsiveHeightProvider>().resHeight!;
+    // final bannerHei = _admobUtil.bannerAd!.size.height;
     return SizedBox(
-        // height: MediaQuery.sizeOf(context).height -300,
+        height: hei,
         child: Column(
       children: [
         SizedBox(
@@ -260,7 +261,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                             decoration: BoxDecoration(
                                 color: Theme.of(context).colorScheme.primary,
                                 border: Border(right: BorderSide(color: Theme.of(context).colorScheme.outline))),
-                            child: Column(
+                            child: const Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
@@ -297,13 +298,13 @@ class _AccountBookPageState extends State<AccountBookPage> {
         info.usageHistory == null || info.usageHistory!.isEmpty
             ? SizedBox(
                 width: MediaQuery.sizeOf(context).width,
-                height: MediaQuery.sizeOf(context).height - 320,
+                height: hei - 120,
                 child: const Center(
                   child: Text("사용내역이 없습니다."),
                 ),
               )
             : SizedBox(
-                height: hei - bannerHei- 170 ,
+                height: hei - 100 ,
                 child: Column(
                   children: [
                     Expanded(

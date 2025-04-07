@@ -10,10 +10,10 @@ import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
 
-import '../domain/entities/provider/admob_provider.dart';
-import '../domain/entities/provider/images_provider.dart';
-import '../domain/entities/provider/responsive_height_provider.dart';
-import '../util/admob_util.dart';
+import '../../domain/entities/provider/admob_provider.dart';
+import '../../domain/entities/provider/images_provider.dart';
+import '../../domain/entities/provider/responsive_height_provider.dart';
+import '../../util/admob_util.dart';
 
 class AirTicketPage extends StatefulWidget {
   final int planId;
@@ -71,7 +71,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
             LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraint) => SizedBox(
                 width: MediaQuery.sizeOf(context).width,
-                // height: height - bannerHei - 40,
+                height: height - bannerHei - 40,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

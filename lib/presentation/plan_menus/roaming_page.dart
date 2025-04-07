@@ -13,10 +13,10 @@ import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/roaming_model/roaming_period_model.dart';
 
-import '../domain/entities/provider/admob_provider.dart';
-import '../domain/entities/provider/responsive_height_provider.dart';
-import '../domain/entities/provider/roaming_provider.dart';
-import '../util/admob_util.dart';
+import '../../domain/entities/provider/admob_provider.dart';
+import '../../domain/entities/provider/responsive_height_provider.dart';
+import '../../domain/entities/provider/roaming_provider.dart';
+import '../../util/admob_util.dart';
 
 class RoamingPage extends StatefulWidget {
   final int planId;
@@ -74,6 +74,7 @@ class _RoamingPageState extends State<RoamingPage> {
   Widget build(BuildContext context) {
     final roamingData = context.watch<RoamingProvider>().roamingData;
     final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height -120;
+    final bannerHei = _admobUtil.bannerAd!.size.height;
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
@@ -91,30 +92,26 @@ class _RoamingPageState extends State<RoamingPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints constraints) => Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                    SizedBox(
-                      width: height - 100,
-                      // height: MediaQuery.sizeOf(context).height - 280,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _voucherImageSection(context, roamingData!.imgList!),
-                            const Gap(10),
-                            const Divider(),
-                            _codeSection(context, roamingData.activeCode??"", roamingData.dpAddress??""),
-                            // _dpAddressSection(context, address),
-                            // _activeCodeSection(context, code),
-                            const Divider(),
-                            const Gap(10),
-                            _periodSection(context, roamingData.period!)
-                          ],
-                        ),
+                  builder: (BuildContext context, BoxConstraints constraints) => SizedBox(
+                    width: MediaQuery.sizeOf(context).width,
+                    height: height - bannerHei -40,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _voucherImageSection(context, roamingData!.imgList!),
+                          const Gap(10),
+                          const Divider(),
+                          _codeSection(context, roamingData.activeCode??"", roamingData.dpAddress??""),
+                          // _dpAddressSection(context, address),
+                          // _activeCodeSection(context, code),
+                          const Divider(),
+                          const Gap(10),
+                          _periodSection(context, roamingData.period!)
+                        ],
                       ),
                     ),
-                  ]),
+                  ),
                 ),
                 if (_isLoaded && _admobUtil.bannerAd != null)
                   SizedBox(

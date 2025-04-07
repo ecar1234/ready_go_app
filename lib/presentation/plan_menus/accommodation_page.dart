@@ -15,11 +15,11 @@ import 'package:accordion/accordion.dart';
 import 'package:ready_go_project/util/intl_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../data/models/plan_model/plan_model.dart';
-import '../domain/entities/provider/accommodation_provider.dart';
-import '../domain/entities/provider/responsive_height_provider.dart';
-import '../domain/entities/provider/theme_mode_provider.dart';
-import '../util/admob_util.dart';
+import '../../data/models/plan_model/plan_model.dart';
+import '../../domain/entities/provider/accommodation_provider.dart';
+import '../../domain/entities/provider/responsive_height_provider.dart';
+import '../../domain/entities/provider/theme_mode_provider.dart';
+import '../../util/admob_util.dart';
 
 class AccommodationPage extends StatefulWidget {
   final PlanModel plan;
@@ -69,6 +69,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
       }
     }
   }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -84,6 +85,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
       });
     });
   }
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -103,7 +105,10 @@ class _AccommodationPageState extends State<AccommodationPage> {
     final list = context.watch<AccommodationProvider>().accommodation;
     int month = widget.plan.schedule!.first!.month;
     int day = widget.plan.schedule!.first!.day;
-    final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height -120;
+
+    final isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
+    final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
+    final bannerHei = _admobUtil.bannerAd!.size.height;
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
@@ -115,13 +120,15 @@ class _AccommodationPageState extends State<AccommodationPage> {
             title: const Text("숙소정보"),
             actions: [
               SizedBox(
-                width: 70,
-                child: IconButton(
+                width: 100,
+                child: TextButton.icon(
                     onPressed: () {
                       _addAccommodation(context, month, day);
                     },
                     style: IconButton.styleFrom(padding: EdgeInsets.zero),
-                    icon: const Icon(Icons.add)),
+                    label: Text("추가", style: TextStyle(color: isDarkMode? Colors.white : Theme.of(context).colorScheme.primary ),),
+                    iconAlignment: IconAlignment.end,
+                    icon: Icon(Icons.add, color: isDarkMode? Colors.white : Theme.of(context).colorScheme.primary )),
               )
             ],
           ),
@@ -133,13 +140,13 @@ class _AccommodationPageState extends State<AccommodationPage> {
                 builder: (BuildContext context, BoxConstraints constraints) => SizedBox(
                     child: list?.isEmpty == true || list == null
                         ? SizedBox(
-                            height: height -100,
+                            height: height - bannerHei - 50,
                             child: const Center(child: Text("숙소 정보가 없습니다.")),
                           )
                         : SizedBox(
-                            height: height -100,
+                            height: height - bannerHei - 50,
                             width: constraints.maxWidth <= 600 ? MediaQuery.sizeOf(context).width : 600,
-                            child: SingleChildScrollView(child: _accordionSection(context, list)))),
+                            child: SingleChildScrollView(child: _accordionSection(context, list, isDarkMode)))),
               ),
               if (_isLoaded && _admobUtil.bannerAd != null)
                 SizedBox(
@@ -510,8 +517,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
         });
   }
 
-  Widget _accordionSection(BuildContext context, List<AccommodationModel> list) {
-    bool isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
+  Widget _accordionSection(BuildContext context, List<AccommodationModel> list, bool isDarkMode) {
     return Accordion(
         disableScrolling: true,
         rightIcon: null,
@@ -521,7 +527,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
         headerPadding: const EdgeInsets.all(20),
         headerBackgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
         contentBorderColor: isDarkMode ? Colors.white : Colors.black87,
-        contentBackgroundColor: isDarkMode ? Theme.of(context).colorScheme.surface  : Colors.white,
+        contentBackgroundColor: isDarkMode ? Theme.of(context).colorScheme.surface : Colors.white,
         contentVerticalPadding: 20,
         contentHorizontalPadding: 20,
         children: [
@@ -542,7 +548,10 @@ class _AccommodationPageState extends State<AccommodationPage> {
                             context.read<AccommodationProvider>().removeAccommodation(idx, widget.plan.id!);
                           },
                           style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                          child: Text("삭제", style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),)),
+                          child: Text(
+                            "삭제",
+                            style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                          )),
                     ),
                   ],
                 ),

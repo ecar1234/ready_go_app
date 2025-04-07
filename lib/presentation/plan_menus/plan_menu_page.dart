@@ -8,24 +8,23 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/bloc/data_bloc.dart';
-import 'package:ready_go_project/presentation/accommodation_page.dart';
-import 'package:ready_go_project/presentation/account_book_page.dart';
-import 'package:ready_go_project/presentation/air_ticket_page.dart';
-import 'package:ready_go_project/presentation/expectation_page.dart';
-import 'package:ready_go_project/presentation/roaming_page.dart';
-import 'package:ready_go_project/presentation/supplies_page.dart';
+import 'package:ready_go_project/presentation/plan_menus/accommodation_page.dart';
+import 'package:ready_go_project/presentation/plan_menus/account_book_page.dart';
+import 'package:ready_go_project/presentation/plan_menus/air_ticket_page.dart';
+import 'package:ready_go_project/presentation/plan_menus/roaming_page.dart';
 
-import '../data/models/plan_model/plan_model.dart';
-import '../domain/entities/provider/accommodation_provider.dart';
-import '../domain/entities/provider/account_provider.dart';
-import '../domain/entities/provider/admob_provider.dart';
-import '../domain/entities/provider/images_provider.dart';
-import '../domain/entities/provider/responsive_height_provider.dart';
-import '../domain/entities/provider/roaming_provider.dart';
-import '../domain/entities/provider/supplies_provider.dart';
-import '../domain/entities/provider/theme_mode_provider.dart';
-import '../util/admob_util.dart';
-import '../util/date_util.dart';
+import 'package:ready_go_project/presentation/supplies_page/supplies_page.dart';
+
+import '../../data/models/plan_model/plan_model.dart';
+import '../../domain/entities/provider/accommodation_provider.dart';
+import '../../domain/entities/provider/account_provider.dart';
+import '../../domain/entities/provider/images_provider.dart';
+import '../../domain/entities/provider/responsive_height_provider.dart';
+import '../../domain/entities/provider/roaming_provider.dart';
+import '../../domain/entities/provider/supplies_provider.dart';
+import '../../domain/entities/provider/theme_mode_provider.dart';
+import '../../util/admob_util.dart';
+import '../../util/date_util.dart';
 
 class PlanMenuPage extends StatefulWidget {
   final PlanModel plan;
@@ -186,7 +185,7 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
               SizedBox(
                 height: _admobUtil.bannerAd!.size.height.toDouble(),
                 width: _admobUtil.bannerAd!.size.width.toDouble(),
-                child: AdWidget(ad: _admobUtil.bannerAd!),
+                child: _admobUtil.getBannerAdWidget(),
               )
           ]),
         ),

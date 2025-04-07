@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:dotted_line/dotted_line.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -11,24 +8,18 @@ import 'package:get_it/get_it.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
-import 'package:open_file/open_file.dart';
-import 'package:provider/provider.dart';
 import 'package:ready_go_project/bloc/data_bloc.dart';
 import 'package:ready_go_project/domain/entities/provider/plan_favorites_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/responsive_height_provider.dart';
 import 'package:ready_go_project/presentation/add_plan_page.dart';
-import 'package:ready_go_project/presentation/components/custom_accordion_tile.dart';
-import 'package:ready_go_project/presentation/option_page.dart';
-import 'package:ready_go_project/presentation/plan_menu_page.dart';
+import 'package:ready_go_project/presentation/plan_menus/plan_menu_page.dart';
 import 'package:ready_go_project/util/admob_util.dart';
 import 'package:ready_go_project/util/date_util.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../data/models/plan_model/plan_model.dart';
 import '../domain/entities/provider/accommodation_provider.dart';
 import '../domain/entities/provider/account_provider.dart';
 import '../domain/entities/provider/admob_provider.dart';
 import '../domain/entities/provider/images_provider.dart';
-import '../domain/entities/provider/passport_provider.dart';
 import '../domain/entities/provider/plan_list_provider.dart';
 import '../domain/entities/provider/roaming_provider.dart';
 import '../domain/entities/provider/supplies_provider.dart';
@@ -157,9 +148,6 @@ class _PlanMainPageState extends State<PlanMainPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   context.read<AdmobProvider>().loadAdBanner();
-    // });
     _admobUtil.loadBannerAd(onAdLoaded: () {
       setState(() {
         _isLoaded = true;
@@ -392,19 +380,36 @@ class _PlanMainPageState extends State<PlanMainPage> {
                             // 여행 목적 / 여행 기간
                             Container(
                               height: 80,
-                              padding: const EdgeInsets.all(10),
+                              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  SizedBox(
-                                      child: Text(
-                                    "${list[idx].nation} (${DateUtil.datesDifference(list[idx].schedule!) + 1}일)",
-                                    style: const TextStyle(
-                                        // color: Colors.white,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600),
-                                  )),
+                                  Row(
+                                    children: [
+                                      SizedBox(
+                                          child: Text(
+                                        "${list[idx].nation} (${DateUtil.datesDifference(list[idx].schedule!) + 1}일)",
+                                        style: const TextStyle(
+                                            // color: Colors.white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600),
+                                      )),
+                                      const Gap(10),
+                                      Expanded(
+                                        child: SizedBox(
+                                            child: Text(
+                                              "주제: ${list[idx].subject}",
+                                              maxLines: 1,
+                                              style: const TextStyle(
+                                                // color: Colors.white,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  fontWeight: FontWeight.w600),
+                                            )),
+                                      ),
+                                    ],
+                                  ),
+
                                   SizedBox(
                                     child: Text(
                                       "${DateUtil.dateToString(list[idx].schedule?.first ?? DateTime.now())} ~ ${DateUtil.dateToString(list[idx].schedule?.last ?? DateTime.now())}",
