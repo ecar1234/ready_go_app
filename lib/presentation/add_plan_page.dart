@@ -113,29 +113,38 @@ class _AddPlanPageState extends State<AddPlanPage> {
                   child: TextButton.icon(
                     onPressed: () {
                       if (widget.plan != null) {
-                        if (widget.plan!.nation! == subjectController.text && widget.plan!.schedule! == _dates) {
+                        if ((widget.plan!.nation! == nationController.text)
+                            && (widget.plan!.subject! == subjectController.text)
+                            && (widget.plan!.schedule! == _dates)) {
                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                             content: Text("변경 사항이 존재 하지 않습니다."),
                             duration: Duration(seconds: 1),
                           ));
                           return;
-                        } else {}
-                      } else {
-                        if (subjectController.text.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                            content: Text("여행 제목을 입력해 주세요."),
-                            duration: Duration(seconds: 1),
-                          ));
-                          return;
-                        }
-                        if (_dates.length > 2 || _dates.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                            content: Text("일정을 선택해 주세요"),
-                            duration: Duration(seconds: 1),
-                          ));
-                          return;
                         }
                       }
+                      if (nationController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text("여행 국가를 입력해 주세요."),
+                          duration: Duration(seconds: 1),
+                        ));
+                        return;
+                      }
+                      if (subjectController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text("여행 제목을 입력해 주세요."),
+                          duration: Duration(seconds: 1),
+                        ));
+                        return;
+                      }
+                      if (_dates.length > 2 || _dates.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text("일정을 선택해 주세요"),
+                          duration: Duration(seconds: 1),
+                        ));
+                        return;
+                      }
+
                       try {
                         PlanModel plan = PlanModel();
                         if (widget.plan != null) {

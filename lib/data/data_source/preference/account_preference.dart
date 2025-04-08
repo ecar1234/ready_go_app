@@ -23,11 +23,11 @@ class AccountPreference {
         return accountInfo;
       }else{
         return AccountModel(
-            totalExchangeAccount: 0,
-            exchange: 0,
-            card: 0,
-            cash: 0,
-            totalUseAccount: 0,
+            totalExchangeCost: 0,
+            useExchangeMoney: 0,
+            useCard: 0,
+            useKoCash: 0,
+            balance: 0,
             usageHistory: []
         );
       }
@@ -56,11 +56,11 @@ class AccountPreference {
       }
       else{
         list.add(AccountModel(
-            totalExchangeAccount: 0,
-            exchange: 0,
-            card: 0,
-            cash: 0,
-            totalUseAccount: 0,
+            totalExchangeCost: 0,
+            useExchangeMoney: 0,
+            useCard: 0,
+            useKoCash: 0,
+            balance: 0,
             usageHistory: []
         ));
       }

@@ -15,6 +15,7 @@ class PlanFavoritesProvider with ChangeNotifier {
 
   void addFavoriteList(PlanModel plan) {
     _favoriteList.add(plan);
+    _favoriteList.sort((a,b) => a.schedule![0]!.compareTo(b.schedule![0]!));
     notifyListeners();
   }
 

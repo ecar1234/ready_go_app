@@ -5,14 +5,14 @@ part 'account_model.g.dart';
 
 @JsonSerializable()
 class AccountModel {
-  int? totalExchangeAccount;
-  int? exchange;
-  int? cash;
-  int? card;
-  int? totalUseAccount;
+  int? totalExchangeCost;
+  int? useExchangeMoney;
+  int? useKoCash;
+  int? useCard;
+  int? balance;
   List<List<AmountModel>?>? usageHistory;
 
-  AccountModel({this.totalExchangeAccount, this.exchange, this. cash, this.card, this.totalUseAccount, this.usageHistory});
+  AccountModel({this.totalExchangeCost, this.useExchangeMoney, this.useKoCash, this.useCard, this.balance, this.usageHistory});
 
   factory AccountModel.fromJson(Map<String, dynamic> json) => _$AccountModelFromJson(json);
   Map<String, dynamic> toJson() => _$AccountModelToJson(this);

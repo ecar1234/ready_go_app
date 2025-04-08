@@ -28,8 +28,8 @@ class PlanUseCase with PlanRepo{
       logger.e(e.toString());
       rethrow;
     }
-    List<PlanModel> favorite = list.where((item) => item.favorites == true).toList();
-    _getIt.get<PlanFavoritesProvider>().setFavoriteList(favorite);
+    // List<PlanModel> favorite = list.where((item) => item.favorites == true).toList();
+    // _getIt.get<PlanFavoritesProvider>().setFavoriteList(favorite);
 
     return list;
   }
@@ -82,8 +82,8 @@ class PlanUseCase with PlanRepo{
       list.removeWhere((plan) => plan.id == id);
       list.sort((a, b) => a.schedule![0]!.compareTo(b.schedule![0]!));
 
-      List<PlanModel> favorite = list.where((item) => item.favorites == true).toList();
-      _getIt.get<PlanFavoritesProvider>().setFavoriteList(favorite);
+      // List<PlanModel> favorite = list.where((item) => item.favorites == true).toList();
+      // _getIt.get<PlanFavoritesProvider>().setFavoriteList(favorite);
 
       await _getIt.get<PlanLocalDataRepo>().updatePlanList(list);
 

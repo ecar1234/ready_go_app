@@ -298,6 +298,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
                         context.read<ImagesProvider>().removeAllData(list[idx].id!);
                         context.read<RoamingProvider>().removeAllData(list[idx].id!);
                         context.read<SuppliesProvider>().removeAllData(list[idx].id!);
+                        context.read<PlanFavoritesProvider>().removeFavoriteList(list[idx].id!);
                       }),
                 ]),
                 child: Container(

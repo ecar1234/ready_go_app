@@ -4,7 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:ready_go_project/data/models/account_model/account_model.dart';
 import 'package:ready_go_project/data/models/account_model/amount_model.dart';
-import 'package:ready_go_project/domain/entities/provider/plan_list_provider.dart';
+
 import 'package:ready_go_project/domain/repositories/account_repo.dart';
 import 'package:ready_go_project/domain/repositories/plan_repo.dart';
 
@@ -25,7 +25,7 @@ class AccountProvider with ChangeNotifier {
     final allAccountInfo = await GetIt.I.get<AccountRepo>().getTotalUseAccountInfo(planList.length);
     Map<String, int> accountInfo = {};
     planList.map((item){
-      accountInfo[item.nation!] = allAccountInfo[item.id!].exchange!+allAccountInfo[item.id!].card!;
+      accountInfo[item.nation!] = allAccountInfo[item.id!].useExchangeMoney!+allAccountInfo[item.id!].useCard!;
     });
     _totalUseAccountInfo = accountInfo.entries.map((e) => {e.key:e.value}).toList();
 

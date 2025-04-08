@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/account_model/account_model.dart';
@@ -235,12 +234,12 @@ class _AccountBookPageState extends State<AccountBookPage> {
                         Expanded(
                             flex: 2,
                             child: Container(
-                              padding: const EdgeInsets.all(10),
+                              padding: const EdgeInsets.all(5),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   Text(
-                                    IntlUtils.stringIntAddComma(info.totalUseAccount!),
+                                    IntlUtils.stringIntAddComma(info.balance??0),
                                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                                   )
                                 ],
@@ -283,7 +282,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  IntlUtils.stringIntAddComma(info.exchange!),
+                                  IntlUtils.stringIntAddComma(info.useExchangeMoney??0),
                                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                                 )
                               ],
@@ -359,7 +358,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                             style: TextStyle(fontWeight: FontWeight.w600),
                                           ))),
                                       Container(
-                                          width: (MediaQuery.sizeOf(context).width - 42) * 0.6,
+                                          width: (MediaQuery.sizeOf(context).width - 42) * 0.5,
                                           decoration: BoxDecoration(
                                               border: Border.symmetric(vertical: BorderSide(color: Theme.of(context).colorScheme.outline))),
                                           child: const Center(
@@ -368,7 +367,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                             style: TextStyle(fontWeight: FontWeight.w600),
                                           ))),
                                       SizedBox(
-                                          width: (MediaQuery.sizeOf(context).width - 42) * 0.2,
+                                          width: (MediaQuery.sizeOf(context).width - 42) * 0.3,
                                           child: const Center(
                                               child: Text(
                                             "금액",
@@ -402,14 +401,14 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                                         child: Center(child: Text(list[idx].category == 0 ? "현금" : "카드"))),
                                                     Container(
                                                         height: 40,
-                                                        width: (MediaQuery.sizeOf(context).width - 42) * 0.6,
+                                                        width: (MediaQuery.sizeOf(context).width - 42) * 0.5,
                                                         decoration: BoxDecoration(
                                                             border:
                                                                 Border.symmetric(vertical: BorderSide(color: Theme.of(context).colorScheme.outline))),
                                                         child: Center(child: Text("${list[idx].title}"))),
                                                     SizedBox(
                                                         height: 40,
-                                                        width: (MediaQuery.sizeOf(context).width - 42) * 0.2,
+                                                        width: (MediaQuery.sizeOf(context).width - 42) * 0.3,
                                                         child: Center(
                                                             child: Text(
                                                           "${list[idx].amount}",
@@ -556,7 +555,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Text(
-                          IntlUtils.stringIntAddComma(info.totalExchangeAccount ?? 0),
+                          IntlUtils.stringIntAddComma(info.totalExchangeCost ?? 0),
                           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                         ),
                       ],
@@ -589,7 +588,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Text(
-                          IntlUtils.stringIntAddComma(info.totalUseAccount ?? 0),
+                          IntlUtils.stringIntAddComma(info.balance ?? 0),
                           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                         ),
                       ],
@@ -621,7 +620,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Text(
-                          IntlUtils.stringIntAddComma(info.exchange ?? 0),
+                          IntlUtils.stringIntAddComma(info.useExchangeMoney ?? 0),
                           style: const TextStyle(fontSize: 16, color: Colors.redAccent),
                         )
                       ],
@@ -652,7 +651,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Text(
-                          IntlUtils.stringIntAddComma(info.card ?? 0),
+                          IntlUtils.stringIntAddComma(info.useCard ?? 0),
                           style: const TextStyle(fontSize: 16, color: Colors.green),
                         )
                       ],

@@ -41,7 +41,7 @@ class StatisticsUseCase with ChangeNotifier {
       for (var item in completePlanList) {
         final planAccount = await GetIt.I.get<AccountRepo>().getAccountInfo(item.id!);
         if(item.nation != null){
-          List<int> useAccount = [planAccount.exchange!, planAccount.card!];
+          List<int> useAccount = [planAccount.useExchangeMoney!, planAccount.useCard!];
           final useCash = (accounts[item.nation!] == null ?0:accounts[item.nation!]!.first) + useAccount.first;
           final useCard = (accounts[item.nation!] == null ?0:accounts[item.nation!]!.last) + useAccount.last;
           accounts[item.nation!] = [useCash, useCard];

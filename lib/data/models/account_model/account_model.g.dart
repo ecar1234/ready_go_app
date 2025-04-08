@@ -7,11 +7,11 @@ part of 'account_model.dart';
 // **************************************************************************
 
 AccountModel _$AccountModelFromJson(Map<String, dynamic> json) => AccountModel(
-      totalExchangeAccount: (json['totalExchangeAccount'] as num?)?.toInt(),
-      exchange: (json['exchange'] as num?)?.toInt(),
-      cash: (json['cash'] as num?)?.toInt(),
-      card: (json['card'] as num?)?.toInt(),
-      totalUseAccount: (json['totalUseAccount'] as num?)?.toInt(),
+      totalExchangeCost: (json['totalExchangeCost'] as num?)?.toInt(),
+      useExchangeMoney: (json['useExchangeMoney'] as num?)?.toInt(),
+      useKoCash: (json['useKoCash'] as num?)?.toInt(),
+      useCard: (json['useCard'] as num?)?.toInt(),
+      balance: (json['balance'] as num?)?.toInt(),
       usageHistory: (json['usageHistory'] as List<dynamic>?)
           ?.map((e) => (e as List<dynamic>?)
               ?.map((e) => AmountModel.fromJson(e as Map<String, dynamic>))
@@ -21,10 +21,10 @@ AccountModel _$AccountModelFromJson(Map<String, dynamic> json) => AccountModel(
 
 Map<String, dynamic> _$AccountModelToJson(AccountModel instance) =>
     <String, dynamic>{
-      'totalExchangeAccount': instance.totalExchangeAccount,
-      'exchange': instance.exchange,
-      'cash': instance.cash,
-      'card': instance.card,
-      'totalUseAccount': instance.totalUseAccount,
+      'totalExchangeCost': instance.totalExchangeCost,
+      'useExchangeMoney': instance.useExchangeMoney,
+      'useKoCash': instance.useKoCash,
+      'useCard': instance.useCard,
+      'balance': instance.balance,
       'usageHistory': instance.usageHistory,
     };

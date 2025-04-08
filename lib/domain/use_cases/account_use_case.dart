@@ -27,20 +27,18 @@ class AccountUseCase with AccountRepo {
 
   @override
   Future<AccountModel> addAmount(AmountModel amount, int day, int id) async {
-    AccountModel account = AccountModel();
-
-    try {
-      account = await _getIt.get<AccountLocalDataRepo>().getAccountInfo(id);
+      AccountModel account = await _getIt.get<AccountLocalDataRepo>().getAccountInfo(id);
       List<List<AmountModel>?> history = account.usageHistory!;
 
+    try {
       switch (amount.category) {
         case 0:
-          account.totalUseAccount = account.totalUseAccount! - amount.amount!;
-          account.exchange = account.exchange! + amount.amount!;
+          account.balance = account.balance! - amount.amount!;
+          account.useExchangeMoney = account.useExchangeMoney! + amount.amount!;
         case 1:
-          account.cash = account.cash! + amount.amount!;
+          account.useKoCash = account.useKoCash! + amount.amount!;
         case 2:
-          account.card = account.card! + amount.amount!;
+          account.useCard = account.useCard! + amount.amount!;
       }
 
       if (history.isEmpty) {
@@ -62,7 +60,7 @@ class AccountUseCase with AccountRepo {
         }
       }
       history.sort((a, b) => int.tryParse(a!.first.id!)!.compareTo(int.parse(b!.first.id!)));
-
+      account.usageHistory = history;
       await _getIt.get<AccountLocalDataRepo>().updateAccountInfo(account, id);
     } catch (ex) {
       logger.e(ex.toString());
@@ -76,8 +74,8 @@ class AccountUseCase with AccountRepo {
   Future<AccountModel> addTotalAmount(int total, int day, int id) async {
     try {
       AccountModel account = await _getIt.get<AccountLocalDataRepo>().getAccountInfo(id);
-      account.totalExchangeAccount = account.totalExchangeAccount! + total;
-      account.totalUseAccount = account.totalExchangeAccount! - account.exchange!;
+      account.totalExchangeCost = account.totalExchangeCost! + total;
+      account.balance = account.totalExchangeCost! - account.useExchangeMoney!;
 
       try {
         var planList = await _getIt.get<PlanRepo>().getLocalList();
@@ -169,14 +167,14 @@ class AccountUseCase with AccountRepo {
       var removeItem = history[firstIdx]![secondIdx];
 
       if (removeItem.type == AmountType.add) {
-        account.totalExchangeAccount = account.totalExchangeAccount! - removeItem.amount!;
-        account.totalUseAccount = account.totalExchangeAccount! - account.exchange!;
+        account.totalExchangeCost = account.totalExchangeCost! - removeItem.amount!;
+        account.balance = account.totalExchangeCost! - account.useExchangeMoney!;
       } else if (removeItem.type == AmountType.use) {
         if (removeItem.category == 0) {
-          account.totalUseAccount = account.totalUseAccount! + removeItem.amount!;
-          account.exchange = account.exchange! - removeItem.amount!;
+          account.balance = account.balance! + removeItem.amount!;
+          account.useExchangeMoney = account.useExchangeMoney! - removeItem.amount!;
         } else if (removeItem.category == 2) {
-          account.card = account.card! - removeItem.amount!;
+          account.useCard = account.useCard! - removeItem.amount!;
         }
       }
 
@@ -196,31 +194,57 @@ class AccountUseCase with AccountRepo {
 
   @override
   Future<AccountModel> editAmountItem(int firstIdx, int secondIdx, AmountModel newAmount, int id) async {
-    try {
-      var account = await _getIt.get<AccountLocalDataRepo>().getAccountInfo(id);
-      var history = account.usageHistory!;
-      var item = history[firstIdx]![secondIdx];
+    var account = await _getIt.get<AccountLocalDataRepo>().getAccountInfo(id);
+    var history = account.usageHistory!;
+    var item = history[firstIdx]![secondIdx];
 
-      if (item.category == newAmount.category) {
-        if (newAmount.type == AmountType.add) {
-          account.totalExchangeAccount = (account.totalExchangeAccount! - item.amount!) + newAmount.amount!;
-          account.totalUseAccount = account.totalExchangeAccount! - account.exchange!;
-        } else if (newAmount.type == AmountType.use) {
-          account.totalUseAccount = (account.totalUseAccount! + item.amount!) - newAmount.amount!;
-          account.exchange = (account.exchange! - item.amount!) + newAmount.amount!;
-        }
+    try {
+      if (item.type == AmountType.add) {
+        account.usageHistory![firstIdx]![secondIdx] = newAmount;
+        account.totalExchangeCost = (account.totalExchangeCost! - item.amount!) + newAmount.amount!;
+        account.balance = account.totalExchangeCost! - account.useExchangeMoney!;
       } else {
-        if (newAmount.category == 2) {
-          account.exchange = account.exchange! - item.amount!;
-          account.card = account.card! + newAmount.amount!;
-          account.totalUseAccount = account.totalExchangeAccount! - account.exchange!;
-        } else if (newAmount.category == 0) {
-          account.card = account.card! - newAmount.amount!;
-          account.exchange = account.exchange! + newAmount.amount!;
-          account.totalUseAccount = account.totalExchangeAccount! - account.exchange!;
+        account.usageHistory![firstIdx]![secondIdx] = newAmount;
+        if (item.category == newAmount.category) {
+          if (item.category == 0) {
+            account.balance = (account.balance! - item.amount!) + newAmount.amount!;
+            account.useExchangeMoney = (account.useExchangeMoney! - item.amount!) + newAmount.amount!;
+          } else {
+            account.useCard = (account.useCard! - item.amount!) + newAmount.amount!;
+          }
+        } else {
+          if (item.category == 0) {
+            account.balance = account.balance! + item.amount!;
+            account.useExchangeMoney = account.useExchangeMoney! - item.amount!;
+            account.useCard = account.useCard! + newAmount.amount!;
+          } else {
+            account.balance = account.balance! - newAmount.amount!;
+            account.useCard = account.useCard! - item.amount!;
+            account.useExchangeMoney = account.useExchangeMoney! + newAmount.amount!;
+          }
         }
       }
-      account.usageHistory![firstIdx]![secondIdx] = newAmount;
+
+      // if (item.category == newAmount.category) {
+      //   if (newAmount.type == AmountType.add) {
+      //     account.totalExchangeAccount += item.amount! - newAmount.amount!;
+      //     account.totalUseAccount = account.totalExchangeAccount! - account.exchange!;
+      //   } else if (newAmount.type == AmountType.use) {
+      //     account.totalUseAccount = (account.totalUseAccount! + item.amount!) - newAmount.amount!;
+      //     account.exchange = (account.exchange! - item.amount!) + newAmount.amount!;
+      //   }
+      // } else {
+      //   if (newAmount.category == 2) {
+      //     account.exchange = account.exchange! - item.amount!;
+      //     account.card = account.card! + newAmount.amount!;
+      //     account.totalUseAccount = account.totalExchangeAccount! - account.exchange!;
+      //   } else if (newAmount.category == 0) {
+      //     account.card = account.card! - newAmount.amount!;
+      //     account.exchange = account.exchange! + newAmount.amount!;
+      //     account.totalUseAccount = account.totalExchangeAccount! - account.exchange!;
+      //   }
+      // }
+      // account.usageHistory![firstIdx]![secondIdx] = newAmount;
 
       await _getIt.get<AccountLocalDataRepo>().updateAccountInfo(account, id);
       return account;
