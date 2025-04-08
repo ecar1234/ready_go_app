@@ -59,10 +59,10 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDdQ2D4Q7q4oqDaKuTDIAxRdK3diXJHudo',
-    appId: '1:1060786139450:ios:0e13c113172b2a4f6ea003',
+    appId: '1:1060786139450:ios:be5cdbf044216e486ea003',
     messagingSenderId: '1060786139450',
     projectId: 'readygoapp-5d7c7',
     storageBucket: 'readygoapp-5d7c7.firebasestorage.app',
-    iosBundleId: 'com.jk.readygo.app',
+    iosBundleId: 'com.readygo.devon.studio',
   );
 }

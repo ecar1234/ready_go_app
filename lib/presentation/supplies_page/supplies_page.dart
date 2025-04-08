@@ -234,7 +234,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
               SizedBox(
                 height: _admobUtil.bannerAd!.size.height.toDouble(),
                 width: _admobUtil.bannerAd!.size.width.toDouble(),
-                child: AdWidget(ad: _admobUtil.bannerAd!),
+                child: _admobUtil.getBannerAdWidget(),
               )
           ]),
         ),

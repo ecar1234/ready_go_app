@@ -71,7 +71,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                 SizedBox(
                   height: _admobUtil.bannerAd!.size.height.toDouble(),
                   width: _admobUtil.bannerAd!.size.width.toDouble(),
-                  child: AdWidget(ad: _admobUtil.bannerAd!),
+                  child: _admobUtil.getBannerAdWidget(),
                 )
             ],
           ),

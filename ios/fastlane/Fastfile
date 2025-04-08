@@ -63,18 +63,21 @@ platform :ios do
   lane :beta do
     build
     upload_to_testFlight(
+      username: "ecar1234@naver.com",
       team_id: "38DCD6F7UP",
-      team_name: "DevOn Studio"
-      app_identifier: "com.jk.readygo.app",
+      team_name: "DevOn Studio",
+      app_identifier: "com.readygo.devon.studio",
       ipa: "./ready_go_project/build/ios/Runner.ipa",
       skip_waiting_for_build_processing: true
     )
   end
+
   lane :deploy do
     upload_to_testFlight(
       username: "ecar1234@naver.com",
-      apple_id: "38DCD6F7UP",
-      app_identifier: "com.jk.readygo.app",
+      team_id: "38DCD6F7UP",
+      team_name: "DevOn Studio",
+      app_identifier: "com.readygo.devon.studio",
       ipa: "../build/ios/Runner.ipa",
       skip_waiting_for_build_processing: true
     )

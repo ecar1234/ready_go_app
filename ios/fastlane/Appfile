@@ -1,4 +1,4 @@
-app_identifier("com.jk.readygo.app") # The bundle identifier of your app
+app_identifier("com.readygo.devon.studio") # The bundle identifier of your app
 apple_id("ecar1234@naver.com") # Your Apple Developer Portal username
 
 team_id ("38DCD6F7UP") # Developer Portal Team ID

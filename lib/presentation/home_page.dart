@@ -6,16 +6,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:logger/logger.dart';
-import 'package:open_file/open_file.dart';
 import 'package:ready_go_project/presentation/plan_menus/plan_menu_page.dart';
 import 'package:ready_go_project/util/admob_util.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../bloc/data_bloc.dart';
 import '../data/models/plan_model/plan_model.dart';
-import '../domain/entities/provider/passport_provider.dart';
 import '../domain/entities/provider/plan_favorites_provider.dart';
 import '../domain/entities/provider/plan_list_provider.dart';
 import '../domain/entities/provider/responsive_height_provider.dart';
@@ -81,22 +78,26 @@ class _HomePageState extends State<HomePage> {
         return Container(
           height: height - 80,
           padding: const EdgeInsets.only(top: 20, right: 20, left: 20),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                _favoritePlanListContainer(context, favoriteList, isDarkMode, state),
-                _infoCardContainer(context, isDarkMode),
-                _batteryInfoButton(context, isDarkMode),
-                if (_isLoaded && _admobUtil.bannerAd != null) const Gap(10),
-                if (_isLoaded && _admobUtil.bannerAd != null)
-                  SizedBox(
-                    height: _admobUtil.bannerAd!.size.height.toDouble(),
-                    width: _admobUtil.bannerAd!.size.width.toDouble(),
-                    child: _admobUtil.getBannerAdWidget(),
-                  ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                children: [
+                  _favoritePlanListContainer(context, favoriteList, isDarkMode, state),
+                  _infoCardContainer(context, isDarkMode),
+                  _batteryInfoButton(context, isDarkMode),
+                ],
+              ),
 
-              ],
-            ),
+              if (_isLoaded && _admobUtil.bannerAd != null) const Gap(10),
+              if (_isLoaded && _admobUtil.bannerAd != null)
+                SizedBox(
+                  height: _admobUtil.bannerAd!.size.height.toDouble(),
+                  width: _admobUtil.bannerAd!.size.width.toDouble(),
+                  child: _admobUtil.getBannerAdWidget(),
+                ),
+
+            ],
           ),
         );
       });

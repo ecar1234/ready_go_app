@@ -110,7 +110,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                 SizedBox(
                   height: _admobUtil.bannerAd!.size.height.toDouble(),
                   width: _admobUtil.bannerAd!.size.width.toDouble(),
-                  child: AdWidget(ad: _admobUtil.bannerAd!),
+                  child: _admobUtil.getBannerAdWidget(),
                 )
             ]),
           ),
@@ -304,7 +304,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                 ),
               )
             : SizedBox(
-                height: hei - 100 ,
+                height: hei - 130 ,
                 child: Column(
                   children: [
                     Expanded(
