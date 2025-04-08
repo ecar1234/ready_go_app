@@ -67,7 +67,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
   Widget build(BuildContext context) {
     final list = context.watch<SuppliesProvider>().suppliesList;
     final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
-    final bannerHei = _admobUtil.bannerAd!.size.height;
+    final double bannerHei = _isLoaded ? _admobUtil.bannerAd!.size.height.toDouble() : 0;
     final isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
     return SafeArea(
       child: Scaffold(

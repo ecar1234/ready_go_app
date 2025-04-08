@@ -93,7 +93,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
     final isDarkMode = context.read<ThemeModeProvider>().isDarkMode;
     final hei = GetIt.I.get<ResponsiveHeightProvider>().resHeight
         ?? MediaQuery.sizeOf(context).height - 120;
-    final bannerHei = _admobUtil.bannerAd!.size.height;
+    final double bannerHei = _isLoaded ? _admobUtil.bannerAd!.size.height.toDouble() : 0;
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
@@ -188,17 +188,21 @@ class _AddPlanPageState extends State<AddPlanPage> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   _nationSelection(context),
-                                  const Gap(20),
+                                  const Gap(10),
                                   _titleSection(),
-                                  const Gap(20),
-                                  Container(
-                                      width: constraints.maxWidth <= 600 ? MediaQuery.sizeOf(context).width : 840,
-                                      padding: const EdgeInsets.symmetric(vertical: 20),
-                                      decoration: BoxDecoration(
-                                          border: Border.all(),
-                                          borderRadius: BorderRadius.circular(10),
-                                          color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
-                                      child: _calendarSection(isDarkMode)),
+                                  const Gap(10),
+                                  Expanded(
+                                    child: SingleChildScrollView(
+                                      child: Container(
+                                          // width: constraints.maxWidth <= 600 ? MediaQuery.sizeOf(context).width : 840,
+                                          padding: const EdgeInsets.symmetric(vertical: 20),
+                                          decoration: BoxDecoration(
+                                              border: Border.all(),
+                                              borderRadius: BorderRadius.circular(10),
+                                              color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
+                                          child: _calendarSection(isDarkMode)),
+                                    ),
+                                  ),
                                   // const Gap(30),
                                   // create button
                                   // SizedBox(
@@ -415,7 +419,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
         ),
         const Gap(10),
         SizedBox(
-            height: 300,
+            // height: 300,
             width: 500,
             child: CalendarDatePicker2(
                 config: CalendarDatePicker2Config(

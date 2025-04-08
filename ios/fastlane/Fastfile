@@ -42,7 +42,16 @@ platform :ios do
       sh("flutter", "pub", "get")
       sh("flutter", "build", "ios", "--release", "--build-number=#{name}", "--build-name=#{code}.#{name}")
 
-    build_app(workspace: "ready_go_project/ios/Runner.xcworkspace", scheme: "Runner", output_directory: "ready_go_project/build/ios")
+    build_app(
+      workspace: "ready_go_project/ios/Runner.xcworkspace",
+      scheme: "Runner",
+      output_directory: "ready_go_project/build/ios",
+      export_options: {
+        provisioningProfiles: {
+          "com.readygo.devon.studio" => "DevOn Studio profile"
+        }
+      }
+    )
     puts "build Number : #{code}.#{name}"
   end
 

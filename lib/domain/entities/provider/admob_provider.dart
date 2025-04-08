@@ -60,7 +60,7 @@ class AdmobProvider with ChangeNotifier {
       }
     } else if (Platform.isIOS) {
       if (kReleaseMode) {
-        interstitialAd = "ca-app-pub-6057371989804889/3672400120";
+        interstitialAd = "ca-app-pub-6057371989804889/3488764386";
       } else {
         interstitialAd = "ca-app-pub-3940256099942544/4411468910";
       }

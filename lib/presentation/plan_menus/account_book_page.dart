@@ -87,7 +87,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
     final AccountModel info = context.watch<AccountProvider>().accountInfo!;
     final isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
     final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
-    final bannerHei = _admobUtil.bannerAd!.size.height;
+    final double bannerHei = _isLoaded ? _admobUtil.bannerAd!.size.height.toDouble() : 0;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(

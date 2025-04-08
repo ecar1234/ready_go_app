@@ -108,7 +108,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
 
     final isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
     final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
-    final bannerHei = _admobUtil.bannerAd!.size.height;
+    final double bannerHei = _isLoaded ? _admobUtil.bannerAd!.size.height.toDouble() : 0;
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();

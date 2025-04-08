@@ -58,7 +58,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
     // final departureList = context.watch<ImagesProvider>().departureImg;
     // final arrivalList = context.watch<ImagesProvider>().arrivalImg;
     final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
-    final bannerHei = _admobUtil.bannerAd!.size.height;
+    final double bannerHei = _isLoaded ? _admobUtil.bannerAd!.size.height.toDouble() : 0;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(

@@ -18,7 +18,7 @@ class AdmobUtil {
       }
     } else if (Platform.isIOS) {
       if (kReleaseMode) {
-        adUnitId = "ca-app-pub-6057371989804889/2808834070";
+        adUnitId = "ca-app-pub-6057371989804889/9661685838";
       } else {
         adUnitId = "ca-app-pub-3940256099942544/2435281174";
       }

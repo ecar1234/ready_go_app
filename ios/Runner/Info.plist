@@ -32,7 +32,7 @@
 		<key>CFBundleVersion</key>
 		<string>$(FLUTTER_BUILD_NUMBER)</string>
 		<key>GADApplicationIdentifier</key>
-		<string>ca-app-pub-6057371989804889~7266820383</string>
+		<string>ca-app-pub-6057371989804889~1010413469</string>
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
 		<key>NSCameraUsageDescription</key>
