@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
@@ -30,10 +31,16 @@ class ImagesProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addDepartureImage(XFile image, int id) async {
+  Future<void> addDepartureImage(XFile? image, List<PlatformFile>? files, int id) async {
+
     try {
-      final list = await GetIt.I.get<ImageRepo>().addDepartureImg(image, id);
-      _departureImage = list;
+      if(image != null){
+        final list = await GetIt.I.get<ImageRepo>().addDepartureImg(image, id);
+        _departureImage = list;
+      } else if(files != null){
+        final list = await GetIt.I.get<ImageRepo>().addDepartureFile(files, id);
+        _departureImage = list;
+      }
     } on Exception catch (e) {
       logger.e(e.toString());
       rethrow;
@@ -41,10 +48,16 @@ class ImagesProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addArrivalImage(XFile image, int id) async {
+  Future<void> addArrivalImage(XFile? image, List<PlatformFile>? files, int id) async {
     try {
-      final list = await GetIt.I.get<ImageRepo>().addArrivalImg(image, id);
-      _arrivalImage = list;
+      if(image != null && files == null){
+        final list = await GetIt.I.get<ImageRepo>().addArrivalImg(image, id);
+        _arrivalImage = list;
+      }else if(files != null && image == null){
+        final list = await GetIt.I.get<ImageRepo>().addArrivalFile(files, id);
+        _arrivalImage = list;
+      }
+
     } on Exception catch (e) {
       logger.e(e.toString());
       rethrow;
@@ -66,7 +79,6 @@ class ImagesProvider with ChangeNotifier {
   Future<void> removeArrivalImage(File image, int id) async {
     try {
       final list = await GetIt.I.get<ImageRepo>().removeArrivalImg(image, id);
-
       _arrivalImage = list;
     } on Exception catch (e) {
       logger.e(e.toString());

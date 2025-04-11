@@ -48,7 +48,7 @@ platform :ios do
       output_directory: "ready_go_project/build/ios",
       export_options: {
         provisioningProfiles: {
-          "com.readygo.devon.studio" => "DevOn Studio profile"
+          "com.readygo.devon.studio" => "DevOn readygo profile"
         }
       }
     )
@@ -73,22 +73,23 @@ platform :ios do
     build
     upload_to_testFlight(
       username: "ecar1234@naver.com",
+      apple_id: "6744342927",
       team_id: "38DCD6F7UP",
-      team_name: "DevOn Studio",
       app_identifier: "com.readygo.devon.studio",
       ipa: "./ready_go_project/build/ios/Runner.ipa",
-      skip_waiting_for_build_processing: false
+      skip_waiting_for_build_processing: true
     )
   end
 
   lane :deploy do
     upload_to_testFlight(
       username: "ecar1234@naver.com",
+      apple_id: "6744342927",
       team_id: "38DCD6F7UP",
-      team_name: "DevOn Studio",
+#       team_name: "DevOn Studio",
       app_identifier: "com.readygo.devon.studio",
       ipa: "../build/ios/Runner.ipa",
-      skip_waiting_for_build_processing: false
+#       skip_waiting_for_build_processing: false
     )
   end
 end

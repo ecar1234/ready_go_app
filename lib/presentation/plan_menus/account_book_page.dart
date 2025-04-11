@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/account_model/account_model.dart';
 import 'package:ready_go_project/data/models/account_model/amount_model.dart';
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
+import 'package:ready_go_project/util/date_util.dart';
 import 'package:ready_go_project/util/intl_utils.dart';
 
 import '../../data/models/plan_model/plan_model.dart';
@@ -29,6 +30,7 @@ class AccountBookPage extends StatefulWidget {
 
 class _AccountBookPageState extends State<AccountBookPage> {
   final TextEditingController _totalDaysController = TextEditingController(text: "1");
+  final TextEditingController _usedTypeController = TextEditingController();
   final TextEditingController _daysController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _payAmountController = TextEditingController();
@@ -76,6 +78,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
     _totalAmountController.dispose();
     _expandController.dispose();
     _totalDaysController.dispose();
+    _usedTypeController.dispose();
 
     _debounce?.cancel();
     _admobUtil.dispose();
@@ -177,7 +180,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                 width: 100,
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    _addAmountDialog(context, info);
+                    _addAmountDialog(context, info, isDarkMode);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
@@ -472,7 +475,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
               width: (MediaQuery.sizeOf(context).width - 50) / 2,
               child: ElevatedButton.icon(
                 onPressed: () {
-                  _setTotalAmountDialog(context, info);
+                  _setTotalAmountDialog(context, info, isDarkMode);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
@@ -490,7 +493,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
               width: (MediaQuery.sizeOf(context).width - 50) / 2,
               child: ElevatedButton.icon(
                 onPressed: () {
-                  _addAmountDialog(context, info);
+                  _addAmountDialog(context, info, isDarkMode);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
@@ -666,14 +669,14 @@ class _AccountBookPageState extends State<AccountBookPage> {
     ];
   }
 
-  Future<void> _addAmountDialog(BuildContext context, AccountModel info) {
+  Future<void> _addAmountDialog(BuildContext context, AccountModel info, bool isDarkMode) {
     AmountModel newAmount = AmountModel();
-
+    int selectDayInit = 0;
     if (info.usageHistory != null && info.usageHistory!.isNotEmpty) {
-      _daysController.text = "${info.usageHistory!.length}";
+      selectDayInit = info.usageHistory!.length;
       // titleController.text = info.usageHistory![daysController.text]
     } else {
-      _daysController.text = "1";
+      selectDayInit = 1;
     }
     return showDialog(
         context: context,
@@ -681,58 +684,92 @@ class _AccountBookPageState extends State<AccountBookPage> {
               insetPadding: const EdgeInsets.all(20),
               child: SingleChildScrollView(
                 child: Container(
-                  height: 420,
+                  height: 380,
                   padding: const EdgeInsets.all(30),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      //title
-                      const SizedBox(
-                        height: 50,
-                        child: Center(
-                          child: Text(
-                            "사용내역 추가 하기",
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                      SizedBox(
+                        height: 60,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // 일차 선택
+                            SizedBox(
+                              height: 60,
+                              child: DropdownMenu(
+                                controller: _daysController,
+                                dropdownMenuEntries:
+                                List.generate(DateUtil.datesDifference(widget.plan.schedule!)+1, (int idx){
+                                  if(idx == 0){
+                                    return DropdownMenuEntry(value: idx, label: "일차선택");
+                                  }
+                                  return DropdownMenuEntry(value: idx, label: "$idx 일차");
+                                })
+                                ,
+                                initialSelection: selectDayInit,
+                                width: 130,
+                                menuHeight: 200,
+                                onSelected: (value){},
+                              ),
+                            ),
+                            SizedBox(
+                              height: 60,
+                              child: DropdownMenu(
+                                dropdownMenuEntries: const [
+                                  DropdownMenuEntry(value: 0, label: "교통"),
+                                  DropdownMenuEntry(value: 1, label: "음식"),
+                                  DropdownMenuEntry(value: 2, label: "음료 & 음주"),
+                                  DropdownMenuEntry(value: 3, label: "숙소"),
+                                  DropdownMenuEntry(value: 4, label: "여행"),
+                                  DropdownMenuEntry(value: 5, label: "레져"),
+                                  DropdownMenuEntry(value: 6, label: "기타"),
+                                ],
+                                initialSelection: 0,
+                                width: 160,
+                                menuHeight: 200,
+                                onSelected: (value){},
+                              ),
+                            ),
+
+                          ],
+                        ),
+                      ),
+                      const Gap(10),
+                      // detail
+                      SizedBox(
+                        height: 60,
+                        child: SizedBox(
+                          width: MediaQuery.sizeOf(context).width,
+                          child: TextField(
+                            controller: _titleController,
+                            onChanged: _onChanged,
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+                                    borderRadius: BorderRadius.circular(10)),
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+                                    borderRadius: BorderRadius.circular(10)),
+                                counterText: "",
+                                labelText: "제목",
+                                labelStyle: const TextStyle(fontSize: 12)),
+                            textAlign: TextAlign.end,
+                            maxLines: 1,
+                            maxLength: 15,
                           ),
                         ),
                       ),
-                      const Divider(),
-                      const Gap(20),
-                      // days
+                      const Gap(10),
+                      // amount
                       SizedBox(
-                        height: 50,
-                        width: 280,
+                        height: 60,
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             SizedBox(
-                              height: 50,
-                              width: 100,
-                              child: TextField(
-                                controller: _daysController,
-                                onChanged: _onChanged,
-                                decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
-                                        borderRadius: BorderRadius.circular(10)),
-                                    focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                                    counterText: "",
-                                    labelText: "사용 일차",
-                                    labelStyle: const TextStyle(
-                                      fontSize: 12,
-                                    )),
-                                textAlign: TextAlign.end,
-                                maxLines: 1,
-                                maxLength: 2,
-                                keyboardType: TextInputType.number,
-                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                              ),
-                            ),
-                            const Gap(10),
-                            const Text("일차"),
-                            const Gap(10),
-                            SizedBox(
-                              height: 50,
-                              width: 100,
+                              height: 60,
+                              width: 110,
                               child: DropdownMenu(
                                 initialSelection: 0,
                                 dropdownMenuEntries: const [DropdownMenuEntry(value: 0, label: "환전"), DropdownMenuEntry(value: 2, label: "카드")],
@@ -740,51 +777,10 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                   newAmount.category = value;
                                 },
                               ),
-                            )
-                          ],
-                        ),
-                      ),
-                      const Gap(20),
-                      // detail
-                      SizedBox(
-                        height: 50,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: 50,
-                              width: 282,
-                              child: TextField(
-                                controller: _titleController,
-                                onChanged: _onChanged,
-                                decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
-                                        borderRadius: BorderRadius.circular(10)),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
-                                        borderRadius: BorderRadius.circular(10)),
-                                    counterText: "",
-                                    labelText: "제목",
-                                    labelStyle: const TextStyle(fontSize: 12)),
-                                textAlign: TextAlign.end,
-                                maxLines: 1,
-                                maxLength: 15,
-                              ),
                             ),
-                          ],
-                        ),
-                      ),
-                      const Gap(20),
-                      // amount
-                      SizedBox(
-                        height: 50,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
                             SizedBox(
-                              height: 50,
-                              width: 282,
+                              height: 60,
+                              width: 180,
                               child: TextField(
                                 controller: _payAmountController,
                                 onChanged: _onChanged,
@@ -805,6 +801,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                               ),
                             ),
+
                           ],
                         ),
                       ),
@@ -836,27 +833,33 @@ class _AccountBookPageState extends State<AccountBookPage> {
                               width: 100,
                               child: ElevatedButton(
                                   onPressed: () {
-                                    if (_daysController.text.isEmpty) {
-                                      Get.snackbar("데이터 입력 확인", "사용 일차를 확인해 주세요",
-                                          colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
-                                      return;
+                                    if (_daysController.text == "일차선택") {
+                                    Get.snackbar("사용 일 차 미 선택.", "경비 추가 일차를 선택해 주세요.",
+                                    colorText: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary ,
+                                    backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white
+                                    );
+                                    return;
                                     }
                                     if (_titleController.text.isEmpty) {
-                                      Get.snackbar("데이터 입력 확인", "제목을 확인해 주세요",
-                                          colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
+                                      Get.snackbar("사용 내역 미입력.", "사용 내용을 입력해 주세요",
+                                          colorText: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary ,
+                                          backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white
+                                      );
                                       return;
                                     }
                                     if (_payAmountController.text.isEmpty) {
-                                      Get.snackbar("데이터 입력 확인", "사용 금액을 확인해 주세요",
-                                          colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
+                                      Get.snackbar("사용금액 미입력.", "사용 금액을 입력해 주세요",
+                                          colorText: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary ,
+                                          backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white
+                                      );
                                       return;
                                     }
-                                    newAmount.id = _daysController.text;
+                                    newAmount.id =  _daysController.text.split(" ").first;
                                     newAmount.title = _titleController.text;
                                     newAmount.type = AmountType.use;
                                     newAmount.amount = int.parse(_payAmountController.text);
                                     newAmount.category ??= 0;
-                                    int day = int.parse(_daysController.text);
+                                    int day = int.parse(_daysController.text.split(" ").first);
                                     if (day == 1) {
                                       newAmount.usageTime = widget.plan.schedule!.first;
                                     } else if (day > 1) {
@@ -889,7 +892,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
             ));
   }
 
-  Future<void> _setTotalAmountDialog(BuildContext context, AccountModel info) {
+  Future<void> _setTotalAmountDialog(BuildContext context, AccountModel info, bool isDarkMode) {
     return showDialog(
         context: context,
         builder: (context) => Dialog(
@@ -898,62 +901,79 @@ class _AccountBookPageState extends State<AccountBookPage> {
                 height: 300,
                 padding: const EdgeInsets.all(30),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(
-                      height: 50,
-                      child: Center(
-                        child: Text(
-                          "총 경비 추가 하기",
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                    ),
-                    const Divider(),
-                    const Gap(20),
                     SizedBox(
-                      height: 50,
+                      height: 60,
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          // 일 차 선택
                           SizedBox(
-                            height: 50,
-                            width: 150,
-                            child: TextField(
-                              controller: _totalAmountController,
-                              onChanged: _onChanged,
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Theme.of(context).colorScheme.outline), borderRadius: BorderRadius.circular(10)),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Theme.of(context).colorScheme.outline), borderRadius: BorderRadius.circular(10)),
-                                  counterText: "",
-                                  labelText: "추가 금액",
-                                  labelStyle: const TextStyle(fontSize: 12)),
-                              textAlign: TextAlign.end,
-                              maxLines: 1,
-                              maxLength: 13,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                            height: 60,
+                            child: DropdownMenu(
+                              controller: _totalDaysController,
+                              dropdownMenuEntries:
+                                List.generate(DateUtil.datesDifference(widget.plan.schedule!)+1, (int idx){
+                                  if(idx == 0){
+                                    return DropdownMenuEntry(value: "$idx", label: "일차선택");
+                                  }
+                                  return DropdownMenuEntry(value: "$idx", label: "$idx 일차");
+                                })
+                              ,
+                              initialSelection: "0",
+                              width: 130,
+                              menuHeight: 200,
+                              onSelected: (value){},
                             ),
                           ),
-                          const Gap(10),
+                          // 카테고리 고정 (경비추가)
                           SizedBox(
-                              width: 60,
-                              child: TextField(
-                                controller: _totalDaysController,
-                                textAlign: TextAlign.end,
-                              )),
-                          const Gap(10),
-                          const Text("일차")
+                            height: 60,
+                            child: DropdownMenu(
+                              enabled: false,
+                              dropdownMenuEntries: const [
+                                DropdownMenuEntry(value: 0, label: "경비추가")
+                              ],
+                              initialSelection: 0,
+                              width: 160,
+                              menuHeight: 200,
+                              onSelected: (value){},
+                            ),
+                          ),
                         ],
                       ),
                     ),
+                    const Gap(10),
+                    // 추가 금액 입력
+                    SizedBox(
+                      height: 60,
+                      child: TextField(
+                        controller: _totalAmountController,
+                        onChanged: _onChanged,
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                                borderSide: BorderSide(color: Theme.of(context).colorScheme.outline), borderRadius: BorderRadius.circular(10)),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Theme.of(context).colorScheme.outline), borderRadius: BorderRadius.circular(10)),
+                            counterText: "",
+                            labelText: "추가 금액",
+                            labelStyle: const TextStyle(fontSize: 12)),
+                        textAlign: TextAlign.end,
+                        maxLines: 1,
+                        maxLength: 13,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      ),
+                    ),
                     const Gap(20),
+                    // buttons
                     SizedBox(
                       height: 50,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          // 취소
                           SizedBox(
                             height: 50,
                             width: 100,
@@ -977,8 +997,17 @@ class _AccountBookPageState extends State<AccountBookPage> {
                             child: ElevatedButton(
                                 onPressed: () {
                                   if (_totalAmountController.text.isEmpty) {
-                                    Get.snackbar("데이터 입력 확인", "추가 금액을 확인해 주세요",
-                                        colorText: Theme.of(context).colorScheme.onSurface, backgroundColor: Theme.of(context).colorScheme.surface);
+                                    Get.snackbar("추가경비 입력 확인", "추가 경비를 입력해 주세요.",
+                                        colorText: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary ,
+                                        backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white
+                                    );
+                                    return;
+                                  }
+                                  if (_totalDaysController.text == "일차선택") {
+                                    Get.snackbar("일 차 선택을 해주세요.", "경비 추가 일차를 선택해 주세요.",
+                                        colorText: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary ,
+                                        backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white
+                                    );
                                     return;
                                   }
                                   int amount = int.tryParse(_totalAmountController.text) ?? 0;

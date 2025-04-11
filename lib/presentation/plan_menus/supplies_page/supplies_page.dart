@@ -9,11 +9,12 @@ import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/supply_model/supply_model.dart';
 import 'package:ready_go_project/domain/entities/provider/supplies_template_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
-import 'package:ready_go_project/presentation/supplies_page/add_template_page.dart';
 
-import '../../domain/entities/provider/responsive_height_provider.dart';
-import '../../domain/entities/provider/supplies_provider.dart';
-import '../../util/admob_util.dart';
+import '../../../domain/entities/provider/responsive_height_provider.dart';
+import '../../../domain/entities/provider/supplies_provider.dart';
+import '../../../util/admob_util.dart';
+import 'add_template_page.dart';
+
 
 class SuppliesPage extends StatefulWidget {
   final int planId;

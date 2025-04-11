@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/supply_model/supply_model.dart';
 import 'package:ready_go_project/data/models/supply_model/template_model.dart';
@@ -10,7 +9,8 @@ import 'package:ready_go_project/domain/entities/provider/supplies_template_prov
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
 import 'package:ready_go_project/util/admob_util.dart';
 
-import '../../domain/entities/provider/responsive_height_provider.dart';
+import '../../../domain/entities/provider/responsive_height_provider.dart';
+
 
 class AddTemplatePage extends StatefulWidget {
   final List<SupplyModel>? temp;

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
@@ -11,6 +12,64 @@ import '../../data/repositories/image_local_data_repo.dart';
 class ImageUseCase with ImageRepo {
   final GetIt _getIt = GetIt.I;
   final logger = Logger();
+
+  @override
+  Future<List<File>> addArrivalFile(List<PlatformFile> files, int id) async {
+    try {
+      List<String> arrivalPathList = await _getIt.get<ImageLocalDataRepo>().getArrivalImgList(id);
+      Directory dir = await getApplicationDocumentsDirectory();
+
+      for(var file in files){
+        String newFilePath = "${dir.path}/arrivalImg$id${file.name}";
+
+        if (file.path != null && await File(file.path!).exists()) {
+          await File(file.path!).copy(newFilePath);
+          if (await File(newFilePath).exists()) {
+            arrivalPathList.add(newFilePath);
+          } else {
+            throw Exception("image save failed!");
+          }
+        } else {
+          logger.e("image XFile path is not exists");
+        }
+      }
+      await _getIt.get<ImageLocalDataRepo>().addArrivalImage(arrivalPathList, id);
+      return arrivalPathList.map((path) => File(path)).toList();
+    } on Exception catch (e) {
+      logger.e(e.toString());
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<File>> addDepartureFile(List<PlatformFile> files, int id) async {
+    try {
+      List<String> departurePathList = await _getIt.get<ImageLocalDataRepo>().getDepartureImgList(id);
+      Directory dir = await getApplicationDocumentsDirectory();
+
+      for(var file in files){
+        String newFilePath = "${dir.path}/departureImg$id${file.name}";
+
+        if (file.path != null && await File(file.path!).exists()) {
+          await File(file.path!).copy(newFilePath);
+          if (await File(newFilePath).exists()) {
+            departurePathList.add(newFilePath);
+            // await _getIt.get<ImageLocalDataRepo>().addDepartureImage(departurePathList, id);
+            // return departurePathList.map((path) => File(path)).toList();
+          } else {
+            throw Exception("image save failed!");
+          }
+        } else {
+          logger.e("image XFile path is not exists");
+        }
+      }
+      await _getIt.get<ImageLocalDataRepo>().addDepartureImage(departurePathList, id);
+      return departurePathList.map((path) => File(path)).toList();
+    } on Exception catch (e) {
+      logger.e(e.toString());
+      rethrow;
+    }
+  }
 
   @override
   Future<List<List<File>>> getImageList(int id) async {
