@@ -7,9 +7,11 @@ import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/bloc/data_bloc.dart';
+import 'package:ready_go_project/domain/entities/provider/expectation_provider.dart';
 import 'package:ready_go_project/presentation/plan_menus/accommodation_page.dart';
 import 'package:ready_go_project/presentation/plan_menus/account_book_page.dart';
 import 'package:ready_go_project/presentation/plan_menus/air_ticket_page.dart';
+import 'package:ready_go_project/presentation/plan_menus/expectation_page.dart';
 import 'package:ready_go_project/presentation/plan_menus/roaming_page.dart';
 import 'package:ready_go_project/presentation/plan_menus/supplies_page/supplies_page.dart';
 
@@ -36,8 +38,8 @@ class PlanMenuPage extends StatefulWidget {
 class _PlanMenuPageState extends State<PlanMenuPage> {
   final AdmobUtil _admobUtil = AdmobUtil();
   bool _isLoaded = false;
-  // List<String> itemList = ["예상 경비", "항공권", "준비물", "로밍(E-SIM)", "사용 경비", "숙소"];
-  List<String> itemList = ["항공권", "준비물", "로밍(E-SIM)", "사용 경비", "숙소"];
+  List<String> itemList = ["예상 경비", "항공권", "준비물", "로밍(E-SIM)", "사용 경비", "숙소"];
+  // List<String> itemList = ["항공권", "준비물", "로밍(E-SIM)", "사용 경비", "숙소"];
   // List<String> itemList = ["항공권", "준비물", "로밍 & ESIM", "여행 경비", "숙소", "일정"];
 
   @override
@@ -65,7 +67,7 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
       context.read<RoamingProvider>().getRoamingDate(widget.plan.id!);
       context.read<AccountProvider>().getAccountInfo(widget.plan.id!);
       context.read<AccommodationProvider>().getAccommodationList(widget.plan.id!);
-
+      context.read<ExpectationProvider>().getExpectationData(widget.plan.id!);
       // context.read<ImagesProvider>().getImgList(widget.plan.id!);
       context.read<DataBloc>().add(DataLoadingPlanEvent());
     }
@@ -139,6 +141,8 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
                               child: ElevatedButton.icon(
                                 onPressed: () {
                                   switch (itemList[idx]) {
+                                    case "예상 경비":
+                                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => ExpectationPage(planId: widget.plan.id)));
                                     case "항공권":
                                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => AirTicketPage(planId: widget.plan.id!)));
                                     case "준비물":
@@ -149,8 +153,6 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
                                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
                                     case "숙소":
                                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccommodationPage(plan: widget.plan)));
-                                    // case "예상 경비":
-                                    //   Navigator.of(context).push(MaterialPageRoute(builder: (context) => ExpectationPage(planId: widget.plan.id)));
                                     case "사용 경비":
                                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
                                     // case "일정":
@@ -194,17 +196,17 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
   Widget _iconSelector(int idx, bool isDarkMode) {
     switch (idx) {
       case 0:
-        return  Icon(Icons.airplane_ticket, color: isDarkMode ? Colors.white : Colors.black87,);
+        return  Icon(Icons.bar_chart, color: isDarkMode ? Colors.white : Colors.black87,);
       case 1:
-        return  Icon(Icons.shopping_bag_rounded, color: isDarkMode ? Colors.white : Colors.black87,);
+        return  Icon(Icons.airplane_ticket, color: isDarkMode ? Colors.white : Colors.black87,);
       case 2:
-        return  Icon(Icons.sim_card, color: isDarkMode ? Colors.white : Colors.black87,);
+        return  Icon(Icons.shopping_bag_rounded, color: isDarkMode ? Colors.white : Colors.black87,);
       case 3:
-        return  Icon(Icons.attach_money, color: isDarkMode ? Colors.white : Colors.black87,);
+        return  Icon(Icons.sim_card, color: isDarkMode ? Colors.white : Colors.black87,);
       case 4:
+        return  Icon(Icons.attach_money, color: isDarkMode ? Colors.white : Colors.black87,);
+      case 5:
         return  Icon(Icons.hotel, color: isDarkMode ? Colors.white : Colors.black87,);
-      // case 0:
-      //   return  Icon(Icons.bar_chart, color: isDarkMode ? Colors.white : Colors.black87,);
       default:
         return  Icon(Icons.abc, color: isDarkMode ? Colors.white : Colors.black87,);
     }

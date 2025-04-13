@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
+import 'package:ready_go_project/domain/entities/provider/expectation_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/plan_favorites_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/supplies_template_provider.dart';
 import 'package:ready_go_project/domain/use_cases/statistics_use_case.dart';
@@ -37,6 +38,7 @@ void main() async {
       ChangeNotifierProvider(create: (_) => SuppliesTemplateProvider()),
       ChangeNotifierProvider(create: (_) => PlanFavoritesProvider()),
       ChangeNotifierProvider(create: (_) => StatisticsUseCase()),
+      ChangeNotifierProvider(create: (_) => ExpectationProvider()),
 
       // ChangeNotifierProvider(create: (_) => ResponsiveHeightProvider())
     ],

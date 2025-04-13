@@ -128,7 +128,7 @@ class _AddTemplatePageState extends State<AddTemplatePage> {
                                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                                         child: Text(
                                           "추가",
-                                          style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                                          style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                                         )),
                                   ),
                                 )

@@ -4,6 +4,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:ready_go_project/data/data_source/expectation_data_impl.dart';
 import 'package:ready_go_project/data/data_source/plan_data_impl.dart';
 import 'package:ready_go_project/data/data_source/preference/analytics_preference.dart';
 import 'package:ready_go_project/data/data_source/accommodation_data_impl.dart';
@@ -14,6 +15,7 @@ import 'package:ready_go_project/data/data_source/supplies_data_impl.dart';
 import 'package:ready_go_project/data/data_source/supplies_temp_data_impl.dart';
 import 'package:ready_go_project/data/repositories/accommodation_local_data_repo.dart';
 import 'package:ready_go_project/data/repositories/account_local_data_repo.dart';
+import 'package:ready_go_project/data/repositories/expectation_local_data_repo.dart';
 import 'package:ready_go_project/data/repositories/image_local_data_repo.dart';
 import 'package:ready_go_project/data/repositories/plan_local_data_repo.dart';
 import 'package:ready_go_project/data/repositories/roaming_local_data_repo.dart';
@@ -23,6 +25,7 @@ import 'package:ready_go_project/domain/entities/provider/plan_favorites_provide
 import 'package:ready_go_project/domain/entities/provider/responsive_height_provider.dart';
 import 'package:ready_go_project/domain/repositories/accommodation_repo.dart';
 import 'package:ready_go_project/domain/repositories/account_repo.dart';
+import 'package:ready_go_project/domain/repositories/expectation_repo.dart';
 import 'package:ready_go_project/domain/repositories/image_repo.dart';
 import 'package:ready_go_project/domain/repositories/plan_repo.dart';
 import 'package:ready_go_project/domain/repositories/roaming_repo.dart';
@@ -31,6 +34,7 @@ import 'package:ready_go_project/domain/repositories/supplies_temp_repo.dart';
 
 import 'package:ready_go_project/domain/use_cases/accommodation_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/account_use_case.dart';
+import 'package:ready_go_project/domain/use_cases/expectation_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/image_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/plan_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/roaming_use_case.dart';
@@ -70,6 +74,7 @@ Future<void> serviceLocator() async {
   _getIt.registerSingleton<RoamingRepo>(RoamingUseCase());
   _getIt.registerSingleton<SuppliesRepo>(SuppliesUseCase());
   _getIt.registerSingleton<SuppliesTempRepo>(SuppliesTempUseCase());
+  _getIt.registerSingleton<ExpectationRepo>(ExpectationUseCase());
 
   //data
   _getIt.registerLazySingleton<AccommodationLocalDateRepo>(() => AccommodationDataImpl());
@@ -79,6 +84,7 @@ Future<void> serviceLocator() async {
   _getIt.registerLazySingleton<RoamingLocalDataRepo>(() => RoamingDataImpl());
   _getIt.registerLazySingleton<SuppliesLocalDataRepo>(() => SuppliesDataImpl());
   _getIt.registerLazySingleton<SuppliesTempLocalRepo>(() => SuppliesTempDataImpl());
+  _getIt.registerLazySingleton<ExpectationLocalDataRepo>(() => ExpectationDataImpl());
 
   // favorite
   _getIt.registerLazySingleton<PlanFavoritesProvider>(() => PlanFavoritesProvider());

@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'amount_model.g.dart';
 
 enum AmountType {add, use}
-enum MethodType {traffic, food, drink, accommodation, tour, leisure, ect}
+enum MethodType {ariPlane , traffic, food, drink, shopping, accommodation, tour, leisure, ect}
 
 @JsonSerializable()
 class AmountModel {

@@ -1,12 +1,13 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:ready_go_project/domain/entities/provider/expectation_provider.dart';
+import 'package:ready_go_project/data/models/account_model/amount_model.dart';
 
 part 'expectation_model.g.dart';
+
 
 @JsonSerializable()
 class  ExpectationModel{
   String? title;
-  ExpectationType? type;
+  MethodType? type;
   int? amount;
 
   ExpectationModel({this.title, this.type, this.amount});
