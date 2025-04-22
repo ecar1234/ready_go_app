@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:expandable_page_view/expandable_page_view.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
@@ -16,6 +17,7 @@ import 'package:ready_go_project/util/intl_utils.dart';
 
 import '../../data/models/plan_model/plan_model.dart';
 import '../../domain/entities/provider/account_provider.dart';
+import '../../domain/entities/provider/purchase_manager.dart';
 import '../../domain/entities/provider/responsive_height_provider.dart';
 import '../../util/admob_util.dart';
 
@@ -57,14 +59,22 @@ class _AccountBookPageState extends State<AccountBookPage> {
     // TODO: implement initState
     super.initState();
     // WidgetsBinding.instance.addPostFrameCallback((_) => context.read<AdmobProvider>().loadAdBanner());
-    _admobUtil.loadBannerAd(onAdLoaded: () {
-      setState(() {
-        _isLoaded = true;
-      });
-    }, onAdFailed: () {
-      setState(() {
-        _isLoaded = false;
-      });
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      if(kReleaseMode){
+        final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
+        if(!isRemove){
+          _admobUtil.loadBannerAd(onAdLoaded: () {
+            setState(() {
+              _isLoaded = true;
+            });
+          }, onAdFailed: () {
+            setState(() {
+              _isLoaded = false;
+              logger.e("banner is not loaded");
+            });
+          });
+        }
+      }
     });
   }
 
@@ -414,7 +424,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                                         width: (MediaQuery.sizeOf(context).width - 42) * 0.3,
                                                         child: Center(
                                                             child: Text(
-                                                          "${list[idx].amount}",
+                                                          IntlUtils.stringIntAddComma(list[idx].amount??0),
                                                           style: TextStyle(
                                                               fontWeight: FontWeight.w600,
                                                               color: list[idx].type == AmountType.add

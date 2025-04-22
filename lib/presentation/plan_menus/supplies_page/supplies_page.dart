@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -7,6 +8,7 @@ import 'package:get_it/get_it.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/supply_model/supply_model.dart';
+import 'package:ready_go_project/domain/entities/provider/purchase_manager.dart';
 import 'package:ready_go_project/domain/entities/provider/supplies_template_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
 
@@ -14,7 +16,6 @@ import '../../../domain/entities/provider/responsive_height_provider.dart';
 import '../../../domain/entities/provider/supplies_provider.dart';
 import '../../../util/admob_util.dart';
 import 'add_template_page.dart';
-
 
 class SuppliesPage extends StatefulWidget {
   final int planId;
@@ -43,15 +44,23 @@ class _SuppliesPageState extends State<SuppliesPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => context.read<SuppliesTemplateProvider>().getTempList());
-    _admobUtil.loadBannerAd(onAdLoaded: () {
-      setState(() {
-        _isLoaded = true;
-      });
-    }, onAdFailed: () {
-      setState(() {
-        _isLoaded = false;
-      });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<SuppliesTemplateProvider>().getTempList();
+      if (kReleaseMode) {
+        final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
+        if (!isRemove) {
+          _admobUtil.loadBannerAd(onAdLoaded: () {
+            setState(() {
+              _isLoaded = true;
+            });
+          }, onAdFailed: () {
+            setState(() {
+              _isLoaded = false;
+            });
+          });
+        }
+      }
     });
   }
 
@@ -75,169 +84,171 @@ class _SuppliesPageState extends State<SuppliesPage> {
         appBar: AppBar(
           title: const Text("준비물"),
         ),
-        body: Container(
-          height: height,
-          padding: const EdgeInsets.all(20),
-          child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) => SingleChildScrollView(
-                child: SizedBox(
-                  height: height - bannerHei - 40,
-                  // height: list.isEmpty ? MediaQuery.sizeOf(context).height - 300 : (45 * list.length.toDouble()),
-                  // padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 40),
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.sizeOf(context).width,
-                        height: 40,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SizedBox(
-                              width: (MediaQuery.sizeOf(context).width-50) / 2,
-                              child: ElevatedButton.icon(
-                                onPressed: () {
-                                  _suppliesTemplateDialog(context, isDarkMode);
-                                },
-                                style: ElevatedButton.styleFrom(padding: EdgeInsets.zero,
-                                    backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
-                                label: Text(
-                                  "템플릿 선택",
-                                  style: TextStyle(color:  isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+        body: SingleChildScrollView(
+          child: Container(
+            height: height,
+            padding: const EdgeInsets.all(20),
+            child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) => SingleChildScrollView(
+                  child: SizedBox(
+                    height: height - bannerHei - 40,
+                    // height: list.isEmpty ? MediaQuery.sizeOf(context).height - 300 : (45 * list.length.toDouble()),
+                    // padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 40),
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.sizeOf(context).width,
+                          height: 40,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              SizedBox(
+                                width: (MediaQuery.sizeOf(context).width - 50) / 2,
+                                child: ElevatedButton.icon(
+                                  onPressed: () {
+                                    _suppliesTemplateDialog(context, isDarkMode);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                      padding: EdgeInsets.zero, backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
+                                  label: Text(
+                                    "템플릿 선택",
+                                    style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                                  ),
+                                  icon: Icon(
+                                    Icons.list,
+                                    color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
+                                  ),
+                                  iconAlignment: IconAlignment.end,
                                 ),
-                                icon: Icon(
-                                  Icons.list,
-                                  color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
-                                ),
-                                iconAlignment: IconAlignment.end,
                               ),
-                            ),
-                            const Gap(10),
-                            SizedBox(
-                              width: (MediaQuery.sizeOf(context).width-50) / 2,
-                              child: ElevatedButton.icon(
-                                onPressed: () {
-                                  _itemAddDialog(context, isDarkMode);
-                                },
-                                style: ElevatedButton.styleFrom(padding: EdgeInsets.zero,
-                                    backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
-                                label: Text(
-                                  "체크리스트 추가",
-                                  style: TextStyle(color:  isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                              const Gap(10),
+                              SizedBox(
+                                width: (MediaQuery.sizeOf(context).width - 50) / 2,
+                                child: ElevatedButton.icon(
+                                  onPressed: () {
+                                    _itemAddDialog(context, isDarkMode);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                      padding: EdgeInsets.zero, backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
+                                  label: Text(
+                                    "체크리스트 추가",
+                                    style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                                  ),
+                                  icon: Icon(
+                                    Icons.add,
+                                    color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
+                                  ),
+                                  iconAlignment: IconAlignment.end,
                                 ),
-                                icon: Icon(
-                                  Icons.add,
-                                  color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
-                                ),
-                                iconAlignment: IconAlignment.end,
-                              ),
-                            )
-                          ],
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                      const Gap(10),
-                      Container(
-                          height: height - 160,
-                          decoration: BoxDecoration(border: Border.all(color: const Color(0xff666666)), borderRadius: BorderRadius.circular(10)),
-                          child: list.isEmpty
-                              ? const Center(
-                                  child: Text("목록을 추가해 주세요"),
-                                )
-                              : Scrollbar(
-                                  child: ListView.separated(
-                                      physics: const BouncingScrollPhysics(),
-                                      shrinkWrap: true,
-                                      itemBuilder: (context, idx) {
-                                        return SizedBox(
-                                          height: 40,
-                                          child: TextButton(
-                                              onPressed: () {
-                                                context.read<SuppliesProvider>().updateItemState(idx, widget.planId);
-                                              },
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: [
-                                                  SizedBox(
-                                                    child: Row(
-                                                      children: [
-                                                        Container(
-                                                          height: 16,
-                                                          width: 16,
-                                                          decoration: BoxDecoration(
-                                                            border: Border.all(color: const Color(0xff666666)),
-                                                            shape: BoxShape.circle,
-                                                          ),
-                                                          child: Container(
+                        const Gap(10),
+                        Container(
+                            height: height - 160,
+                            decoration: BoxDecoration(border: Border.all(color: const Color(0xff666666)), borderRadius: BorderRadius.circular(10)),
+                            child: list.isEmpty
+                                ? const Center(
+                                    child: Text("목록을 추가해 주세요"),
+                                  )
+                                : Scrollbar(
+                                    child: ListView.separated(
+                                        physics: const BouncingScrollPhysics(),
+                                        shrinkWrap: true,
+                                        itemBuilder: (context, idx) {
+                                          return SizedBox(
+                                            height: 40,
+                                            child: TextButton(
+                                                onPressed: () {
+                                                  context.read<SuppliesProvider>().updateItemState(idx, widget.planId);
+                                                },
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                  children: [
+                                                    SizedBox(
+                                                      child: Row(
+                                                        children: [
+                                                          Container(
+                                                            height: 16,
+                                                            width: 16,
                                                             decoration: BoxDecoration(
-                                                                border: Border.all(
-                                                                    width: 1.5, color: list[idx].isCheck! ? Colors.white : Colors.transparent),
-                                                                shape: BoxShape.circle,
-                                                                color: list[idx].isCheck!
-                                                                    ? Theme.of(context).colorScheme.primary
-                                                                    : Colors.transparent),
+                                                              border: Border.all(color: const Color(0xff666666)),
+                                                              shape: BoxShape.circle,
+                                                            ),
+                                                            child: Container(
+                                                              decoration: BoxDecoration(
+                                                                  border: Border.all(
+                                                                      width: 1.5, color: list[idx].isCheck! ? Colors.white : Colors.transparent),
+                                                                  shape: BoxShape.circle,
+                                                                  color: list[idx].isCheck!
+                                                                      ? Theme.of(context).colorScheme.primary
+                                                                      : Colors.transparent),
+                                                            ),
                                                           ),
-                                                        ),
-                                                        const Gap(10),
-                                                        Text(
-                                                          "${list[idx].item}",
-                                                          style: TextStyle(
-                                                              fontSize: 18,
-                                                              color:
-                                                                  list[idx].isCheck == true ? (isDarkMode ? Colors.white : Colors.grey)
-                                                                      : (isDarkMode ? Colors.white : Colors.black87),
-                                                              decoration:
-                                                                  list[idx].isCheck == true ? TextDecoration.lineThrough : TextDecoration.none),
-                                                          overflow: TextOverflow.ellipsis,
-                                                        ),
-                                                      ],
+                                                          const Gap(10),
+                                                          Text(
+                                                            "${list[idx].item}",
+                                                            style: TextStyle(
+                                                                fontSize: 18,
+                                                                color: list[idx].isCheck == true
+                                                                    ? (isDarkMode ? Colors.white : Colors.grey)
+                                                                    : (isDarkMode ? Colors.white : Colors.black87),
+                                                                decoration:
+                                                                    list[idx].isCheck == true ? TextDecoration.lineThrough : TextDecoration.none),
+                                                            overflow: TextOverflow.ellipsis,
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
-                                                  ),
-                                                  PopupMenuButton(
-                                                    iconColor: isDarkMode ? Colors.white : Colors.black87,
-                                                    padding: EdgeInsets.zero,
-                                                    color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white ,
-                                                    itemBuilder: (context) => [
-                                                      const PopupMenuItem(
-                                                          value: "edit",
-                                                          child: Text(
-                                                            "수정",
-                                                          )),
-                                                      const PopupMenuItem(
-                                                          value: "delete",
-                                                          child: Text(
-                                                            "삭제",
-                                                          )),
-                                                    ],
-                                                    onSelected: (value) {
-                                                      switch (value) {
-                                                        case "edit":
-                                                          _controller.text = list[idx].item!;
-                                                          _itemEditDialog(context, idx, isDarkMode);
-                                                        case "delete":
-                                                          context.read<SuppliesProvider>().removeItem(idx, widget.planId);
-                                                      }
-                                                    },
-                                                  )
-                                                ],
-                                              )),
-                                        );
-                                      },
-                                      separatorBuilder: (context, idx) => const Gap(5),
-                                      itemCount: list.length),
-                                )),
-                    ],
+                                                    PopupMenuButton(
+                                                      iconColor: isDarkMode ? Colors.white : Colors.black87,
+                                                      padding: EdgeInsets.zero,
+                                                      color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                                      itemBuilder: (context) => [
+                                                        const PopupMenuItem(
+                                                            value: "edit",
+                                                            child: Text(
+                                                              "수정",
+                                                            )),
+                                                        const PopupMenuItem(
+                                                            value: "delete",
+                                                            child: Text(
+                                                              "삭제",
+                                                            )),
+                                                      ],
+                                                      onSelected: (value) {
+                                                        switch (value) {
+                                                          case "edit":
+                                                            _controller.text = list[idx].item!;
+                                                            _itemEditDialog(context, idx, isDarkMode);
+                                                          case "delete":
+                                                            context.read<SuppliesProvider>().removeItem(idx, widget.planId);
+                                                        }
+                                                      },
+                                                    )
+                                                  ],
+                                                )),
+                                          );
+                                        },
+                                        separatorBuilder: (context, idx) => const Gap(5),
+                                        itemCount: list.length),
+                                  )),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            if (_isLoaded && _admobUtil.bannerAd != null)
-              SizedBox(
-                height: _admobUtil.bannerAd!.size.height.toDouble(),
-                width: _admobUtil.bannerAd!.size.width.toDouble(),
-                child: _admobUtil.getBannerAdWidget(),
-              )
-          ]),
+              if (_isLoaded && _admobUtil.bannerAd != null)
+                SizedBox(
+                  height: _admobUtil.bannerAd!.size.height.toDouble(),
+                  width: _admobUtil.bannerAd!.size.width.toDouble(),
+                  child: _admobUtil.getBannerAdWidget(),
+                )
+            ]),
+          ),
         ),
       ),
     );
@@ -271,7 +282,10 @@ class _SuppliesPageState extends State<SuppliesPage> {
                             const Gap(5),
                             Consumer<SuppliesTemplateProvider>(builder: (context, temp, Widget? child) {
                               return SizedBox(
-                                child: Text("(${temp.tempList!.length} / 2)", style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87),),
+                                child: Text(
+                                  "(${temp.tempList!.length} / 2)",
+                                  style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87),
+                                ),
                               );
                             })
                           ],
@@ -284,8 +298,11 @@ class _SuppliesPageState extends State<SuppliesPage> {
                               Navigator.push(context, MaterialPageRoute(builder: (context) => const AddTemplatePage()));
                             },
                             style: IconButton.styleFrom(padding: EdgeInsets.zero),
-                            label: Text("생성", style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87),),
-                            icon: Icon(Icons.add, color: isDarkMode ? Colors.white : Colors.black87),
+                            label: Text(
+                              "생성",
+                              style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                            ),
+                            icon: Icon(Icons.add, color: Theme.of(context).colorScheme.primary),
                           ),
                         )
                       ]),
@@ -351,8 +368,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                                         color: temp.selectedList == temp.tempList![idx].temp
                                                             ? (isDarkMode ? Colors.black87 : Colors.white)
                                                             : (isDarkMode ? Colors.white : Colors.black87),
-                                                      fontWeight: FontWeight.w500
-                                                    ),
+                                                        fontWeight: FontWeight.w500),
                                                   ),
                                                 ),
                                               ],
@@ -404,7 +420,10 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                 },
                                 style: ElevatedButton.styleFrom(
                                     padding: EdgeInsets.zero, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                child: Text("닫기",style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87),)),
+                                child: Text(
+                                  "닫기",
+                                  style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87),
+                                )),
                           ),
                           const Gap(10),
                           SizedBox(
@@ -422,7 +441,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                   Get.back();
                                 },
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.black87,
+                                    backgroundColor: Theme.of(context).colorScheme.primary,
                                     padding: EdgeInsets.zero,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                                 child: const Text(
@@ -499,8 +518,13 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                   Get.back();
                                 },
                                 style: ElevatedButton.styleFrom(
-                                    padding: EdgeInsets.zero, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                child: const Text("닫기")),
+                                    padding: EdgeInsets.zero,
+                                    backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                                child: Text(
+                                  "닫기",
+                                  style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                                )),
                           ),
                           const Gap(10),
                           SizedBox(
@@ -517,7 +541,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                   _controller.text = "";
                                 },
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.black87,
+                                    backgroundColor: Theme.of(context).colorScheme.primary,
                                     padding: EdgeInsets.zero,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                                 child: const Text(
@@ -564,7 +588,6 @@ class _SuppliesPageState extends State<SuppliesPage> {
                         ],
                       ),
                     ),
-
                     Expanded(
                         child: Padding(
                       padding: const EdgeInsets.all(20.0),

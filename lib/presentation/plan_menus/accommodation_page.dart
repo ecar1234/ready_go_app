@@ -17,6 +17,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/models/plan_model/plan_model.dart';
 import '../../domain/entities/provider/accommodation_provider.dart';
+import '../../domain/entities/provider/purchase_manager.dart';
 import '../../domain/entities/provider/responsive_height_provider.dart';
 import '../../domain/entities/provider/theme_mode_provider.dart';
 import '../../util/admob_util.dart';
@@ -75,14 +76,22 @@ class _AccommodationPageState extends State<AccommodationPage> {
     // TODO: implement initState
     super.initState();
     // WidgetsBinding.instance.addPostFrameCallback((_) => context.read<AdmobProvider>().loadAdBanner());
-    _admobUtil.loadBannerAd(onAdLoaded: () {
-      setState(() {
-        _isLoaded = true;
-      });
-    }, onAdFailed: () {
-      setState(() {
-        _isLoaded = false;
-      });
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      if(kReleaseMode){
+        final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
+        if(!isRemove){
+          _admobUtil.loadBannerAd(onAdLoaded: () {
+            setState(() {
+              _isLoaded = true;
+            });
+          }, onAdFailed: () {
+            setState(() {
+              _isLoaded = false;
+              logger.e("banner is not loaded");
+            });
+          });
+        }
+      }
     });
   }
 
@@ -126,16 +135,19 @@ class _AccommodationPageState extends State<AccommodationPage> {
                       _addAccommodation(context, month, day);
                     },
                     style: IconButton.styleFrom(padding: EdgeInsets.zero),
-                    label: Text("추가", style: TextStyle(color: isDarkMode? Colors.white : Theme.of(context).colorScheme.primary ),),
+                    label: Text(
+                      "추가",
+                      style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                    ),
                     iconAlignment: IconAlignment.end,
-                    icon: Icon(Icons.add, color: isDarkMode? Colors.white : Theme.of(context).colorScheme.primary )),
+                    icon: Icon(Icons.add, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary)),
               )
             ],
           ),
           body: Container(
             height: height,
             padding: const EdgeInsets.all(20),
-            child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.center, children: [
               LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) => SizedBox(
                     child: list?.isEmpty == true || list == null

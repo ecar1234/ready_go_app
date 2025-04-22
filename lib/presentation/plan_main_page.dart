@@ -1,4 +1,5 @@
 import 'package:dotted_line/dotted_line.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -22,6 +23,7 @@ import '../domain/entities/provider/account_provider.dart';
 import '../domain/entities/provider/admob_provider.dart';
 import '../domain/entities/provider/images_provider.dart';
 import '../domain/entities/provider/plan_list_provider.dart';
+import '../domain/entities/provider/purchase_manager.dart';
 import '../domain/entities/provider/roaming_provider.dart';
 import '../domain/entities/provider/supplies_provider.dart';
 import '../domain/entities/provider/theme_mode_provider.dart';
@@ -149,15 +151,24 @@ class _PlanMainPageState extends State<PlanMainPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _admobUtil.loadBannerAd(onAdLoaded: () {
-      setState(() {
-        _isLoaded = true;
-      });
-    }, onAdFailed: () {
-      setState(() {
-        _isLoaded = false;
-      });
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      if(kReleaseMode){
+        final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
+        if(!isRemove){
+          _admobUtil.loadBannerAd(onAdLoaded: () {
+            setState(() {
+              _isLoaded = true;
+            });
+          }, onAdFailed: () {
+            setState(() {
+              _isLoaded = false;
+              logger.e("banner is not loaded");
+            });
+          });
+        }
+      }
     });
+
   }
 
   @override
@@ -175,7 +186,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
     return BlocBuilder<DataBloc, DataState>(builder: (context, state) {
       final list = context.watch<PlanListProvider>().planList;
       final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
-      logger.d("body height : $height");
+      // logger.d("body height : $height");
       final double bannerHeight = _isLoaded ? _admobUtil.bannerAd!.size.height.toDouble() : 0;
       return Container(
         height: height - 80, // height - 하단바 높이 - gap(10) => body 크기
@@ -195,7 +206,11 @@ class _PlanMainPageState extends State<PlanMainPage> {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () {
-                        context.read<AdmobProvider>().loadAdInterstitialAd();
+                        final purchases = context.read<PurchaseManager>().purchases;
+                        bool isRemove = purchases.any((item) => item.productId.contains("cash_3300"));
+                        if(!isRemove){
+                          context.read<AdmobProvider>().loadAdInterstitialAd();
+                        }
                         Navigator.of(context).push(
                           MaterialPageRoute(builder: (context) => const AddPlanPage()),
                         );

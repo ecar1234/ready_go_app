@@ -16,6 +16,7 @@ import 'package:ready_go_project/util/date_util.dart';
 import '../data/models/plan_model/plan_model.dart';
 import '../domain/entities/provider/admob_provider.dart';
 import '../domain/entities/provider/plan_list_provider.dart';
+import '../domain/entities/provider/purchase_manager.dart';
 import '../domain/entities/provider/responsive_height_provider.dart';
 
 class AddPlanPage extends StatefulWidget {
@@ -55,23 +56,26 @@ class _AddPlanPageState extends State<AddPlanPage> {
     super.initState();
     if (widget.plan != null) {
       nationController.text = widget.plan!.nation!;
-      subjectController.text = widget.plan!.subject??"";
+      subjectController.text = widget.plan!.subject ?? "";
       _dates = widget.plan!.schedule!;
     }
-    if (mounted) {
-      _interstitialAd = context.read<AdmobProvider>().interstitialAd;
-      if (_interstitialAd != null) {
-        _interstitialAd?.show();
+
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      if(kReleaseMode){
+        final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
+        if(!isRemove){
+          _admobUtil.loadBannerAd(onAdLoaded: () {
+            setState(() {
+              _isLoaded = true;
+            });
+          }, onAdFailed: () {
+            setState(() {
+              _isLoaded = false;
+              logger.e("banner is not loaded");
+            });
+          });
+        }
       }
-    }
-    _admobUtil.loadBannerAd(onAdLoaded: () {
-      setState(() {
-        _isLoaded = true;
-      });
-    }, onAdFailed: () {
-      setState(() {
-        _isLoaded = false;
-      });
     });
   }
 
@@ -91,8 +95,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
     final list = context.read<PlanListProvider>().planList;
     final idNum = list.length;
     final isDarkMode = context.read<ThemeModeProvider>().isDarkMode;
-    final hei = GetIt.I.get<ResponsiveHeightProvider>().resHeight
-        ?? MediaQuery.sizeOf(context).height - 120;
+    final hei = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
     final double bannerHei = _isLoaded ? _admobUtil.bannerAd!.size.height.toDouble() : 0;
     return GestureDetector(
       onTap: () {
@@ -113,9 +116,9 @@ class _AddPlanPageState extends State<AddPlanPage> {
                   child: TextButton.icon(
                     onPressed: () {
                       if (widget.plan != null) {
-                        if ((widget.plan!.nation! == nationController.text)
-                            && (widget.plan!.subject! == subjectController.text)
-                            && (widget.plan!.schedule! == _dates)) {
+                        if ((widget.plan!.nation! == nationController.text) &&
+                            (widget.plan!.subject! == subjectController.text) &&
+                            (widget.plan!.schedule! == _dates)) {
                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                             content: Text("변경 사항이 존재 하지 않습니다."),
                             duration: Duration(seconds: 1),
@@ -192,7 +195,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                   LayoutBuilder(
                       builder: (BuildContext context, BoxConstraints constraints) => SingleChildScrollView(
                             child: SizedBox(
-                              height: hei - bannerHei -40 ,
+                              height: hei - bannerHei - 40,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
@@ -335,7 +338,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
       "칠레",
       "기타"
     ];
-    if(nationController.text.isEmpty){
+    if (nationController.text.isEmpty) {
       nationController.text = nations[0];
     }
     return SizedBox(
@@ -358,17 +361,16 @@ class _AddPlanPageState extends State<AddPlanPage> {
               children: [
                 DropdownMenu(
                     width: 150,
-                    initialSelection: widget.plan == null ? "대한민국"
-                        : (nations.contains(widget.plan!.nation!) ? widget.plan!.nation! : "기타"),
+                    initialSelection: widget.plan == null ? "대한민국" : (nations.contains(widget.plan!.nation!) ? widget.plan!.nation! : "기타"),
                     trailingIcon: null,
                     menuHeight: 250,
                     onSelected: (selected) {
-                      if(selected == "기타"){
+                      if (selected == "기타") {
                         setState(() {
                           _nationRead = false;
                         });
                       }
-                      if(selected != null){
+                      if (selected != null) {
                         nationController.text = selected;
                       }
                     },

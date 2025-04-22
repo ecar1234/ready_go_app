@@ -3,7 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:logger/logger.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:ready_go_project/data/data_source/purchases_data_impl.dart';
+import 'package:ready_go_project/data/repositories/purchases_local_data_repo.dart';
+import 'package:ready_go_project/domain/entities/provider/purchase_manager.dart';
 import 'package:ready_go_project/data/data_source/expectation_data_impl.dart';
 import 'package:ready_go_project/data/data_source/plan_data_impl.dart';
 import 'package:ready_go_project/data/data_source/preference/analytics_preference.dart';
@@ -28,6 +32,7 @@ import 'package:ready_go_project/domain/repositories/account_repo.dart';
 import 'package:ready_go_project/domain/repositories/expectation_repo.dart';
 import 'package:ready_go_project/domain/repositories/image_repo.dart';
 import 'package:ready_go_project/domain/repositories/plan_repo.dart';
+import 'package:ready_go_project/domain/repositories/purchases_repo.dart';
 import 'package:ready_go_project/domain/repositories/roaming_repo.dart';
 import 'package:ready_go_project/domain/repositories/supplies_repo.dart';
 import 'package:ready_go_project/domain/repositories/supplies_temp_repo.dart';
@@ -37,6 +42,7 @@ import 'package:ready_go_project/domain/use_cases/account_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/expectation_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/image_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/plan_use_case.dart';
+import 'package:ready_go_project/domain/use_cases/purchases_manager_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/roaming_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/statistics_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/supplies_temp_use_case.dart';
@@ -46,7 +52,7 @@ import 'package:ready_go_project/firebase/firebase_options.dart';
 final _getIt = GetIt.instance;
 
 AnalyticsPreference get pref => AnalyticsPreference.singleton;
-
+final Logger logger = Logger();
 Future<void> serviceLocator() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
@@ -75,6 +81,7 @@ Future<void> serviceLocator() async {
   _getIt.registerSingleton<SuppliesRepo>(SuppliesUseCase());
   _getIt.registerSingleton<SuppliesTempRepo>(SuppliesTempUseCase());
   _getIt.registerSingleton<ExpectationRepo>(ExpectationUseCase());
+  _getIt.registerSingleton<PurchasesRepo>(PurchasesManagerUseCase());
 
   //data
   _getIt.registerLazySingleton<AccommodationLocalDateRepo>(() => AccommodationDataImpl());
@@ -85,6 +92,7 @@ Future<void> serviceLocator() async {
   _getIt.registerLazySingleton<SuppliesLocalDataRepo>(() => SuppliesDataImpl());
   _getIt.registerLazySingleton<SuppliesTempLocalRepo>(() => SuppliesTempDataImpl());
   _getIt.registerLazySingleton<ExpectationLocalDataRepo>(() => ExpectationDataImpl());
+  _getIt.registerLazySingleton<PurchasesLocalDataRepo>(() => PurchasesDataImpl());
 
   // favorite
   _getIt.registerLazySingleton<PlanFavoritesProvider>(() => PlanFavoritesProvider());

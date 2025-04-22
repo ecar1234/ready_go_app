@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:get_it/get_it.dart';
+import 'package:logger/logger.dart';
 import 'package:ready_go_project/domain/entities/provider/plan_list_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/responsive_height_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
@@ -12,6 +14,7 @@ import 'package:ready_go_project/util/intl_utils.dart';
 import 'package:ready_go_project/util/statistics_util.dart';
 
 import '../data/models/plan_model/plan_model.dart';
+import '../domain/entities/provider/purchase_manager.dart';
 
 class VisitStatisticsPage extends StatefulWidget {
   const VisitStatisticsPage({super.key});
@@ -23,6 +26,7 @@ class VisitStatisticsPage extends StatefulWidget {
 class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
   final _admobUtil = AdmobUtil();
   bool _isLoaded = false;
+  final logger = Logger();
 
   int selectIdx = 0;
   int nationTouchedIndex = -1;
@@ -61,16 +65,24 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
     // TODO: implement initState
     super.initState();
 
-
-    _admobUtil.loadBannerAd(onAdLoaded: () {
-      setState(() {
-        _isLoaded = true;
-      });
-    }, onAdFailed: () {
-      setState(() {
-        _isLoaded = false;
-      });
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      if(kReleaseMode){
+        final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
+        if(!isRemove){
+          _admobUtil.loadBannerAd(onAdLoaded: () {
+            setState(() {
+              _isLoaded = true;
+            });
+          }, onAdFailed: () {
+            setState(() {
+              _isLoaded = false;
+              logger.e("banner is not loaded");
+            });
+          });
+        }
+      }
     });
+
   }
 
   @override
@@ -220,7 +232,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
   }
 
   List<PieChartSectionData> nationSection(BuildContext context, List<PlanModel> list, bool isDarkMode) {
-    List<Map<String, int>> nationsList = context.read<StatisticsUseCase>().nations??[];
+    List<Map<String, int>> nationsList = context.read<StatisticsUseCase>().nations ?? [];
 
     return List.generate(nationsList.length, (idx) {
       final isTouched = idx == nationTouchedIndex;
@@ -228,11 +240,11 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
       final radius = isTouched ? 70.0 : 60.0;
       final widgetSize = isTouched ? 55.0 : 10.0;
       final offset = isTouched ? 1.4 : 1.1;
-
+      final color = nationColors[idx % nationColors.length];
       return PieChartSectionData(
           title: "${((nationsList[idx].values.first / list.length) * 100).toStringAsFixed(1)}%",
           value: (nationsList[idx].values.first / list.length) * 100,
-          color: nationColors[idx],
+          color: color,
           titleStyle: TextStyle(
             fontSize: fontSize,
             fontWeight: FontWeight.bold,
@@ -302,7 +314,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
   }
 
   List<PieChartSectionData> accountSection(BuildContext context, bool isDarkMode) {
-    List<Map<String, List<int>>> accountList = context.read<StatisticsUseCase>().accounts??[];
+    List<Map<String, List<int>>> accountList = context.read<StatisticsUseCase>().accounts ?? [];
 
     return List.generate(accountList.length, (idx) {
       final isTouched = idx == accountTouchedIndex;
@@ -310,11 +322,11 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
       final radius = isTouched ? 70.0 : 60.0;
       final widgetSize = isTouched ? 55.0 : 10.0;
       final offset = isTouched ? 1.4 : 1.0;
-
+      final color = accountColors[idx % accountColors.length];
       return PieChartSectionData(
           title: "${StatisticsUtil.getAccountStatistics(accountList, idx)}%",
           value: StatisticsUtil.getAccountValue(accountList, idx),
-          color: accountColors[idx],
+          color: color,
           titleStyle: TextStyle(
             fontSize: fontSize,
             fontWeight: FontWeight.bold,
@@ -348,7 +360,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
   }
 
   Widget _nationStatistics(BuildContext context, List<PlanModel> list, bool isDarkMode, double hei) {
-    List<Map<String, int>> nationList = context.read<StatisticsUseCase>().nations??[];
+    List<Map<String, int>> nationList = context.read<StatisticsUseCase>().nations ?? [];
 
     return SizedBox(
       height: hei - 40,
@@ -398,7 +410,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
   }
 
   Widget _accountStatistics(BuildContext context, List<PlanModel> list, bool isDarkMode, double hei) {
-    List<Map<String, List<int>>> accountList = context.read<StatisticsUseCase>().accounts??[];
+    List<Map<String, List<int>>> accountList = context.read<StatisticsUseCase>().accounts ?? [];
 
     return SizedBox(
       height: hei - 40,
@@ -423,8 +435,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
                         ),
                       )
                     : GridView.builder(
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            mainAxisExtent: 40, crossAxisCount: 1, mainAxisSpacing: 5),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(mainAxisExtent: 40, crossAxisCount: 1, mainAxisSpacing: 5),
                         itemBuilder: (context, idx) {
                           return SizedBox(
                             child: Row(
@@ -434,9 +445,12 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
                                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                                 ),
                                 const Gap(10),
-                                Text("${IntlUtils.stringIntAddComma(StatisticsUtil.getPlanTotalAccount(accountList[idx]))}원",
-                                  style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
-                                      fontWeight: FontWeight.w600,fontSize: 16),
+                                Text(
+                                  "${IntlUtils.stringIntAddComma(StatisticsUtil.getPlanTotalAccount(accountList[idx]))}원",
+                                  style: TextStyle(
+                                      color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16),
                                 ),
                                 const Gap(10),
                                 Text("(${StatisticsUtil.getAccountStatistics(accountList, idx)}%)"),

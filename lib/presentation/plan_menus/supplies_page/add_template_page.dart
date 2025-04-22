@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/supply_model/supply_model.dart';
 import 'package:ready_go_project/data/models/supply_model/template_model.dart';
@@ -9,8 +11,8 @@ import 'package:ready_go_project/domain/entities/provider/supplies_template_prov
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
 import 'package:ready_go_project/util/admob_util.dart';
 
+import '../../../domain/entities/provider/purchase_manager.dart';
 import '../../../domain/entities/provider/responsive_height_provider.dart';
-
 
 class AddTemplatePage extends StatefulWidget {
   final List<SupplyModel>? temp;
@@ -27,20 +29,29 @@ class _AddTemplatePageState extends State<AddTemplatePage> {
   final TextEditingController _tempTitleController = TextEditingController();
   final _admobUtil = AdmobUtil();
   bool _isLoaded = false;
+  final logger = Logger();
   List<String> _tempList = [];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _admobUtil.loadBannerAd(onAdLoaded: () {
-      setState(() {
-        _isLoaded = true;
-      });
-    }, onAdFailed: () {
-      setState(() {
-        _isLoaded = false;
-      });
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      if(kReleaseMode){
+        final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
+        if(!isRemove){
+          _admobUtil.loadBannerAd(onAdLoaded: () {
+            setState(() {
+              _isLoaded = true;
+            });
+          }, onAdFailed: () {
+            setState(() {
+              _isLoaded = false;
+              logger.e("banner is not loaded");
+            });
+          });
+        }
+      }
     });
 
     if (widget.temp != null) {
@@ -58,8 +69,7 @@ class _AddTemplatePageState extends State<AddTemplatePage> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
-    final hei = GetIt.I.get<ResponsiveHeightProvider>().resHeight
-        ?? MediaQuery.sizeOf(context).height - 120;
+    final hei = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
     final double bannerHei = _isLoaded ? _admobUtil.bannerAd!.size.height.toDouble() : 0;
     return SafeArea(
         child: Scaffold(
@@ -70,192 +80,194 @@ class _AddTemplatePageState extends State<AddTemplatePage> {
         onTap: () {
           FocusManager.instance.primaryFocus?.unfocus();
         },
-        child: Container(
-          width: MediaQuery.sizeOf(context).width,
-          height: hei,
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              SizedBox(
-                width: MediaQuery.sizeOf(context).width,
-                height: hei - bannerHei - 50,
-                // decoration: BoxDecoration(border: Border.all()),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 100,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 30,
-                            child: Text(
-                              "템플릿 아이템 추가",
-                              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontSize: 18, fontWeight: FontWeight.w600),
+        child: SingleChildScrollView(
+          child: Container(
+            width: MediaQuery.sizeOf(context).width,
+            height: hei,
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                SizedBox(
+                  width: MediaQuery.sizeOf(context).width,
+                  height: hei - bannerHei - 50,
+                  // decoration: BoxDecoration(border: Border.all()),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 100,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 30,
+                              child: Text(
+                                "템플릿 아이템 추가",
+                                style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontSize: 18, fontWeight: FontWeight.w600),
+                              ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 50,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Flexible(
-                                  flex: 3,
-                                  child: SizedBox(
-                                    width: 260,
-                                    child: TextField(
-                                      controller: _textController,
+                            SizedBox(
+                              height: 50,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Flexible(
+                                    flex: 3,
+                                    child: SizedBox(
+                                      width: 260,
+                                      child: TextField(
+                                        controller: _textController,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Flexible(
-                                  flex: 1,
-                                  child: SizedBox(
-                                    height: 50,
-                                    child: ElevatedButton(
-                                        onPressed: () {
-                                          if (_textController.text.isEmpty) {
-                                            Get.snackbar("준비물 확인.", "빈 값은 추가 할 수 없습니다.", backgroundColor: Theme.of(context).colorScheme.surface);
-                                            return;
-                                          }
-                                          setState(() {
-                                            _tempList.add(_textController.text);
-                                          });
-                                          _textController.clear();
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                            backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
-                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                        child: Text(
-                                          "추가",
-                                          style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
-                                        )),
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                        child: Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                          border: Border.all(color: isDarkMode ? Colors.white : Colors.black87), borderRadius: BorderRadius.circular(10)),
-                      child: _tempList.isEmpty
-                          ? const SizedBox(
-                              child: Center(
-                                child: Text("템플릿을 추가해 보세요."),
+                                  Flexible(
+                                    flex: 1,
+                                    child: SizedBox(
+                                      height: 50,
+                                      child: ElevatedButton(
+                                          onPressed: () {
+                                            if (_textController.text.isEmpty) {
+                                              Get.snackbar("준비물 확인.", "빈 값은 추가 할 수 없습니다.", backgroundColor: Theme.of(context).colorScheme.surface);
+                                              return;
+                                            }
+                                            setState(() {
+                                              _tempList.add(_textController.text);
+                                            });
+                                            _textController.clear();
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                                          child: Text(
+                                            "추가",
+                                            style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                                          )),
+                                    ),
+                                  )
+                                ],
                               ),
                             )
-                          : Scrollbar(
-                              child: ListView.separated(
-                                  physics: const BouncingScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemBuilder: (context, idx) {
-                                    return SizedBox(
-                                      height: 30,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          SizedBox(
-                                              child: Text(
-                                            "${idx + 1}.${_tempList[idx]}",
-                                            style: TextStyle(
-                                                color: isDarkMode ? Colors.white : Colors.black87, fontSize: 16, fontWeight: FontWeight.w500),
-                                          )),
-                                          SizedBox(
-                                            height: 30,
-                                            child: ElevatedButton(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _tempList.removeAt(idx);
-                                                  });
-                                                },
-                                                style: ElevatedButton.styleFrom(
-                                                    backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.black87,
-                                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                                child: const Text(
-                                                  "삭제",
-                                                  style: TextStyle(color: Colors.white),
-                                                )),
-                                          )
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                  separatorBuilder: (context, idx) => const Gap(10),
-                                  itemCount: _tempList.length),
-                            ),
-                    )),
-                    const Gap(20),
-                    SizedBox(
-                      height: 50,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            height: 50,
-                            width: 120,
-                            child: ElevatedButton(
-                                onPressed: () {
-                                  Get.back();
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                child: const Text(
-                                  "뒤로가기",
-                                  style: TextStyle(color: Colors.black87),
-                                )),
-                          ),
-                          const Gap(20),
-                          SizedBox(
-                            height: 50,
-                            width: 120,
-                            child: ElevatedButton(
-                                onPressed: _tempList.isEmpty
-                                    ? null
-                                    : () async {
-                                        if (widget.temp == null) {
-                                          bool isCreated = await _tempAddDialog(context);
-                                          if (isCreated) {
-                                            Get.back();
-                                          }
-                                        } else {
-                                          context.read<SuppliesTemplateProvider>().changeTemplate(_tempList, widget.idx);
-                                          Navigator.pop(context);
-                                        }
-                                      },
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Theme.of(context).colorScheme.primary,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                child: Text(
-                                  widget.temp == null ? "생성" : "수정",
-                                  style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-                                )),
-                          )
-                        ],
+                          ],
+                        ),
                       ),
-                    )
-                  ],
+                      Expanded(
+                          child: Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: isDarkMode ? Colors.white : Colors.black87), borderRadius: BorderRadius.circular(10)),
+                        child: _tempList.isEmpty
+                            ? const SizedBox(
+                                child: Center(
+                                  child: Text("템플릿을 추가해 보세요."),
+                                ),
+                              )
+                            : Scrollbar(
+                                child: ListView.separated(
+                                    physics: const BouncingScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemBuilder: (context, idx) {
+                                      return SizedBox(
+                                        height: 30,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            SizedBox(
+                                                child: Text(
+                                              "${idx + 1}.${_tempList[idx]}",
+                                              style: TextStyle(
+                                                  color: isDarkMode ? Colors.white : Colors.black87, fontSize: 16, fontWeight: FontWeight.w500),
+                                            )),
+                                            SizedBox(
+                                              height: 30,
+                                              child: ElevatedButton(
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      _tempList.removeAt(idx);
+                                                    });
+                                                  },
+                                                  style: ElevatedButton.styleFrom(
+                                                      backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.black87,
+                                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                                                  child: const Text(
+                                                    "삭제",
+                                                    style: TextStyle(color: Colors.white),
+                                                  )),
+                                            )
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                    separatorBuilder: (context, idx) => const Gap(10),
+                                    itemCount: _tempList.length),
+                              ),
+                      )),
+                      const Gap(20),
+                      SizedBox(
+                        height: 50,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: 50,
+                              width: 120,
+                              child: ElevatedButton(
+                                  onPressed: () {
+                                    Get.back();
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                                  child: const Text(
+                                    "뒤로가기",
+                                    style: TextStyle(color: Colors.black87),
+                                  )),
+                            ),
+                            const Gap(20),
+                            SizedBox(
+                              height: 50,
+                              width: 120,
+                              child: ElevatedButton(
+                                  onPressed: _tempList.isEmpty
+                                      ? null
+                                      : () async {
+                                          if (widget.temp == null) {
+                                            bool isCreated = await _tempAddDialog(context, isDarkMode);
+                                            if (isCreated) {
+                                              Get.back();
+                                            }
+                                          } else {
+                                            context.read<SuppliesTemplateProvider>().changeTemplate(_tempList, widget.idx);
+                                            Navigator.pop(context);
+                                          }
+                                        },
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Theme.of(context).colorScheme.primary,
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                                  child: Text(
+                                    widget.temp == null ? "생성" : "수정",
+                                    style: const TextStyle(color: Colors.white),
+                                  )),
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-              const Gap(10),
-              if (_isLoaded == true)
-                SizedBox(
-                  height: _admobUtil.bannerAd!.size.height.toDouble(),
-                  width: _admobUtil.bannerAd!.size.width.toDouble(),
-                  child: _admobUtil.getBannerAdWidget(),
-                )
-            ],
+                const Gap(10),
+                if (_isLoaded == true)
+                  SizedBox(
+                    height: _admobUtil.bannerAd!.size.height.toDouble(),
+                    width: _admobUtil.bannerAd!.size.width.toDouble(),
+                    child: _admobUtil.getBannerAdWidget(),
+                  )
+              ],
+            ),
           ),
         ),
       ),
     ));
   }
 
-  Future<dynamic> _tempAddDialog(BuildContext context) async {
+  Future<dynamic> _tempAddDialog(BuildContext context, bool isDarkMode) async {
     return showDialog(
         context: context,
         builder: (context) {
@@ -294,8 +306,13 @@ class _AddTemplatePageState extends State<AddTemplatePage> {
                                 Navigator.of(context).pop(false);
                               },
                               style: ElevatedButton.styleFrom(
-                                  padding: EdgeInsets.zero, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                              child: const Text("취소")),
+                                  backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                  padding: EdgeInsets.zero,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                              child: Text(
+                                "취소",
+                                style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                              )),
                         ),
                         const Gap(10),
                         SizedBox(
@@ -315,7 +332,7 @@ class _AddTemplatePageState extends State<AddTemplatePage> {
                                 Navigator.of(context).pop(true);
                               },
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.black87,
+                                  backgroundColor: Theme.of(context).colorScheme.primary,
                                   padding: EdgeInsets.zero,
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                               child: const Text(

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ready_go_project/data/models/expectation_model/expectation_model.dart';
 
 import '../data/models/account_model/amount_model.dart';
@@ -55,13 +57,14 @@ class StatisticsUtil {
     return total;
   }
 
-  static double getExpectationTotalAccount(List<ExpectationModel> list, int idx) {
+  static String getExpectationTotalAccount(List<ExpectationModel> list, int idx) {
     int total = 0;
     int use = list[idx].amount!;
     for (var item in list) {
       total += item.amount!;
     }
-    return ((use / total) * 100).roundToDouble();
+    // log("${((use / total) * 100).roundToDouble()}");
+    return ((use / total) * 100).toStringAsFixed(1);
   }
 
   static String conversionMethodTypeToString(MethodType type) {

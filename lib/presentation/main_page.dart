@@ -8,21 +8,19 @@ import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:open_file/open_file.dart';
 import 'package:ready_go_project/data/models/plan_model/plan_model.dart';
-import 'package:ready_go_project/domain/entities/provider/account_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/plan_favorites_provider.dart';
 import 'package:ready_go_project/presentation/home_page.dart';
+import 'package:ready_go_project/presentation/in_app_purchase_page.dart';
 import 'package:ready_go_project/presentation/option_page.dart';
 import 'package:ready_go_project/presentation/plan_main_page.dart';
 import 'package:ready_go_project/presentation/visit_statistics_page.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../bloc/data_bloc.dart';
 import '../domain/entities/provider/passport_provider.dart';
 import '../domain/entities/provider/plan_list_provider.dart';
 import '../domain/entities/provider/responsive_height_provider.dart';
 import '../domain/entities/provider/theme_mode_provider.dart';
-import '../domain/use_cases/statistics_use_case.dart';
-import 'components/custom_accordion_tile.dart';
+
 import 'components/custom_bottom_navigation_bar.dart';
 
 class MainPage extends StatefulWidget {
@@ -142,7 +140,7 @@ class MainPage2 extends StatefulWidget {
 class _MainPage2State extends State<MainPage2> {
   ImagePicker picker = ImagePicker();
   int _selected = 0;
-  List<Widget> pageOption = [const HomePage(), const PlanMainPage(), const VisitStatisticsPage()];
+  List<Widget> pageOption = [const HomePage(), const PlanMainPage(), const VisitStatisticsPage(), const InAppPurchasePage()];
 
   void setFavoriteList(BuildContext context) {
     List<PlanModel> list = context.read<PlanListProvider>().planList;
@@ -161,16 +159,18 @@ class _MainPage2State extends State<MainPage2> {
       setFavoriteList(context);
     });
   }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DataBloc, DataState>(builder: (context, state) {
-      if (state.state == DataStatus.beforePlanList) {
-        context.read<PlanListProvider>().getPlanList();
-        context.read<DataBloc>().add(DataLoadingPlanListEvent());
-        context.read<PassportProvider>().getPassImg();
-        context.read<AccountProvider>().getTotalUseAccountInfo();
-        context.read<StatisticsUseCase>().getStatisticsData();
+      if (state.state == DataStatus.beforeCheckPurchases) {
+        context.read<DataBloc>().add(CheckPurchases(context: context));
+        // context.read<DataBloc>().add(DataLoadingEvent(context: context));
       }
       File? passImg = context.watch<PassportProvider>().passport;
       bool isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
@@ -282,7 +282,8 @@ class _MainPage2State extends State<MainPage2> {
                 items: const [
                   {"홈": Icons.home},
                   {"여행": Icons.airplane_ticket},
-                  {"방문통계" : Icons.pie_chart}
+                  {"방문통계" : Icons.pie_chart},
+                  {"인앱구매" : Icons.sell}
                 ],
               )
             ],

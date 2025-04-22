@@ -35,9 +35,11 @@ const _$AmountTypeEnumMap = {
 };
 
 const _$MethodTypeEnumMap = {
+  MethodType.ariPlane: 'ariPlane',
   MethodType.traffic: 'traffic',
   MethodType.food: 'food',
   MethodType.drink: 'drink',
+  MethodType.shopping: 'shopping',
   MethodType.accommodation: 'accommodation',
   MethodType.tour: 'tour',
   MethodType.leisure: 'leisure',

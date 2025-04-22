@@ -12,7 +12,7 @@ class ResponsiveHeightProvider{
     double statusBarHeight = MediaQuery.paddingOf(context).top;
     double bottomBarHeight = MediaQuery.paddingOf(context).bottom;
     double appBarHeight = kToolbarHeight;
-    logger.d("screenHeight : $screenHeight / statusBarHeight : $statusBarHeight / bottomBarHeight : $bottomBarHeight / appBarHeight : $appBarHeight");
+    // logger.d("screenHeight : $screenHeight / statusBarHeight : $statusBarHeight / bottomBarHeight : $bottomBarHeight / appBarHeight : $appBarHeight");
 
     _resHeight = screenHeight - statusBarHeight - bottomBarHeight - appBarHeight;
     _resHeight = _resHeight!.floorToDouble();

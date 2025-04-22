@@ -1,4 +1,5 @@
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -19,6 +20,7 @@ import '../../data/models/plan_model/plan_model.dart';
 import '../../domain/entities/provider/accommodation_provider.dart';
 import '../../domain/entities/provider/account_provider.dart';
 import '../../domain/entities/provider/images_provider.dart';
+import '../../domain/entities/provider/purchase_manager.dart';
 import '../../domain/entities/provider/responsive_height_provider.dart';
 import '../../domain/entities/provider/roaming_provider.dart';
 import '../../domain/entities/provider/supplies_provider.dart';
@@ -38,6 +40,7 @@ class PlanMenuPage extends StatefulWidget {
 class _PlanMenuPageState extends State<PlanMenuPage> {
   final AdmobUtil _admobUtil = AdmobUtil();
   bool _isLoaded = false;
+  final logger = Logger();
   List<String> itemList = ["예상 경비", "항공권", "준비물", "로밍(E-SIM)", "사용 경비", "숙소"];
   // List<String> itemList = ["항공권", "준비물", "로밍(E-SIM)", "사용 경비", "숙소"];
   // List<String> itemList = ["항공권", "준비물", "로밍 & ESIM", "여행 경비", "숙소", "일정"];
@@ -46,15 +49,22 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // WidgetsBinding.instance.addPostFrameCallback((_) => context.read<AdmobProvider>().loadAdBanner());
-    _admobUtil.loadBannerAd(onAdLoaded: () {
-      setState(() {
-        _isLoaded = true;
-      });
-    }, onAdFailed: () {
-      setState(() {
-        _isLoaded = false;
-      });
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      if(kReleaseMode){
+        final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
+        if(!isRemove){
+          _admobUtil.loadBannerAd(onAdLoaded: () {
+            setState(() {
+              _isLoaded = true;
+            });
+          }, onAdFailed: () {
+            setState(() {
+              _isLoaded = false;
+              logger.e("banner is not loaded");
+            });
+          });
+        }
+      }
     });
   }
 
@@ -62,14 +72,8 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
   Widget build(BuildContext context) {
     DataState state = context.watch<DataBloc>().state;
     if (state.state == DataStatus.loadedPlanList) {
-      context.read<ImagesProvider>().getImgList(widget.plan.id!);
-      context.read<SuppliesProvider>().getList(widget.plan.id!);
-      context.read<RoamingProvider>().getRoamingDate(widget.plan.id!);
-      context.read<AccountProvider>().getAccountInfo(widget.plan.id!);
-      context.read<AccommodationProvider>().getAccommodationList(widget.plan.id!);
-      context.read<ExpectationProvider>().getExpectationData(widget.plan.id!);
       // context.read<ImagesProvider>().getImgList(widget.plan.id!);
-      context.read<DataBloc>().add(DataLoadingPlanEvent());
+      context.read<DataBloc>().add(PlanDataLoadingEvent(context: context, planId: widget.plan.id!));
     }
     bool isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
     final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height -120;

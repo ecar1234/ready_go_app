@@ -1,7 +1,7 @@
 
 part of 'data_bloc.dart';
 
-enum DataStatus {beforePlanList, loadedPlanList, beforePlan, loadedPlan, endPlan, loadError}
+enum DataStatus {beforeCheckPurchases, beforeDataLoading, beforePlanList, loadedPlanList, beforePlan, loadedPlan, endPlan, loadError}
 
 class DataState {
   DataStatus state;
