@@ -206,8 +206,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () {
-                        final purchases = context.read<PurchaseManager>().purchases;
-                        bool isRemove = purchases.any((item) => item.productId.contains("cash_3300"));
+                        bool isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
                         if(!isRemove){
                           context.read<AdmobProvider>().loadAdInterstitialAd();
                         }
@@ -248,10 +247,44 @@ class _PlanMainPageState extends State<PlanMainPage> {
                         // height: favoriteList.isEmpty ? height - 160
                         //     : height - 170 - ((favoriteList.length * 140)+50),
                         child: list.isEmpty
-                            ? SizedBox(
-                                height: height - 100,
-                                child: const Center(child: Text("생성된 여행이 없습니다.")),
-                              )
+                            ? Center(
+                              child: SizedBox(
+                                  height: height * 0.5,
+                                  width: constraints.maxWidth > 640 ? 550 : 330,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text("✨ Ready Go와 함께 하는 여행!", style: TextStyle(fontWeight: FontWeight.w600, fontSize: constraints.maxWidth > 640 ? 34 : 22),),
+                                      const Gap(20),
+                                      Text("✅ 여행 경비를 미리 정리하고 관리해 보세요.", style: TextStyle(
+                                        fontSize: constraints.maxWidth > 640 ? 24 : 18, fontWeight: FontWeight.w500
+                                      ),textAlign: TextAlign.center,),
+                                      const Gap(5),
+                                      Text("✅ E-Ticket을 출력 할 필요없이 쉽게 저장 하세요.", style: TextStyle(
+                                        fontSize: constraints.maxWidth > 640 ? 24 : 18, fontWeight: FontWeight.w500
+                                      ),),
+                                      const Gap(5),
+                                      Text("✅ 체크리스트를 템플릿으로 만들고 쉽게 적용 할 수 있어요.", style: TextStyle(
+                                        fontSize: constraints.maxWidth > 640 ? 24 : 18, fontWeight: FontWeight.w500
+                                      ),textAlign: TextAlign.start),
+                                      const Gap(5),
+                                      Text("✅ E-SIM 로밍 정보를 쉽게 저장하고 활성화해 보세요.", style: TextStyle(
+                                        fontSize: constraints.maxWidth > 640 ? 24 : 18, fontWeight: FontWeight.w500
+                                      ),),
+                                      const Gap(5),
+                                      Text("✅ 여행 중 사용 경비를 쉽게 기록 할 수 있어요.", style: TextStyle(
+                                        fontSize: constraints.maxWidth > 640 ? 24 : 18, fontWeight: FontWeight.w500
+                                      ),),
+                                      const Gap(5),
+                                      Text("✅ 숙소 정보를 쉽게 저장하고 언제든 지도로 확인 할 수 있어요.", style: TextStyle(
+                                        fontSize: constraints.maxWidth > 640 ? 24 : 18, fontWeight: FontWeight.w500
+                                      ),),
+                                      // Text("✈️Ready Go와 함께 하는 여행!"),
+                                    ],
+                                  ),
+                                ),
+                            )
                             : _planListSection(context, list, isDarkMode, state));
                   }),
                 ]),

@@ -213,7 +213,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                               height: 50,
                               child: TextField(
                                 controller: _nameController,
-                                onChanged: _onChanged,
+                                // onChanged: _onChanged,
                                 decoration: const InputDecoration(
                                   label: Text(
                                     "숙소명",
@@ -226,7 +226,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                               height: 50,
                               child: TextField(
                                 controller: _addressController,
-                                onChanged: _onChanged,
+                                // onChanged: _onChanged,
                                 decoration: const InputDecoration(
                                   label: Text(
                                     "주소",
@@ -239,7 +239,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                               height: 50,
                               child: TextField(
                                 controller: _paymentController,
-                                onChanged: _onChanged,
+                                // onChanged: _onChanged,
                                 maxLines: 1,
                                 maxLength: 8,
                                 keyboardType: TextInputType.number,
@@ -331,7 +331,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                             height: 50,
                             child: TextField(
                               controller: _periodController,
-                              onChanged: _onChanged,
+                              // onChanged: _onChanged,
                               maxLines: 1,
                               maxLength: 2,
                               keyboardType: TextInputType.number,
@@ -366,7 +366,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                   width: 100,
                                   child: TextField(
                                     controller: _checkInController,
-                                    onChanged: _onChanged,
+                                    // onChanged: _onChanged,
                                     maxLines: 1,
                                     maxLength: 2,
                                     textAlign: TextAlign.end,
@@ -393,7 +393,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                   width: 100,
                                   child: TextField(
                                     controller: _checkOutController,
-                                    onChanged: _onChanged,
+                                    // onChanged: _onChanged,
                                     maxLines: 1,
                                     maxLength: 2,
                                     textAlign: TextAlign.end,

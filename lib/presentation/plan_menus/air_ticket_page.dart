@@ -135,7 +135,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
               child: list.isEmpty
                   ? const SizedBox(
                       child: Center(
-                        child: Text("등록된 출발(Departure) 이미지가 없습니다."),
+                        child: Text("출발(Departure) E-Ticket 등록해 보세요."),
                       ),
                     )
                   : GridView.builder(
@@ -243,7 +243,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
               child: list.isEmpty
                   ? const SizedBox(
                       child: Center(
-                        child: Text("등록된 도착(Arrival) 이미지가 없습니다."),
+                        child: Text("도착(Arrival) E-Ticket 등록해 보세요."),
                       ),
                     )
                   : GridView.builder(

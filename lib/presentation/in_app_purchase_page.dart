@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get_it/get_it.dart';
@@ -171,7 +173,8 @@ class _InAppPurchasePageState extends State<InAppPurchasePage> {
                                               Row(
                                                 children: [
                                                   Text(
-                                                    // "광고 제거",
+                                                    Platform.isIOS ?
+                                                    "광고 제거" :
                                                     products.first.title.split(" ").first,
                                                     style: TextStyle(
                                                         fontWeight: FontWeight.w600,

@@ -407,7 +407,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
             height: 50,
             child: TextField(
               controller: subjectController,
-              onChanged: _onChanged,
+              // onChanged: _onChanged,
               decoration: const InputDecoration(
                   hintText: "도시명 or 여행목적(친목여행, 가족여행 등)",
                   border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black87), borderRadius: BorderRadius.all(Radius.circular(10))),

@@ -104,7 +104,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
               height: hei * 0.5,
               width: wid,
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              color: selectIdx == 0 ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary,
+              // color: selectIdx == 0 ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary,
               child: Stack(
                 children: [
                   Column(
@@ -200,8 +200,8 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
         ? const SizedBox(
             child: Center(
                 child: Text(
-              "완료된 여행 기록이 아직 없습니다.",
-              style: TextStyle(color: Colors.white),
+              "✈️ 여행이 완료되면 여행 통계를 확인 할 수 있어요.",
+              style: TextStyle(fontSize: 22),
             )),
           )
         : AspectRatio(
@@ -282,8 +282,8 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
         ? const SizedBox(
             child: Center(
                 child: Text(
-              "완료된 여행 기록이 아직 없습니다.",
-              style: TextStyle(color: Colors.white),
+              "📊 여행이 완료되면 사용 경비 통계를 확인 할 수 있어요.",
+              style: TextStyle(fontSize: 22),
             )),
           )
         : AspectRatio(
@@ -381,7 +381,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
                 child: nationList.isEmpty
                     ? const SizedBox(
                         child: Center(
-                          child: Text("아직 기록된 여행이 없습니다."),
+                          child: Text("완료 된 여행이 없습니다."),
                         ),
                       )
                     : GridView.builder(
@@ -431,7 +431,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
                 child: accountList.isEmpty
                     ? const SizedBox(
                         child: Center(
-                          child: Text("아직 기록된 여행이 없습니다."),
+                          child: Text("완료 된 여행이 없습니다."),
                         ),
                       )
                     : GridView.builder(

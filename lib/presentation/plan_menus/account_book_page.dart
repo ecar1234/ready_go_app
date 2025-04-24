@@ -753,7 +753,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                           width: MediaQuery.sizeOf(context).width,
                           child: TextField(
                             controller: _titleController,
-                            onChanged: _onChanged,
+                            // onChanged: _onChanged,
                             decoration: InputDecoration(
                                 border: OutlineInputBorder(
                                     borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
@@ -793,7 +793,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                               width: 180,
                               child: TextField(
                                 controller: _payAmountController,
-                                onChanged: _onChanged,
+                                // onChanged: _onChanged,
                                 decoration: InputDecoration(
                                     border: OutlineInputBorder(
                                         borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
@@ -960,7 +960,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                       height: 60,
                       child: TextField(
                         controller: _totalAmountController,
-                        onChanged: _onChanged,
+                        // onChanged: _onChanged,
                         decoration: InputDecoration(
                             border: OutlineInputBorder(
                                 borderSide: BorderSide(color: Theme.of(context).colorScheme.outline), borderRadius: BorderRadius.circular(10)),

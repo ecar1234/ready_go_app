@@ -113,7 +113,7 @@ class _HomePageState extends State<HomePage> {
               height: 120,
               decoration: BoxDecoration(border: Border.all(), borderRadius: BorderRadius.circular(10)),
               child: const Center(
-                child: Text("즐겨찾기 여행이 없습니다."),
+                child: Text("여행 계획을 즐겨찾기로 쉽게 관리하세요."),
               ),
             ),
           ],
@@ -329,142 +329,146 @@ class _HomePageState extends State<HomePage> {
       {"assets/images/logo_jeju.png": "https://www.jejuair.net/ko/linkService/boardingProcessGuide/trustBaggage.do"},
       {"assets/images/logo_aerok.png": "https://www.aerok.com/service/free"},
     ];
-    return SizedBox(
-      height: 200,
-      child: GridView(
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+      return SizedBox(
+        // height: constraints.maxWidth > 640 ? 400 : 200,
+        height: 450,
+        child: GridView(
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+          ),
+          children: [
+            GestureDetector(
+                onTap: () {
+                  launchUrl(Uri.parse("https://www.airport.kr/ap_ko/905/subview.do"));
+                },
+                child: Card(
+                  clipBehavior: Clip.antiAlias,
+                  color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                  child: Stack(
+                    children: [
+                      Image.asset("assets/images/trolley_case.jpeg", fit: BoxFit.cover),
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.white38, // 위쪽은 반투명 흰색
+                              isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white, // 아래쪽은 투명
+                            ],
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 30,
+                        left: 10,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '인천공항',
+                              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontSize: 14),
+                            ),
+                            Text(
+                              '기내반입 규정',
+                              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontSize: 16, fontWeight: FontWeight.w600),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+            GestureDetector(
+                onTap: () {
+                  showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        final hei = GetIt.I.get<ResponsiveHeightProvider>().resHeight!;
+                        return Container(
+                            height: hei * 0.5,
+                            width: MediaQuery.sizeOf(context).width,
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 30),
+                            decoration: const BoxDecoration(
+                                color: Colors.white, borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
+                            child: GridView.builder(
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 20, mainAxisExtent: 50),
+                              itemBuilder: (context, idx) {
+                                return ElevatedButton(
+                                    onPressed: () {
+                                      launchUrl(Uri.parse(planeList[idx].values.toList()[0]));
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                    ),
+                                    child: Stack(children: [
+                                      SizedBox(
+                                          height: 25,
+                                          child: Image.asset(
+                                            planeList[idx].keys.toList()[0],
+                                            fit: BoxFit.cover,
+                                          )),
+                                      Positioned(
+                                          top: 0,
+                                          bottom: 0,
+                                          right: 0,
+                                          left: 0,
+                                          child: Container(
+                                            height: 50,
+                                            color: Colors.white24,
+                                          ))
+                                    ]));
+                              },
+                              itemCount: planeList.length,
+                            ));
+                      });
+                },
+                child: Card(
+                  clipBehavior: Clip.antiAlias,
+                  color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                  child: Stack(
+                    children: [
+                      Image.asset("assets/images/plane.jpeg", fit: BoxFit.cover),
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.white38, // 위쪽은 반투명 흰색
+                              isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white, // 아래쪽은 투명
+                            ],
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 30,
+                        left: 10,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '항공사 별',
+                              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontSize: 14),
+                            ),
+                            Text(
+                              '수화물 규정',
+                              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontSize: 16, fontWeight: FontWeight.w600),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+          ],
         ),
-        children: [
-          GestureDetector(
-              onTap: () {
-                launchUrl(Uri.parse("https://www.airport.kr/ap_ko/905/subview.do"));
-              },
-              child: Card(
-                clipBehavior: Clip.antiAlias,
-                color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
-                child: Stack(
-                  children: [
-                    Image.asset("assets/images/trolley_case.jpeg", fit: BoxFit.cover),
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.white38, // 위쪽은 반투명 흰색
-                            isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white, // 아래쪽은 투명
-                          ],
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 30,
-                      left: 10,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '인천공항',
-                            style: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontSize: 14),
-                          ),
-                          Text(
-                            '기내반입 규정',
-                            style: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontSize: 16, fontWeight: FontWeight.w600),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              )),
-          GestureDetector(
-              onTap: () {
-                showModalBottomSheet(
-                    context: context,
-                    builder: (context) {
-                      final hei = GetIt.I.get<ResponsiveHeightProvider>().resHeight!;
-                      return Container(
-                          height: hei * 0.5,
-                          width: MediaQuery.sizeOf(context).width,
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 30),
-                          decoration: const BoxDecoration(
-                              color: Colors.white, borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
-                          child: GridView.builder(
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 20, mainAxisExtent: 50),
-                            itemBuilder: (context, idx) {
-                              return ElevatedButton(
-                                  onPressed: () {
-                                    launchUrl(Uri.parse(planeList[idx].values.toList()[0]));
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white,
-                                  ),
-                                  child: Stack(children: [
-                                    SizedBox(
-                                        height: 25,
-                                        child: Image.asset(
-                                          planeList[idx].keys.toList()[0],
-                                          fit: BoxFit.cover,
-                                        )),
-                                    Positioned(
-                                        top: 0,
-                                        bottom: 0,
-                                        right: 0,
-                                        left: 0,
-                                        child: Container(
-                                          height: 50,
-                                          color: Colors.white24,
-                                        ))
-                                  ]));
-                            },
-                            itemCount: planeList.length,
-                          ));
-                    });
-              },
-              child: Card(
-                clipBehavior: Clip.antiAlias,
-                color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
-                child: Stack(
-                  children: [
-                    Image.asset("assets/images/plane.jpeg", fit: BoxFit.cover),
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.white38, // 위쪽은 반투명 흰색
-                            isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white, // 아래쪽은 투명
-                          ],
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 30,
-                      left: 10,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '항공사 별',
-                            style: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontSize: 14),
-                          ),
-                          Text(
-                            '수화물 규정',
-                            style: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontSize: 16, fontWeight: FontWeight.w600),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              )),
-        ],
-      ),
-    );
+      );
+    });
   }
 
   Widget _batteryInfoButton(BuildContext context, bool isDarkMode) {

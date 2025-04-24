@@ -87,8 +87,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
 
   @override
   Widget build(BuildContext context) {
-    final list = context.watch<ExpectationProvider>().expectationList!;
-
+    // final list = context.watch<ExpectationProvider>().expectationList!;
     final isDarkMode = context.read<ThemeModeProvider>().isDarkMode;
     final wid = MediaQuery.sizeOf(context).width;
     final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
@@ -111,7 +110,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                     SizedBox(
                       height: height * 0.45,
                       // color: Colors.deepPurpleAccent,
-                      child: _expectationChart(context, list, isDarkMode, height),
+                      child: _expectationChart(context, isDarkMode, height),
                     ),
                     Container(
                       height: (height * 0.55) - bannerHei - 20,
@@ -143,13 +142,17 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                       "예상 금액 : ",
                                       style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87),
                                     ),
-                                    Text(
-                                      IntlUtils.stringIntAddComma(StatisticsUtil.getExpectationTotal(list)),
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                          color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
-                                    )
+                                    Selector<ExpectationProvider, List<ExpectationModel>>(
+                                      selector: (context, expectation) => expectation.expectationList!,
+                                      builder:(context, list, child) {
+                                          return Text(
+                                            IntlUtils.stringIntAddComma(StatisticsUtil.getExpectationTotal(list)),
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                                color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                                          );
+                                        })
                                   ],
                                 ),
                               )
@@ -158,75 +161,80 @@ class _ExpectationPageState extends State<ExpectationPage> {
                           const Gap(10),
                           // const Gap(5),
                           Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: isDarkMode ? Colors.white : Colors.black87), borderRadius: BorderRadius.circular(10)),
-                              child: list.isEmpty
-                                  ? Center(
-                                      child: Text(
-                                        "리스트를 추가해 주세요.",
-                                        style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87),
-                                      ),
-                                    )
-                                  : Scrollbar(
-                                      child: ListView.separated(
-                                          itemBuilder: (context, idx) {
-                                            int total = list.fold(0, (prev, ele) => prev + ele.amount!);
-                                            return SizedBox(
-                                              height: 60,
-                                              child: Row(
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: [
-                                                  SizedBox(
-                                                    width: (wid - 60) * 0.5,
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      children: [
-                                                        Text(
-                                                          list[idx].title!,
-                                                          style: TextStyle(
-                                                              color: isDarkMode ? Colors.white : Colors.black87,
-                                                              fontWeight: FontWeight.w600,
-                                                              fontSize: 14),
-                                                          overflow: TextOverflow.ellipsis,
+                            child: Selector<ExpectationProvider, List<ExpectationModel>>(
+                              selector: (context, expectation) => expectation.expectationList!,
+                              builder:(context, list, child) {
+                                return Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(color: isDarkMode ? Colors.white : Colors.black87), borderRadius: BorderRadius.circular(10)),
+                                  child: list.isEmpty
+                                      ? Center(
+                                          child: Text(
+                                            "리스트를 추가해 주세요.",
+                                            style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87),
+                                          ),
+                                        )
+                                      : Scrollbar(
+                                          child: ListView.separated(
+                                              itemBuilder: (context, idx) {
+                                                int total = list.fold(0, (prev, ele) => prev + ele.amount!);
+                                                return SizedBox(
+                                                  height: 60,
+                                                  child: Row(
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      SizedBox(
+                                                        width: (wid - 60) * 0.5,
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Text(
+                                                              list[idx].title!,
+                                                              style: TextStyle(
+                                                                  color: isDarkMode ? Colors.white : Colors.black87,
+                                                                  fontWeight: FontWeight.w600,
+                                                                  fontSize: 14),
+                                                              overflow: TextOverflow.ellipsis,
+                                                            ),
+                                                            Text(
+                                                              IntlUtils.stringIntAddComma(list[idx].amount!),
+                                                              style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.primary),
+                                                            ),
+                                                          ],
                                                         ),
-                                                        Text(
-                                                          IntlUtils.stringIntAddComma(list[idx].amount!),
-                                                          style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.primary),
-                                                        ),
-                                                      ],
-                                                    ),
+                                                      ),
+                                                      SizedBox(child: Text("${((list[idx].amount! / total) * 100).toStringAsFixed(1)}%")),
+                                                      SizedBox(
+                                                          width: 30,
+                                                          child: PopupMenuButton(
+                                                            iconColor: isDarkMode ? Colors.white : Colors.black87,
+                                                            padding: EdgeInsets.zero,
+                                                            color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                                            itemBuilder: (context) => const [
+                                                              PopupMenuItem(value: 0, child: Text("수정")),
+                                                              PopupMenuItem(value: 1, child: Text("삭제")),
+                                                            ],
+                                                            onSelected: (value) {
+                                                              if (value == 0) {
+                                                                ExpectationModel item = list[idx];
+                                                                _expectationDialog(context, wid, isDarkMode, item, idx);
+                                                              } else if (value == 1) {
+                                                                context.read<ExpectationProvider>().removeExpectationData(idx, widget.planId!);
+                                                              }
+                                                            },
+                                                          ))
+                                                    ],
                                                   ),
-                                                  SizedBox(child: Text("${((list[idx].amount! / total) * 100).toStringAsFixed(1)}%")),
-                                                  SizedBox(
-                                                      width: 30,
-                                                      child: PopupMenuButton(
-                                                        iconColor: isDarkMode ? Colors.white : Colors.black87,
-                                                        padding: EdgeInsets.zero,
-                                                        color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
-                                                        itemBuilder: (context) => const [
-                                                          PopupMenuItem(value: 0, child: Text("수정")),
-                                                          PopupMenuItem(value: 1, child: Text("삭제")),
-                                                        ],
-                                                        onSelected: (value) {
-                                                          if (value == 0) {
-                                                            ExpectationModel item = list[idx];
-                                                            _expectationDialog(context, wid, isDarkMode, item, idx);
-                                                          } else if (value == 1) {
-                                                            context.read<ExpectationProvider>().removeExpectationData(idx, widget.planId!);
-                                                          }
-                                                        },
-                                                      ))
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                          separatorBuilder: (context, idx) => const Gap(10),
-                                          itemCount: list.length),
-                                    ),
+                                                );
+                                              },
+                                              separatorBuilder: (context, idx) => const Gap(10),
+                                              itemCount: list.length),
+                                        ),
+                                );
+                              },
                             ),
                           )
                         ],
@@ -248,39 +256,43 @@ class _ExpectationPageState extends State<ExpectationPage> {
     ));
   }
 
-  Widget _expectationChart(BuildContext context, List<ExpectationModel> list, bool isDarkMode, double hei) {
-    return list.isEmpty
-        ? SizedBox(
-            height: hei * 0.45,
-            width: MediaQuery.sizeOf(context).width * 0.7,
-            child: Center(
-              child: Text(
-                "✨예상 경비를 미리 준비해 보세요",
-                style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w600, fontSize: 18),
-              ),
-            ))
-        : PieChart(
-            duration: const Duration(milliseconds: 600),
-            curve: Curves.easeOut,
-            PieChartData(
-              pieTouchData: PieTouchData(
-                touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                  setState(() {
-                    if (!event.isInterestedForInteractions || pieTouchResponse == null || pieTouchResponse.touchedSection == null) {
-                      _chartIdx = -1;
-                      return;
-                    }
-                    _chartIdx = pieTouchResponse.touchedSection!.touchedSectionIndex;
-                  });
-                },
-              ),
-              borderData: FlBorderData(
-                show: false,
-              ),
-              sectionsSpace: 5,
-              centerSpaceRadius: 40,
-              sections: _planAmountChartSection(context, list, isDarkMode),
-            ));
+  Widget _expectationChart(BuildContext context, bool isDarkMode, double hei) {
+    return Selector<ExpectationProvider, List<ExpectationModel>>(
+      selector: (context, expectation) => expectation.expectationList!,
+          builder: (context, list, child){
+            return list.isEmpty
+                ? SizedBox(
+                height: hei * 0.45,
+                width: MediaQuery.sizeOf(context).width * 0.7,
+                child: Center(
+                  child: Text(
+                    "✨예상 경비를 미리 준비해 보세요",
+                    style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w600, fontSize: 18),
+                  ),
+                ))
+              : PieChart(
+                duration: const Duration(milliseconds: 600),
+                curve: Curves.easeOut,
+                PieChartData(
+                  pieTouchData: PieTouchData(
+                    touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                      setState(() {
+                        if (!event.isInterestedForInteractions || pieTouchResponse == null || pieTouchResponse.touchedSection == null) {
+                          _chartIdx = -1;
+                          return;
+                        }
+                        _chartIdx = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                      });
+                    },
+                  ),
+                  borderData: FlBorderData(
+                    show: false,
+                  ),
+                  sectionsSpace: 5,
+                  centerSpaceRadius: 40,
+                  sections: _planAmountChartSection(context, list, isDarkMode),
+                ));
+          });
   }
 
   List<PieChartSectionData> _planAmountChartSection(BuildContext context, List<ExpectationModel> list, bool isDarkMode) {

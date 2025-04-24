@@ -464,47 +464,26 @@ class _SuppliesPageState extends State<SuppliesPage> {
         builder: (context) => Dialog(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               surfaceTintColor: isDarkMode ? const Color(0xffADD8E6) : Colors.white,
-              child: SizedBox(
+              child: Container(
+                padding: const EdgeInsets.all(20),
                 width: 600,
                 height: 200,
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
-                      width: 600,
-                      height: 40,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          SizedBox(
-                            width: 40,
-                            height: 40,
-                            child: IconButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              icon: const Icon(Icons.close),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                        child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: SizedBox(
-                        height: 30,
-                        child: TextField(
-                          controller: _controller,
-                          autofocus: true,
-                          onChanged: _onChanged,
-                          style: const TextStyle(fontSize: 12),
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                            focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                          ),
+                      height: 60,
+                      child: TextField(
+                        controller: _controller,
+                        autofocus: true,
+                        // onChanged: _onChanged,
+                        style: const TextStyle(fontSize: 14),
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
+                          focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
                         ),
                       ),
-                    )),
+                    ),
                     SizedBox(
                       height: 60,
                       child: Row(
@@ -595,7 +574,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
                         height: 30,
                         child: TextField(
                           controller: _controller,
-                          onChanged: _onChanged,
+                          // onChanged: _onChanged,
                           style: const TextStyle(fontSize: 12),
                           decoration: InputDecoration(
                             border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
