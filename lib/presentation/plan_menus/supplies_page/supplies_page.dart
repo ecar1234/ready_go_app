@@ -12,6 +12,7 @@ import 'package:ready_go_project/domain/entities/provider/purchase_manager.dart'
 import 'package:ready_go_project/domain/entities/provider/supplies_template_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
 
+import '../../../domain/entities/provider/admob_provider.dart';
 import '../../../domain/entities/provider/responsive_height_provider.dart';
 import '../../../domain/entities/provider/supplies_provider.dart';
 import '../../../util/admob_util.dart';
@@ -50,6 +51,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
       if (kReleaseMode) {
         final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
         if (!isRemove) {
+          context.read<AdmobProvider>().interstitialAd!.show();
           _admobUtil.loadBannerAd(onAdLoaded: () {
             setState(() {
               _isLoaded = true;

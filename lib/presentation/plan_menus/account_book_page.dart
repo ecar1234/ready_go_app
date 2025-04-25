@@ -17,6 +17,7 @@ import 'package:ready_go_project/util/intl_utils.dart';
 
 import '../../data/models/plan_model/plan_model.dart';
 import '../../domain/entities/provider/account_provider.dart';
+import '../../domain/entities/provider/admob_provider.dart';
 import '../../domain/entities/provider/purchase_manager.dart';
 import '../../domain/entities/provider/responsive_height_provider.dart';
 import '../../util/admob_util.dart';
@@ -63,6 +64,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
       if(kReleaseMode){
         final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
         if(!isRemove){
+          context.read<AdmobProvider>().interstitialAd!.show();
           _admobUtil.loadBannerAd(onAdLoaded: () {
             setState(() {
               _isLoaded = true;
@@ -903,6 +905,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
   }
 
   Future<void> _setTotalAmountDialog(BuildContext context, AccountModel info, bool isDarkMode) {
+    final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
     return showDialog(
         context: context,
         builder: (context) => Dialog(
@@ -1022,8 +1025,13 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                   }
                                   int amount = int.tryParse(_totalAmountController.text) ?? 0;
                                   int days = int.tryParse(_totalDaysController.text) ?? 1;
+
+                                  if(kReleaseMode && !isRemove){
+                                    context.read<AdmobProvider>().interstitialAd!.show();
+                                  }
+
                                   context.read<AccountProvider>().addTotalAmount(amount, days, widget.plan.id!);
-                                  _totalAmountController.text = "";
+                                  _totalAmountController.clear();
                                   Get.back();
                                 },
                                 style: ElevatedButton.styleFrom(

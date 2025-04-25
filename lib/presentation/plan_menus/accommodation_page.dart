@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/accommodation_model/accommodation_model.dart';
@@ -17,6 +16,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/models/plan_model/plan_model.dart';
 import '../../domain/entities/provider/accommodation_provider.dart';
+import '../../domain/entities/provider/admob_provider.dart';
 import '../../domain/entities/provider/purchase_manager.dart';
 import '../../domain/entities/provider/responsive_height_provider.dart';
 import '../../domain/entities/provider/theme_mode_provider.dart';
@@ -43,13 +43,27 @@ class _AccommodationPageState extends State<AccommodationPage> {
   bool _isLoaded = false;
   Timer? _debounce;
 
-  _onChanged(String value) {
+  _onChangedCheckIn(String value) {
     if (_debounce?.isActive ?? false) {
       _debounce?.cancel();
     }
     _debounce = Timer(const Duration(milliseconds: 500), () {
       logger.d(value);
     });
+    if(int.parse(value) > 24){
+      _checkInController.text = "24";
+    }
+  }
+  _onChangedCheckOut(String value) {
+    if (_debounce?.isActive ?? false) {
+      _debounce?.cancel();
+    }
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      logger.d(value);
+    });
+    if(int.parse(value) > 24){
+      _checkOutController.text = "24";
+    }
   }
 
   Future<void> _openGoogleMap(String address) async {
@@ -60,7 +74,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
       // Google Maps 앱으로 열기
       await launchUrl(Uri.parse(mapsUrl));
       if (kDebugMode) {
-        print("open google maps");
+        print("open maps app");
       }
     } else {
       // Google Maps 웹 브라우저로 열기
@@ -80,6 +94,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
       if(kReleaseMode){
         final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
         if(!isRemove){
+          context.read<AdmobProvider>().interstitialAd!.show();
           _admobUtil.loadBannerAd(onAdLoaded: () {
             setState(() {
               _isLoaded = true;
@@ -109,6 +124,14 @@ class _AccommodationPageState extends State<AccommodationPage> {
     _admobUtil.dispose();
   }
 
+  int getDaysOfMouth(int year, int month) {
+    if (month == 12) {
+      return DateTime(year + 1, 1, 0).day;
+    } else {
+      return DateTime(year, month + 1, 0).day;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final list = context.watch<AccommodationProvider>().accommodation;
@@ -132,7 +155,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                 width: 100,
                 child: TextButton.icon(
                     onPressed: () {
-                      _addAccommodation(context, month, day);
+                      _addAccommodation(context, month, day, height);
                     },
                     style: IconButton.styleFrom(padding: EdgeInsets.zero),
                     label: Text(
@@ -181,7 +204,8 @@ class _AccommodationPageState extends State<AccommodationPage> {
     );
   }
 
-  Future<void> _addAccommodation(BuildContext context, int month, int day) {
+  Future<void> _addAccommodation(BuildContext context, int month, int day, double hei) {
+    final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
     return showDialog(
         context: context,
         builder: (BuildContext diaContext) {
@@ -193,10 +217,12 @@ class _AccommodationPageState extends State<AccommodationPage> {
               insetPadding: const EdgeInsets.all(20),
               child: SingleChildScrollView(
                 child: Container(
-                  height: 720,
-                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                  // height: hei * 0.8,
+                  //width 는 LayoutBuilder 필요
+                  // width: MediaQuery.sizeOf(context).width * 0.7,
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       // info field
                       SizedBox(
@@ -206,9 +232,10 @@ class _AccommodationPageState extends State<AccommodationPage> {
                           children: [
                             const Text(
                               "숙소 정보",
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                             ),
                             const Gap(10),
+                            // 숙소 이름
                             SizedBox(
                               height: 50,
                               child: TextField(
@@ -222,6 +249,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                               ),
                             ),
                             const Gap(10),
+                            // 숙소 주소
                             SizedBox(
                               height: 50,
                               child: TextField(
@@ -235,13 +263,14 @@ class _AccommodationPageState extends State<AccommodationPage> {
                               ),
                             ),
                             const Gap(10),
+                            // 금액
                             SizedBox(
                               height: 50,
                               child: TextField(
                                 controller: _paymentController,
                                 // onChanged: _onChanged,
                                 maxLines: 1,
-                                maxLength: 8,
+                                maxLength: 9,
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                 decoration: const InputDecoration(
@@ -254,166 +283,147 @@ class _AccommodationPageState extends State<AccommodationPage> {
                           ],
                         ),
                       ),
-                      const Gap(10),
-                      const Divider(),
+                      const Gap(15),
                       // start Day
-                      const Gap(5),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "숙박 일정",
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                          ),
-                          const Gap(10),
-                          SizedBox(
-                            height: 50,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const Text("시작일 : "),
-                                const Gap(10),
-                                DropdownMenu(
-                                  width: 110,
-                                  // enabled: false,
-                                  menuStyle: const MenuStyle(
-                                    visualDensity: VisualDensity.compact, // 밀도 조정
-                                  ),
-                                  initialSelection: month,
-                                  onSelected: (value) {
-                                    setState(() {
-                                      month = value!;
-                                    });
-                                  },
-                                  // selectedTrailingIcon: null,
-                                  dropdownMenuEntries: [...List.generate(12, (idx) => DropdownMenuEntry(value: idx + 1, label: "${idx + 1}월"))],
-                                ),
-                                const Gap(10),
-                                DropdownMenu(
-                                  width: 110,
-                                  // enabled: false,
-                                  menuStyle: const MenuStyle(
-                                    visualDensity: VisualDensity.compact, // 밀도 조정
-                                  ),
-                                  initialSelection: day,
-                                  onSelected: (value) {
-                                    setState(() {
-                                      if (value! < day) {
-                                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("여행 시작일 보다 이전의 날짜로 설정 할 수 없습니다.")));
-                                        return;
-                                      }
-                                      if (value > widget.plan.schedule!.last!.day) {
-                                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("여행 종료일 보다 이후 날짜로 설정 할 수 없습니다.")));
-                                        return;
-                                      }
-                                      day = value;
-                                    });
-                                  },
-                                  dropdownMenuEntries: [
-                                    ...List.generate(getDaysOfMouth(widget.plan.schedule!.first!.year, month),
-                                        (idx) => DropdownMenuEntry(value: idx + 1, label: "${idx + 1}일"))
-                                  ],
-                                ),
-                              ],
+                      SizedBox(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "숙박 일정",
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                             ),
-                          ),
-                        ],
+                            const Gap(10),
+                            SizedBox(
+                              height: 60,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  DropdownMenu(
+                                    width: 110,
+                                    // enabled: false,
+                                    menuStyle: const MenuStyle(
+                                      visualDensity: VisualDensity.compact, // 밀도 조정
+                                    ),
+                                    initialSelection: month,
+                                    onSelected: (value) {
+                                      setState(() {
+                                        month = value!;
+                                      });
+                                    },
+                                    // selectedTrailingIcon: null,
+                                    dropdownMenuEntries: [...List.generate(12, (idx) => DropdownMenuEntry(value: idx + 1, label: "${idx + 1}월"))],
+                                  ),
+                                  const Gap(10),
+                                  DropdownMenu(
+                                    width: 110,
+                                    // enabled: false,
+                                    menuStyle: const MenuStyle(
+                                      visualDensity: VisualDensity.compact, // 밀도 조정
+                                    ),
+                                    initialSelection: day,
+                                    onSelected: (value) {
+                                      setState(() {
+                                        if (value! < day) {
+                                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("여행 시작일 보다 이전의 날짜로 설정 할 수 없습니다.")));
+                                          return;
+                                        }
+                                        if (value > widget.plan.schedule!.last!.day) {
+                                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("여행 종료일 보다 이후 날짜로 설정 할 수 없습니다.")));
+                                          return;
+                                        }
+                                        day = value;
+                                      });
+                                    },
+                                    dropdownMenuEntries: [
+                                      ...List.generate(getDaysOfMouth(widget.plan.schedule!.first!.year, month),
+                                          (idx) => DropdownMenuEntry(value: idx + 1, label: "${idx + 1}일"))
+                                    ],
+                                  ),
+                                  const Gap(10),
+                                  SizedBox(
+                                    width: 60,
+                                    height: 60,
+                                    child: TextField(
+                                      controller: _periodController,
+                                      // onChanged: _onChanged,
+                                      maxLines: 1,
+                                      maxLength: 2,
+                                      keyboardType: TextInputType.number,
+                                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                      textAlign: TextAlign.end,
+                                      decoration: const InputDecoration(label: Text("기간"), counterText: ""),
+                                    ),
+                                  ),
+                                  const Gap(5),
+                                  const Text("박")
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       const Gap(20),
-                      // period
-                      Row(
-                        children: [
-                          const Text("숙박기간 : "),
-                          const Gap(10),
-                          SizedBox(
-                            width: 60,
-                            height: 50,
-                            child: TextField(
-                              controller: _periodController,
-                              // onChanged: _onChanged,
-                              maxLines: 1,
-                              maxLength: 2,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                              textAlign: TextAlign.end,
-                              decoration: const InputDecoration(label: Text("일정"), counterText: ""),
-                            ),
-                          ),
-                          const Gap(10),
-                          const Text("박")
-                        ],
-                      ),
-                      const Gap(10),
-                      const Divider(),
-                      const Gap(5),
                       // options(checkIn/checkout)
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "옵션",
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                          ),
-                          const Gap(10),
-                          SizedBox(
-                            height: 50,
-                            width: MediaQuery.sizeOf(context).width,
-                            child: Row(
-                              children: [
-                                const SizedBox(width: 70, child: Text("체크인 : ")),
-                                SizedBox(
-                                  width: 100,
-                                  child: TextField(
-                                    controller: _checkInController,
-                                    // onChanged: _onChanged,
-                                    maxLines: 1,
-                                    maxLength: 2,
-                                    textAlign: TextAlign.end,
-                                    keyboardType: TextInputType.number,
-                                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                    decoration: InputDecoration(
-                                        counterText: "",
-                                        border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10))),
-                                  ),
-                                ),
-                                const Gap(10),
-                                const Text("시")
-                              ],
+                      SizedBox(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "체크인 & 아웃",
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                             ),
-                          ),
-                          const Gap(10),
-                          SizedBox(
-                            height: 50,
-                            width: MediaQuery.sizeOf(context).width,
-                            child: Row(
-                              children: [
-                                const SizedBox(width: 70, child: Text("체크아웃 : ")),
-                                SizedBox(
-                                  width: 100,
-                                  child: TextField(
-                                    controller: _checkOutController,
-                                    // onChanged: _onChanged,
-                                    maxLines: 1,
-                                    maxLength: 2,
-                                    textAlign: TextAlign.end,
-                                    keyboardType: TextInputType.number,
-                                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                    decoration: InputDecoration(
-                                        counterText: "",
-                                        border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10))),
+                            const Gap(10),
+                            SizedBox(
+                              height: 50,
+                              width: MediaQuery.sizeOf(context).width,
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 80,
+                                    child: TextField(
+                                      controller: _checkInController,
+                                      onChanged: _onChangedCheckIn,
+                                      maxLines: 1,
+                                      maxLength: 2,
+                                      textAlign: TextAlign.end,
+                                      keyboardType: TextInputType.number,
+                                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                      decoration: const InputDecoration(
+                                          counterText: "",
+                                        ),
+                                    ),
                                   ),
-                                ),
-                                const Gap(10),
-                                const Text("시")
-                              ],
+                                  const Gap(10),
+                                  const Text("시 부터"),
+                                  const Gap(10),
+                                  SizedBox(
+                                    width: 80,
+                                    child: TextField(
+                                      controller: _checkOutController,
+                                      onChanged: _onChangedCheckOut,
+                                      maxLines: 1,
+                                      maxLength: 2,
+                                      textAlign: TextAlign.end,
+                                      keyboardType: TextInputType.number,
+                                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                      decoration: InputDecoration(
+                                          counterText: "",
+                                          border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10))),
+                                    ),
+                                  ),
+                                  const Gap(10),
+                                  const Text("시 까지")
+                                ],
+                              ),
                             ),
-                          )
-                        ],
+                          ],
+                        ),
                       ),
                       const Gap(10),
                       const Divider(),
-                      const Gap(5),
+                      const Gap(20),
                       // buttons
                       SizedBox(
                         height: 50,
@@ -488,6 +498,9 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("체크아웃 시간을 확인해 주세요")));
                                       return;
                                     }
+                                    if(kReleaseMode && !isRemove){
+                                      context.read<AdmobProvider>().interstitialAd!.show();
+                                    }
 
                                     AccommodationModel info = AccommodationModel();
                                     info.name = _nameController.text;
@@ -499,12 +512,12 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                     info.startDay = DateTime(widget.plan.schedule!.first!.year, month, day);
 
                                     context.read<AccommodationProvider>().addAccommodation(info, widget.plan.id!);
-                                    _nameController.text = "";
-                                    _addressController.text = "";
-                                    _paymentController.text = "";
-                                    _checkInController.text = "";
-                                    _checkOutController.text = "";
-                                    _periodController.text = "";
+                                    _nameController.clear();
+                                    _addressController.clear();
+                                    _paymentController.clear();
+                                    _checkInController.clear();
+                                    _checkOutController.clear();
+                                    _periodController.clear();
 
                                     Navigator.pop(diaContext);
                                   },
@@ -590,7 +603,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                         await _openGoogleMap(list[idx].address!);
                                       },
                                       style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                                      child: const Text("구글맵 열기"),
+                                      child: const Text("지도 열기"),
                                     ),
                                   ),
                                   const Gap(10),
@@ -693,13 +706,5 @@ class _AccommodationPageState extends State<AccommodationPage> {
                     )));
           })
         ]);
-  }
-
-  int getDaysOfMouth(int year, int month) {
-    if (month == 12) {
-      return DateTime(year + 1, 1, 0).day;
-    } else {
-      return DateTime(year, month + 1, 0).day;
-    }
   }
 }

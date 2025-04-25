@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/roaming_model/roaming_period_model.dart';
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
 
+import '../../domain/entities/provider/admob_provider.dart';
 import '../../domain/entities/provider/purchase_manager.dart';
 import '../../domain/entities/provider/responsive_height_provider.dart';
 import '../../domain/entities/provider/roaming_provider.dart';
@@ -54,6 +55,7 @@ class _RoamingPageState extends State<RoamingPage> {
       if (kReleaseMode) {
         final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
         if (!isRemove) {
+          context.read<AdmobProvider>().interstitialAd!.show();
           _admobUtil.loadBannerAd(onAdLoaded: () {
             setState(() {
               _isLoaded = true;
@@ -85,6 +87,7 @@ class _RoamingPageState extends State<RoamingPage> {
     final isDarkMode = context.read<ThemeModeProvider>().isDarkMode;
     final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
     final double bannerHei = _isLoaded ? _admobUtil.bannerAd!.size.height.toDouble() : 0;
+    final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
@@ -110,13 +113,13 @@ class _RoamingPageState extends State<RoamingPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _codeSection(context, roamingData!.activeCode ?? "", roamingData.dpAddress ?? "", isDarkMode),
+                            _codeSection(context, roamingData!.activeCode ?? "", roamingData.dpAddress ?? "", isDarkMode, isRemove),
                             // _dpAddressSection(context, address),
                             // _activeCodeSection(context, code),
                             const Gap(20),
                             _periodSection(context, roamingData.period!, isDarkMode),
                             const Gap(20),
-                            _voucherImageSection(context, roamingData.imgList!, isDarkMode),
+                            _voucherImageSection(context, roamingData.imgList!, isDarkMode, isRemove),
                           ],
                         ),
                       ),
@@ -137,7 +140,7 @@ class _RoamingPageState extends State<RoamingPage> {
     );
   }
 
-  Widget _voucherImageSection(BuildContext context, List<String> imgPath, bool isDarkMode) {
+  Widget _voucherImageSection(BuildContext context, List<String> imgPath, bool isDarkMode, bool isRemove) {
     List<File> list = imgPath.map((path) => File(path)).toList();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,7 +150,7 @@ class _RoamingPageState extends State<RoamingPage> {
           width: MediaQuery.sizeOf(context).width - 40,
           child: ElevatedButton.icon(
               onPressed: () async {
-                await _showImageSourceDialog(context, isDarkMode);
+                await _showImageSourceDialog(context, isDarkMode, isRemove);
               },
               style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
               label: Text(
@@ -226,7 +229,7 @@ class _RoamingPageState extends State<RoamingPage> {
     );
   }
 
-  Widget _codeSection(BuildContext context, String code, String address, bool isDarkMode) {
+  Widget _codeSection(BuildContext context, String code, String address, bool isDarkMode, bool isRemove) {
     return SizedBox(
       child: Column(
         children: [
@@ -236,7 +239,7 @@ class _RoamingPageState extends State<RoamingPage> {
               width: MediaQuery.sizeOf(context).width - 40,
               child: ElevatedButton.icon(
                 onPressed: () {
-                  _showSetCodeDialog(context, code, address, isDarkMode);
+                  _showSetCodeDialog(context, code, address, isDarkMode, isRemove);
                 },
                 style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
                 label: Text(
@@ -688,8 +691,7 @@ class _RoamingPageState extends State<RoamingPage> {
     );
   }
 
-  Future<void> _showImageSourceDialog(BuildContext context, bool isDarkMode) async {
-    final roamingProvider = context.read<RoamingProvider>();
+  Future<void> _showImageSourceDialog(BuildContext context, bool isDarkMode, bool isRemove) async {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -703,24 +705,35 @@ class _RoamingPageState extends State<RoamingPage> {
                 Navigator.of(context).pop(); // 다이얼로그 닫기
                 final XFile? image = await picker.pickImage(source: ImageSource.camera); // 카메라에서 이미지 선택
                 if (image != null) {
-                  roamingProvider.addImage(image, widget.planId);
+                  if (context.mounted) {
+                    context.read<RoamingProvider>().addImage(image, widget.planId);
+                  }
                 }
-              },style: ElevatedButton.styleFrom(
-              backgroundColor: isDarkMode?Theme.of(context).colorScheme.primary : Colors.white
-            ),
-              child: Text("카메라", style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),),
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
+              child: Text(
+                "카메라",
+                style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+              ),
             ),
             ElevatedButton(
               onPressed: () async {
-                Navigator.of(context).pop(); // 다이얼로그 닫기
                 final XFile? image = await picker.pickImage(source: ImageSource.gallery); // 갤러리에서 이미지 선택
                 if (image != null) {
-                  roamingProvider.addImage(image, widget.planId);
+                  if (context.mounted) {
+                    if (kReleaseMode && !isRemove) {
+                      context.read<AdmobProvider>().interstitialAd!.show();
+                    }
+                    context.read<RoamingProvider>().addImage(image, widget.planId);
+                    Navigator.of(context).pop(); // 다이얼로그 닫기
+                  }
                 }
-              },style: ElevatedButton.styleFrom(
-              backgroundColor: isDarkMode?Theme.of(context).colorScheme.primary : Colors.white
-            ),
-              child: Text("갤러리", style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),),
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
+              child: Text(
+                "갤러리",
+                style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+              ),
             ),
           ],
         );
@@ -728,7 +741,13 @@ class _RoamingPageState extends State<RoamingPage> {
     );
   }
 
-  Future<void> _showSetCodeDialog(BuildContext context, String? code, String? address, bool isDarkMode) async {
+  Future<void> _showSetCodeDialog(BuildContext context, String? code, String? address, bool isDarkMode, bool isRemove) async {
+    if(code != null){
+      activeCodeController.text = code;
+    }
+    if(address != null){
+      dpAddressController.text = address;
+    }
     showDialog(
         context: context,
         builder: (context) => Dialog(
@@ -801,6 +820,9 @@ class _RoamingPageState extends State<RoamingPage> {
                                   }
                                   if (Platform.isAndroid) {
                                     dpAddressController.text = "";
+                                  }
+                                  if(kReleaseMode && !isRemove){
+                                    context.read<AdmobProvider>().interstitialAd!.show();
                                   }
                                   context.read<RoamingProvider>().enterCode(dpAddressController.text, activeCodeController.text, widget.planId);
                                   dpAddressController.clear();

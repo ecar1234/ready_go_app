@@ -13,6 +13,7 @@ import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.da
 import 'package:file_picker/file_picker.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
+import '../../domain/entities/provider/admob_provider.dart';
 import '../../domain/entities/provider/images_provider.dart';
 import '../../domain/entities/provider/purchase_manager.dart';
 import '../../domain/entities/provider/responsive_height_provider.dart';
@@ -42,10 +43,11 @@ class _AirTicketPageState extends State<AirTicketPage> {
     // TODO: implement initState
     super.initState();
     // WidgetsBinding.instance.addPostFrameCallback((_) => context.read<AdmobProvider>().loadAdBanner());
-    WidgetsBinding.instance.addPostFrameCallback((_){
-      if(kReleaseMode){
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (kReleaseMode) {
         final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
-        if(!isRemove){
+        if (!isRemove) {
+          context.read<AdmobProvider>().interstitialAd!.show();
           _admobUtil.loadBannerAd(onAdLoaded: () {
             setState(() {
               _isLoaded = true;
@@ -247,79 +249,79 @@ class _AirTicketPageState extends State<AirTicketPage> {
                       ),
                     )
                   : GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 10, mainAxisSpacing: 10),
-                itemBuilder: (context, idx) {
-                  return Stack(children: [
-                    GestureDetector(
-                      onTap: () {
-                        if (list[idx].path.contains("pdf")) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Scaffold(
-                                  appBar: AppBar(
-                                    title: const Text("PDF Viewer"),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 10, mainAxisSpacing: 10),
+                      itemBuilder: (context, idx) {
+                        return Stack(children: [
+                          GestureDetector(
+                            onTap: () {
+                              if (list[idx].path.contains("pdf")) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Scaffold(
+                                        appBar: AppBar(
+                                          title: const Text("PDF Viewer"),
+                                        ),
+                                        body: SizedBox(child: SfPdfViewer.file(File(list[idx].path)))),
                                   ),
-                                  body: SizedBox(child: SfPdfViewer.file(File(list[idx].path)))),
+                                );
+                              } else {
+                                OpenFile.open(list[idx].path);
+                              }
+                            },
+                            child: SizedBox(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: list[idx].path.contains("pdf")
+                                    ? AbsorbPointer(
+                                        // 클릭/스크롤 막기
+                                        child: SfPdfViewer.file(
+                                        File(list[idx].path),
+                                        controller: _pdfArrivalController,
+                                        canShowPaginationDialog: false,
+                                        canShowScrollHead: false,
+                                        enableTextSelection: false,
+                                        pageLayoutMode: PdfPageLayoutMode.single,
+                                        scrollDirection: PdfScrollDirection.vertical,
+                                        initialScrollOffset: const Offset(0, 0),
+                                        enableDocumentLinkAnnotation: false,
+                                        enableHyperlinkNavigation: false,
+                                        onDocumentLoaded: (details) {
+                                          _pdfArrivalController.jumpToPage(1);
+                                        },
+                                      ))
+                                    : AspectRatio(
+                                        aspectRatio: 1.0,
+                                        child: SizedBox(
+                                            child: Image.file(
+                                          list[idx],
+                                          fit: BoxFit.cover,
+                                        ))),
+                              ),
                             ),
-                          );
-                        } else {
-                          OpenFile.open(list[idx].path);
-                        }
-                      },
-                      child: SizedBox(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: list[idx].path.contains("pdf")
-                              ? AbsorbPointer(
-                            // 클릭/스크롤 막기
-                              child: SfPdfViewer.file(
-                                File(list[idx].path),
-                                controller: _pdfArrivalController,
-                                canShowPaginationDialog: false,
-                                canShowScrollHead: false,
-                                enableTextSelection: false,
-                                pageLayoutMode: PdfPageLayoutMode.single,
-                                scrollDirection: PdfScrollDirection.vertical,
-                                initialScrollOffset: const Offset(0, 0),
-                                enableDocumentLinkAnnotation: false,
-                                enableHyperlinkNavigation: false,
-                                onDocumentLoaded: (details) {
-                                  _pdfArrivalController.jumpToPage(1);
-                                },
+                          ),
+                          Positioned(
+                              top: 2,
+                              right: 2,
+                              child: Container(
+                                width: 20,
+                                height: 20,
+                                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(25)),
+                                child: IconButton(
+                                    onPressed: () {
+                                      context.read<ImagesProvider>().removeArrivalImage(list[idx], widget.planId);
+                                    },
+                                    style: IconButton.styleFrom(padding: EdgeInsets.zero),
+                                    icon: const Icon(
+                                      Icons.close,
+                                      size: 15,
+                                      color: Colors.black87,
+                                    )),
                               ))
-                              : AspectRatio(
-                              aspectRatio: 1.0,
-                              child: SizedBox(
-                                  child: Image.file(
-                                    list[idx],
-                                    fit: BoxFit.cover,
-                                  ))),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                        top: 2,
-                        right: 2,
-                        child: Container(
-                          width: 20,
-                          height: 20,
-                          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(25)),
-                          child: IconButton(
-                              onPressed: () {
-                                context.read<ImagesProvider>().removeArrivalImage(list[idx], widget.planId);
-                              },
-                              style: IconButton.styleFrom(padding: EdgeInsets.zero),
-                              icon: const Icon(
-                                Icons.close,
-                                size: 15,
-                                color: Colors.black87,
-                              )),
-                        ))
-                  ]);
-                },
-                itemCount: list.length,
-              )),
+                        ]);
+                      },
+                      itemCount: list.length,
+                    )),
         )
       ],
     );
@@ -327,7 +329,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
 
   void _showImageSourceDialog(String type, bool isDarkMode) {
     final imgProvider = context.read<ImagesProvider>();
-
+    final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -344,14 +346,20 @@ class _AirTicketPageState extends State<AirTicketPage> {
                     width: 200,
                     child: ElevatedButton.icon(
                       onPressed: () async {
-                        Navigator.of(context).pop(); // 다이얼로그 닫기
                         final XFile? image = await picker.pickImage(source: ImageSource.camera); // 카메라에서 이미지 선택
                         if (image != null) {
-                          if (type == "departure") {
-                            imgProvider.addDepartureImage(image, null, widget.planId);
-                          } else if (type == "arrival") {
-                            imgProvider.addArrivalImage(image, null, widget.planId);
+                          if (context.mounted) {
+                            final list = context.read<ImagesProvider>().departureImg;
+                            if(kReleaseMode && list.isNotEmpty && !isRemove){
+                              context.read<AdmobProvider>().interstitialAd!.show();
+                            }
+                            if (type == "departure") {
+                              imgProvider.addDepartureImage(image, null, widget.planId);
+                            } else if (type == "arrival") {
+                              imgProvider.addArrivalImage(image, null, widget.planId);
+                            }
                           }
+                          Navigator.of(context).pop(); // 다이얼로그 닫기
                         }
                       },
                       style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),

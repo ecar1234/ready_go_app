@@ -11,6 +11,7 @@ import 'package:ready_go_project/domain/entities/provider/supplies_template_prov
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
 import 'package:ready_go_project/util/admob_util.dart';
 
+import '../../../domain/entities/provider/admob_provider.dart';
 import '../../../domain/entities/provider/purchase_manager.dart';
 import '../../../domain/entities/provider/responsive_height_provider.dart';
 
@@ -71,6 +72,7 @@ class _AddTemplatePageState extends State<AddTemplatePage> {
     final isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
     final hei = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
     final double bannerHei = _isLoaded ? _admobUtil.bannerAd!.size.height.toDouble() : 0;
+    final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
     return SafeArea(
         child: Scaffold(
       appBar: AppBar(
@@ -229,11 +231,14 @@ class _AddTemplatePageState extends State<AddTemplatePage> {
                                       ? null
                                       : () async {
                                           if (widget.temp == null) {
-                                            bool isCreated = await _tempAddDialog(context, isDarkMode);
+                                            bool isCreated = await _tempAddDialog(context, isDarkMode, isRemove);
                                             if (isCreated) {
                                               Get.back();
                                             }
                                           } else {
+                                            if(kReleaseMode && !isRemove){
+                                              context.read<AdmobProvider>().interstitialAd!.show();
+                                            }
                                             context.read<SuppliesTemplateProvider>().changeTemplate(_tempList, widget.idx);
                                             Navigator.pop(context);
                                           }
@@ -267,7 +272,7 @@ class _AddTemplatePageState extends State<AddTemplatePage> {
     ));
   }
 
-  Future<dynamic> _tempAddDialog(BuildContext context, bool isDarkMode) async {
+  Future<dynamic> _tempAddDialog(BuildContext context, bool isDarkMode, bool isRemove) async {
     return showDialog(
         context: context,
         builder: (context) {
@@ -327,6 +332,10 @@ class _AddTemplatePageState extends State<AddTemplatePage> {
                                 final temp = TemplateModel(tempTitle: _tempTitleController.text);
                                 final list = _tempList.map((item) => SupplyModel(item: item, isCheck: false)).toList();
                                 temp.temp = list;
+                                final tempList = context.read<SuppliesTemplateProvider>().tempList;
+                                if(kReleaseMode && !isRemove && tempList!.length == 1){
+                                  context.read<AdmobProvider>().interstitialAd!.show();
+                                }
                                 context.read<SuppliesTemplateProvider>().addTemplate(temp);
                                 _tempTitleController.clear();
                                 Navigator.of(context).pop(true);

@@ -59,7 +59,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
       subjectController.text = widget.plan!.subject ?? "";
       _dates = widget.plan!.schedule!;
     }
-
+    context.read<AdmobProvider>().interstitialAd!.show();
     WidgetsBinding.instance.addPostFrameCallback((_){
       if(kReleaseMode){
         final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
@@ -170,6 +170,10 @@ class _AddPlanPageState extends State<AddPlanPage> {
                       } catch (ex) {
                         throw (ex).toString();
                       }
+                      final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
+                      if(kReleaseMode && !isRemove && list.isNotEmpty){
+                        context.read<AdmobProvider>().interstitialAd!.show();
+                      }
                       Navigator.pop(context);
                     },
                     style: TextButton.styleFrom(padding: EdgeInsets.zero),
@@ -186,119 +190,123 @@ class _AddPlanPageState extends State<AddPlanPage> {
                 ),
               ],
             ),
-            body: Container(
-              height: hei,
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  LayoutBuilder(
-                      builder: (BuildContext context, BoxConstraints constraints) => SingleChildScrollView(
-                            child: SizedBox(
-                              height: hei - bannerHei - 40,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  _nationSelection(context),
-                                  const Gap(10),
-                                  _titleSection(),
-                                  const Gap(10),
-                                  Expanded(
-                                    child: SingleChildScrollView(
-                                      child: Container(
-                                          // width: constraints.maxWidth <= 600 ? MediaQuery.sizeOf(context).width : 840,
-                                          padding: const EdgeInsets.symmetric(vertical: 20),
-                                          decoration: BoxDecoration(
-                                              border: Border.all(),
-                                              borderRadius: BorderRadius.circular(10),
-                                              color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
-                                          child: _calendarSection(isDarkMode)),
+            body: Center(
+              child: Container(
+                height: hei,
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    LayoutBuilder(
+                        builder: (BuildContext context, BoxConstraints constraints) => SingleChildScrollView(
+                              child: SizedBox(
+                                height: hei - bannerHei - 40,
+                                width: constraints.maxWidth > 800 ? 700 : MediaQuery.sizeOf(context).width,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    _nationSelection(context),
+                                    const Gap(10),
+                                    _titleSection(),
+                                    const Gap(10),
+                                    Expanded(
+                                      child: SingleChildScrollView(
+                                        child: Container(
+                                            // width: constraints.maxWidth <= 600 ? MediaQuery.sizeOf(context).width : 840,
+                                            padding: const EdgeInsets.symmetric(vertical: 20),
+                                            decoration: BoxDecoration(
+                                                border: Border.all(),
+                                                borderRadius: BorderRadius.circular(10),
+                                                color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
+                                            child: _calendarSection(isDarkMode, hei)),
+                                      ),
                                     ),
-                                  ),
-                                  // const Gap(30),
-                                  // create button
-                                  // SizedBox(
-                                  //   height: 50,
-                                  //   child: Row(
-                                  //     mainAxisAlignment: MainAxisAlignment.center,
-                                  //     children: [
-                                  //       SizedBox(
-                                  //         width: 150,
-                                  //         height: 50,
-                                  //         child: ElevatedButton(
-                                  //           onPressed: () {
-                                  //             if (widget.plan != null) {
-                                  //               if (widget.plan!.nation! == nationController.text && widget.plan!.schedule! == _dates) {
-                                  //                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                  //                   content: Text("변경 사항이 존재 하지 않습니다."),
-                                  //                   duration: Duration(seconds: 1),
-                                  //                 ));
-                                  //                 return;
-                                  //               } else {}
-                                  //             } else {
-                                  //               if (nationController.text.isEmpty) {
-                                  //                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                  //                   content: Text("여행 제목을 입력해 주세요."),
-                                  //                   duration: Duration(seconds: 1),
-                                  //                 ));
-                                  //                 return;
-                                  //               }
-                                  //               if (_dates.length > 2 || _dates.isEmpty) {
-                                  //                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                  //                   content: Text("일정을 선택해 주세요"),
-                                  //                   duration: Duration(seconds: 1),
-                                  //                 ));
-                                  //                 return;
-                                  //               }
-                                  //             }
-                                  //             try {
-                                  //               PlanModel plan = PlanModel();
-                                  //               if (widget.plan != null) {
-                                  //                 plan
-                                  //                   ..id = widget.plan!.id
-                                  //                   ..schedule = _dates
-                                  //                   ..nation = nationController.text
-                                  //                   ..favorites = widget.plan!.favorites;
-                                  //                 context.read<PlanListProvider>().changePlan(plan);
-                                  //               } else {
-                                  //                 plan
-                                  //                   ..id = idNum + 1
-                                  //                   ..nation = nationController.text
-                                  //                   ..schedule = _dates
-                                  //                   ..favorites = false;
-                                  //                 context.read<PlanListProvider>().addPlanList(plan);
-                                  //               }
-                                  //             } catch (ex) {
-                                  //               throw (ex).toString();
-                                  //             }
-                                  //             Navigator.pop(context);
-                                  //           },
-                                  //           style: ElevatedButton.styleFrom(
-                                  //               backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
-                                  //               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                  //           child: Text(
-                                  //             widget.plan != null ? "수정" : "생성",
-                                  //             style: TextStyle(
-                                  //                 fontSize: 18,
-                                  //                 fontWeight: FontWeight.w500,
-                                  //                 color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
-                                  //           ),
-                                  //         ),
-                                  //       ),
-                                  //     ],
-                                  //   ),
-                                  // ),
-                                ],
+                                    // const Gap(30),
+                                    // create button
+                                    // SizedBox(
+                                    //   height: 50,
+                                    //   child: Row(
+                                    //     mainAxisAlignment: MainAxisAlignment.center,
+                                    //     children: [
+                                    //       SizedBox(
+                                    //         width: 150,
+                                    //         height: 50,
+                                    //         child: ElevatedButton(
+                                    //           onPressed: () {
+                                    //             if (widget.plan != null) {
+                                    //               if (widget.plan!.nation! == nationController.text && widget.plan!.schedule! == _dates) {
+                                    //                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                    //                   content: Text("변경 사항이 존재 하지 않습니다."),
+                                    //                   duration: Duration(seconds: 1),
+                                    //                 ));
+                                    //                 return;
+                                    //               } else {}
+                                    //             } else {
+                                    //               if (nationController.text.isEmpty) {
+                                    //                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                    //                   content: Text("여행 제목을 입력해 주세요."),
+                                    //                   duration: Duration(seconds: 1),
+                                    //                 ));
+                                    //                 return;
+                                    //               }
+                                    //               if (_dates.length > 2 || _dates.isEmpty) {
+                                    //                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                    //                   content: Text("일정을 선택해 주세요"),
+                                    //                   duration: Duration(seconds: 1),
+                                    //                 ));
+                                    //                 return;
+                                    //               }
+                                    //             }
+                                    //             try {
+                                    //               PlanModel plan = PlanModel();
+                                    //               if (widget.plan != null) {
+                                    //                 plan
+                                    //                   ..id = widget.plan!.id
+                                    //                   ..schedule = _dates
+                                    //                   ..nation = nationController.text
+                                    //                   ..favorites = widget.plan!.favorites;
+                                    //                 context.read<PlanListProvider>().changePlan(plan);
+                                    //               } else {
+                                    //                 plan
+                                    //                   ..id = idNum + 1
+                                    //                   ..nation = nationController.text
+                                    //                   ..schedule = _dates
+                                    //                   ..favorites = false;
+                                    //                 context.read<PlanListProvider>().addPlanList(plan);
+                                    //               }
+                                    //             } catch (ex) {
+                                    //               throw (ex).toString();
+                                    //             }
+                                    //             Navigator.pop(context);
+                                    //           },
+                                    //           style: ElevatedButton.styleFrom(
+                                    //               backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                    //               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                                    //           child: Text(
+                                    //             widget.plan != null ? "수정" : "생성",
+                                    //             style: TextStyle(
+                                    //                 fontSize: 18,
+                                    //                 fontWeight: FontWeight.w500,
+                                    //                 color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                                    //           ),
+                                    //         ),
+                                    //       ),
+                                    //     ],
+                                    //   ),
+                                    // ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          )),
-                  if (_isLoaded && _admobUtil.bannerAd != null)
-                    SizedBox(
-                      height: _admobUtil.bannerAd!.size.height.toDouble(),
-                      width: _admobUtil.bannerAd!.size.width.toDouble(),
-                      child: _admobUtil.getBannerAdWidget(),
-                    )
-                ],
+                            )),
+                    if (_isLoaded && _admobUtil.bannerAd != null)
+                      SizedBox(
+                        height: _admobUtil.bannerAd!.size.height.toDouble(),
+                        width: _admobUtil.bannerAd!.size.width.toDouble(),
+                        child: _admobUtil.getBannerAdWidget(),
+                      )
+                  ],
+                ),
               ),
             )),
       ),
@@ -420,7 +428,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
     );
   }
 
-  Widget _calendarSection(bool isDarkMode) {
+  Widget _calendarSection(bool isDarkMode, double hei) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -429,20 +437,24 @@ class _AddPlanPageState extends State<AddPlanPage> {
           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
         ),
         const Gap(10),
-        SizedBox(
-            // height: 300,
-            width: 500,
-            child: CalendarDatePicker2(
-                config: CalendarDatePicker2Config(
-                    firstDate: DateTime.now(),
-                    firstDayOfWeek: 0,
-                    calendarType: CalendarDatePicker2Type.range,
-                    weekdayLabels: ["일", "월", "화", "수", "목", "금", "토"],
-                    selectedDayHighlightColor: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
-                value: _dates,
-                onValueChanged: (list) => setState(() {
-                      _dates = list;
-                    }))),
+        LayoutBuilder(
+          builder: (context, constraints){
+            return SizedBox(
+                height: hei * 0.3,
+                width: constraints.maxWidth > 800 ? 640 : MediaQuery.sizeOf(context).width ,
+                child: CalendarDatePicker2(
+                    config: CalendarDatePicker2Config(
+                        firstDate: DateTime.now(),
+                        firstDayOfWeek: 0,
+                        calendarType: CalendarDatePicker2Type.range,
+                        weekdayLabels: ["일", "월", "화", "수", "목", "금", "토"],
+                        selectedDayHighlightColor: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                    value: _dates,
+                    onValueChanged: (list) => setState(() {
+                          _dates = list;
+                        })));
+          },
+        ),
         SizedBox(
             height: 30,
             child: _dates.isNotEmpty

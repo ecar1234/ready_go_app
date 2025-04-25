@@ -206,10 +206,6 @@ class _PlanMainPageState extends State<PlanMainPage> {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () {
-                        bool isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
-                        if(!isRemove){
-                          context.read<AdmobProvider>().loadAdInterstitialAd();
-                        }
                         Navigator.of(context).push(
                           MaterialPageRoute(builder: (context) => const AddPlanPage()),
                         );

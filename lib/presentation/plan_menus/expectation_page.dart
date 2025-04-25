@@ -14,6 +14,7 @@ import 'package:ready_go_project/domain/entities/provider/expectation_provider.d
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
 import 'package:ready_go_project/util/intl_utils.dart';
 
+import '../../domain/entities/provider/admob_provider.dart';
 import '../../domain/entities/provider/purchase_manager.dart';
 import '../../domain/entities/provider/responsive_height_provider.dart';
 import '../../util/admob_util.dart';
@@ -60,6 +61,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
       if(kReleaseMode){
         final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
         if(!isRemove){
+          context.read<AdmobProvider>().interstitialAd!.show();
           _admobUtil.loadBannerAd(onAdLoaded: () {
             setState(() {
               _isLoaded = true;

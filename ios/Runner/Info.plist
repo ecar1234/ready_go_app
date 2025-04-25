@@ -36,11 +36,11 @@
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
 		<key>NSCameraUsageDescription</key>
-		<string>Used to demonstrate image picker plugin</string>
-		<key>NSMicrophoneUsageDescription</key>
-		<string>Used to capture audio for image picker plugin</string>
-		<key>NSPhotoLibraryUsageDescription</key>
-		<string>Used to demonstrate image picker plugin</string>
+    <string>여행 사진 촬영, 티켓 및 영수증 스캔을 위해 카메라 접근이 필요합니다.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>앱 사용 중 전화를 위한 마이크 접근이 필요합니다.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>여행 사진을 저장하거나 불러오기 위해 사진 라이브러리 접근이 필요합니다.</string>
 		<key>SKAdNetworkItems</key>
 		<array>
 			<dict>

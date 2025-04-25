@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+import 'package:ready_go_project/domain/entities/provider/purchase_manager.dart';
 
 import '../domain/entities/provider/theme_mode_provider.dart';
-
 
 class OptionPage extends StatefulWidget {
   const OptionPage({super.key});
@@ -14,12 +12,10 @@ class OptionPage extends StatefulWidget {
 }
 
 class _OptionPageState extends State<OptionPage> {
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
   }
 
   @override
@@ -59,6 +55,54 @@ class _OptionPageState extends State<OptionPage> {
                 ],
               ),
             ),
+            SizedBox(
+              height: 60,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const SizedBox(
+                    child: Text(
+                      "구매 복원 하기",
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  SizedBox(
+                    child: ElevatedButton(
+                        onPressed: () async{
+                          context.read<PurchaseManager>().loadPastPurchases();
+                          showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                    title: const Text(
+                                      "구매 복원 완료",
+                                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                                    ),
+                                    content: const Text(
+                                      "구매 복원이 완료 되었습니다.",
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                    actions: [
+                                      SizedBox(
+                                        child: ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                                backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
+                                            child: Text(
+                                              "닫기",
+                                              style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                                            )),
+                                      )
+                                    ],
+                                  ));
+                        },
+                        style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
+                        child: Text("복원", style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary))),
+                  )
+                ],
+              ),
+            )
           ],
         ),
       ),

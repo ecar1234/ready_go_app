@@ -332,8 +332,8 @@ class _HomePageState extends State<HomePage> {
     return LayoutBuilder(
       builder: (context, constraints) {
       return SizedBox(
-        // height: constraints.maxWidth > 640 ? 400 : 200,
-        height: 450,
+        height: constraints.maxWidth > 640 ? (constraints.maxWidth > 800 ? 520 : 420) : 200,
+        // height: 450,
         child: GridView(
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

@@ -212,7 +212,7 @@ class PurchaseManager with ChangeNotifier {
       // 필요하다면 사용자에게 복원 절차가 시작되었음을 알리는 UI 피드백 제공
       // 예: ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('구매 내역 복원을 시작합니다... 완료 시 자동으로 적용됩니다.')));
     } catch (e) {
-      logger.e('구매 내역 복원 시작 오류: $e');
+      debugPrint('구매 내역 복원 시작 오류: ${e.toString()}');
       // TODO: [개선점 4] 사용자에게 오류 발생을 알리는 UI 피드백이 필요합니다.
       // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('구매 내역 복원 중 오류가 발생했습니다.')));
     }

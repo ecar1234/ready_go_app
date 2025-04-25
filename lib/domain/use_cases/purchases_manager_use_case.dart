@@ -30,7 +30,7 @@ class PurchasesManagerUseCase with PurchasesRepo {
   @override
   Future<void> removePurchasesData(List<PurchaseModel> items) async{
     final list = await GetIt.I.get<PurchasesLocalDataRepo>().getPurchasesData();
-    if(list != items){
+    if(list.length != items.length){
       await GetIt.I.get<PurchasesLocalDataRepo>().updatePurchasesData(items);
     }else{
       return;
