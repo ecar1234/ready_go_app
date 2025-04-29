@@ -6,7 +6,6 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:ready_go_project/bloc/data_bloc.dart';
@@ -20,7 +19,6 @@ import 'package:ready_go_project/util/date_util.dart';
 import '../data/models/plan_model/plan_model.dart';
 import '../domain/entities/provider/accommodation_provider.dart';
 import '../domain/entities/provider/account_provider.dart';
-import '../domain/entities/provider/admob_provider.dart';
 import '../domain/entities/provider/images_provider.dart';
 import '../domain/entities/provider/plan_list_provider.dart';
 import '../domain/entities/provider/purchase_manager.dart';
@@ -151,10 +149,10 @@ class _PlanMainPageState extends State<PlanMainPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_){
-      if(kReleaseMode){
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (kReleaseMode) {
         final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
-        if(!isRemove){
+        if (!isRemove) {
           _admobUtil.loadBannerAd(onAdLoaded: () {
             setState(() {
               _isLoaded = true;
@@ -168,7 +166,6 @@ class _PlanMainPageState extends State<PlanMainPage> {
         }
       }
     });
-
   }
 
   @override
@@ -199,7 +196,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
               SizedBox(
                 // button + Listview
                 height: height - 100 - bannerHeight,
-                child: Column(children: [
+                child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
                   // 여행 생성 버튼
                   SizedBox(
                     width: MediaQuery.sizeOf(context).width,
@@ -234,54 +231,94 @@ class _PlanMainPageState extends State<PlanMainPage> {
                       ),
                     ),
                   ),
-                  const Gap(20),
                   // ListView
+                  const Gap(20),
                   LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-                    return SizedBox(
-                        width: MediaQuery.sizeOf(context).width,
-                        height: height - 180 - bannerHeight, // height - button+gap(100) + banner(50) + bottom(70)
-                        // height: favoriteList.isEmpty ? height - 160
-                        //     : height - 170 - ((favoriteList.length * 140)+50),
-                        child: list.isEmpty
-                            ? Center(
-                              child: SizedBox(
-                                  height: height * 0.5,
-                                  width: constraints.maxWidth > 640 ? 550 : 330,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text("✨ Ready Go와 함께 하는 여행!", style: TextStyle(fontWeight: FontWeight.w600, fontSize: constraints.maxWidth > 640 ? 34 : 22),),
-                                      const Gap(20),
-                                      Text("✅ 여행 경비를 미리 정리하고 관리해 보세요.", style: TextStyle(
-                                        fontSize: constraints.maxWidth > 640 ? 24 : 18, fontWeight: FontWeight.w500
-                                      ),textAlign: TextAlign.center,),
-                                      const Gap(5),
-                                      Text("✅ E-Ticket을 출력 할 필요없이 쉽게 저장 하세요.", style: TextStyle(
-                                        fontSize: constraints.maxWidth > 640 ? 24 : 18, fontWeight: FontWeight.w500
-                                      ),),
-                                      const Gap(5),
-                                      Text("✅ 체크리스트를 템플릿으로 만들고 쉽게 적용 할 수 있어요.", style: TextStyle(
-                                        fontSize: constraints.maxWidth > 640 ? 24 : 18, fontWeight: FontWeight.w500
-                                      ),textAlign: TextAlign.start),
-                                      const Gap(5),
-                                      Text("✅ E-SIM 로밍 정보를 쉽게 저장하고 활성화해 보세요.", style: TextStyle(
-                                        fontSize: constraints.maxWidth > 640 ? 24 : 18, fontWeight: FontWeight.w500
-                                      ),),
-                                      const Gap(5),
-                                      Text("✅ 여행 중 사용 경비를 쉽게 기록 할 수 있어요.", style: TextStyle(
-                                        fontSize: constraints.maxWidth > 640 ? 24 : 18, fontWeight: FontWeight.w500
-                                      ),),
-                                      const Gap(5),
-                                      Text("✅ 숙소 정보를 쉽게 저장하고 언제든 지도로 확인 할 수 있어요.", style: TextStyle(
-                                        fontSize: constraints.maxWidth > 640 ? 24 : 18, fontWeight: FontWeight.w500
-                                      ),),
-                                      // Text("✈️Ready Go와 함께 하는 여행!"),
-                                    ],
+                    return list.isEmpty
+                        ? SizedBox(
+                            height: height * 0.6,
+                            width: constraints.maxWidth > 640
+                                ? (constraints.maxWidth > 800 ? 650 : 520)
+                                : 320,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Center(
+                                  child: Text(
+                                    "✨ Ready Go와 함께 하는 여행!",
+                                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: constraints.maxWidth > 640 ? 34 : 22),
                                   ),
                                 ),
-                            )
-                            : _planListSection(context, list, isDarkMode, state));
+                                const Gap(20),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "✅ 예상 경비",
+                                      style: TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 18, fontWeight: FontWeight.w500),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    const Text("- 여행 경비를 미리 정리하고 관리해 보세요.")
+                                  ],
+                                ),
+                                const Gap(10),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("✅ E-Ticket 관리",
+                                        style: TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 18, fontWeight: FontWeight.w500),
+                                        textAlign: TextAlign.center),
+                                    const Text("- 출력 할 필요 없이 쉽게 저장 하세요.")
+                                  ],
+                                ),
+                                const Gap(10),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("✅ 준비물(체크리스트)",
+                                        style: TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w500),
+                                        textAlign: TextAlign.center),
+                                    const Text("- 템플릿으로 만들고 쉽게 적용 할 수 있어요.")
+                                  ],
+                                ),
+                                const Gap(10),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("✅ E-SIM 관리",
+                                        style: TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w500),
+                                        textAlign: TextAlign.center),
+                                    const Text("- 활성화 코드를 저장하고 쉽게 활성화 복사 할 수 있어요.")
+                                  ],
+                                ),
+                                const Gap(10),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("✅ 여행 경비",
+                                        style: TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w500),
+                                        textAlign: TextAlign.center),
+                                    const Text("- 사용한 경비를 쉽게 기록 할 수 있어요.")
+                                  ],
+                                ),
+                                const Gap(10),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("✅ 숙소 관리",
+                                        style: TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w500),
+                                        textAlign: TextAlign.center),
+                                    const Text("- 숙소 정보를 저장하고 언제든 지도로 확인 할 수 있어요.")
+                                  ],
+                                ),
+                                // Text("✈️Ready Go와 함께 하는 여행!"),
+                              ],
+                            ),
+                          )
+                        : SizedBox(
+                            width: MediaQuery.sizeOf(context).width,
+                            height: height - 180 - bannerHeight, // height - button+gap(100) + banner(50) + bottom(70)
+                            child: _planListSection(context, list, isDarkMode, state));
                   }),
                 ]),
               ),
@@ -446,17 +483,16 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                       Expanded(
                                         child: SizedBox(
                                             child: Text(
-                                              "주제: ${list[idx].subject}",
-                                              maxLines: 1,
-                                              style: const TextStyle(
-                                                // color: Colors.white,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  fontWeight: FontWeight.w600),
-                                            )),
+                                          "주제: ${list[idx].subject}",
+                                          maxLines: 1,
+                                          style: const TextStyle(
+                                              // color: Colors.white,
+                                              overflow: TextOverflow.ellipsis,
+                                              fontWeight: FontWeight.w600),
+                                        )),
                                       ),
                                     ],
                                   ),
-
                                   SizedBox(
                                     child: Text(
                                       "${DateUtil.dateToString(list[idx].schedule?.first ?? DateTime.now())} ~ ${DateUtil.dateToString(list[idx].schedule?.last ?? DateTime.now())}",

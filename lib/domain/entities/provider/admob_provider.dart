@@ -9,12 +9,13 @@ class AdmobProvider with ChangeNotifier {
 
   // BannerAd? _bannerAd;
   InterstitialAd? _interstitialAd;
-  // bool _isLoaded = false;
+
+  bool _isLoaded = false;
 
   // BannerAd? get bannerAd => _bannerAd;
   InterstitialAd? get interstitialAd => _interstitialAd;
-  // bool get isLoaded => _isLoaded;
 
+  // bool get isLoaded => _isLoaded;
 
   // void loadAdBanner() {
   //   late String adUnitId;
@@ -70,15 +71,43 @@ class AdmobProvider with ChangeNotifier {
         request: const AdRequest(),
         adLoadCallback: InterstitialAdLoadCallback(onAdLoaded: (InterstitialAd ad) {
           _interstitialAd = ad;
+          _isLoaded = true;
+          _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (InterstitialAd ad) {
+              logger.i('$ad dismissed.');
+              ad.dispose();
+              _interstitialAd = null;
+              _isLoaded = false;
+              // 필요하다면 다음 광고 로드
+              // _loadInterstitialAd();
+            },
+            onAdFailedToShowFullScreenContent: (Ad ad, AdError error) {
+              logger.e('$ad failed to show: $error');
+              ad.dispose();
+              _interstitialAd = null;
+              _isLoaded = false;
+              // 필요하다면 재시도 또는 오류 처리
+            },
+          );
         }, onAdFailedToLoad: (LoadAdError error) {
           logger.e("full screen AD loading failed");
         }));
   }
 
+  void showInterstitialAd() {
+    if (_isLoaded && _interstitialAd != null) {
+      _interstitialAd!.show();
+    } else {
+      logger.w("Interstitial Ad is not ready yet.");
+      // 광고가 준비되지 않았을 때의 처리
+    }
+  }
 
-  void interstitialAdDispose() {
+  @override
+  void dispose() {
     // TODO: implement dispose
     super.dispose();
     _interstitialAd?.dispose();
   }
+
 }

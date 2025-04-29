@@ -36,7 +36,6 @@ class _AddPlanPageState extends State<AddPlanPage> {
   TextEditingController nationController = TextEditingController();
   TextEditingController subjectController = TextEditingController();
   List<DateTime?> _dates = [];
-  InterstitialAd? _interstitialAd;
   Timer? _debounce;
 
   _onChanged(String value) {
@@ -59,7 +58,6 @@ class _AddPlanPageState extends State<AddPlanPage> {
       subjectController.text = widget.plan!.subject ?? "";
       _dates = widget.plan!.schedule!;
     }
-    context.read<AdmobProvider>().interstitialAd!.show();
     WidgetsBinding.instance.addPostFrameCallback((_){
       if(kReleaseMode){
         final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
@@ -87,7 +85,6 @@ class _AddPlanPageState extends State<AddPlanPage> {
     subjectController.dispose();
     _debounce?.cancel();
     _admobUtil.dispose();
-    // context.read<AdmobProvider>().interstitialAdDispose();
   }
 
   @override
@@ -172,7 +169,8 @@ class _AddPlanPageState extends State<AddPlanPage> {
                       }
                       final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
                       if(kReleaseMode && !isRemove && list.isNotEmpty){
-                        context.read<AdmobProvider>().interstitialAd!.show();
+                        context.read<AdmobProvider>().loadAdInterstitialAd();
+                        context.read<AdmobProvider>().showInterstitialAd();
                       }
                       Navigator.pop(context);
                     },

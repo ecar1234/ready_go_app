@@ -61,7 +61,6 @@ class _ExpectationPageState extends State<ExpectationPage> {
       if(kReleaseMode){
         final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
         if(!isRemove){
-          context.read<AdmobProvider>().interstitialAd!.show();
           _admobUtil.loadBannerAd(onAdLoaded: () {
             setState(() {
               _isLoaded = true;

@@ -334,7 +334,8 @@ class _AddTemplatePageState extends State<AddTemplatePage> {
                                 temp.temp = list;
                                 final tempList = context.read<SuppliesTemplateProvider>().tempList;
                                 if(kReleaseMode && !isRemove && tempList!.length == 1){
-                                  context.read<AdmobProvider>().interstitialAd!.show();
+                                  context.read<AdmobProvider>().loadAdInterstitialAd();
+                                  context.read<AdmobProvider>().showInterstitialAd();
                                 }
                                 context.read<SuppliesTemplateProvider>().addTemplate(temp);
                                 _tempTitleController.clear();

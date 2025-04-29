@@ -205,7 +205,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
   }
 
   Future<void> _addAccommodation(BuildContext context, int month, int day, double hei) {
-    final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
+    // final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
     return showDialog(
         context: context,
         builder: (BuildContext diaContext) {
@@ -498,8 +498,10 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("체크아웃 시간을 확인해 주세요")));
                                       return;
                                     }
+                                    final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
                                     if(kReleaseMode && !isRemove){
-                                      context.read<AdmobProvider>().interstitialAd!.show();
+                                      context.read<AdmobProvider>().loadAdInterstitialAd();
+                                      context.read<AdmobProvider>().showInterstitialAd();
                                     }
 
                                     AccommodationModel info = AccommodationModel();

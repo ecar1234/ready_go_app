@@ -63,12 +63,6 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
     });
   }
 
-  void _loadFullScreenAd(BuildContext context){
-    bool isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
-    if(!isRemove){
-      context.read<AdmobProvider>().loadAdInterstitialAd();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -148,7 +142,11 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
                                 padding: const EdgeInsets.symmetric(horizontal: 20),
                                 child: ElevatedButton.icon(
                                   onPressed: () {
-                                    _loadFullScreenAd(context);
+                                    final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
+                                    if(kReleaseMode && !isRemove){
+                                      context.read<AdmobProvider>().loadAdInterstitialAd();
+                                      context.read<AdmobProvider>().showInterstitialAd();
+                                    }
                                     switch (itemList[idx]) {
                                       case "예상 경비":
                                         Navigator.of(context).push(MaterialPageRoute(builder: (context) => ExpectationPage(planId: widget.plan.id)));

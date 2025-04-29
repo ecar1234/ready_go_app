@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
@@ -47,7 +48,6 @@ class _AirTicketPageState extends State<AirTicketPage> {
       if (kReleaseMode) {
         final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
         if (!isRemove) {
-          context.read<AdmobProvider>().interstitialAd!.show();
           _admobUtil.loadBannerAd(onAdLoaded: () {
             setState(() {
               _isLoaded = true;
@@ -328,11 +328,10 @@ class _AirTicketPageState extends State<AirTicketPage> {
   }
 
   void _showImageSourceDialog(String type, bool isDarkMode) {
-    final imgProvider = context.read<ImagesProvider>();
-    final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
         return Dialog(
             insetPadding: const EdgeInsets.all(20),
             child: SizedBox(
@@ -347,19 +346,25 @@ class _AirTicketPageState extends State<AirTicketPage> {
                     child: ElevatedButton.icon(
                       onPressed: () async {
                         final XFile? image = await picker.pickImage(source: ImageSource.camera); // 카메라에서 이미지 선택
-                        if (image != null) {
-                          if (context.mounted) {
+                        if (image != null && context.mounted) {
+                          if (type == "departure") {
                             final list = context.read<ImagesProvider>().departureImg;
-                            if(kReleaseMode && list.isNotEmpty && !isRemove){
-                              context.read<AdmobProvider>().interstitialAd!.show();
+                            if (kReleaseMode && list.isNotEmpty && !isRemove) {
+                              context.read<AdmobProvider>().loadAdInterstitialAd();
+                              context.read<AdmobProvider>().showInterstitialAd();
                             }
-                            if (type == "departure") {
-                              imgProvider.addDepartureImage(image, null, widget.planId);
-                            } else if (type == "arrival") {
-                              imgProvider.addArrivalImage(image, null, widget.planId);
+                            context.read<ImagesProvider>().addDepartureImage(image, null, widget.planId);
+                          } else if (type == "arrival") {
+                            final list = context.read<ImagesProvider>().arrivalImg;
+                            if (kReleaseMode && list.isNotEmpty && !isRemove) {
+                              context.read<AdmobProvider>().loadAdInterstitialAd();
+                              context.read<AdmobProvider>().showInterstitialAd();
                             }
+                            context.read<ImagesProvider>().addArrivalImage(image, null, widget.planId);
                           }
                           Navigator.of(context).pop(); // 다이얼로그 닫기
+                        } else {
+                          Get.snackbar("카메라 이미지 오류", "알 수 없는 이유로 이미지를 불러오지 못했습니다.");
                         }
                       },
                       style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
@@ -378,14 +383,26 @@ class _AirTicketPageState extends State<AirTicketPage> {
                     width: 200,
                     child: ElevatedButton.icon(
                       onPressed: () async {
-                        Navigator.of(context).pop(); // 다이얼로그 닫기
                         final XFile? image = await picker.pickImage(source: ImageSource.gallery); // 갤러리에서 이미지 선택
-                        if (image != null) {
+                        if (image != null && context.mounted) {
                           if (type == "departure") {
-                            imgProvider.addDepartureImage(image, null, widget.planId);
+                            final list = context.read<ImagesProvider>().departureImg;
+                            if (kReleaseMode && list.isNotEmpty && !isRemove) {
+                              context.read<AdmobProvider>().loadAdInterstitialAd();
+                              context.read<AdmobProvider>().showInterstitialAd();
+                            }
+                            context.read<ImagesProvider>().addDepartureImage(image, null, widget.planId);
                           } else if (type == "arrival") {
-                            imgProvider.addArrivalImage(image, null, widget.planId);
+                            final list = context.read<ImagesProvider>().arrivalImg;
+                            if (kReleaseMode && list.isNotEmpty && !isRemove) {
+                              context.read<AdmobProvider>().loadAdInterstitialAd();
+                              context.read<AdmobProvider>().showInterstitialAd();
+                            }
+                            context.read<ImagesProvider>().addArrivalImage(image, null, widget.planId);
                           }
+                          Navigator.of(context).pop(); // 다이얼로그 닫기
+                        } else {
+                          Get.snackbar("이미지 불러오기 실패", "알 수 없는 문제로 이미지 불러오기 실패.");
                         }
                       },
                       style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
@@ -404,18 +421,30 @@ class _AirTicketPageState extends State<AirTicketPage> {
                     width: 200,
                     child: ElevatedButton.icon(
                       onPressed: () async {
-                        Navigator.of(context).pop(); // 다이얼로그 닫기
                         FilePickerResult? result = await FilePicker.platform.pickFiles(
                           type: FileType.custom,
                           allowedExtensions: ['jpg', 'pdf', 'doc'],
                         );
 
-                        if (result != null) {
+                        if (result != null && context.mounted) {
                           if (type == "departure") {
-                            imgProvider.addDepartureImage(null, result.files, widget.planId);
+                            final list = context.read<ImagesProvider>().departureImg;
+                            if (kReleaseMode && list.isNotEmpty && !isRemove) {
+                              context.read<AdmobProvider>().loadAdInterstitialAd();
+                              context.read<AdmobProvider>().showInterstitialAd();
+                            }
+                            context.read<ImagesProvider>().addDepartureImage(null, result.files, widget.planId);
                           } else if (type == "arrival") {
-                            imgProvider.addArrivalImage(null, result.files, widget.planId);
+                            final list = context.read<ImagesProvider>().arrivalImg;
+                            if (kReleaseMode && list.isNotEmpty && !isRemove) {
+                              context.read<AdmobProvider>().loadAdInterstitialAd();
+                              context.read<AdmobProvider>().showInterstitialAd();
+                            }
+                            context.read<ImagesProvider>().addArrivalImage(null, result.files, widget.planId);
                           }
+                        Navigator.of(context).pop(); // 다이얼로그 닫기
+                        }else{
+                          Get.snackbar("파일 불러오기 실패", "알 수 없는 문제로 파일 불러오기 실패.");
                         }
                       },
                       style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),

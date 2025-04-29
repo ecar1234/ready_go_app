@@ -201,7 +201,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
             child: Center(
                 child: Text(
               "✈️ 여행이 완료되면 여행 통계를 확인 할 수 있어요.",
-              style: TextStyle(fontSize: 22),
+              style: TextStyle(fontSize: 22),textAlign: TextAlign.center,
             )),
           )
         : AspectRatio(
@@ -242,7 +242,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
       final offset = isTouched ? 1.4 : 1.1;
       final color = nationColors[idx % nationColors.length];
       return PieChartSectionData(
-          title: "${((nationsList[idx].values.first / list.length) * 100).toStringAsFixed(1)}%",
+          title: nationsList[idx].keys.first,
           value: (nationsList[idx].values.first / list.length) * 100,
           color: color,
           titleStyle: TextStyle(
@@ -264,7 +264,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
                   color: Colors.white),
               child: Center(
                 child: Text(
-                  nationsList[idx].keys.first,
+                  "${((nationsList[idx].values.first / list.length) * 100).toStringAsFixed(1)}%",
                   maxLines: 1,
                   style: TextStyle(
                     overflow: TextOverflow.ellipsis,
@@ -283,7 +283,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
             child: Center(
                 child: Text(
               "📊 여행이 완료되면 사용 경비 통계를 확인 할 수 있어요.",
-              style: TextStyle(fontSize: 22),
+              style: TextStyle(fontSize: 22), textAlign: TextAlign.center,
             )),
           )
         : AspectRatio(
@@ -314,7 +314,8 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
   }
 
   List<PieChartSectionData> accountSection(BuildContext context, bool isDarkMode) {
-    List<Map<String, List<int>>> accountList = context.read<StatisticsUseCase>().accounts ?? [];
+    context.read<StatisticsUseCase>().getStatisticsData();
+    List<Map<String, List<int>>> accountList = context.watch<StatisticsUseCase>().accounts ?? [];
 
     return List.generate(accountList.length, (idx) {
       final isTouched = idx == accountTouchedIndex;
@@ -324,7 +325,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
       final offset = isTouched ? 1.4 : 1.0;
       final color = accountColors[idx % accountColors.length];
       return PieChartSectionData(
-          title: "${StatisticsUtil.getAccountStatistics(accountList, idx)}%",
+          title: StatisticsUtil.getAccountValue(accountList, idx) == 0 ? "" :accountList[idx].keys.first,
           value: StatisticsUtil.getAccountValue(accountList, idx),
           color: color,
           titleStyle: TextStyle(
@@ -332,7 +333,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
-          badgeWidget: AnimatedContainer(
+          badgeWidget:StatisticsUtil.getAccountValue(accountList, idx) == 0 ? null : AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               width: widgetSize,
               height: widgetSize,
@@ -346,7 +347,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
                   color: Colors.white),
               child: Center(
                 child: Text(
-                  accountList[idx].keys.first,
+                  "${StatisticsUtil.getAccountStatistics(accountList, idx)}%",
                   maxLines: 1,
                   style: TextStyle(
                     overflow: TextOverflow.ellipsis,

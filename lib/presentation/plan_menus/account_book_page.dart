@@ -91,7 +91,6 @@ class _AccountBookPageState extends State<AccountBookPage> {
     _expandController.dispose();
     _totalDaysController.dispose();
     _usedTypeController.dispose();
-
     _debounce?.cancel();
     _admobUtil.dispose();
   }
