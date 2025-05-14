@@ -144,7 +144,6 @@ class MainPage2 extends StatefulWidget {
 
 class _MainPage2State extends State<MainPage2> {
   ImagePicker picker = ImagePicker();
-  bool _requireUpdate = false;
   int _selected = 0;
   List<Widget> pageOption = [const HomePage(), const PlanMainPage(), const VisitStatisticsPage(), const InAppPurchasePage()];
 
@@ -164,57 +163,84 @@ class _MainPage2State extends State<MainPage2> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       setFavoriteList(context);
       final remote = FirebaseRemoteConfig.instance;
-      final packageInfo = await PackageInfo.fromPlatform();
-      final minVersion = remote.getInt("min_version");
-      final currentVer = packageInfo.buildNumber;
-      debugPrint("min version : $minVersion");
-      debugPrint("current version : $currentVer");
+      // final packageInfo = await PackageInfo.fromPlatform();
+      // final currentVer = int.parse(packageInfo.buildNumber);
 
-      if (minVersion > int.parse(currentVer)) {
-        logger.i("must need update: ${minVersion > int.parse(currentVer)}");
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16)
-            ),
-            contentPadding: const EdgeInsets.all(20),
-            content: const SizedBox(
-              height: 100,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("최신 버전으로 업데이트 후", style: TextStyle(fontSize: 16),),
-                  const Gap(10),
-                  Text("이용해 주세요.", style: TextStyle(fontSize: 16),),
+      final iosMinVersion = remote.getInt("ios_min_version");
+      final iosVersion = remote.getInt("IOS_version");
+      final androidMinVersion = remote.getInt("android_min_version");
+      final androidVersion = remote.getInt("Android_version");
+
+      bool update = false;
+      debugPrint("min version : $iosMinVersion");
+      debugPrint("min version : $iosVersion");
+      debugPrint("min version : $androidMinVersion");
+      debugPrint("current version : $androidVersion");
+
+      logger.i("ios need update: ${iosMinVersion < iosVersion}");
+      logger.i("android need update: ${androidMinVersion < androidVersion}");
+      if(Platform.isAndroid){
+        if(androidVersion >= androidMinVersion){
+          update = false;
+        }else {
+          update = true;
+        }
+      }else if(Platform.isIOS){
+        if(iosVersion >= iosMinVersion){
+          update = false;
+        }else {
+          update = true;
+        }
+      }
+
+      if (update) {
+        if(mounted){
+          final isDarkMode = context.read<ThemeModeProvider>().isDarkMode;
+          showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                contentPadding: const EdgeInsets.all(20),
+                content: const SizedBox(
+                  height: 100,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "최신 버전으로 업데이트 후",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      Gap(10),
+                      Text(
+                        "이용해 주세요.",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ),
+                actions: [
+                  SizedBox(
+                    width: 100,
+                    height: 50,
+                    child: ElevatedButton(
+                        onPressed: () async {
+                          if (Platform.isIOS) {
+                            await launchUrl(Uri.parse('https://apps.apple.com/app/id6744342927'));
+                          } else {
+                            await launchUrl(Uri.parse('https://play.google.com/store/apps/details?id=com.ready_go_project'));
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.zero, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
+                        child: Text("업데이트", style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary  ),)),
+                  )
                 ],
+                actionsAlignment: MainAxisAlignment.center,
               ),
-            ),
-            actions: [
-              SizedBox(
-                width: 100,
-                height: 50,
-                child: ElevatedButton(
-                    onPressed: () async {
-                      if (Platform.isIOS) {
-                        await launchUrl(Uri.parse('https://apps.apple.com/app/id6744342927'));
-                      } else {
-                        await launchUrl(Uri.parse('https://play.google.com/store/apps/details?id=com.ready_go_project'));
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)
-                      )
-                    ),
-                    child: Text("업데이트")),
-              )
-            ],
-            actionsAlignment: MainAxisAlignment.center,
-          ),
-          barrierDismissible: false
-        );
+              barrierDismissible: false);
+        }
+
       }
     });
   }
