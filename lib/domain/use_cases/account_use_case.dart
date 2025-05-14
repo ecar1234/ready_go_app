@@ -51,8 +51,9 @@ class AccountUseCase with AccountRepo {
             List<AmountModel> list = [];
             list.add(amount);
             history.add(list);
+          }else{
+            history[day - 1]!.add(amount);
           }
-          history[day - 1]!.add(amount);
         } else {
           List<AmountModel> list = [];
           list.add(amount);
@@ -127,8 +128,9 @@ class AccountUseCase with AccountRepo {
                   List<AmountModel> list = [];
                   list.add(amount);
                   history.add(list);
+                }else{
+                  history[day - 1]!.add(amount);
                 }
-                history[day - 1]!.add(amount);
               } else {
                 List<AmountModel> list = [];
                 list.add(amount);
@@ -199,52 +201,75 @@ class AccountUseCase with AccountRepo {
     var item = history[firstIdx]![secondIdx];
 
     try {
-      if (item.type == AmountType.add) {
-        account.usageHistory![firstIdx]![secondIdx] = newAmount;
-        account.totalExchangeCost = (account.totalExchangeCost! - item.amount!) + newAmount.amount!;
-        account.balance = account.totalExchangeCost! - account.useExchangeMoney!;
-      } else {
-        account.usageHistory![firstIdx]![secondIdx] = newAmount;
-        if (item.category == newAmount.category) {
-          if (item.category == 0) {
-            account.balance = (account.balance! - item.amount!) + newAmount.amount!;
-            account.useExchangeMoney = (account.useExchangeMoney! - item.amount!) + newAmount.amount!;
-          } else {
-            account.useCard = (account.useCard! - item.amount!) + newAmount.amount!;
-          }
-        } else {
-          if (item.category == 0) {
-            account.balance = account.balance! + item.amount!;
-            account.useExchangeMoney = account.useExchangeMoney! - item.amount!;
-            account.useCard = account.useCard! + newAmount.amount!;
-          } else {
-            account.balance = account.balance! - newAmount.amount!;
-            account.useCard = account.useCard! - item.amount!;
-            account.useExchangeMoney = account.useExchangeMoney! + newAmount.amount!;
-          }
-        }
-      }
+      int day = int.parse(newAmount.id!);
+     if(item.id != newAmount.id){
+       account.usageHistory![firstIdx]!.removeAt(secondIdx);
+       if(account.usageHistory![firstIdx]!.isEmpty){
+         account.usageHistory!.removeAt(firstIdx);
+       }
+       if(history.length >= day && history[day -1] != null){
+         history[day-1]!.add(newAmount);
+       }else {
+         List<AmountModel> list = [];
+         list.add(newAmount);
+         account.usageHistory!.add(list);
+       }
 
-      // if (item.category == newAmount.category) {
-      //   if (newAmount.type == AmountType.add) {
-      //     account.totalExchangeAccount += item.amount! - newAmount.amount!;
-      //     account.totalUseAccount = account.totalExchangeAccount! - account.exchange!;
-      //   } else if (newAmount.type == AmountType.use) {
-      //     account.totalUseAccount = (account.totalUseAccount! + item.amount!) - newAmount.amount!;
-      //     account.exchange = (account.exchange! - item.amount!) + newAmount.amount!;
-      //   }
-      // } else {
-      //   if (newAmount.category == 2) {
-      //     account.exchange = account.exchange! - item.amount!;
-      //     account.card = account.card! + newAmount.amount!;
-      //     account.totalUseAccount = account.totalExchangeAccount! - account.exchange!;
-      //   } else if (newAmount.category == 0) {
-      //     account.card = account.card! - newAmount.amount!;
-      //     account.exchange = account.exchange! + newAmount.amount!;
-      //     account.totalUseAccount = account.totalExchangeAccount! - account.exchange!;
-      //   }
-      // }
-      // account.usageHistory![firstIdx]![secondIdx] = newAmount;
+       if (item.type == AmountType.add) {
+         // account.usageHistory![day-1]![secondIdx] = newAmount;
+         account.totalExchangeCost = (account.totalExchangeCost! - item.amount!) + newAmount.amount!;
+         account.balance = account.totalExchangeCost! - account.useExchangeMoney!;
+       } else {
+         // account.usageHistory![day-1]![secondIdx] = newAmount;
+         if (item.category == newAmount.category) {
+           if (item.category == 0) {
+             account.balance = (account.balance! - item.amount!) + newAmount.amount!;
+             account.useExchangeMoney = (account.useExchangeMoney! - item.amount!) + newAmount.amount!;
+           } else {
+             account.useCard = (account.useCard! - item.amount!) + newAmount.amount!;
+           }
+         } else {
+           if (item.category == 0) {
+             account.balance = account.balance! + item.amount!;
+             account.useExchangeMoney = account.useExchangeMoney! - item.amount!;
+             account.useCard = account.useCard! + newAmount.amount!;
+           } else {
+             account.balance = account.balance! - newAmount.amount!;
+             account.useCard = account.useCard! - item.amount!;
+             account.useExchangeMoney = account.useExchangeMoney! + newAmount.amount!;
+           }
+         }
+       }
+
+     }else {
+       if (item.type == AmountType.add) {
+         account.usageHistory![firstIdx]![secondIdx] = newAmount;
+         account.totalExchangeCost = (account.totalExchangeCost! - item.amount!) + newAmount.amount!;
+         account.balance = account.totalExchangeCost! - account.useExchangeMoney!;
+       } else {
+         account.usageHistory![firstIdx]![secondIdx] = newAmount;
+         if (item.category == newAmount.category) {
+           if (item.category == 0) {
+             account.balance = (account.balance! - item.amount!) + newAmount.amount!;
+             account.useExchangeMoney = (account.useExchangeMoney! - item.amount!) + newAmount.amount!;
+           } else {
+             account.useCard = (account.useCard! - item.amount!) + newAmount.amount!;
+           }
+         } else {
+           if (item.category == 0) {
+             account.balance = account.balance! + item.amount!;
+             account.useExchangeMoney = account.useExchangeMoney! - item.amount!;
+             account.useCard = account.useCard! + newAmount.amount!;
+           } else {
+             account.balance = account.balance! - newAmount.amount!;
+             account.useCard = account.useCard! - item.amount!;
+             account.useExchangeMoney = account.useExchangeMoney! + newAmount.amount!;
+           }
+         }
+       }
+     }
+
+
 
       await _getIt.get<AccountLocalDataRepo>().updateAccountInfo(account, id);
       return account;

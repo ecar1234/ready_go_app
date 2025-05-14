@@ -3,9 +3,11 @@ import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:ready_go_project/domain/entities/provider/plan_favorites_provider.dart';
 import 'package:ready_go_project/domain/repositories/plan_repo.dart';
+import 'package:ready_go_project/util/statistics_util.dart';
 
 import '../../data/models/plan_model/plan_model.dart';
 import '../../data/repositories/plan_local_data_repo.dart';
+import '../../util/nation_currency_unit_util.dart';
 
 class PlanUseCase with PlanRepo{
   final GetIt _getIt = GetIt.I;
@@ -22,6 +24,7 @@ class PlanUseCase with PlanRepo{
             item.nation = "기타";
           }
         }
+        item.unit ??= NationCurrencyUnitUtil.getNationCurrency(item.nation!);
       }
       _getIt.get<PlanLocalDataRepo>().updatePlanList(list);
     } on Exception catch (e) {

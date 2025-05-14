@@ -1,12 +1,15 @@
 import 'dart:io';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:open_file/open_file.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:ready_go_project/data/models/plan_model/plan_model.dart';
 import 'package:ready_go_project/domain/entities/provider/plan_favorites_provider.dart';
 import 'package:ready_go_project/presentation/home_page.dart';
@@ -14,6 +17,8 @@ import 'package:ready_go_project/presentation/in_app_purchase_page.dart';
 import 'package:ready_go_project/presentation/option_page.dart';
 import 'package:ready_go_project/presentation/plan_main_page.dart';
 import 'package:ready_go_project/presentation/visit_statistics_page.dart';
+import 'package:ready_go_project/service_locator.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../bloc/data_bloc.dart';
 import '../domain/entities/provider/passport_provider.dart';
@@ -139,6 +144,7 @@ class MainPage2 extends StatefulWidget {
 
 class _MainPage2State extends State<MainPage2> {
   ImagePicker picker = ImagePicker();
+  bool _requireUpdate = false;
   int _selected = 0;
   List<Widget> pageOption = [const HomePage(), const PlanMainPage(), const VisitStatisticsPage(), const InAppPurchasePage()];
 
@@ -155,10 +161,64 @@ class _MainPage2State extends State<MainPage2> {
     // TODO: implement initState
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       setFavoriteList(context);
+      final remote = FirebaseRemoteConfig.instance;
+      final packageInfo = await PackageInfo.fromPlatform();
+      final minVersion = remote.getInt("min_version");
+      final currentVer = packageInfo.buildNumber;
+      debugPrint("min version : $minVersion");
+      debugPrint("current version : $currentVer");
+
+      if (minVersion > int.parse(currentVer)) {
+        logger.i("must need update: ${minVersion > int.parse(currentVer)}");
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16)
+            ),
+            contentPadding: const EdgeInsets.all(20),
+            content: const SizedBox(
+              height: 100,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("최신 버전으로 업데이트 후", style: TextStyle(fontSize: 16),),
+                  const Gap(10),
+                  Text("이용해 주세요.", style: TextStyle(fontSize: 16),),
+                ],
+              ),
+            ),
+            actions: [
+              SizedBox(
+                width: 100,
+                height: 50,
+                child: ElevatedButton(
+                    onPressed: () async {
+                      if (Platform.isIOS) {
+                        await launchUrl(Uri.parse('https://apps.apple.com/app/id6744342927'));
+                      } else {
+                        await launchUrl(Uri.parse('https://play.google.com/store/apps/details?id=com.ready_go_project'));
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)
+                      )
+                    ),
+                    child: Text("업데이트")),
+              )
+            ],
+            actionsAlignment: MainAxisAlignment.center,
+          ),
+          barrierDismissible: false
+        );
+      }
     });
   }
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -176,121 +236,128 @@ class _MainPage2State extends State<MainPage2> {
       bool isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
       final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
       return SafeArea(
-          child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-              onPressed: () {
-
-              },
-              style: IconButton.styleFrom(
-                padding: EdgeInsets.zero,
+        child: Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+                onPressed: () {},
+                style: IconButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                ),
+                icon: isDarkMode
+                    ? Image.asset(
+                        'assets/images/logo_white.png',
+                        fit: BoxFit.cover,
+                      )
+                    : Image.asset(
+                        'assets/images/logo.png',
+                        fit: BoxFit.cover,
+                      )),
+            leadingWidth: 120,
+            actions: [
+              Stack(children: [
+                IconButton(
+                    onPressed: () {
+                      final render = context.findRenderObject() as RenderBox;
+                      final local = render.globalToLocal(const Offset(0, 0));
+                      showMenu(context: context, position: RelativeRect.fromLTRB(local.dy + 40, local.dy + 110, local.dx, local.dy), items: [
+                        PopupMenuItem(
+                          child: const Text("여권 등록 및 수정"),
+                          onTap: () {
+                            final provider = context.read<PassportProvider>();
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text("이미지 선택"),
+                                  content: const Text("갤러리 또는 카메라 중 하나를 선택하세요."),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () async {
+                                        Navigator.of(context).pop(); // 다이얼로그 닫기
+                                        final XFile? image = await picker.pickImage(source: ImageSource.camera); // 카메라에서 이미지 선택
+                                        if (image != null) {
+                                          provider.setPassImg(image);
+                                        }
+                                      },
+                                      child: const Text("카메라"),
+                                    ),
+                                    TextButton(
+                                      onPressed: () async {
+                                        Navigator.of(context).pop(); // 다이얼로그 닫기
+                                        final XFile? image = await picker.pickImage(source: ImageSource.gallery); // 갤러리에서 이미지 선택
+                                        if (image != null) {
+                                          provider.setPassImg(image);
+                                        }
+                                      },
+                                      child: const Text("갤러리"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        ),
+                        PopupMenuItem(
+                          child: const Text("여권 보기"),
+                          onTap: () async {
+                            if (passImg != null) {
+                              OpenFile.open(passImg.path);
+                            } else {
+                              Get.snackbar("여권 이미지 확인", "여권 이미지가 저장된 상황에서만 가능합니다.");
+                            }
+                          },
+                        ),
+                      ]);
+                    },
+                    icon: const Icon(Icons.person_pin_rounded)),
+                Positioned(
+                    top: 10,
+                    left: 10,
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(50), color: passImg == null ? Colors.redAccent : Colors.green),
+                    ))
+              ]),
+              const SizedBox(
+                width: 10,
               ),
-              icon: isDarkMode ? Image.asset('assets/images/logo_white.png', fit: BoxFit.cover,) : Image.asset('assets/images/logo.png', fit: BoxFit.cover,)),
-          leadingWidth: 120,
-          actions: [
-            Stack(children: [
               IconButton(
                   onPressed: () {
-                    final render = context.findRenderObject() as RenderBox;
-                    final local = render.globalToLocal(const Offset(0, 0));
-                    showMenu(context: context, position: RelativeRect.fromLTRB(local.dy + 40, local.dy + 110, local.dx, local.dy), items: [
-                      PopupMenuItem(
-                        child: const Text("여권 등록 및 수정"),
-                        onTap: () {
-                          final provider = context.read<PassportProvider>();
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: const Text("이미지 선택"),
-                                content: const Text("갤러리 또는 카메라 중 하나를 선택하세요."),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () async {
-                                      Navigator.of(context).pop(); // 다이얼로그 닫기
-                                      final XFile? image = await picker.pickImage(source: ImageSource.camera); // 카메라에서 이미지 선택
-                                      if (image != null) {
-                                        provider.setPassImg(image);
-                                      }
-                                    },
-                                    child: const Text("카메라"),
-                                  ),
-                                  TextButton(
-                                    onPressed: () async {
-                                      Navigator.of(context).pop(); // 다이얼로그 닫기
-                                      final XFile? image = await picker.pickImage(source: ImageSource.gallery); // 갤러리에서 이미지 선택
-                                      if (image != null) {
-                                        provider.setPassImg(image);
-                                      }
-                                    },
-                                    child: const Text("갤러리"),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                      ),
-                      PopupMenuItem(
-                        child: const Text("여권 보기"),
-                        onTap: () async {
-                          if (passImg != null) {
-                            OpenFile.open(passImg.path);
-                          } else {
-                            Get.snackbar("여권 이미지 확인", "여권 이미지가 저장된 상황에서만 가능합니다.");
-                          }
-                        },
-                      ),
-                    ]);
+                    Get.to(() => const OptionPage());
                   },
-                  icon: const Icon(Icons.person_pin_rounded)),
-              Positioned(
-                  top: 10,
-                  left: 10,
-                  child: Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(50), color: passImg == null ? Colors.redAccent : Colors.green),
-                  ))
-            ]),
-            const SizedBox(
-              width: 10,
-            ),
-            IconButton(
-                onPressed: () {
-                  Get.to(() => const OptionPage());
-                },
-                icon: const Icon(Icons.settings)),
-            const SizedBox(
-              width: 10,
-            )
-          ],
-        ),
-        body: Container(
-          height: height,
-          padding: const EdgeInsets.only(bottom: 20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              pageOption[_selected],
-              CustomBottomNavigationBar(
-                onTap: (int idx) {
-                  setState(() {
-                    _selected = idx;
-                  });
-                },
-                items: const [
-                  {"홈": Icons.home},
-                  {"여행": Icons.airplane_ticket},
-                  {"방문통계" : Icons.pie_chart},
-                  {"인앱구매" : Icons.sell}
-                ],
+                  icon: const Icon(Icons.settings)),
+              const SizedBox(
+                width: 10,
               )
             ],
           ),
+          body: Container(
+            height: height,
+            padding: const EdgeInsets.only(bottom: 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                pageOption[_selected],
+                CustomBottomNavigationBar(
+                  onTap: (int idx) {
+                    setState(() {
+                      _selected = idx;
+                    });
+                  },
+                  items: const [
+                    {"홈": Icons.home},
+                    {"여행": Icons.airplane_ticket},
+                    {"방문통계": Icons.pie_chart},
+                    {"인앱구매": Icons.sell}
+                  ],
+                )
+              ],
+            ),
+          ),
         ),
         // bottomNavigationBar: BottomNavigationBar(items: [],onTap: (idx){},),
-      ));
+      );
     });
   }
 }

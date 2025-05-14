@@ -9,8 +9,9 @@ class  ExpectationModel{
   String? title;
   MethodType? type;
   int? amount;
+  String? unit;
 
-  ExpectationModel({this.title, this.type, this.amount});
+  ExpectationModel({this.title, this.type, this.amount, this.unit});
 
   factory ExpectationModel.fromJson(Map<String, dynamic> json) => _$ExpectationModelFromJson(json);
   Map<String, dynamic> toJson() => _$ExpectationModelToJson(this);

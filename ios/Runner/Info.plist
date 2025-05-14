@@ -35,6 +35,8 @@
 		<string>ca-app-pub-6057371989804889~1010413469</string>
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
+		<key>NSLocalNetworkUsageDescription</key>
+    <string>앱이 로컬 네트워크에 접근하기 위해 필요합니다.</string>
 		<key>NSCameraUsageDescription</key>
     <string>여행 사진 촬영, 티켓 및 영수증 스캔을 위해 카메라 접근이 필요합니다.</string>
     <key>NSMicrophoneUsageDescription</key>

@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -58,6 +61,12 @@ Future<void> serviceLocator() async {
 
   await pref.checkIsFirst();
   await MobileAds.instance.initialize();
+  FirebaseRemoteConfig remote = FirebaseRemoteConfig.instance;
+  await remote.setConfigSettings(RemoteConfigSettings(
+    fetchTimeout: const Duration(minutes: 1),
+    minimumFetchInterval: const Duration(hours: 1),
+  ));
+  await remote.fetchAndActivate();
 
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
@@ -100,7 +109,6 @@ Future<void> serviceLocator() async {
   _getIt.registerLazySingleton<ResponsiveHeightProvider>(() => ResponsiveHeightProvider());
   // statistics
   // _getIt.registerLazySingleton<StatisticsUseCase>(() => StatisticsUseCase());
-  await Future.delayed(const Duration(seconds: 2));
 
   FlutterNativeSplash.remove();
 }

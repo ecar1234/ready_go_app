@@ -14,6 +14,7 @@ PlanModel _$PlanModelFromJson(Map<String, dynamic> json) => PlanModel(
           ?.map((e) => e == null ? null : DateTime.parse(e as String))
           .toList(),
       favorites: json['favorites'] as bool?,
+      unit: json['unit'] as String?,
     );
 
 Map<String, dynamic> _$PlanModelToJson(PlanModel instance) => <String, dynamic>{
@@ -22,4 +23,5 @@ Map<String, dynamic> _$PlanModelToJson(PlanModel instance) => <String, dynamic>{
       'subject': instance.subject,
       'schedule': instance.schedule?.map((e) => e?.toIso8601String()).toList(),
       'favorites': instance.favorites,
+      'unit': instance.unit,
     };

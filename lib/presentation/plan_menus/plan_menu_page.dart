@@ -14,6 +14,7 @@ import 'package:ready_go_project/presentation/plan_menus/air_ticket_page.dart';
 import 'package:ready_go_project/presentation/plan_menus/expectation_page.dart';
 import 'package:ready_go_project/presentation/plan_menus/roaming_page.dart';
 import 'package:ready_go_project/presentation/plan_menus/supplies_page/supplies_page.dart';
+import 'package:ready_go_project/util/intl_utils.dart';
 
 import '../../data/models/plan_model/plan_model.dart';
 import '../../domain/entities/provider/admob_provider.dart';
@@ -95,50 +96,17 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
                   height: height - 100,
                   width: constraints.maxWidth > 800 ? 700 : MediaQuery.sizeOf(context).width,
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        width: MediaQuery.sizeOf(context).width - 40,
-                        height: 80,
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
-                            border: Border.all(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
-                            borderRadius: BorderRadius.circular(10),
-                          boxShadow:isDarkMode ? null : [
-                            BoxShadow(
-                              offset: const Offset(0, 7.0),
-                              spreadRadius: 1.0,
-                              blurRadius: 7.0,
-                              color: Colors.grey[400]!,
-                              // blurStyle: BlurStyle.solid
-                            )
-                          ]
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "${widget.plan.nation}",
-                              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
-                            ),
-                            const Gap(10),
-                            Text(
-                              "${DateUtil.dateToString(widget.plan.schedule!.first!)} ~ ${DateUtil.dateToString(widget.plan.schedule!.last!)}",
-                              style: const TextStyle(wordSpacing: 15),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Gap(40),
                       SizedBox(
-                        height: 70 * itemList.length.toDouble(),
+                        // height: 70 * itemList.length.toDouble(),
                         child: ListView.separated(
                             physics: const BouncingScrollPhysics(),
                             shrinkWrap: true,
                             primary: false,
                             itemBuilder: (context, idx) {
                               return Container(
-                                height: 50,
+                                height: 60,
                                 padding: const EdgeInsets.symmetric(horizontal: 20),
                                 child: ElevatedButton.icon(
                                   onPressed: () {

@@ -11,6 +11,7 @@ ExpectationModel _$ExpectationModelFromJson(Map<String, dynamic> json) =>
       title: json['title'] as String?,
       type: $enumDecodeNullable(_$MethodTypeEnumMap, json['type']),
       amount: (json['amount'] as num?)?.toInt(),
+      unit: json['unit'] as String?,
     );
 
 Map<String, dynamic> _$ExpectationModelToJson(ExpectationModel instance) =>
@@ -18,6 +19,7 @@ Map<String, dynamic> _$ExpectationModelToJson(ExpectationModel instance) =>
       'title': instance.title,
       'type': _$MethodTypeEnumMap[instance.type],
       'amount': instance.amount,
+      'unit': instance.unit,
     };
 
 const _$MethodTypeEnumMap = {

@@ -9,8 +9,9 @@ class PlanModel {
   String? subject;
   List<DateTime?>? schedule;
   bool? favorites;
+  String? unit;
 
-  PlanModel({this.id, this.nation, this.subject, this.schedule, this.favorites});
+  PlanModel({this.id, this.nation, this.subject, this.schedule, this.favorites, this.unit});
 
   factory PlanModel.fromJson(Map<String, dynamic> json) => _$PlanModelFromJson(json);
 

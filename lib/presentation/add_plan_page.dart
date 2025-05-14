@@ -12,6 +12,7 @@ import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.da
 import 'package:ready_go_project/util/admob_util.dart';
 
 import 'package:ready_go_project/util/date_util.dart';
+import 'package:ready_go_project/util/nation_currency_unit_util.dart';
 
 import '../data/models/plan_model/plan_model.dart';
 import '../domain/entities/provider/admob_provider.dart';
@@ -58,10 +59,10 @@ class _AddPlanPageState extends State<AddPlanPage> {
       subjectController.text = widget.plan!.subject ?? "";
       _dates = widget.plan!.schedule!;
     }
-    WidgetsBinding.instance.addPostFrameCallback((_){
-      if(kReleaseMode){
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (kReleaseMode) {
         final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
-        if(!isRemove){
+        if (!isRemove) {
           _admobUtil.loadBannerAd(onAdLoaded: () {
             setState(() {
               _isLoaded = true;
@@ -151,24 +152,30 @@ class _AddPlanPageState extends State<AddPlanPage> {
                           plan
                             ..id = widget.plan!.id
                             ..schedule = _dates
-                            ..nation = nationController.text
+                            ..nation = nationController.text.split(" ")[0]
                             ..subject = subjectController.text
-                            ..favorites = widget.plan!.favorites;
+                            ..favorites = widget.plan!.favorites
+                            ..unit = NationCurrencyUnitUtil.getNationCurrency(nationController.text.split(" ")[0]);
+                          // debugPrint(nationController.text);
+                          // debugPrint("${plan.unit}");
                           context.read<PlanListProvider>().changePlan(plan);
                         } else {
                           plan
                             ..id = idNum + 1
-                            ..nation = nationController.text
+                            ..nation = nationController.text.split(" ")[0]
                             ..subject = subjectController.text
                             ..schedule = _dates
-                            ..favorites = false;
+                            ..favorites = false
+                            ..unit = NationCurrencyUnitUtil.getNationCurrency(nationController.text.split(" ")[0]);
+                          // debugPrint(nationController.text);
+                          // debugPrint("${plan.unit}");
                           context.read<PlanListProvider>().addPlanList(plan);
                         }
                       } catch (ex) {
                         throw (ex).toString();
                       }
                       final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
-                      if(kReleaseMode && !isRemove && list.isNotEmpty){
+                      if (kReleaseMode && !isRemove && list.isNotEmpty) {
                         context.read<AdmobProvider>().loadAdInterstitialAd();
                         context.read<AdmobProvider>().showInterstitialAd();
                       }
@@ -313,36 +320,41 @@ class _AddPlanPageState extends State<AddPlanPage> {
 
   Widget _nationSelection(BuildContext context) {
     List<String> nations = [
-      "대한민국",
-      "일본",
-      "중국",
-      "대만",
-      "베트남",
-      "필리핀",
-      "캄보디아",
-      "라오스",
-      "말레이시아",
-      "싱가포르",
-      "인도네시아",
-      "호주",
-      "뉴질랜드",
-      "인도",
-      "영국",
-      "프랑스",
-      "독일",
-      "스페인",
-      "포르투칼",
-      "이탈리아",
-      "그리스",
-      "튀르키예",
-      "캐나다",
-      "미국",
-      "맥시코",
-      "콜롬비아",
-      "브라질",
-      "아르헨티나",
-      "칠레",
-      "기타"
+      "선택",
+      "🇰🇷 대한민국",
+      "🇯🇵 일본",
+      "🇨🇳 중국",
+      "🇹🇼 대만",
+      "🇲🇳 몽골",
+      "🇭🇰 홍콩",
+      "🇹🇭 태국",
+      "🇻🇳 베트남",
+      "🇵🇭 필리핀",
+      "🇰🇭 캄보디아",
+      "🇱🇦 라오스",
+      "🇲🇾 말레이시아",
+      "🇸🇬 싱가포르",
+      "🇮🇩 인도네시아",
+      "🇲🇲 미얀마"
+          "🇦🇺 호주",
+      "🇳🇿 뉴질랜드",
+      "🇮🇳 인도",
+      "🇬🇧 영국",
+      "🇫🇷 프랑스",
+      "🇩🇪 독일",
+      "🇪🇸 스페인",
+      "🇵🇹 포르투칼",
+      "🇮🇹 이탈리아",
+      "🇬🇷 그리스",
+      "🇹🇷 튀르키예",
+      "🇨🇦 캐나다",
+      "🇺🇸 미국",
+      "🇲🇽 맥시코",
+      "🇨🇴 콜롬비아",
+      "🇧🇷 브라질",
+      "🇦🇷 아르헨티나",
+      "🇨🇱 칠레",
+      "✈️ 기타"
     ];
     if (nationController.text.isEmpty) {
       nationController.text = nations[0];
@@ -366,18 +378,27 @@ class _AddPlanPageState extends State<AddPlanPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 DropdownMenu(
-                    width: 150,
-                    initialSelection: widget.plan == null ? "대한민국" : (nations.contains(widget.plan!.nation!) ? widget.plan!.nation! : "기타"),
+                    width: 200,
+                    initialSelection: widget.plan == null ? "선택" : (nations.contains(widget.plan!.nation!) ? widget.plan!.nation! : "✈️ 기타"),
                     trailingIcon: null,
                     menuHeight: 250,
                     onSelected: (selected) {
-                      if (selected == "기타") {
+                      if (selected == "✈️ 기타") {
                         setState(() {
                           _nationRead = false;
                         });
+                      } else {
+                        setState(() {
+                          _nationRead = true;
+                        });
                       }
                       if (selected != null) {
-                        nationController.text = selected;
+                        final nation = selected.split(" ")[1];
+                        if (selected == "✈️ 기타") {
+                          nationController.text = "국가명";
+                        } else {
+                          nationController.text = "$nation (${NationCurrencyUnitUtil.getNationCurrency(nation)})";
+                        }
                       }
                     },
                     dropdownMenuEntries: List.generate(nations.length, (int idx) => DropdownMenuEntry(value: nations[idx], label: nations[idx]))),
@@ -387,6 +408,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                     child: TextField(
                       controller: nationController,
                       readOnly: _nationRead,
+                      autofocus: _nationRead ? false : true,
                     ),
                   ),
                 )
@@ -436,10 +458,10 @@ class _AddPlanPageState extends State<AddPlanPage> {
         ),
         const Gap(10),
         LayoutBuilder(
-          builder: (context, constraints){
+          builder: (context, constraints) {
             return SizedBox(
                 height: hei * 0.3,
-                width: constraints.maxWidth > 800 ? 640 : MediaQuery.sizeOf(context).width ,
+                width: constraints.maxWidth > 800 ? 640 : MediaQuery.sizeOf(context).width,
                 child: CalendarDatePicker2(
                     config: CalendarDatePicker2Config(
                         firstDate: DateTime.now(),

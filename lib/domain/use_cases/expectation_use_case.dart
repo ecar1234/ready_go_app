@@ -1,5 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:ready_go_project/data/models/expectation_model/expectation_model.dart';
+import 'package:ready_go_project/domain/entities/provider/plan_list_provider.dart';
+import 'package:ready_go_project/domain/repositories/plan_repo.dart';
 
 import '../../data/repositories/expectation_local_data_repo.dart';
 import '../repositories/expectation_repo.dart';
@@ -9,6 +11,14 @@ class ExpectationUseCase with ExpectationRepo{
   @override
   Future<List<ExpectationModel>> getExpectationData(int id) async {
     final list = await GetIt.I.get<ExpectationLocalDataRepo>().getExpectationData(id);
+    if(list.any((item) => item.unit == null)){
+      final planList = await GetIt.I.get<PlanRepo>().getLocalList();
+      final plan = planList.firstWhere((item) => item.id == id);
+      for(var item in list){
+        item.unit ??= plan.unit;
+      }
+      await GetIt.I.get<ExpectationLocalDataRepo>().updateExpectationData(list, id);
+    }
     return list;
   }
 
