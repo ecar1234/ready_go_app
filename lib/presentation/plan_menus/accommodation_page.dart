@@ -38,6 +38,8 @@ class _AccommodationPageState extends State<AccommodationPage> {
   final TextEditingController _paymentController = TextEditingController();
   final TextEditingController _checkInController = TextEditingController();
   final TextEditingController _checkOutController = TextEditingController();
+  final TextEditingController _bookingNumController = TextEditingController();
+  final TextEditingController _bookingAppController = TextEditingController();
   final logger = Logger();
   final AdmobUtil _admobUtil = AdmobUtil();
   bool _isLoaded = false;
@@ -120,6 +122,8 @@ class _AccommodationPageState extends State<AccommodationPage> {
     _paymentController.dispose();
     _checkOutController.dispose();
     _checkInController.dispose();
+    _bookingNumController.dispose();
+    _bookingAppController.dispose();
     _debounce?.cancel();
     _admobUtil.dispose();
   }
@@ -175,8 +179,23 @@ class _AccommodationPageState extends State<AccommodationPage> {
                 builder: (BuildContext context, BoxConstraints constraints) => SizedBox(
                     child: list?.isEmpty == true || list == null
                         ? SizedBox(
-                            height: height - bannerHei - 50,
-                            child: const Center(child: Text("숙소 정보가 없습니다.")),
+                            height: height - bannerHei -170,
+                            width: MediaQuery.sizeOf(context).width-40,
+                            child: const Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.hotel),
+                                    Gap(5),
+                                    Text("숙소 예약 정보를 저장 하고", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),),
+                                  ],
+                                ),
+                                Gap(10),
+                                Text("쉬게 확인해 보세요.", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),),
+                              ],
+                            ),
                           )
                         : SizedBox(
                             height: height - bannerHei - 50,
@@ -278,12 +297,17 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                       "결제금액",
                                     ),
                                     counterText: ""),
+                                onChanged: (value){
+                                  if(value.isNotEmpty){
+                                    _paymentController.text = IntlUtils.stringIntAddComma(int.parse(value));
+                                  }
+                                },
                               ),
                             )
                           ],
                         ),
                       ),
-                      const Gap(15),
+                      const Gap(20),
                       // start Day
                       SizedBox(
                         child: Column(
@@ -421,8 +445,38 @@ class _AccommodationPageState extends State<AccommodationPage> {
                           ],
                         ),
                       ),
-                      const Gap(10),
-                      const Divider(),
+                      const Gap(20),
+                      // booking info
+                      SizedBox(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text("예약 정보 (선택)", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),),
+                            const Gap(10),
+                            SizedBox(
+                              height: 50,
+                              child: TextField(
+                                controller: _bookingAppController,
+                                decoration: const InputDecoration(
+                                  label: Text("예약 App"),
+                                  counterText: ""
+                                ),
+                              ),
+                            ),
+                            const Gap(10),
+                            SizedBox(
+                              height: 50,
+                              child: TextField(
+                                controller: _bookingNumController,
+                                decoration: const InputDecoration(
+                                  label: Text("예약 번호"),
+                                  counterText: ""
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
                       const Gap(20),
                       // buttons
                       SizedBox(
@@ -512,6 +566,8 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                     info.checkOutTime = _checkOutController.text;
                                     info.period = int.parse(_periodController.text);
                                     info.startDay = DateTime(widget.plan.schedule!.first!.year, month, day);
+                                    info.bookApp = _bookingAppController.text;
+                                    info.bookNum = _bookingNumController.text;
 
                                     context.read<AccommodationProvider>().addAccommodation(info, widget.plan.id!);
                                     _nameController.clear();
@@ -520,6 +576,8 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                     _checkInController.clear();
                                     _checkOutController.clear();
                                     _periodController.clear();
+                                    _bookingNumController.clear();
+                                    _bookingAppController.clear();
 
                                     Navigator.pop(diaContext);
                                   },
@@ -584,57 +642,62 @@ class _AccommodationPageState extends State<AccommodationPage> {
                 ),
                 content: SizedBox(
                     width: MediaQuery.sizeOf(context).width,
-                    height: 300,
+                    // height: 350,
                     child: Column(
                       children: [
-                        SizedBox(
-                          height: 40,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                "주소",
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                              ),
-                              Row(
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 40,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  SizedBox(
-                                    width: 80,
-                                    child: TextButton(
-                                      onPressed: () async {
-                                        await _openGoogleMap(list[idx].address!);
-                                      },
-                                      style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                                      child: const Text("지도 열기"),
-                                    ),
+                                  const Text(
+                                    "주소",
+                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                                   ),
-                                  const Gap(10),
-                                  SizedBox(
-                                    width: 70,
-                                    child: TextButton(
-                                      onPressed: () {
-                                        if (list[idx].address!.isEmpty) {
-                                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("주소가 존재하지 않습니다.")));
-                                          return;
-                                        }
-                                        Clipboard.setData(ClipboardData(text: list[idx].address!));
-                                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("숙소 주소가 복사 되었습니다.")));
-                                      },
-                                      style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                                      child: const Text("주소 복사"),
-                                    ),
+                                  Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 80,
+                                        child: TextButton(
+                                          onPressed: () async {
+                                            await _openGoogleMap(list[idx].address!);
+                                          },
+                                          style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                                          child: const Text("지도 열기"),
+                                        ),
+                                      ),
+                                      const Gap(10),
+                                      SizedBox(
+                                        width: 70,
+                                        child: TextButton(
+                                          onPressed: () {
+                                            if (list[idx].address!.isEmpty) {
+                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("주소가 존재하지 않습니다.")));
+                                              return;
+                                            }
+                                            Clipboard.setData(ClipboardData(text: list[idx].address!));
+                                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("숙소 주소가 복사 되었습니다.")));
+                                          },
+                                          style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                                          child: const Text("주소 복사"),
+                                        ),
+                                      )
+                                    ],
                                   )
                                 ],
-                              )
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: 30,
-                          child: Text(
-                            "${list[idx].address}",
-                            style: const TextStyle(overflow: TextOverflow.ellipsis),
-                          ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                              child: Text(
+                                "${list[idx].address}",
+                                style: const TextStyle(overflow: TextOverflow.ellipsis),
+                              ),
+                            ),
+                          ],
                         ),
                         const Gap(10),
                         SizedBox(
@@ -689,6 +752,32 @@ class _AccommodationPageState extends State<AccommodationPage> {
                         ),
                         const Gap(10),
                         SizedBox(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(child: Text("예약 정보", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),)),
+                              const Gap(10),
+                              Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      const SizedBox(width: 80, child: Text("예약 App : ")),
+                                      SizedBox(child: Text(list[idx].bookApp??"데이터가 없습니다."),)
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      const SizedBox(width: 80, child: Text("예약 번호 : ")),
+                                      SizedBox(child: Text(list[idx].bookNum??"데이터가 없습니다."),)
+                                    ],
+                                  )
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                        const Gap(10),
+                        SizedBox(
                           height: 40,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -698,12 +787,12 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                               ),
                               Text(
-                                IntlUtils.stringIntAddComma(int.parse(list[idx].payment!)),
+                                list[idx].payment!,
                                 style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                               )
                             ],
                           ),
-                        )
+                        ),
                       ],
                     )));
           })

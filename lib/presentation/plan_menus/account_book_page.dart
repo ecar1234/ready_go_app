@@ -659,7 +659,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                     Expanded(
                                       child: Container(
                                         height: 1,
-                                        decoration: const BoxDecoration(border: Border(bottom: BorderSide())),
+                                        decoration: BoxDecoration(border: Border(bottom: BorderSide(color: isDarkMode ? Colors.white : Colors.black87))),
                                       ),
                                     )
                                   ],
@@ -678,9 +678,9 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                           children: [
                                             // title + amount
                                             Flexible(
-                                              flex: 4,
+                                              flex: 5,
                                               child: Container(
-                                                  width: (wid - 60) * 0.4,
+                                                  width: (wid - 60) * 0.5,
                                                   padding: const EdgeInsets.only(left: 8),
                                                   child: Column(
                                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -701,24 +701,38 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                                     ],
                                                   )),
                                             ),
+                                            // Flexible(
+                                            //   flex: 2,
+                                            //   child: SizedBox(
+                                            //     width: (wid - 60) * 0.2,
+                                            //     height: 40,
+                                            //     child: Card(
+                                            //       // color: items[firstIdx]![secondIdx].category == 0 ? Colors.redAccent : Colors.green,
+                                            //       shape: RoundedRectangleBorder(
+                                            //         borderRadius: BorderRadius.circular(8)
+                                            //       ),
+                                            //         child: Center(child: Text(items[firstIdx]![secondIdx].category == 0 ? "현금" : "카드",
+                                            //         style: TextStyle(color: items[firstIdx]![secondIdx].category == 0 ? Colors.redAccent : Colors.green),))),
+                                            //   ),
+                                            // ),
                                             Flexible(
                                               flex: 2,
                                               child: SizedBox(
                                                 width: (wid - 60) * 0.2,
-                                                height: 50,
-                                                child: Center(child: Text(items[firstIdx]![secondIdx].category == 0 ? "현금" : "카드")),
+                                                height: 40,
+                                                child: Card(
+                                                  color: StatisticsUtil.getCardColor(items[firstIdx]![secondIdx].methodType??MethodType.ect ),
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(8)
+                                                  ),
+                                                  child: Center(
+                                                      child: Text(StatisticsUtil.conversionMethodTypeToString(
+                                                          items[firstIdx]![secondIdx].methodType ?? MethodType.ect),
+                                                      style: const TextStyle(color: Colors.white),)),
+                                                ),
                                               ),
                                             ),
-                                            Flexible(
-                                              flex: 2,
-                                              child: SizedBox(
-                                                width: (wid - 60) * 0.2,
-                                                height: 50,
-                                                child: Center(
-                                                    child: Text(StatisticsUtil.conversionMethodTypeToString(
-                                                        items[firstIdx]![secondIdx].methodType ?? MethodType.ect))),
-                                              ),
-                                            ),
+                                            Flexible(flex: 1, child: SizedBox(width: (wid - 60) * 0.2,)),
                                             Flexible(
                                                 flex: 2,
                                                 child: SizedBox(
@@ -859,7 +873,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                               height: 60,
                               child: DropdownMenu(
                                 controller: _daysController,
-                                dropdownMenuEntries: List.generate(DateUtil.datesDifference(widget.plan.schedule!) + 1, (int idx) {
+                                dropdownMenuEntries: List.generate(DateUtil.datesDifference(widget.plan.schedule!) + 2, (int idx) {
                                   if (idx == 0) {
                                     return DropdownMenuEntry(value: idx, label: "일차선택");
                                   }
@@ -958,11 +972,17 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                     counterText: "",
                                     labelText: "사용 금액",
                                     labelStyle: const TextStyle(fontSize: 12)),
-                                textAlign: TextAlign.end,
                                 maxLines: 1,
                                 maxLength: 13,
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                style: const TextStyle(fontWeight: FontWeight.w600),
+                                textAlign: TextAlign.end,
+                                onChanged: (value){
+                                  if(value.isNotEmpty) {
+                                    _payAmountController.text = IntlUtils.stringIntAddComma(int.parse(value));
+                                  }
+                                },
                               ),
                             ),
                           ],
@@ -1033,7 +1053,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                       newAmount.title = _titleController.text;
                                       newAmount.amount = int.tryParse(_payAmountController.text);
                                       newAmount.category = _usedTypeController.text =="현금" ? 0 : 2;
-                                      newAmount.methodType = StatisticsUtil.conversionStringToMethodType(_usedTypeController.text);
+                                      newAmount.methodType = StatisticsUtil.conversionStringToMethodType(_categoryController.text);
                                       newAmount.type = item.type;
                                       // newAmount.usageTime = item.usageTime;
                                       int day = int.parse(_daysController.text.split(" ").first);
@@ -1067,7 +1087,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                       newAmount.methodType = StatisticsUtil.conversionStringToMethodType(_categoryController.text);
                                       newAmount.title = _titleController.text;
                                       newAmount.type = AmountType.use;
-                                      newAmount.amount = int.parse(_payAmountController.text);
+                                      newAmount.amount = IntlUtils.removeComma(_payAmountController.text);
                                       newAmount.category = _usedTypeController.text == "현금" ? 0 : 2;
                                       int day = int.parse(_daysController.text.split(" ").first);
                                       if (day == 1) {
@@ -1128,7 +1148,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                             height: 60,
                             child: DropdownMenu(
                               controller: _totalDaysController,
-                              dropdownMenuEntries: List.generate(DateUtil.datesDifference(widget.plan.schedule!) + 1, (int idx) {
+                              dropdownMenuEntries: List.generate(DateUtil.datesDifference(widget.plan.schedule!) + 2, (int idx) {
                                 if (idx == 0) {
                                   return DropdownMenuEntry(value: "$idx", label: "일차선택");
                                 }
@@ -1172,11 +1192,17 @@ class _AccountBookPageState extends State<AccountBookPage> {
                             counterText: "",
                             labelText: "추가 금액",
                             labelStyle: const TextStyle(fontSize: 12)),
-                        textAlign: TextAlign.end,
                         maxLines: 1,
                         maxLength: 13,
                         keyboardType: TextInputType.number,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                        textAlign: TextAlign.end,
+                        onChanged: (value){
+                          if(value.isNotEmpty) {
+                            _totalAmountController.text = IntlUtils.stringIntAddComma(int.parse(value));
+                          }
+                        },
                       ),
                     ),
                     const Gap(20),
@@ -1221,7 +1247,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                         backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white);
                                     return;
                                   }
-                                  int amount = int.parse(_totalAmountController.text);
+                                  int amount = IntlUtils.removeComma(_totalAmountController.text);
                                   int days = int.parse(_totalDaysController.text.split(" ").first);
 
                                   if (kReleaseMode && !isRemove) {

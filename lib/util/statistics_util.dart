@@ -1,5 +1,5 @@
-import 'dart:developer';
 
+import 'package:flutter/material.dart';
 import 'package:ready_go_project/data/models/expectation_model/expectation_model.dart';
 
 import '../data/models/account_model/amount_model.dart';
@@ -111,6 +111,29 @@ class StatisticsUtil {
       case "기타":
         return MethodType.ect;
       default: return MethodType.ect;
+    }
+  }
+
+  static Color getCardColor(MethodType type){
+    switch (type) {
+      case MethodType.ariPlane:
+        return Colors.blue;
+      case MethodType.shopping:
+        return Colors.orangeAccent;
+      case MethodType.traffic:
+        return Colors.cyan;
+      case MethodType.food:
+        return Colors.green;
+      case MethodType.drink:
+        return Colors.teal;
+      case MethodType.tour:
+        return Colors.indigo;
+      case MethodType.leisure:
+        return Colors.redAccent;
+      case MethodType.accommodation:
+        return Colors.pink;
+      case MethodType.ect:
+        return Colors.grey[300]!;
     }
   }
 }

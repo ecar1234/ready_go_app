@@ -10,6 +10,7 @@ import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:open_file/open_file.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+
 import 'package:ready_go_project/data/models/plan_model/plan_model.dart';
 import 'package:ready_go_project/domain/entities/provider/plan_favorites_provider.dart';
 import 'package:ready_go_project/presentation/home_page.dart';
@@ -163,8 +164,8 @@ class _MainPage2State extends State<MainPage2> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       setFavoriteList(context);
       final remote = FirebaseRemoteConfig.instance;
-      // final packageInfo = await PackageInfo.fromPlatform();
-      // final currentVer = int.parse(packageInfo.buildNumber);
+      final packageInfo = await PackageInfo.fromPlatform();
+      final currentVer = int.parse(packageInfo.buildNumber);
 
       final iosMinVersion = remote.getInt("ios_min_version");
       final iosVersion = remote.getInt("IOS_version");
@@ -180,13 +181,13 @@ class _MainPage2State extends State<MainPage2> {
       logger.i("ios need update: ${iosMinVersion < iosVersion}");
       logger.i("android need update: ${androidMinVersion < androidVersion}");
       if(Platform.isAndroid){
-        if(androidVersion >= androidMinVersion){
+        if(currentVer-1 >= androidMinVersion){
           update = false;
         }else {
           update = true;
         }
       }else if(Platform.isIOS){
-        if(iosVersion >= iosMinVersion){
+        if(currentVer >= iosMinVersion){
           update = false;
         }else {
           update = true;

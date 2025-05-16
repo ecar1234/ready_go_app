@@ -5,32 +5,32 @@
     
     
       
-      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000264">
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000317">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="1: Switch to android build_aab lane" time="0.000142">
+      <testcase classname="fastlane.lanes" name="1: Switch to android build_aab lane" time="0.000144">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="2: flutter clean" time="15.926498">
+      <testcase classname="fastlane.lanes" name="2: flutter clean" time="18.003118">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="3: flutter pub get" time="6.608616">
+      <testcase classname="fastlane.lanes" name="3: flutter pub get" time="7.143569">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="4: flutter build appbundle --build-number\=944 --build-name\=0.9.944" time="147.448792">
+      <testcase classname="fastlane.lanes" name="4: flutter build appbundle --build-number\=950 --build-name\=0.9.950" time="106.280181">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="5: upload_to_play_store" time="49.137922">
+      <testcase classname="fastlane.lanes" name="5: upload_to_play_store" time="57.9307">
         
       </testcase>
     

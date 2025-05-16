@@ -192,6 +192,8 @@ class _ExpectationPageState extends State<ExpectationPage> {
                               )
                             : Scrollbar(
                                 child: ListView.separated(
+                                  shrinkWrap: true,
+                                    physics: const BouncingScrollPhysics(),
                                     itemBuilder: (context, idx) {
                                       // int total = list.fold(0, (prev, ele) => prev + ele.amount!);
                                       return SizedBox(
@@ -217,7 +219,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                                       overflow: TextOverflow.ellipsis,
                                                     ),
                                                     Text(
-                                                      "${IntlUtils.stringIntAddComma(list[idx].amount!)} ${list[idx].unit}",
+                                                      "${IntlUtils.stringIntAddComma(list[idx].amount??0)} ${list[idx].unit}",
                                                       style: TextStyle(
                                                           fontSize: 16,
                                                           color: list[idx].unit == "₩" ? Theme.of(context).colorScheme.primary : Colors.green,
@@ -228,15 +230,25 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                               ),
                                             ),
                                             Flexible(
-                                              flex: 3,
+                                              flex: 2,
                                               child: SizedBox(
-                                                width: (wid - 60) * 0.3,
-                                                child: Text(
-                                                  StatisticsUtil.conversionMethodTypeToString(list[idx].type!),
-                                                  style: const TextStyle(fontWeight: FontWeight.w600),
+                                                width: (wid - 60) * 0.2,
+                                                height: 40,
+                                                child: Card(
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(8)
+                                                  ),
+                                                  color: StatisticsUtil.getCardColor(list[idx].type!),
+                                                  child: Center(
+                                                    child: Text(
+                                                      StatisticsUtil.conversionMethodTypeToString(list[idx].type!),
+                                                      style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
                                             ),
+                                            Flexible(flex: 1,child: SizedBox(width: (wid - 60) * 0.1,)),
                                             Flexible(
                                               flex: 2,
                                               child: SizedBox(
@@ -304,6 +316,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                               for (var item in list) {
                                 totalAmount += item.amount!;
                               }
+                              print(totalAmount);
                               if (list.isNotEmpty) {
                                 return Text(
                                   "${IntlUtils.stringIntAddComma(totalAmount)} ${list[0].unit}",
@@ -558,6 +571,13 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                   decoration: const InputDecoration(counterText: "", labelText: "예상 금액"),
                                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                   keyboardType: TextInputType.number,
+                                  style: const TextStyle(fontWeight: FontWeight.w600),
+                                  textAlign: TextAlign.end,
+                                  onChanged: (value){
+                                    if(value.isNotEmpty) {
+                                      _amountController.text = IntlUtils.stringIntAddComma(int.parse(value));
+                                    }
+                                  },
                                 ),
                               ),
                             ),
@@ -636,7 +656,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                   }
                                   ExpectationModel item = ExpectationModel()
                                     ..title = _titleController.text
-                                    ..amount = int.tryParse(_amountController.text)
+                                    ..amount = IntlUtils.removeComma(_amountController.text)
                                     ..type = StatisticsUtil.conversionStringToMethodType(_methodController.text)
                                     ..unit = _currencyController.text;
 

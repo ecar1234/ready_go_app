@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
@@ -125,7 +124,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
             },
             style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
             label: Text(
-              "출발(Departure) 이미지 추가",
+              "출발(Departure) 파일(이미지) 추가",
               style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
             ),
             icon: Icon(Icons.flight_takeoff, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
@@ -233,7 +232,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
             },
             style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
             label: Text(
-              "도착(Arrival) 이미지 추가",
+              "도착(Arrival) 파일(이미지) 추가",
               style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
             ),
             icon: Icon(Icons.flight_land, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
