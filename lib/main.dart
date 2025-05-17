@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:ready_go_project/domain/entities/provider/purchase_manager.dart';
 import 'package:ready_go_project/domain/entities/provider/expectation_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/plan_favorites_provider.dart';
+import 'package:ready_go_project/domain/entities/provider/schedule_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/supplies_template_provider.dart';
 import 'package:ready_go_project/domain/use_cases/statistics_use_case.dart';
 import 'package:ready_go_project/presentation/main_page.dart';
@@ -41,6 +42,7 @@ void main() async {
       ChangeNotifierProvider(create: (_) => StatisticsUseCase()),
       ChangeNotifierProvider(create: (_) => ExpectationProvider()),
       ChangeNotifierProvider(create: (_) => PurchaseManager()),
+      ChangeNotifierProvider(create: (_) => ScheduleProvider()),
 
       // ChangeNotifierProvider(create: (_) => ResponsiveHeightProvider())
     ],

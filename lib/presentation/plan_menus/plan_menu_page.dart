@@ -13,6 +13,7 @@ import 'package:ready_go_project/presentation/plan_menus/account_book_page.dart'
 import 'package:ready_go_project/presentation/plan_menus/air_ticket_page.dart';
 import 'package:ready_go_project/presentation/plan_menus/expectation_page.dart';
 import 'package:ready_go_project/presentation/plan_menus/roaming_page.dart';
+import 'package:ready_go_project/presentation/plan_menus/schedule_page.dart';
 import 'package:ready_go_project/presentation/plan_menus/supplies_page/supplies_page.dart';
 import 'package:ready_go_project/util/intl_utils.dart';
 
@@ -37,7 +38,7 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
   final AdmobUtil _admobUtil = AdmobUtil();
   bool _isLoaded = false;
   final logger = Logger();
-  List<String> itemList = ["예상 경비", "항공권", "준비물", "로밍(E-SIM)", "사용 경비", "숙소"];
+  List<String> itemList = ["예상 경비", "항공권", "준비물", "로밍(E-SIM)", "여행 경비", "숙소", "일정"];
   // List<String> itemList = ["항공권", "준비물", "로밍(E-SIM)", "사용 경비", "숙소"];
   // List<String> itemList = ["항공권", "준비물", "로밍 & ESIM", "여행 경비", "숙소", "일정"];
 
@@ -106,7 +107,7 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
                             primary: false,
                             itemBuilder: (context, idx) {
                               return Container(
-                                height: 60,
+                                height: 50,
                                 padding: const EdgeInsets.symmetric(horizontal: 20),
                                 child: ElevatedButton.icon(
                                   onPressed: () {
@@ -128,21 +129,22 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
                                         Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
                                       case "숙소":
                                         Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccommodationPage(plan: widget.plan)));
-                                      case "사용 경비":
+                                      case "여행 경비":
                                         Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
-                                      // case "일정":
-                                      //   Navigator.of(context).push(MaterialPageRoute(builder: (context) => TourPage(plan: widget.plan)));
+                                      case "일정":
+                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => SchedulePage(plan: widget.plan)));
                                       default:
                                         return;
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
-                                      side: BorderSide(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                                      // side: BorderSide(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                                      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
+                                  ),
                                   label: Text(
                                     itemList[idx],
-                                    style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w600),
+                                    style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600),
                                   ),
                                   iconAlignment: IconAlignment.end,
                                   icon: _iconSelector(idx, isDarkMode),
@@ -172,19 +174,21 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
   Widget _iconSelector(int idx, bool isDarkMode) {
     switch (idx) {
       case 0:
-        return  Icon(Icons.bar_chart, color: isDarkMode ? Colors.white : Colors.black87,);
+        return  Icon(Icons.bar_chart, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,);
       case 1:
-        return  Icon(Icons.airplane_ticket, color: isDarkMode ? Colors.white : Colors.black87,);
+        return  Icon(Icons.airplane_ticket, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,);
       case 2:
-        return  Icon(Icons.shopping_bag_rounded, color: isDarkMode ? Colors.white : Colors.black87,);
+        return  Icon(Icons.shopping_bag_rounded, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,);
       case 3:
-        return  Icon(Icons.sim_card, color: isDarkMode ? Colors.white : Colors.black87,);
+        return  Icon(Icons.sim_card, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,);
       case 4:
-        return  Icon(Icons.attach_money, color: isDarkMode ? Colors.white : Colors.black87,);
+        return  Icon(Icons.attach_money, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,);
       case 5:
-        return  Icon(Icons.hotel, color: isDarkMode ? Colors.white : Colors.black87,);
+        return  Icon(Icons.hotel, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,);
+      case 6:
+        return  Icon(Icons.tour, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,);
       default:
-        return  Icon(Icons.abc, color: isDarkMode ? Colors.white : Colors.black87,);
+        return  Icon(Icons.abc, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,);
     }
   }
 }
