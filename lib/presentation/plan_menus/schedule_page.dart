@@ -21,7 +21,6 @@ class SchedulePage extends StatefulWidget {
 class _SchedulePageState extends State<SchedulePage> {
   final _admobUtil = AdmobUtil();
   bool _isLoaded = false;
-
   final logger = Logger();
 
   @override
@@ -60,21 +59,37 @@ class _SchedulePageState extends State<SchedulePage> {
     final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
     final bannerHei = _isLoaded ? _admobUtil.bannerAd!.size.height.toDouble() : 0;
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("일정 관리"),
-        ),
-        body: Container(
-          child: Column(
-            children: [
-              if (_isLoaded && _admobUtil.bannerAd != null)
-                SizedBox(
-                  height: _admobUtil.bannerAd!.size.height.toDouble(),
-                  width: _admobUtil.bannerAd!.size.width.toDouble(),
-                  child: _admobUtil.getBannerAdWidget(),
-                )
-            ],
+    return DefaultTabController(
+      length: 10,
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text("일정 관리"),
+          ),
+          body: Container(
+            height: height - bannerHei,
+            // padding: const EdgeInsets.all(20),
+            // decoration: BoxDecoration(
+            //   border: Border.all()
+            // ),
+            child: Column(
+              children: [
+
+                // Container(
+                //   height: height - bannerHei - 60,
+                //   decoration: BoxDecoration(
+                //       border: Border.all()
+                //   ),
+                // ),
+                // admob
+                if (_isLoaded && _admobUtil.bannerAd != null)
+                  SizedBox(
+                    height: _admobUtil.bannerAd!.size.height.toDouble(),
+                    width: _admobUtil.bannerAd!.size.width.toDouble(),
+                    child: _admobUtil.getBannerAdWidget(),
+                  )
+              ],
+            ),
           ),
         ),
       ),

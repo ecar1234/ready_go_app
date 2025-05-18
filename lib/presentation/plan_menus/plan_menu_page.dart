@@ -139,7 +139,7 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
                                   },
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
-                                      // side: BorderSide(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                                      side: BorderSide(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                                       // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
                                   ),
                                   label: Text(
