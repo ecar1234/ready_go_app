@@ -289,7 +289,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
         : AspectRatio(
             aspectRatio: 1.0,
             child: PieChart(
-                duration: const Duration(milliseconds: 600),
+                duration: const Duration(milliseconds: 300),
                 curve: Curves.linear,
                 PieChartData(
                   pieTouchData: PieTouchData(
@@ -447,7 +447,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
                                 ),
                                 const Gap(10),
                                 Text(
-                                  "${IntlUtils.stringIntAddComma(StatisticsUtil.getPlanTotalAccount(accountList[idx]))}원",
+                                  "${IntlUtils.stringIntAddComma(StatisticsUtil.getPlanTotalAccount(accountList[idx]))}${list[idx].unit}",
                                   style: TextStyle(
                                       color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
                                       fontWeight: FontWeight.w600,

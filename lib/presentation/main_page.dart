@@ -286,7 +286,11 @@ class _MainPage2State extends State<MainPage2> {
                     onPressed: () {
                       final render = context.findRenderObject() as RenderBox;
                       final local = render.globalToLocal(const Offset(0, 0));
-                      showMenu(context: context, position: RelativeRect.fromLTRB(local.dy + 40, local.dy + 110, local.dx, local.dy), items: [
+                      showMenu(
+                          context: context,
+                          position: RelativeRect.fromLTRB(local.dy + 40, local.dy + 110, local.dx, local.dy),
+                          color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                          items: [
                         PopupMenuItem(
                           child: const Text("여권 등록 및 수정"),
                           onTap: () {
@@ -295,28 +299,42 @@ class _MainPage2State extends State<MainPage2> {
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  title: const Text("이미지 선택"),
+                                  title: const Text("여권 이미지 선택"),
                                   content: const Text("갤러리 또는 카메라 중 하나를 선택하세요."),
                                   actions: [
-                                    TextButton(
-                                      onPressed: () async {
-                                        Navigator.of(context).pop(); // 다이얼로그 닫기
-                                        final XFile? image = await picker.pickImage(source: ImageSource.camera); // 카메라에서 이미지 선택
-                                        if (image != null) {
-                                          provider.setPassImg(image);
-                                        }
-                                      },
-                                      child: const Text("카메라"),
+                                    SizedBox(
+                                      child: ElevatedButton(
+                                        onPressed: () async {
+                                          Navigator.of(context).pop(); // 다이얼로그 닫기
+                                          final XFile? image = await picker.pickImage(source: ImageSource.camera); // 카메라에서 이미지 선택
+                                          if (image != null) {
+                                            provider.setPassImg(image);
+                                          }
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                        ),
+                                        child: Text("카메라", style: TextStyle(
+                                          color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary
+                                        ),),
+                                      ),
                                     ),
-                                    TextButton(
-                                      onPressed: () async {
-                                        Navigator.of(context).pop(); // 다이얼로그 닫기
-                                        final XFile? image = await picker.pickImage(source: ImageSource.gallery); // 갤러리에서 이미지 선택
-                                        if (image != null) {
-                                          provider.setPassImg(image);
-                                        }
-                                      },
-                                      child: const Text("갤러리"),
+                                    SizedBox(
+                                      child: ElevatedButton(
+                                        onPressed: () async {
+                                          Navigator.of(context).pop(); // 다이얼로그 닫기
+                                          final XFile? image = await picker.pickImage(source: ImageSource.gallery); // 갤러리에서 이미지 선택
+                                          if (image != null) {
+                                            provider.setPassImg(image);
+                                          }
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                        ),
+                                        child: Text("갤러리", style: TextStyle(
+                                          color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary
+                                        ),),
+                                      ),
                                     ),
                                   ],
                                 );

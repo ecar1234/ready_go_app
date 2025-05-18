@@ -1,4 +1,3 @@
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,7 +36,8 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
   final AdmobUtil _admobUtil = AdmobUtil();
   bool _isLoaded = false;
   final logger = Logger();
-  List<String> itemList = ["예상 경비", "항공권", "준비물", "로밍(E-SIM)", "사용 경비", "숙소"];
+  List<String> itemList = ["예상 경비", "항공권", "채크 리스트", "로밍(E-SIM)", "사용 경비", "숙소"];
+
   // List<String> itemList = ["항공권", "준비물", "로밍(E-SIM)", "사용 경비", "숙소"];
   // List<String> itemList = ["항공권", "준비물", "로밍 & ESIM", "여행 경비", "숙소", "일정"];
 
@@ -45,10 +45,10 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_){
-      if(kReleaseMode){
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (kReleaseMode) {
         final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
-        if(!isRemove){
+        if (!isRemove) {
           _admobUtil.loadBannerAd(onAdLoaded: () {
             setState(() {
               _isLoaded = true;
@@ -64,7 +64,6 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     DataState state = context.watch<DataBloc>().state;
@@ -73,7 +72,7 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
       context.read<DataBloc>().add(PlanDataLoadingEvent(context: context, planId: widget.plan.id!));
     }
     bool isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
-    final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height -120;
+    final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -111,16 +110,21 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
                                 child: ElevatedButton.icon(
                                   onPressed: () {
                                     final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
-                                    if(kReleaseMode && !isRemove){
-                                      context.read<AdmobProvider>().loadAdInterstitialAd();
-                                      context.read<AdmobProvider>().showInterstitialAd();
+                                    if (kReleaseMode && !isRemove) {
+                                      if (itemList[idx] == "채크 리스트" ||
+                                          itemList[idx] == "숙소" ||
+                                          itemList[idx] == "예상 경비" ||
+                                          itemList[idx] == "로밍(E-SIM)") {
+                                        context.read<AdmobProvider>().loadAdInterstitialAd();
+                                        context.read<AdmobProvider>().showInterstitialAd();
+                                      }
                                     }
                                     switch (itemList[idx]) {
                                       case "예상 경비":
                                         Navigator.of(context).push(MaterialPageRoute(builder: (context) => ExpectationPage(planId: widget.plan.id)));
                                       case "항공권":
                                         Navigator.of(context).push(MaterialPageRoute(builder: (context) => AirTicketPage(planId: widget.plan.id!)));
-                                      case "준비물":
+                                      case "채크 리스트":
                                         Navigator.of(context).push(MaterialPageRoute(builder: (context) => SuppliesPage(planId: widget.plan.id!)));
                                       case "로밍(E-SIM)":
                                         Navigator.of(context).push(MaterialPageRoute(builder: (context) => RoamingPage(planId: widget.plan.id!)));
@@ -172,19 +176,40 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
   Widget _iconSelector(int idx, bool isDarkMode) {
     switch (idx) {
       case 0:
-        return  Icon(Icons.bar_chart, color: isDarkMode ? Colors.white : Colors.black87,);
+        return Icon(
+          Icons.bar_chart,
+          color: isDarkMode ? Colors.white : Colors.black87,
+        );
       case 1:
-        return  Icon(Icons.airplane_ticket, color: isDarkMode ? Colors.white : Colors.black87,);
+        return Icon(
+          Icons.airplane_ticket,
+          color: isDarkMode ? Colors.white : Colors.black87,
+        );
       case 2:
-        return  Icon(Icons.shopping_bag_rounded, color: isDarkMode ? Colors.white : Colors.black87,);
+        return Icon(
+          Icons.shopping_bag_rounded,
+          color: isDarkMode ? Colors.white : Colors.black87,
+        );
       case 3:
-        return  Icon(Icons.sim_card, color: isDarkMode ? Colors.white : Colors.black87,);
+        return Icon(
+          Icons.sim_card,
+          color: isDarkMode ? Colors.white : Colors.black87,
+        );
       case 4:
-        return  Icon(Icons.attach_money, color: isDarkMode ? Colors.white : Colors.black87,);
+        return Icon(
+          Icons.attach_money,
+          color: isDarkMode ? Colors.white : Colors.black87,
+        );
       case 5:
-        return  Icon(Icons.hotel, color: isDarkMode ? Colors.white : Colors.black87,);
+        return Icon(
+          Icons.hotel,
+          color: isDarkMode ? Colors.white : Colors.black87,
+        );
       default:
-        return  Icon(Icons.abc, color: isDarkMode ? Colors.white : Colors.black87,);
+        return Icon(
+          Icons.abc,
+          color: isDarkMode ? Colors.white : Colors.black87,
+        );
     }
   }
 }

@@ -1,7 +1,6 @@
-
-class NationCurrencyUnitUtil{
-  static String getNationCurrency(String nation){
-    final Map<String,String> unit = {
+class NationCurrencyUnitUtil {
+  static String getNationCurrency(String nation) {
+    final Map<String, String> unit = {
       "대한민국": "₩",
       "일본": "¥",
       "중국": "¥",
@@ -37,6 +36,47 @@ class NationCurrencyUnitUtil{
       "칠레": "\$",
       "️기타": "-"
     };
-    return unit[nation]?? "-";
+    return unit[nation] ?? "-";
+  }
+
+  static String getNationFlag(String nation) {
+    Map<String, String> nations = {
+      "대한민국": "🇰🇷 대한민국",
+      "일본": "🇯🇵 일본",
+      "중국": "🇨🇳 중국",
+      "대만": "🇹🇼 대만",
+      "몽골": "🇲🇳 몽골",
+      "홍콩": "🇭🇰 홍콩",
+      "태국": "🇹🇭 태국",
+      "베트남": "🇻🇳 베트남",
+      "필리핀": "🇵🇭 필리핀",
+      "캄보디아": "🇰🇭 캄보디아",
+      "라오스": "🇱🇦 라오스",
+      "말레이시아": "🇲🇾 말레이시아",
+      "싱가포르": "🇸🇬 싱가포르",
+      "인도네시아": "🇮🇩 인도네시아",
+      "미얀마": "🇲🇲 미얀마",
+      "호주": "🇦🇺 호주",
+      "뉴질랜드": "🇳🇿 뉴질랜드",
+      "인도": "🇮🇳 인도",
+      "영국": "🇬🇧 영국",
+      "프랑스": "🇫🇷 프랑스",
+      "독일": "🇩🇪 독일",
+      "스페인": "🇪🇸 스페인",
+      "포르투칼": "🇵🇹 포르투칼",
+      "이탈리아": "🇮🇹 이탈리아",
+      "그리스": "🇬🇷 그리스",
+      "튀르키예": "🇹🇷 튀르키예",
+      "캐나다": "🇨🇦 캐나다",
+      "미국": "🇺🇸 미국",
+      "맥시코": "🇲🇽 맥시코",
+      "콜롬비아": "🇨🇴 콜롬비아",
+      "브라질": "🇧🇷 브라질",
+      "아르헨티나": "🇦🇷 아르헨티나",
+      "칠레": "🇨🇱 칠레",
+      "기타": "✈️ 기타"
+    };
+
+    return nations[nation] ?? "✈️ 기타";
   }
 }

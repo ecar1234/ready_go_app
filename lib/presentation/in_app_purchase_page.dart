@@ -132,19 +132,19 @@ class _InAppPurchasePageState extends State<InAppPurchasePage> {
                                               child: Row(
                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
-                                                  Container(
-                                                    width: 50,
-                                                    height: 25,
-                                                    decoration: BoxDecoration(
-                                                        color: _selectedIdx == 0 || isRemove ? Colors.orangeAccent : const Color(0xff999999),
-                                                        border: _selectedIdx == 0 || isRemove ? null : Border.all(color: const Color(0xff999999)),
-                                                        borderRadius: BorderRadius.circular(25)),
-                                                    child: const Center(
-                                                        child: Text(
-                                                      "인기",
-                                                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-                                                    )),
-                                                  ),
+                                                  // Container(
+                                                  //   width: 50,
+                                                  //   height: 25,
+                                                  //   decoration: BoxDecoration(
+                                                  //       color: _selectedIdx == 0 || isRemove ? Colors.orangeAccent : const Color(0xff999999),
+                                                  //       border: _selectedIdx == 0 || isRemove ? null : Border.all(color: const Color(0xff999999)),
+                                                  //       borderRadius: BorderRadius.circular(25)),
+                                                  //   child: const Center(
+                                                  //       child: Text(
+                                                  //     "인기",
+                                                  //     style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                                                  //   )),
+                                                  // ),
                                                   Container(
                                                     width: 50,
                                                     height: 25,
@@ -221,6 +221,15 @@ class _InAppPurchasePageState extends State<InAppPurchasePage> {
                                           ),
                                         ),
                                       ),
+                                      // 설명
+                                      SizedBox(
+                                        child: Text("광고 없이 서비스를 이용 할 수 있습니다.",
+                                        style: TextStyle(
+                                            color: isDarkMode
+                                                ? (_selectedIdx == 0 || isRemove ? Colors.white : const Color(0xff999999))
+                                                : (_selectedIdx == 0 || isRemove ? Colors.black87 : const Color(0xff999999))
+                                        ),),
+                                      )
                                     ],
                                   )),
                             );
