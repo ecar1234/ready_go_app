@@ -5,12 +5,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get_it/get_it.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
 import 'package:ready_go_project/util/admob_util.dart';
-
 import 'package:ready_go_project/util/date_util.dart';
 import 'package:ready_go_project/util/nation_currency_unit_util.dart';
 
@@ -55,7 +53,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
     // TODO: implement initState
     super.initState();
     if (widget.plan != null) {
-      nationController.text = widget.plan!.nation!;
+      nationController.text = NationCurrencyUnitUtil.getNationFlag(widget.plan!.nation!);
       subjectController.text = widget.plan!.subject ?? "";
       _dates = widget.plan!.schedule!;
     }
@@ -335,8 +333,8 @@ class _AddPlanPageState extends State<AddPlanPage> {
       "🇲🇾 말레이시아",
       "🇸🇬 싱가포르",
       "🇮🇩 인도네시아",
-      "🇲🇲 미얀마"
-          "🇦🇺 호주",
+      "🇲🇲 미얀마",
+      "🇦🇺 호주",
       "🇳🇿 뉴질랜드",
       "🇮🇳 인도",
       "🇬🇧 영국",
