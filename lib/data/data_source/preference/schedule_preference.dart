@@ -20,9 +20,15 @@ class SchedulePreference {
     try {
       String? dataModel = pref.getString("scheduleList$planId");
       if (dataModel != null) {
-        List<Map<String, dynamic>> jsonList = jsonDecode(dataModel);
-        final data = jsonList.map((item) => ScheduleListModel.fromJson(item)).toList();
-        return data;
+        final jsonList = jsonDecode(dataModel);
+        if (jsonList is List) {
+          final data = jsonList
+              .map((item) => ScheduleListModel.fromJson(item as Map<String,dynamic>))
+              .toList();
+          return data;
+        }else {
+          return [];
+        }
       }else {
         return [];
       }

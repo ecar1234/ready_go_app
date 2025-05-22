@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
+import 'package:ready_go_project/domain/entities/provider/schedule_provider.dart';
 
 import '../domain/entities/provider/purchase_manager.dart';
 import '../domain/entities/provider/accommodation_provider.dart';
@@ -54,6 +55,7 @@ class DataBloc extends Bloc<DataEvent, DataState> {
       event.context.read<AccountProvider>().getAccountInfo(event.planId);
       event.context.read<AccommodationProvider>().getAccommodationList(event.planId);
       event.context.read<ExpectationProvider>().getExpectationData(event.planId);
+      event.context.read<ScheduleProvider>().getScheduleList(event.planId);
       logger.i("plan Data loaded : plan id ${event.planId}");
       emit(DataState(state: DataStatus.loadedPlan));
     });

@@ -5,8 +5,9 @@ part 'schedule_list_model.g.dart';
 
 @JsonSerializable()
 class ScheduleListModel{
+  int? id;
   List<ScheduleModel>? scheduleList;
-  ScheduleListModel({this.scheduleList});
+  ScheduleListModel({this.id, this.scheduleList});
 
   factory ScheduleListModel.fromJson(Map<String, dynamic> json) => _$ScheduleListModelFromJson(json);
   Map<String, dynamic> toJson() => _$ScheduleListModelToJson(this);

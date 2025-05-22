@@ -5,7 +5,7 @@ part 'schedule_model.g.dart';
 @JsonSerializable()
 class ScheduleModel {
   int? id;
-  DateTime? time;
+  String? time;
   String? title;
   List<String>? details;
   ScheduleModel({this.id, this.time, this.title, this.details});

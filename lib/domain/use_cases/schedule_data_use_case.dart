@@ -16,7 +16,24 @@ class ScheduleDataUseCase with ScheduleRepo {
   @override
   Future<List<ScheduleListModel>> createSchedule(ScheduleModel item, int roundIdx, int planId) async {
     List<ScheduleListModel> data = await _getIt.getScheduleList(planId);
-
+    if(data.isEmpty){
+      ScheduleListModel list = ScheduleListModel()..id = roundIdx..scheduleList=[];
+      list.scheduleList = [];
+      list.scheduleList!.add(item);
+      data.add(list);
+    }else{
+      if(data.any((scheduleList) => scheduleList.id == roundIdx)){
+        ScheduleListModel list = data.firstWhere((scheduleList) => scheduleList.id == roundIdx);
+        list.scheduleList!.add(item);
+        data[roundIdx] = list;
+      }else{
+        ScheduleListModel list = ScheduleListModel()..id=roundIdx..scheduleList=[];
+        list.scheduleList!.add(item);
+        data.add(list);
+      }
+    }
+    data.sort((a, b) => a.id!.compareTo(b.id!));
+    _getIt.updateScheduleList(data, planId);
     return data;
   }
 

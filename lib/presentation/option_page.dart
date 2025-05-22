@@ -134,7 +134,7 @@ class _OptionPageState extends State<OptionPage> {
             FutureBuilder(
               future: PackageInfo.fromPlatform(),
               builder:(context, info) {
-                int versionNum = int.parse(info.data!.buildNumber);
+                int? versionNum = int.tryParse(info.data!.buildNumber);
 
                 return Column(
                 children: [
