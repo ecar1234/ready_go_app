@@ -38,7 +38,7 @@ class SuppliesTemplateProvider with ChangeNotifier {
     if(list == null){
       _selectedList = [];
     }else {
-      _selectedList = list!;
+      _selectedList = list;
     }
     notifyListeners();
   }
