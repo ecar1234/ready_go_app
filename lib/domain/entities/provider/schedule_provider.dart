@@ -23,4 +23,33 @@ class ScheduleProvider with ChangeNotifier {
     _scheduleList = data;
     notifyListeners();
   }
+
+  Future<void> editSchedule(ScheduleModel item, int roundIdx, int planId)async{
+    final data = await _getIt.editSchedule(item, roundIdx, planId);
+    _scheduleList = data;
+    notifyListeners();
+  }
+
+  Future<void> removeSchedule(int roundIdx, int itemIdx, int planId)async{
+    final data = await _getIt.removeSchedule(roundIdx, itemIdx ,planId);
+    _scheduleList = data;
+    notifyListeners();
+  }
+
+  Future<void> addScheduleDetails(List<String> details, int roundIdx, int scheduleIdx, int planId)async{
+    final data = await _getIt.addScheduleDetails(details, roundIdx, scheduleIdx, planId);
+    _scheduleList = data;
+    notifyListeners();
+  }
+
+  Future<void> removeScheduleDetail(int roundIdx, int scheduleIdx, int detailIdx, int planId)async{
+    final data = await _getIt.removeScheduleDetail(roundIdx, scheduleIdx, detailIdx, planId);
+    _scheduleList = data;
+    notifyListeners();
+  }
+
+  Future<void> removeAllSchedule(int planId)async{
+    await _getIt.removeAllScheduleList(planId);
+    notifyListeners();
+  }
 }

@@ -12,6 +12,7 @@ import 'package:ready_go_project/bloc/data_bloc.dart';
 import 'package:ready_go_project/domain/entities/provider/expectation_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/plan_favorites_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/responsive_height_provider.dart';
+import 'package:ready_go_project/domain/entities/provider/schedule_provider.dart';
 import 'package:ready_go_project/presentation/add_plan_page.dart';
 import 'package:ready_go_project/presentation/plan_menus/plan_menu_page.dart';
 import 'package:ready_go_project/util/admob_util.dart';
@@ -382,6 +383,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
                         context.read<SuppliesProvider>().removeAllData(list[idx].id!);
                         context.read<PlanFavoritesProvider>().removeFavoriteList(list[idx].id!);
                         context.read<ExpectationProvider>().removeAllData(list[idx].id!);
+                        context.read<ScheduleProvider>().removeAllSchedule(list[idx].id!);
                       }),
                 ]),
                 child: Container(

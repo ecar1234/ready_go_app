@@ -5,9 +5,11 @@ import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:ready_go_project/data/models/schedule_model/schedule_list_model.dart';
 import 'package:ready_go_project/data/models/schedule_model/schedule_model.dart';
 import 'package:ready_go_project/domain/entities/provider/responsive_height_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/schedule_provider.dart';
+import 'package:ready_go_project/presentation/plan_menus/supplies_page/add_schedule_page.dart';
 import 'package:ready_go_project/util/admob_util.dart';
 import 'package:ready_go_project/util/date_util.dart';
 
@@ -33,7 +35,13 @@ class _SchedulePageState extends State<SchedulePage> {
   final TextEditingController _hourController = TextEditingController();
   final TextEditingController _minController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _detailController = TextEditingController();
+
+  bool isAfterCheckScheduleTime(List<String> timeList, DateTime startDay, int roundIdx) {
+    DateTime today = DateTime.now();
+    DateTime scheduleDay = DateTime(startDay.add(Duration(days: roundIdx)).year, startDay.add(Duration(days: roundIdx)).month,
+        startDay.add(Duration(days: roundIdx)).day, int.parse(timeList[0]), int.parse(timeList[1]));
+    return today.isAfter(scheduleDay);
+  }
 
   @override
   void initState() {
@@ -64,6 +72,9 @@ class _SchedulePageState extends State<SchedulePage> {
     // TODO: implement dispose
     super.dispose();
     _admobUtil.dispose();
+    _titleController.dispose();
+    _minController.dispose();
+    _hourController.dispose();
   }
 
   @override
@@ -71,7 +82,7 @@ class _SchedulePageState extends State<SchedulePage> {
     final isDarkMode = context.read<ThemeModeProvider>().isDarkMode;
     final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
     final bannerHei = _isLoaded ? _admobUtil.bannerAd!.size.height.toDouble() : 0;
-    final allScheduleList = context.watch<ScheduleProvider>().scheduleList ?? [];
+    // final allScheduleList = context.watch<ScheduleProvider>().scheduleList ?? [];
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -83,235 +94,38 @@ class _SchedulePageState extends State<SchedulePage> {
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
+                // add buttons
                 SizedBox(
-                  height: 40,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text("여행 일정", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
-                      ElevatedButton(
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (context) {
-                                  // final editSchedule = allScheduleList[_selected].scheduleList.
-                                  return Dialog(
-                                    insetPadding: const EdgeInsets.all(20),
-                                    child: Container(
-                                      // height: 00,
-                                      padding: const EdgeInsets.all(20),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                "시간",
-                                                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
-                                              ),
-                                              const Gap(8),
-                                              Row(
-                                                children: [
-                                                  SizedBox(
-                                                    width: 100,
-                                                    child: DropdownMenu(
-                                                        controller: _hourController,
-                                                        menuHeight: 300,
-                                                        initialSelection: 0,
-                                                        dropdownMenuEntries:
-                                                            List.generate(24, (idx) => DropdownMenuEntry(value: idx, label: idx == 0 ? "0" : "$idx"))),
-                                                  ),
-                                                  const Gap(8),
-                                                  const Text("시"),
-                                                  const Gap(16),
-                                                  SizedBox(
-                                                    width: 100,
-                                                    child: DropdownMenu(
-                                                        controller: _minController,
-                                                        initialSelection: 0,
-                                                        dropdownMenuEntries: List.generate(
-                                                            6, (idx) => DropdownMenuEntry(value: idx, label: idx == 0 ? "00" : "${idx * 10}"))),
-                                                  ),
-                                                  const Gap(8),
-                                                  const Text("분")
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                          const Gap(20),
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                "여행 일정",
-                                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                                              ),
-                                              const Gap(8),
-                                              SizedBox(
-                                                height: 50,
-                                                child: TextField(
-                                                  controller: _titleController,
-                                                  maxLines: 1,
-                                                  style: const TextStyle(overflow: TextOverflow.ellipsis),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                          const Gap(20),
-                                          SizedBox(
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                SizedBox(
-                                                  width: 100,
-                                                  height: 50,
-                                                  child: ElevatedButton(
-                                                      onPressed: () {
-                                                        _titleController.clear();
-                                                        _hourController.clear();
-                                                        _minController.clear();
-                                                        Navigator.pop(context);
-                                                      },
-                                                      style: ElevatedButton.styleFrom(
-                                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                                      child: Text("닫기")),
-                                                ),
-                                                const Gap(20),
-                                                SizedBox(
-                                                  width: 100,
-                                                  height: 50,
-                                                  child: ElevatedButton(
-                                                      onPressed: () {
-
-                                                        if(_titleController.text.isEmpty){
-                                                          Get.snackbar("일정 내용을 입력해 주세요.", "일정의 타이틀 없이 셍성 할 수 없습니다.");
-                                                          return;
-                                                        }
-
-                                                        int scheduleNewId = 1;
-                                                        if(allScheduleList.any((item) => item.id == _selected)){
-                                                          var item = allScheduleList.firstWhere((item) => item.id == _selected);
-                                                          if(item.scheduleList != null && item.scheduleList!.isNotEmpty){
-                                                            scheduleNewId = item.scheduleList!.length;
-                                                          }
-                                                        }
-                                                        ScheduleModel item = ScheduleModel()
-                                                          ..id = scheduleNewId
-                                                          ..time = "${_hourController.text}:${_minController.text}"
-                                                          ..title = _titleController.text;
-                                                        // logger.i("$item");
-                                                        // logger.i("$_selected");
-                                                        context.read<ScheduleProvider>().createSchedule(item, _selected, widget.plan.id!);
-                                                        Navigator.pop(context);
-                                                      },
-                                                      style: ElevatedButton.styleFrom(
-                                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                                      child: Text("생성")),
-                                                )
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                });
-                          },
-                          child: Text("일정 추가"))
-                    ],
-                  ),
-                ),
-                const Gap(10),
-                SizedBox(
-                    height: 40,
-                    child: ListView.separated(
-                      shrinkWrap: true,
-                      physics: const BouncingScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, idx) {
-                        final scheduleDay = widget.plan.schedule![0]!.add(Duration(days: idx));
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _selected = idx;
-                            });
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                                color: _selected == idx
-                                    ? (isDarkMode ? Theme.of(context).colorScheme.primary : Theme.of(context).primaryColor)
-                                    : (isDarkMode ? Theme.of(context).primaryColor : Colors.white),
-                                border: Border.all(
-                                    color: _selected == idx
-                                        ? (isDarkMode ? Colors.transparent : Colors.white)
-                                        : (isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary)),
-                                borderRadius: BorderRadius.circular(24)),
-                            child: Text(
-                              "${scheduleDay.month}월${scheduleDay.day}일 (${idx + 1}일차)",
-                              style: TextStyle(
-                                  color: _selected == idx ? Colors.white : (isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
-                                  fontWeight: _selected == idx ? FontWeight.w600 : FontWeight.w400),
-                            ),
-                          ),
-                        );
+                  height: 50,
+                  width: MediaQuery.sizeOf(context).width - 40,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        _scheduleDialog(context, null, isDarkMode);
                       },
-                      separatorBuilder: (context, idx) => const Gap(8),
-                      itemCount: DateUtil.datesDifference(widget.plan.schedule!) + 1,
-                    )),
-                const Gap(10),
-                Expanded(
-                  child: Container(
-                      width: MediaQuery.sizeOf(context).width - 40,
-                      decoration: BoxDecoration(border: Border.all()),
-                      child: allScheduleList.isEmpty
-                          ? SizedBox(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text("주요 일정과 세부 일정을 등록해보세요."),
-                                  const Gap(24),
-                                  Text("주요일정 등록 후"),
-                                  Text("세부 일정을 등록 할 수 있어요."),
-                                ],
-                              ),
-                            )
-                          : allScheduleList.any((item) => item.id == _selected)
-                              ? ListView.separated(
-                                  itemBuilder: (context, idx) {
-                                    final daySchedule = allScheduleList.firstWhere((item) => item.id == _selected).scheduleList!;
-                                    final scheduleTime = daySchedule[idx].time!.split(":");
-                                    return SizedBox(
-                                      child: Column(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text("${scheduleTime[0]}시 ${scheduleTime[1]}분"),
-                                              const Gap(10),
-                                              Text("${daySchedule[idx].title}")
-                                            ],
-                                          ),
-                                          if (daySchedule[idx].details != null && daySchedule[idx].details!.isNotEmpty)
-                                            ListView.separated(
-                                                shrinkWrap: true,
-                                                physics: const NeverScrollableScrollPhysics(),
-                                                scrollDirection: Axis.vertical,
-                                                itemBuilder: (context, idx) {},
-                                                separatorBuilder: (context, idx) => const Gap(4),
-                                                itemCount: daySchedule[idx].details!.length)
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                  separatorBuilder: (context, idx) => const Gap(10),
-                                  itemCount: allScheduleList.firstWhere((item) => item.id == _selected).scheduleList!.length)
-                          : SizedBox(
-                        child: Text("${_selected + 1}일차의 일정을 추가해 보세요"),
-                      )
-                  ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            child: Icon(Icons.calendar_today, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,),
+                          ),
+                          Text("일정 추가", style: TextStyle(
+                            color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary
+                          ),),
+                          SizedBox(
+                            child: Icon(Icons.arrow_forward_ios, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,),
+                          ),
+                        ],
+                      )),
                 ),
+                const Gap(20),
+                // schedule index
+                _scheduleIndex(context, isDarkMode),
+                const Gap(10),
+                // schedule data for days
+                _scheduleDataForDays(context, isDarkMode),
                 // admob
                 if (_isLoaded && _admobUtil.bannerAd != null)
                   SizedBox(
@@ -326,4 +140,411 @@ class _SchedulePageState extends State<SchedulePage> {
       ),
     );
   }
+
+  Widget _scheduleIndex(BuildContext context, bool isDarkMode) {
+    return SizedBox(
+        height: 40,
+        child: ListView.separated(
+          shrinkWrap: true,
+          physics: const BouncingScrollPhysics(),
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (context, idx) {
+            final scheduleDay = widget.plan.schedule![0]!.add(Duration(days: idx));
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  _selected = idx;
+                });
+              },
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                    color: _selected == idx
+                        ? (isDarkMode ? Theme.of(context).colorScheme.primary : Theme.of(context).primaryColor)
+                        : (isDarkMode ? Theme.of(context).primaryColor : Colors.white),
+                    border: Border.all(
+                        color: _selected == idx
+                            ? (isDarkMode ? Colors.transparent : Colors.white)
+                            : (isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary)),
+                    borderRadius: BorderRadius.circular(24)),
+                child: Text(
+                  "${scheduleDay.month}월${scheduleDay.day}일 (${idx + 1}일차)",
+                  style: TextStyle(
+                      color: _selected == idx ? Colors.white : (isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                      fontWeight: _selected == idx ? FontWeight.w600 : FontWeight.w400),
+                ),
+              ),
+            );
+          },
+          separatorBuilder: (context, idx) => const Gap(8),
+          itemCount: DateUtil.datesDifference(widget.plan.schedule!) + 1,
+        ));
+  }
+
+  Widget _scheduleDataForDays(BuildContext context, bool isDarkMode) {
+    return Expanded(
+      child: Selector<ScheduleProvider, List<ScheduleListModel>>(
+          selector: (context, schedule) => schedule.scheduleList ?? [],
+          builder: (context, allSchedule, child) {
+            if (allSchedule[_selected].scheduleList!.isEmpty) {
+              return const SizedBox(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "주요 일정을 등록해보세요.",
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                    ),
+                    const Gap(24),
+                    Text("주요일정 등록 후"),
+                    Text("세부 일정을 등록 할 수 있어요."),
+                  ],
+                ),
+              );
+            }
+            return SizedBox(
+                width: MediaQuery.sizeOf(context).width - 40,
+                // decoration: BoxDecoration(border: Border.all()),
+                child: ListView.separated(
+                    itemBuilder: (context, idx) {
+                      final daySchedule = allSchedule[_selected].scheduleList;
+                      final stringTimeList = daySchedule![idx].time!.split(":");
+                      Widget conversionTime = const SizedBox();
+                      if (int.parse(stringTimeList[0]) > 12) {
+                        conversionTime = RichText(
+                            text: TextSpan(
+                                text: "PM",
+                                style: TextStyle(
+                                    color: isDarkMode ? Theme.of(context).colorScheme.secondary : Colors.green,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 18),
+                                children: [
+                              TextSpan(
+                                  text: " ${int.parse(stringTimeList[0]) - 12}:${stringTimeList[1]}",
+                                  style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w600, fontSize: 18))
+                            ]));
+                      } else {
+                        conversionTime = RichText(
+                            text: TextSpan(
+                                text: "AM",
+                                style: TextStyle(
+                                    color: Theme.of(context).colorScheme.primary,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 18),
+                                children: [
+                              TextSpan(
+                                  text: " ${stringTimeList[0]}:${stringTimeList[1]}",
+                                  style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w600, fontSize: 18))
+                            ]));
+                      }
+                      return SizedBox(
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                // time
+                                Flexible(
+                                  flex: 3,
+                                  child: SizedBox(
+                                    width: (MediaQuery.sizeOf(context).width - 40) * 0.3,
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          height: 8,
+                                          width: 8,
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: isAfterCheckScheduleTime(stringTimeList, widget.plan.schedule![0]!, _selected)
+                                                  ? Colors.redAccent
+                                                  : Colors.green),
+                                        ),
+                                        const Gap(10),
+                                        conversionTime
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                // title
+                                Flexible(
+                                    flex: 5,
+                                    child: SizedBox(
+                                        width: (MediaQuery.sizeOf(context).width - 40) * 0.5,
+                                        child: Text(
+                                          "${daySchedule[idx].title}",
+                                          style: const TextStyle(overflow: TextOverflow.ellipsis),
+                                        ))),
+                                // button menus
+                                Flexible(
+                                    flex: 2,
+                                    child: SizedBox(
+                                      width: (MediaQuery.sizeOf(context).width - 40) * 0.5,
+                                      child: PopupMenuButton(
+                                        color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                          itemBuilder: (context) => [
+                                                PopupMenuItem(
+                                                  value: "edit",
+                                                  child: const Text("일정 수정"),
+                                                  onTap: () {
+                                                    _scheduleDialog(context, daySchedule[idx], isDarkMode);
+                                                  },
+                                                ),
+                                                PopupMenuItem(
+                                                  value: "add",
+                                                  child: const Text("세부 정보 추가"),
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) => AddSchedulePage(
+                                                                  daySchedule: daySchedule[idx],
+                                                                  roundIdx: _selected,
+                                                                  scheduleIdx: idx,
+                                                                  planId: widget.plan.id!,
+                                                                )));
+                                                  },
+                                                ),
+                                                PopupMenuItem(
+                                                  value: "remove",
+                                                  child: const Text("삭제"),
+                                                  onTap: () {
+                                                    showDialog(
+                                                        context: context,
+                                                        builder: (context) => AlertDialog(
+                                                              title: const Text("일정을 삭제 합니다."),
+                                                              actions: [
+                                                                SizedBox(
+                                                                  child: ElevatedButton(
+                                                                      onPressed: () {
+                                                                        Navigator.pop(context);
+                                                                      },
+                                                                      child: const Text("취소")),
+                                                                ),
+                                                                SizedBox(
+                                                                  child: ElevatedButton(
+                                                                      onPressed: () {
+                                                                        context
+                                                                            .read<ScheduleProvider>()
+                                                                            .removeSchedule(_selected, idx, widget.plan.id!);
+                                                                        Navigator.pop(context);
+                                                                      },
+                                                                      child: const Text("삭제")),
+                                                                ),
+                                                              ],
+                                                            ));
+                                                  },
+                                                ),
+                                              ]),
+                                    ))
+                              ],
+                            ),
+                            if (daySchedule[idx].details != null && daySchedule[idx].details!.isNotEmpty)
+                              SizedBox(
+                                child: Row(
+                                  children: [
+                                    Flexible(
+                                        flex: 3,
+                                        child: Container(
+                                          width: (MediaQuery.sizeOf(context).width - 40) * 0.3,
+                                          height: daySchedule[idx].details!.length * 20,
+                                          decoration: BoxDecoration(border: Border(left: BorderSide(
+                                            color: isDarkMode ? Colors.white : Colors.black87
+                                          ))),
+                                        )),
+                                    Flexible(
+                                      flex: 7,
+                                      child: SizedBox(
+                                        width: (MediaQuery.sizeOf(context).width - 40) * 0.7,
+                                        child: ListView.separated(
+                                            shrinkWrap: true,
+                                            physics: const NeverScrollableScrollPhysics(),
+                                            scrollDirection: Axis.vertical,
+                                            itemBuilder: (context, detailIdx) {
+                                              return SizedBox(
+                                                  height: 20,
+                                                  width: (MediaQuery.sizeOf(context).width - 40) * 0.7,
+                                                  child: Row(
+                                                    children: [
+                                                      Flexible(
+                                                        flex: 7,
+                                                        child: SizedBox(
+                                                            width: ((MediaQuery.sizeOf(context).width - 40) * 0.7)*0.7,
+                                                            child: Text(daySchedule[idx].details![detailIdx])),
+                                                      ),
+                                                      Flexible(
+                                                        flex: 3,
+                                                        child: SizedBox(
+                                                          height: 20,
+                                                            width: ((MediaQuery.sizeOf(context).width - 40) * 0.7)*0.3,
+                                                            child: GestureDetector(
+                                                          onTap: () {
+                                                            context.read<ScheduleProvider>().removeScheduleDetail(_selected, idx, detailIdx, widget.plan.id!);
+                                                          },
+                                                          child: const Icon(Icons.remove_circle, color: Colors.redAccent,),
+                                                        )),
+                                                      ),
+                                                    ],
+                                                  ));
+                                            },
+                                            separatorBuilder: (context, idx) => const Gap(4),
+                                            itemCount: daySchedule[idx].details!.length),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                          ],
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, idx) => const Gap(10),
+                    itemCount: allSchedule[_selected].scheduleList!.length));
+          }),
+    );
+  }
+
+  Future<void> _scheduleDialog(BuildContext context, ScheduleModel? schedule, bool isDarkMode) async {
+    showDialog(
+        context: context,
+        builder: (context) {
+          if (schedule != null) {
+            _titleController.text = schedule.title!;
+            _hourController.text = schedule.time!.split(":")[0];
+            _minController.text = schedule.time!.split(":")[1];
+          }
+          return Dialog(
+            insetPadding: const EdgeInsets.all(20),
+            backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+            child: Container(
+              // height: 00,
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "시간",
+                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+                      ),
+                      const Gap(8),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 100,
+                            child: DropdownMenu(
+                                controller: _hourController,
+                                menuHeight: 300,
+                                initialSelection: schedule != null ? int.parse(schedule.time!.split(":")[0]) : 0,
+                                dropdownMenuEntries: List.generate(24, (idx) => DropdownMenuEntry(value: idx, label: idx == 0 ? "0" : "$idx"))),
+                          ),
+                          const Gap(8),
+                          const Text("시"),
+                          const Gap(16),
+                          SizedBox(
+                            width: 100,
+                            child: DropdownMenu(
+                                controller: _minController,
+                                initialSelection: schedule != null ? int.parse(schedule.time!.split(":")[1]) : 0,
+                                dropdownMenuEntries:
+                                    List.generate(6, (idx) => DropdownMenuEntry(value: idx, label: idx == 0 ? "00" : "${idx * 10}"))),
+                          ),
+                          const Gap(8),
+                          const Text("분")
+                        ],
+                      ),
+                    ],
+                  ),
+                  const Gap(20),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "여행 일정",
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                      ),
+                      const Gap(8),
+                      SizedBox(
+                        height: 50,
+                        child: TextField(
+                          controller: _titleController,
+                          maxLines: 1,
+                          style: const TextStyle(overflow: TextOverflow.ellipsis),
+                        ),
+                      )
+                    ],
+                  ),
+                  const Gap(20),
+                  SizedBox(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 100,
+                          height: 50,
+                          child: ElevatedButton(
+                              onPressed: () {
+                                _titleController.clear();
+                                _hourController.clear();
+                                _minController.clear();
+                                Navigator.pop(context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                  side: isDarkMode ? const BorderSide(color: Colors.white) : null,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                              child: Text("닫기", style: TextStyle(
+                                color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary
+                              ),)),
+                        ),
+                        const Gap(20),
+                        SizedBox(
+                          width: 100,
+                          height: 50,
+                          child: ElevatedButton(
+                              onPressed: () {
+                                if (_titleController.text.isEmpty) {
+                                  Get.snackbar("일정 내용을 입력해 주세요.", "일정의 타이틀 없이 셍성 할 수 없습니다.");
+                                  return;
+                                }
+
+                                final daySchedule =
+                                    context.read<ScheduleProvider>().scheduleList!.firstWhere((item) => item.id == _selected).scheduleList;
+                                if (daySchedule != null && daySchedule.any((item) => item.time == "${_hourController.text}:${_minController.text}")) {
+                                  Get.snackbar("일정의 시간을 확인해 주세요.", "선택한 시간에 일정이 존재 합니다.");
+                                  return;
+                                }
+
+                                ScheduleModel item = ScheduleModel()
+                                  ..title = _titleController.text
+                                  ..time = "${_hourController.text}:${_minController.text}";
+                                // logger.i("$item");
+                                // logger.i("$_selected");
+                                if (schedule == null) {
+                                  context.read<ScheduleProvider>().createSchedule(item, _selected, widget.plan.id!);
+                                } else {
+                                  item.id = schedule.id;
+                                  context.read<ScheduleProvider>().editSchedule(item, _selected, widget.plan.id!);
+                                }
+                                _titleController.clear();
+                                _hourController.clear();
+                                _minController.clear();
+                                Navigator.pop(context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: isDarkMode ? Theme.of(context).primaryColor :  Theme.of(context).colorScheme.primary,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                              child: Text(schedule == null ? "생성" : "수정", style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),)),
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
 }

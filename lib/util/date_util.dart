@@ -1,21 +1,21 @@
-
-
 class DateUtil {
-  static String dateToString(DateTime date){
+  static String dateToString(DateTime date) {
     String result = "";
 
-    try{
+    try {
       result = "${date.year}.${date.month}.${date.day}";
-    }catch(ex){
-      throw(ex.toString());
+    } catch (ex) {
+      throw (ex.toString());
     }
 
     return result;
   }
-  static bool isSameDay(DateTime a, DateTime b){
+
+  static bool isSameDay(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month && a.day == b.day;
   }
-  static int datesDifference(List<DateTime?> list){
+
+  static int datesDifference(List<DateTime?> list) {
     return list[1]!.difference(list[0]!).inDays;
   }
 
@@ -24,7 +24,7 @@ class DateUtil {
       return "D-Day";
     }
     if (first.isAfter(DateTime.now())) {
-      return "D-${first.difference(DateTime.now()).inDays+1}";
+      return "D-${first.difference(DateTime.now()).inDays + 1}";
     }
     if (first.isBefore(DateTime.now()) && DateTime.now().isBefore(end)) {
       return "여행중";

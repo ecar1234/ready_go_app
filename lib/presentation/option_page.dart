@@ -134,15 +134,15 @@ class _OptionPageState extends State<OptionPage> {
             FutureBuilder(
               future: PackageInfo.fromPlatform(),
               builder:(context, info) {
-                int? versionNum = int.tryParse(info.data!.buildNumber);
-
+                String? versionNum = info.data != null ? info.data!.buildNumber : "";
+                String? buildNum = info.data != null ? info.data!.version : "";
                 return Column(
                 children: [
                  const SizedBox(
                     child: Text("버전 정보"),
                   ),
                   SizedBox(
-                    child: Text("v.0.9.$versionNum", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),),
+                    child: Text("v.$buildNum.$versionNum", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),),
                   )
                 ],
               );}

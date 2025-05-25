@@ -6,8 +6,10 @@ import '../../data/models/schedule_model/schedule_model.dart';
 mixin ScheduleRepo{
   Future<List<ScheduleListModel>> getScheduleList(int planId);
   Future<List<ScheduleListModel>> createSchedule(ScheduleModel item, int roundIdx, int planId);
-  Future<List<ScheduleListModel>> editSchedule(ScheduleModel item, int roundIdx, int itemIdx, int planId);
-  Future<List<ScheduleListModel>> removeSchedule(ScheduleModel item, int roundIdx, int itemIdx, int planId);
+  Future<List<ScheduleListModel>> editSchedule(ScheduleModel item, int roundIdx, int planId);
+  Future<List<ScheduleListModel>> removeSchedule(int roundIdx, int itemIdx, int planId);
   Future<List<ScheduleListModel>> removeScheduleList(int planId);
+  Future<List<ScheduleListModel>> addScheduleDetails(List<String> details, int roundIdx, int scheduleIdx, int planId);
+  Future<List<ScheduleListModel>> removeScheduleDetail(int roundIdx, int scheduleIdx, int detailIdx, int planId);
   Future<void> removeAllScheduleList(int planId);
 }
