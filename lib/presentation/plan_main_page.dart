@@ -9,22 +9,15 @@ import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:ready_go_project/bloc/data_bloc.dart';
-import 'package:ready_go_project/domain/entities/provider/expectation_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/plan_favorites_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/responsive_height_provider.dart';
-import 'package:ready_go_project/domain/entities/provider/schedule_provider.dart';
 import 'package:ready_go_project/presentation/add_plan_page.dart';
 import 'package:ready_go_project/presentation/plan_menus/plan_menu_page.dart';
 import 'package:ready_go_project/util/admob_util.dart';
 import 'package:ready_go_project/util/date_util.dart';
 import '../data/models/plan_model/plan_model.dart';
-import '../domain/entities/provider/accommodation_provider.dart';
-import '../domain/entities/provider/account_provider.dart';
-import '../domain/entities/provider/images_provider.dart';
 import '../domain/entities/provider/plan_list_provider.dart';
 import '../domain/entities/provider/purchase_manager.dart';
-import '../domain/entities/provider/roaming_provider.dart';
-import '../domain/entities/provider/supplies_provider.dart';
 import '../domain/entities/provider/theme_mode_provider.dart';
 
 // class PlanMainPage extends StatefulWidget {
@@ -375,15 +368,8 @@ class _PlanMainPageState extends State<PlanMainPage> {
                       backgroundColor: Colors.redAccent,
                       borderRadius: BorderRadius.circular(10),
                       onPressed: (context) {
-                        context.read<PlanListProvider>().removePlanList(list[idx].id!);
-                        context.read<AccommodationProvider>().removeAllData(list[idx].id!);
-                        context.read<AccountProvider>().removeAllData(list[idx].id!);
-                        context.read<ImagesProvider>().removeAllData(list[idx].id!);
-                        context.read<RoamingProvider>().removeAllData(list[idx].id!);
-                        context.read<SuppliesProvider>().removeAllData(list[idx].id!);
-                        context.read<PlanFavoritesProvider>().removeFavoriteList(list[idx].id!);
-                        context.read<ExpectationProvider>().removeAllData(list[idx].id!);
-                        context.read<ScheduleProvider>().removeAllSchedule(list[idx].id!);
+                        context.read<DataBloc>().add(PlanAllDataRemoveEvent(context: context, planId: list[idx].id!));
+
                       }),
                 ]),
                 child: Container(

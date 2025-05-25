@@ -21,4 +21,10 @@ class PlanDataLoadingEvent extends DataEvent {
   // int planId;
   // DataLoadingPlanEvent({required this.planId});
 }
+class PlanAllDataRemoveEvent extends DataEvent {
+  int planId;
+  BuildContext context;
+  PlanAllDataRemoveEvent({required this.context, required this.planId});
+}
+
 class DataResetEvent extends DataEvent {}

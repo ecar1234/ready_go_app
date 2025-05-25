@@ -12,7 +12,7 @@ import 'package:ready_go_project/presentation/plan_menus/account_book_page.dart'
 import 'package:ready_go_project/presentation/plan_menus/air_ticket_page.dart';
 import 'package:ready_go_project/presentation/plan_menus/expectation_page.dart';
 import 'package:ready_go_project/presentation/plan_menus/roaming_page.dart';
-import 'package:ready_go_project/presentation/plan_menus/schedule_page.dart';
+import 'package:ready_go_project/presentation/plan_menus/schedule_page/schedule_page.dart';
 import 'package:ready_go_project/presentation/plan_menus/supplies_page/supplies_page.dart';
 import 'package:ready_go_project/util/intl_utils.dart';
 

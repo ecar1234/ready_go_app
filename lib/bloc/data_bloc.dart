@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:ready_go_project/domain/entities/provider/schedule_provider.dart';
 
+import '../domain/entities/provider/plan_favorites_provider.dart';
 import '../domain/entities/provider/purchase_manager.dart';
 import '../domain/entities/provider/accommodation_provider.dart';
 import '../domain/entities/provider/account_provider.dart';
@@ -59,6 +60,20 @@ class DataBloc extends Bloc<DataEvent, DataState> {
       logger.i("plan Data loaded : plan id ${event.planId}");
       emit(DataState(state: DataStatus.loadedPlan));
     });
+
+    on<PlanAllDataRemoveEvent>((event, emit){
+      event.context.read<PlanListProvider>().removePlanList(event.planId);
+      event.context.read<AccommodationProvider>().removeAllData(event.planId);
+      event.context.read<AccountProvider>().removeAllData(event.planId);
+      event.context.read<ImagesProvider>().removeAllData(event.planId);
+      event.context.read<RoamingProvider>().removeAllData(event.planId);
+      event.context.read<SuppliesProvider>().removeAllData(event.planId);
+      event.context.read<PlanFavoritesProvider>().removeFavoriteList(event.planId);
+      event.context.read<ExpectationProvider>().removeAllData(event.planId);
+      event.context.read<ScheduleProvider>().removeAllSchedule(event.planId);
+      emit(DataState(state: DataStatus.loadedPlan));
+    });
+
     on<DataResetEvent>((event, emit) async {
       emit(DataState(state: DataStatus.endPlan));
     });

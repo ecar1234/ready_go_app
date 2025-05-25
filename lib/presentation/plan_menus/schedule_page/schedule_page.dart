@@ -9,13 +9,13 @@ import 'package:ready_go_project/data/models/schedule_model/schedule_list_model.
 import 'package:ready_go_project/data/models/schedule_model/schedule_model.dart';
 import 'package:ready_go_project/domain/entities/provider/responsive_height_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/schedule_provider.dart';
-import 'package:ready_go_project/presentation/plan_menus/supplies_page/add_schedule_page.dart';
+import 'package:ready_go_project/presentation/plan_menus/schedule_page/add_schedule_page.dart';
 import 'package:ready_go_project/util/admob_util.dart';
 import 'package:ready_go_project/util/date_util.dart';
 
-import '../../data/models/plan_model/plan_model.dart';
-import '../../domain/entities/provider/purchase_manager.dart';
-import '../../domain/entities/provider/theme_mode_provider.dart';
+import '../../../data/models/plan_model/plan_model.dart';
+import '../../../domain/entities/provider/purchase_manager.dart';
+import '../../../domain/entities/provider/theme_mode_provider.dart';
 
 class SchedulePage extends StatefulWidget {
   final PlanModel plan;
@@ -100,22 +100,28 @@ class _SchedulePageState extends State<SchedulePage> {
                   width: MediaQuery.sizeOf(context).width - 40,
                   child: ElevatedButton(
                       onPressed: () {
-                        _scheduleDialog(context, null, isDarkMode);
+                        _scheduleDialog(context, null, _selected, isDarkMode);
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white
-                      ),
+                      style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           SizedBox(
-                            child: Icon(Icons.calendar_today, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,),
+                            child: Icon(
+                              size: 24,
+                              Icons.edit_calendar,
+                              color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
+                            ),
                           ),
-                          Text("일정 추가", style: TextStyle(
-                            color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary
-                          ),),
+                          Text(
+                            "주요 일정 추가",
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                          ),
                           SizedBox(
-                            child: Icon(Icons.arrow_forward_ios, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,),
+                            child: Icon(
+                              Icons.arrow_forward_ios,
+                              color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
+                            ),
                           ),
                         ],
                       )),
@@ -227,10 +233,7 @@ class _SchedulePageState extends State<SchedulePage> {
                         conversionTime = RichText(
                             text: TextSpan(
                                 text: "AM",
-                                style: TextStyle(
-                                    color: Theme.of(context).colorScheme.primary,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 18),
+                                style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600, fontSize: 18),
                                 children: [
                               TextSpan(
                                   text: " ${stringTimeList[0]}:${stringTimeList[1]}",
@@ -279,13 +282,13 @@ class _SchedulePageState extends State<SchedulePage> {
                                     child: SizedBox(
                                       width: (MediaQuery.sizeOf(context).width - 40) * 0.5,
                                       child: PopupMenuButton(
-                                        color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                          color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
                                           itemBuilder: (context) => [
                                                 PopupMenuItem(
                                                   value: "edit",
                                                   child: const Text("일정 수정"),
                                                   onTap: () {
-                                                    _scheduleDialog(context, daySchedule[idx], isDarkMode);
+                                                    _scheduleDialog(context, daySchedule[idx], _selected, isDarkMode);
                                                   },
                                                 ),
                                                 PopupMenuItem(
@@ -346,9 +349,8 @@ class _SchedulePageState extends State<SchedulePage> {
                                         child: Container(
                                           width: (MediaQuery.sizeOf(context).width - 40) * 0.3,
                                           height: daySchedule[idx].details!.length * 20,
-                                          decoration: BoxDecoration(border: Border(left: BorderSide(
-                                            color: isDarkMode ? Colors.white : Colors.black87
-                                          ))),
+                                          decoration:
+                                              BoxDecoration(border: Border(left: BorderSide(color: isDarkMode ? Colors.white : Colors.black87))),
                                         )),
                                     Flexible(
                                       flex: 7,
@@ -367,20 +369,25 @@ class _SchedulePageState extends State<SchedulePage> {
                                                       Flexible(
                                                         flex: 7,
                                                         child: SizedBox(
-                                                            width: ((MediaQuery.sizeOf(context).width - 40) * 0.7)*0.7,
-                                                            child: Text(daySchedule[idx].details![detailIdx])),
+                                                            width: ((MediaQuery.sizeOf(context).width - 40) * 0.7) * 0.7,
+                                                            child: Text(daySchedule[idx].details![detailIdx], style: const TextStyle(overflow: TextOverflow.ellipsis),)),
                                                       ),
                                                       Flexible(
                                                         flex: 3,
                                                         child: SizedBox(
-                                                          height: 20,
-                                                            width: ((MediaQuery.sizeOf(context).width - 40) * 0.7)*0.3,
+                                                            height: 20,
+                                                            width: ((MediaQuery.sizeOf(context).width - 40) * 0.7) * 0.3,
                                                             child: GestureDetector(
-                                                          onTap: () {
-                                                            context.read<ScheduleProvider>().removeScheduleDetail(_selected, idx, detailIdx, widget.plan.id!);
-                                                          },
-                                                          child: const Icon(Icons.remove_circle, color: Colors.redAccent,),
-                                                        )),
+                                                              onTap: () {
+                                                                context
+                                                                    .read<ScheduleProvider>()
+                                                                    .removeScheduleDetail(_selected, idx, detailIdx, widget.plan.id!);
+                                                              },
+                                                              child: const Icon(
+                                                                Icons.remove_circle,
+                                                                color: Colors.redAccent,
+                                                              ),
+                                                            )),
                                                       ),
                                                     ],
                                                   ));
@@ -402,7 +409,7 @@ class _SchedulePageState extends State<SchedulePage> {
     );
   }
 
-  Future<void> _scheduleDialog(BuildContext context, ScheduleModel? schedule, bool isDarkMode) async {
+  Future<void> _scheduleDialog(BuildContext context, ScheduleModel? schedule, int roundIdx, bool isDarkMode) async {
     showDialog(
         context: context,
         builder: (context) {
@@ -411,6 +418,8 @@ class _SchedulePageState extends State<SchedulePage> {
             _hourController.text = schedule.time!.split(":")[0];
             _minController.text = schedule.time!.split(":")[1];
           }
+          ScheduleListModel dayScheduleList = context.read<ScheduleProvider>().scheduleList![roundIdx];
+
           return Dialog(
             insetPadding: const EdgeInsets.all(20),
             backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
@@ -446,7 +455,8 @@ class _SchedulePageState extends State<SchedulePage> {
                             width: 100,
                             child: DropdownMenu(
                                 controller: _minController,
-                                initialSelection: schedule != null ? int.parse(schedule.time!.split(":")[1]) : 0,
+                                initialSelection: schedule != null ?
+                                (schedule.time!.split(":")[1] == "00" ? 0 : int.parse(schedule.time!.split(":")[1]) / 10) : 0,
                                 dropdownMenuEntries:
                                     List.generate(6, (idx) => DropdownMenuEntry(value: idx, label: idx == 0 ? "00" : "${idx * 10}"))),
                           ),
@@ -494,9 +504,10 @@ class _SchedulePageState extends State<SchedulePage> {
                                   backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
                                   side: isDarkMode ? const BorderSide(color: Colors.white) : null,
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                              child: Text("닫기", style: TextStyle(
-                                color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary
-                              ),)),
+                              child: Text(
+                                "닫기",
+                                style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                              )),
                         ),
                         const Gap(20),
                         SizedBox(
@@ -509,9 +520,8 @@ class _SchedulePageState extends State<SchedulePage> {
                                   return;
                                 }
 
-                                final daySchedule =
-                                    context.read<ScheduleProvider>().scheduleList!.firstWhere((item) => item.id == _selected).scheduleList;
-                                if (daySchedule != null && daySchedule.any((item) => item.time == "${_hourController.text}:${_minController.text}")) {
+                                if (schedule == null &&
+                                    dayScheduleList.scheduleList!.any((item) => item.time == "${_hourController.text}:${_minController.text}")) {
                                   Get.snackbar("일정의 시간을 확인해 주세요.", "선택한 시간에 일정이 존재 합니다.");
                                   return;
                                 }
@@ -533,9 +543,12 @@ class _SchedulePageState extends State<SchedulePage> {
                                 Navigator.pop(context);
                               },
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: isDarkMode ? Theme.of(context).primaryColor :  Theme.of(context).colorScheme.primary,
+                                  backgroundColor: isDarkMode ? Theme.of(context).primaryColor : Theme.of(context).colorScheme.primary,
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                              child: Text(schedule == null ? "생성" : "수정", style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),)),
+                              child: Text(
+                                schedule == null ? "생성" : "수정",
+                                style: const TextStyle(color: Colors.white),
+                              )),
                         )
                       ],
                     ),
@@ -546,5 +559,4 @@ class _SchedulePageState extends State<SchedulePage> {
           );
         });
   }
-
 }

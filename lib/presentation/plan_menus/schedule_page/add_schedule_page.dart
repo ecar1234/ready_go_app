@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -37,7 +39,7 @@ class _AddSchedulePageState extends State<AddSchedulePage> {
     // TODO: implement initState
     super.initState();
 
-    if(widget.daySchedule.details!.isNotEmpty){
+    if(widget.daySchedule.details != null && widget.daySchedule.details!.isNotEmpty){
       details.addAll(widget.daySchedule.details!);
     }
 
@@ -79,7 +81,7 @@ class _AddSchedulePageState extends State<AddSchedulePage> {
           text: TextSpan(
               text: "PM",
               style: TextStyle(
-                  color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.green,
+                  color: isDarkMode ? Theme.of(context).colorScheme.secondary : Colors.green,
                   fontWeight: FontWeight.w600,
                   fontSize: 20),
               children: [
@@ -93,7 +95,7 @@ class _AddSchedulePageState extends State<AddSchedulePage> {
           text: TextSpan(
               text: "AM",
               style: TextStyle(
-                  color: isDarkMode ? const Color(0xff006400) : Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.w600,
                   fontSize: 20),
               children: [
@@ -115,7 +117,7 @@ class _AddSchedulePageState extends State<AddSchedulePage> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                border: Border.all(),
+                border: Border.all(color: isDarkMode ? Colors.white : Colors.black87),
                 borderRadius: BorderRadius.circular(10)
               ),
               child: Column(
@@ -135,7 +137,7 @@ class _AddSchedulePageState extends State<AddSchedulePage> {
                       children: [
                         conversionTime,
                         const Gap(10),
-                        Text("${widget.daySchedule.title}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),)
+                        Text("${widget.daySchedule.title}", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, overflow: TextOverflow.ellipsis),)
                       ],
                     ),
                   ),
@@ -170,11 +172,18 @@ class _AddSchedulePageState extends State<AddSchedulePage> {
                       child: ElevatedButton(
                           onPressed: () {
                             setState(() {
+                              if(_detailController.text.isEmpty){
+                                Get.snackbar("빈 값은 추가 할 수 없습니다.", "세부 일정 또는 메모 값을 입력해 주세요.");
+                                return;
+                              }
                               details.add(_detailController.text);
                               _detailController.clear();
                             });
                           },
-                          child: Text("추가")),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white
+                          ),
+                          child: Text("추가", style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),)),
                     ),
                   )
                 ],
@@ -186,7 +195,7 @@ class _AddSchedulePageState extends State<AddSchedulePage> {
                   width: MediaQuery.sizeOf(context).width-40,
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                      border: Border.all(),
+                      border: Border.all(color: isDarkMode ? Colors.white : Colors.black87),
                       borderRadius: BorderRadius.circular(10)
                   ),
                   child: details.isEmpty ?
@@ -205,20 +214,22 @@ class _AddSchedulePageState extends State<AddSchedulePage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("${idx+1}. ${details[idx]}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),),
+                              Text("${idx+1}. ${details[idx]}", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),),
                               SizedBox(
-                                height: 40,
-                                width: 80,
+                                height: 30,
+                                width: 70,
                                 child: ElevatedButton(onPressed: (){
                                   setState(() {
                                     details.removeAt(idx);
                                   });
                                 }, style: ElevatedButton.styleFrom(
+                                  padding: EdgeInsets.zero,
+                                  backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10)
                                   )
                                 ),
-                                    child: const Text("삭제")),
+                                    child: Text("삭제", style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),)),
                               )
                             ],
                           ),
@@ -239,11 +250,12 @@ class _AddSchedulePageState extends State<AddSchedulePage> {
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
+                          side: isDarkMode ? const BorderSide(color: Colors.white) : null,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)
                           )
                         ),
-                        child: const Text("닫기")),
+                        child: Text("닫기", style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary ),)),
                   ),
                   const Gap(20),
                   SizedBox(
