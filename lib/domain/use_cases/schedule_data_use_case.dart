@@ -114,7 +114,8 @@ class ScheduleDataUseCase with ScheduleRepo {
         data[roundIdx].scheduleList![scheduleIdx].details = [];
         data[roundIdx].scheduleList![scheduleIdx].details!.addAll(details);
       }else {
-        data[roundIdx].scheduleList![scheduleIdx].details!.addAll(details);
+        data[roundIdx].scheduleList![scheduleIdx].details = {...data[roundIdx].scheduleList![scheduleIdx].details!, ...details}.toList();
+        // data[roundIdx].scheduleList![scheduleIdx].details!.addAll(details);
       }
 
       _getIt.updateScheduleList(data, planId);

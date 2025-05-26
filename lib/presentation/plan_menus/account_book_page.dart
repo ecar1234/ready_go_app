@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/account_model/account_model.dart';
@@ -553,7 +554,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                       Flexible(
                           flex: 1,
                           child: SizedBox(
-                              width: (wid - 40) / 3,
+                              width: (wid - 40) / 2,
                               child: Column(
                                 children: [
                                   const Text(
@@ -563,44 +564,28 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                   Selector<AccountProvider, int>(
                                       selector: (context, provider) => provider.accountInfo!.totalExchangeCost ?? 0,
                                       builder: (context, total, child) {
-                                        return Text(
-                                          "${IntlUtils.stringIntAddComma(total)} $unit",
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                              color: Theme.of(context).colorScheme.primary),
+                                        return RichText(
+                                          text: TextSpan(text: IntlUtils.stringIntAddComma(total),
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                                color: Theme.of(context).colorScheme.primary),
+                                            children: [
+                                              TextSpan(text:" $unit", style: GoogleFonts.notoSans(fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Theme.of(context).colorScheme.primary))
+                                            ]
+                                          ),
+
                                         );
                                       })
                                 ],
                               ))),
+
                       Flexible(
                           flex: 1,
                           child: SizedBox(
-                              width: (wid - 40) / 3,
-                              child: Column(
-                                children: [
-                                  const Text(
-                                    "지출 경비",
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                                  ),
-                                  Selector<AccountProvider, AccountModel>(
-                                      selector: (context, provider) => provider.accountInfo!,
-                                      builder: (context, item, child) {
-                                        var total = item.useExchangeMoney! + item.useCard!;
-                                        return Text(
-                                          "${IntlUtils.stringIntAddComma(total)} $unit",
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                              color: isDarkMode ? Theme.of(context).colorScheme.secondary : Colors.redAccent),
-                                        );
-                                      })
-                                ],
-                              ))),
-                      Flexible(
-                          flex: 1,
-                          child: SizedBox(
-                              width: (wid - 40) / 3,
+                              width: (wid - 40) / 2,
                               child: Column(
                                 children: [
                                   const Text(
@@ -610,12 +595,18 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                   Selector<AccountProvider, int>(
                                       selector: (context, provider) => provider.accountInfo!.balance ?? 0,
                                       builder: (context, balance, child) {
-                                        return Text(
-                                          "${IntlUtils.stringIntAddComma(balance)} $unit",
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                              color: Theme.of(context).colorScheme.primary),
+                                        return RichText(
+                                          text: TextSpan(text: IntlUtils.stringIntAddComma(balance),
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Theme.of(context).colorScheme.primary),
+                                              children: [
+                                                TextSpan(text:" $unit", style: GoogleFonts.notoSans(fontSize: 16,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Theme.of(context).colorScheme.primary))
+                                              ]
+                                          ),
                                         );
                                       })
                                 ],
@@ -785,19 +776,30 @@ class _AccountBookPageState extends State<AccountBookPage> {
                       Flexible(
                           flex: 1,
                           child: SizedBox(
-                              width: (wid - 40) / 2,
+                              width: (wid - 40) / 3,
                               child: Column(
                                 children: [
                                   const Text(
-                                    "현금",
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                    "총 사용 경비",
+                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                                   ),
-                                  Selector<AccountProvider, int>(
-                                      selector: (context, provider) => provider.accountInfo!.useExchangeMoney ?? 0,
-                                      builder: (context, exchange, child) {
-                                        return Text(
-                                          "${IntlUtils.stringIntAddComma(exchange)} $unit",
-                                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.redAccent),
+                                  Selector<AccountProvider, AccountModel>(
+                                      selector: (context, provider) => provider.accountInfo!,
+                                      builder: (context, item, child) {
+                                        var total = item.useExchangeMoney! + item.useCard!;
+                                        return RichText(
+                                          text: TextSpan(text: IntlUtils.stringIntAddComma(total),
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: isDarkMode ? Theme.of(context).colorScheme.secondary : Colors.brown),
+                                              children: [
+                                                TextSpan(text:" $unit", style: GoogleFonts.notoSans(fontSize: 16,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: isDarkMode ? Theme.of(context).colorScheme.secondary : Colors.brown))
+                                              ]
+                                          ),
+
                                         );
                                       })
                                 ],
@@ -805,19 +807,58 @@ class _AccountBookPageState extends State<AccountBookPage> {
                       Flexible(
                           flex: 1,
                           child: SizedBox(
-                              width: (wid - 40) / 2,
+                              width: (wid - 40) / 3,
                               child: Column(
                                 children: [
                                   const Text(
-                                    "카드",
+                                    "현금 사용",
+                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                  ),
+                                  Selector<AccountProvider, int>(
+                                      selector: (context, provider) => provider.accountInfo!.useExchangeMoney ?? 0,
+                                      builder: (context, exchange, child) {
+                                        return RichText(
+                                          text: TextSpan(text: IntlUtils.stringIntAddComma(exchange),
+                                              style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.redAccent),
+                                              children: [
+                                                TextSpan(text:" $unit", style: GoogleFonts.notoSans(fontSize: 16,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.redAccent))
+                                              ]
+                                          ),
+                                        );
+                                      })
+                                ],
+                              ))),
+                      Flexible(
+                          flex: 1,
+                          child: SizedBox(
+                              width: (wid - 40) / 3,
+                              child: Column(
+                                children: [
+                                  const Text(
+                                    "카드 사용",
                                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                                   ),
                                   Selector<AccountProvider, int>(
                                       selector: (context, provider) => provider.accountInfo!.useCard ?? 0,
                                       builder: (context, card, child) {
-                                        return Text(
-                                          "${IntlUtils.stringIntAddComma(card)} $unit",
-                                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.green),
+                                        return RichText(
+                                          text: TextSpan(text: IntlUtils.stringIntAddComma(card),
+                                              style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.green),
+                                              children: [
+                                                TextSpan(text:" $unit", style: GoogleFonts.notoSans(fontSize: 16,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.green))
+                                              ]
+                                          ),
+
                                         );
                                       })
                                 ],
@@ -859,7 +900,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
               child: SingleChildScrollView(
                 child: Container(
                   height: 380,
-                  padding: const EdgeInsets.all(30),
+                  padding: const EdgeInsets.all(20),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -869,50 +910,59 @@ class _AccountBookPageState extends State<AccountBookPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             // 일차 선택
-                            SizedBox(
-                              height: 60,
-                              child: DropdownMenu(
-                                controller: _daysController,
-                                dropdownMenuEntries: List.generate(DateUtil.datesDifference(widget.plan.schedule!) + 2, (int idx) {
-                                  if (idx == 0) {
-                                    return DropdownMenuEntry(value: idx, label: "일차선택");
-                                  }
-                                  return DropdownMenuEntry(value: idx, label: "$idx 일차");
-                                }),
-                                initialSelection: selectDayInit,
-                                width: 130,
-                                menuHeight: 200,
-                                onSelected: (value) {},
+                            Flexible(
+                              flex: 4,
+                              child: SizedBox(
+                                width: (MediaQuery.sizeOf(context).width-80)*0.4,
+                                height: 60,
+                                child: DropdownMenu(
+                                  controller: _daysController,
+                                  dropdownMenuEntries: List.generate(DateUtil.datesDifference(widget.plan.schedule!) + 2, (int idx) {
+                                    if (idx == 0) {
+                                      return DropdownMenuEntry(value: idx, label: "일차선택");
+                                    }
+                                    return DropdownMenuEntry(value: idx, label: "$idx 일차");
+                                  }),
+                                  initialSelection: selectDayInit,
+                                  width: 130,
+                                  menuHeight: 200,
+                                  onSelected: (value) {},
+                                ),
                               ),
                             ),
-                            SizedBox(
-                              height: 60,
-                              child: DropdownMenu(
-                                controller: _categoryController,
-                                dropdownMenuEntries: const [
-                                  DropdownMenuEntry(value: "카테고리", label: "카테고리"),
-                                  DropdownMenuEntry(value: "쇼핑", label: "쇼핑"),
-                                  DropdownMenuEntry(value: "교통비", label: "교통비"),
-                                  DropdownMenuEntry(value: "음식", label: "음식"),
-                                  DropdownMenuEntry(value: "유흥", label: "유흥"),
-                                  DropdownMenuEntry(value: "여행", label: "여행"),
-                                  DropdownMenuEntry(value: "레져", label: "레져"),
-                                  DropdownMenuEntry(value: "숙소", label: "숙소"),
-                                  DropdownMenuEntry(value: "기타", label: "기타"),
-                                ],
-                                initialSelection: item == null ? "카테고리" : StatisticsUtil.conversionMethodTypeToString(item.methodType??MethodType.ect),
-                                width: 160,
-                                menuHeight: 200,
-                                onSelected: (value) {
-                                  _categoryController.text = value!;
-                                },
+                            // 카테고리 선택
+                            Flexible(
+                              flex: 5,
+                              child: SizedBox(
+                                width: (MediaQuery.sizeOf(context).width-80)*0.5,
+                                height: 60,
+                                child: DropdownMenu(
+                                  controller: _categoryController,
+                                  dropdownMenuEntries: const [
+                                    DropdownMenuEntry(value: "카테고리", label: "카테고리"),
+                                    DropdownMenuEntry(value: "쇼핑", label: "쇼핑"),
+                                    DropdownMenuEntry(value: "교통비", label: "교통비"),
+                                    DropdownMenuEntry(value: "음식", label: "음식"),
+                                    DropdownMenuEntry(value: "유흥", label: "유흥"),
+                                    DropdownMenuEntry(value: "여행", label: "여행"),
+                                    DropdownMenuEntry(value: "레져", label: "레져"),
+                                    DropdownMenuEntry(value: "숙소", label: "숙소"),
+                                    DropdownMenuEntry(value: "기타", label: "기타"),
+                                  ],
+                                  initialSelection: item == null ? "카테고리" : StatisticsUtil.conversionMethodTypeToString(item.methodType??MethodType.ect),
+                                  width: 160,
+                                  menuHeight: 200,
+                                  onSelected: (value) {
+                                    _categoryController.text = value!;
+                                  },
+                                ),
                               ),
                             ),
                           ],
                         ),
                       ),
                       const Gap(10),
-                      // detail
+                      // 타이틀
                       SizedBox(
                         height: 60,
                         child: SizedBox(
@@ -935,54 +985,62 @@ class _AccountBookPageState extends State<AccountBookPage> {
                         ),
                       ),
                       const Gap(10),
-                      // amount
+                      // 금액 옵션
                       SizedBox(
                         height: 60,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            SizedBox(
-                              height: 60,
-                              width: 110,
-                              child: DropdownMenu(
-                                controller: _usedTypeController,
-                                initialSelection: "현금",
-                                dropdownMenuEntries: const [
-                                  DropdownMenuEntry(value: "현금", label: "현금"),
-                                  DropdownMenuEntry(value: "카드", label: "카드")
-                                ],
-                                onSelected: (value) {
-                                  _usedTypeController.text = value.toString();
-                                },
+                            // 통화 선택
+                            Flexible(
+                              flex: 3,
+                              child: SizedBox(
+                                height: 60,
+                                width: (MediaQuery.sizeOf(context).width-80)*0.3,
+                                child: DropdownMenu(
+                                  controller: _usedTypeController,
+                                  initialSelection: "현금",
+                                  dropdownMenuEntries: const [
+                                    DropdownMenuEntry(value: "현금", label: "현금"),
+                                    DropdownMenuEntry(value: "카드", label: "카드")
+                                  ],
+                                  onSelected: (value) {
+                                    _usedTypeController.text = value.toString();
+                                  },
+                                ),
                               ),
                             ),
-                            SizedBox(
-                              height: 60,
-                              width: 180,
-                              child: TextField(
-                                controller: _payAmountController,
-                                // onChanged: _onChanged,
-                                decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
-                                        borderRadius: BorderRadius.circular(10)),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
-                                        borderRadius: BorderRadius.circular(10)),
-                                    counterText: "",
-                                    labelText: "사용 금액",
-                                    labelStyle: const TextStyle(fontSize: 12)),
-                                maxLines: 1,
-                                maxLength: 13,
-                                keyboardType: TextInputType.number,
-                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                style: const TextStyle(fontWeight: FontWeight.w600),
-                                textAlign: TextAlign.end,
-                                onChanged: (value){
-                                  if(value.isNotEmpty) {
-                                    _payAmountController.text = IntlUtils.stringIntAddComma(int.parse(value));
-                                  }
-                                },
+                            // 사용금액
+                            Flexible(
+                              flex: 6,
+                              child: SizedBox(
+                                height: 60,
+                                width: (MediaQuery.sizeOf(context).width-80)*0.6,
+                                child: TextField(
+                                  controller: _payAmountController,
+                                  // onChanged: _onChanged,
+                                  decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                          borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+                                          borderRadius: BorderRadius.circular(10)),
+                                      focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+                                          borderRadius: BorderRadius.circular(10)),
+                                      counterText: "",
+                                      labelText: "사용 금액",
+                                      labelStyle: const TextStyle(fontSize: 12)),
+                                  maxLines: 1,
+                                  maxLength: 13,
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                  style: const TextStyle(fontWeight: FontWeight.w600),
+                                  textAlign: TextAlign.end,
+                                  onChanged: (value){
+                                    if(value.isNotEmpty) {
+                                      _payAmountController.text = IntlUtils.stringIntAddComma(int.parse(value));
+                                    }
+                                  },
+                                ),
                               ),
                             ),
                           ],
@@ -1010,8 +1068,8 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                       side: BorderSide(color: Theme.of(context).colorScheme.outline),
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                       padding: EdgeInsets.zero),
-                                  child: const Text(
-                                    "닫기",
+                                  child: Text(
+                                    "닫기",style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                                   )),
                             ),
                             const Gap(20),
@@ -1111,9 +1169,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                       padding: EdgeInsets.zero),
                                   child: Text(
                                     item != null ? "수정하기" : "추가하기",
-                                    style: TextStyle(
-                                      color: Theme.of(context).colorScheme.surface,
-                                    ),
+                                    style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                                   )),
                             ),
                           ],
@@ -1134,7 +1190,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
               insetPadding: const EdgeInsets.all(20),
               child: Container(
                 height: 300,
-                padding: const EdgeInsets.all(30),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

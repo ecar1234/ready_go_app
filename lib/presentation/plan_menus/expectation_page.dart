@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/account_model/amount_model.dart';
@@ -126,6 +127,8 @@ class _ExpectationPageState extends State<ExpectationPage> {
   }
 
   Widget _page1(BuildContext context, double height, int bannerHei, double wid, bool isDarkMode) {
+    final plan = context.read<PlanListProvider>().planList.firstWhere((item) => item.id == widget.planId);
+    final isKor = plan.nation == "대한민국";
     return SizedBox(
       height: height - bannerHei - 20,
       child: Column(
@@ -192,7 +195,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                               )
                             : Scrollbar(
                                 child: ListView.separated(
-                                  shrinkWrap: true,
+                                    shrinkWrap: true,
                                     physics: const BouncingScrollPhysics(),
                                     itemBuilder: (context, idx) {
                                       // int total = list.fold(0, (prev, ele) => prev + ele.amount!);
@@ -219,7 +222,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                                       overflow: TextOverflow.ellipsis,
                                                     ),
                                                     Text(
-                                                      "${IntlUtils.stringIntAddComma(list[idx].amount??0)} ${list[idx].unit}",
+                                                      "${IntlUtils.stringIntAddComma(list[idx].amount ?? 0)} ${list[idx].unit}",
                                                       style: TextStyle(
                                                           fontSize: 16,
                                                           color: list[idx].unit == "₩" ? Theme.of(context).colorScheme.primary : Colors.green,
@@ -235,9 +238,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                                 width: (wid - 60) * 0.2,
                                                 height: 40,
                                                 child: Card(
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(8)
-                                                  ),
+                                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                                   color: StatisticsUtil.getCardColor(list[idx].type!),
                                                   child: Center(
                                                     child: Text(
@@ -248,7 +249,11 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                                 ),
                                               ),
                                             ),
-                                            Flexible(flex: 1,child: SizedBox(width: (wid - 60) * 0.1,)),
+                                            Flexible(
+                                                flex: 1,
+                                                child: SizedBox(
+                                                  width: (wid - 60) * 0.1,
+                                                )),
                                             Flexible(
                                               flex: 2,
                                               child: SizedBox(
@@ -297,13 +302,13 @@ class _ExpectationPageState extends State<ExpectationPage> {
                   Flexible(
                     flex: 1,
                     child: SizedBox(
-                      width: (wid - 40) / 2,
+                      width: isKor ? wid - 40 : (wid - 40) / 2,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Text(
-                            "원화 사용",
+                          Text(
+                            isKor ? "예상 비용" : "원화 예상 비용",
                             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                           ),
                           Selector<ExpectationProvider, List<ExpectationModel>>(
@@ -340,45 +345,59 @@ class _ExpectationPageState extends State<ExpectationPage> {
                       ),
                     ),
                   ),
-                  Flexible(
-                    flex: 1,
-                    child: SizedBox(
-                      width: (wid - 40) / 2,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "현지 통화",
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                          ),
-                          Selector<ExpectationProvider, List<ExpectationModel>>(
-                            selector: (context, expectation) {
-                              final wonList = expectation.expectationList!.where((item) => item.unit != "₩").toList();
-                              return wonList;
-                            },
-                            builder: (context, list, child) {
-                              int totalAmount = 0;
-                              for (var item in list) {
-                                totalAmount += item.amount!;
-                              }
-                              if (list.isNotEmpty) {
-                                return Text(
-                                  "${IntlUtils.stringIntAddComma(totalAmount)} ${list[0].unit}",
-                                  style: const TextStyle(color: Colors.green, fontSize: 16, fontWeight: FontWeight.w600),
-                                );
-                              } else {
-                                final unit = context.read<PlanListProvider>().planList.firstWhere((item) => item.id == widget.planId).unit;
-                                return Text(
-                                  "0 $unit",
-                                  style: const TextStyle(color: Colors.green, fontSize: 16, fontWeight: FontWeight.w600),
-                                );
-                              }
-                            },
-                          )
-                        ],
+                  if (!isKor)
+                    Flexible(
+                      flex: 1,
+                      child: SizedBox(
+                        width: (wid - 40) / 2,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "환전 예상 비용",
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                            ),
+                            Selector<ExpectationProvider, List<ExpectationModel>>(
+                              selector: (context, expectation) {
+                                final wonList = expectation.expectationList!.where((item) => item.unit != "₩").toList();
+                                return wonList;
+                              },
+                              builder: (context, list, child) {
+                                int totalAmount = 0;
+                                for (var item in list) {
+                                  totalAmount += item.amount!;
+                                }
+                                if (list.isNotEmpty) {
+                                  return RichText(
+                                    text: TextSpan(
+                                        text: IntlUtils.stringIntAddComma(totalAmount),
+                                        style: const TextStyle(fontFamily: "Nanum", color: Colors.green, fontSize: 16, fontWeight: FontWeight.w600),
+                                        children: [
+                                          TextSpan(
+                                            text: " ${list[0].unit}",
+                                            style: GoogleFonts.notoSans(color: Colors.green, fontSize: 16, fontWeight: FontWeight.w600),
+                                          )
+                                        ]),
+                                  );
+                                } else {
+                                  return RichText(
+                                    text: TextSpan(
+                                        text: "0",
+                                        style: const TextStyle(color: Colors.green, fontSize: 16, fontWeight: FontWeight.w600),
+                                        children: [
+                                          TextSpan(
+                                            text: " ${plan.unit}",
+                                            style: GoogleFonts.notoSans(color: Colors.green, fontSize: 16, fontWeight: FontWeight.w600),
+                                          )
+                                        ]),
+                                  );
+                                }
+                              },
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                  )
+                    )
                 ],
               ),
             ),
@@ -573,8 +592,8 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                   keyboardType: TextInputType.number,
                                   style: const TextStyle(fontWeight: FontWeight.w600),
                                   textAlign: TextAlign.end,
-                                  onChanged: (value){
-                                    if(value.isNotEmpty) {
+                                  onChanged: (value) {
+                                    if (value.isNotEmpty) {
                                       _amountController.text = IntlUtils.stringIntAddComma(int.parse(value));
                                     }
                                   },

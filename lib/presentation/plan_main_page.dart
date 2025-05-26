@@ -467,11 +467,15 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                             fontSize: 18,
                                             fontWeight: FontWeight.w600),
                                       )),
-                                      const Gap(10),
+                                      const Gap(4),
+                                      const SizedBox(
+                                        child: Icon(Icons.arrow_right),
+                                      ),
+                                      const Gap(4),
                                       Expanded(
                                         child: SizedBox(
                                             child: Text(
-                                          "주제: ${list[idx].subject}",
+                                          "${list[idx].subject}",
                                           maxLines: 1,
                                           style: const TextStyle(
                                               // color: Colors.white,

@@ -90,48 +90,55 @@ class _SchedulePageState extends State<SchedulePage> {
         ),
         body: SingleChildScrollView(
           child: Container(
-            height: height - bannerHei,
+            height: height,
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
                 // add buttons
                 SizedBox(
-                  height: 50,
-                  width: MediaQuery.sizeOf(context).width - 40,
-                  child: ElevatedButton(
-                      onPressed: () {
-                        _scheduleDialog(context, null, _selected, isDarkMode);
-                      },
-                      style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SizedBox(
-                            child: Icon(
-                              size: 24,
-                              Icons.edit_calendar,
-                              color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                          Text(
-                            "주요 일정 추가",
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
-                          ),
-                          SizedBox(
-                            child: Icon(
-                              Icons.arrow_forward_ios,
-                              color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                        ],
-                      )),
+                  height: height - bannerHei - 40,
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 50,
+                        width: MediaQuery.sizeOf(context).width - 40,
+                        child: ElevatedButton(
+                            onPressed: () {
+                              _scheduleDialog(context, null, _selected, isDarkMode);
+                            },
+                            style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                SizedBox(
+                                  child: Icon(
+                                    size: 24,
+                                    Icons.edit_calendar,
+                                    color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
+                                  ),
+                                ),
+                                Text(
+                                  "주요 일정 추가",
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                                ),
+                                SizedBox(
+                                  child: Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
+                                  ),
+                                ),
+                              ],
+                            )),
+                      ),
+                      const Gap(20),
+                      // schedule index
+                      _scheduleIndex(context, isDarkMode),
+                      const Gap(10),
+                      // schedule data for days
+                      _scheduleDataForDays(context, isDarkMode),
+                    ],
+                  ),
                 ),
-                const Gap(20),
-                // schedule index
-                _scheduleIndex(context, isDarkMode),
-                const Gap(10),
-                // schedule data for days
-                _scheduleDataForDays(context, isDarkMode),
                 // admob
                 if (_isLoaded && _admobUtil.bannerAd != null)
                   SizedBox(
@@ -422,7 +429,7 @@ class _SchedulePageState extends State<SchedulePage> {
 
           return Dialog(
             insetPadding: const EdgeInsets.all(20),
-            backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+            // backgroundColor: isDarkMode ? const Color(0xffADD8E6) : Colors.white,
             child: Container(
               // height: 00,
               padding: const EdgeInsets.all(20),
@@ -501,7 +508,7 @@ class _SchedulePageState extends State<SchedulePage> {
                                 Navigator.pop(context);
                               },
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                  backgroundColor: isDarkMode ? Theme.of(context).primaryColor : Colors.white,
                                   side: isDarkMode ? const BorderSide(color: Colors.white) : null,
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                               child: Text(
@@ -543,7 +550,7 @@ class _SchedulePageState extends State<SchedulePage> {
                                 Navigator.pop(context);
                               },
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: isDarkMode ? Theme.of(context).primaryColor : Theme.of(context).colorScheme.primary,
+                                  backgroundColor: Theme.of(context).colorScheme.primary,
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                               child: Text(
                                 schedule == null ? "생성" : "수정",

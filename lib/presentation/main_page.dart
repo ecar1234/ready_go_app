@@ -181,15 +181,11 @@ class _MainPage2State extends State<MainPage2> {
       logger.i("ios need update: ${iosMinVersion < iosVersion}");
       logger.i("android need update: ${androidMinVersion < androidVersion}");
       if(Platform.isAndroid){
-        if(currentVer-1 >= androidMinVersion){
-          update = false;
-        }else {
+        if(currentVer < androidMinVersion){
           update = true;
         }
       }else if(Platform.isIOS){
-        if(currentVer >= iosMinVersion){
-          update = false;
-        }else {
+        if(currentVer < iosMinVersion){
           update = true;
         }
       }

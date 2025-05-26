@@ -465,8 +465,10 @@ class _AirTicketPageState extends State<AirTicketPage> {
                         Navigator.of(context).pop(); // 다이얼로그 닫기
                       },
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: isDarkMode ? const Color(0xff007AFF) : Theme.of(context).colorScheme.primary,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                          backgroundColor: isDarkMode ? Theme.of(context).primaryColor : Theme.of(context).colorScheme.primary,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        side: isDarkMode ? const BorderSide(color: Colors.white) : null
+                      ),
                       child: const Text(
                         "취소",
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),

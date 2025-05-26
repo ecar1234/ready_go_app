@@ -480,9 +480,8 @@ class _SuppliesPageState extends State<SuppliesPage> {
                         autofocus: true,
                         // onChanged: _onChanged,
                         style: const TextStyle(fontSize: 14),
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                          focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
+                        decoration: const InputDecoration(
+                          label: const Text("체크 아이템")
                         ),
                       ),
                     ),
@@ -500,8 +499,9 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                 },
                                 style: ElevatedButton.styleFrom(
                                     padding: EdgeInsets.zero,
-                                    backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                                    backgroundColor: isDarkMode ? Theme.of(context).primaryColor : Colors.white,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                ),
                                 child: Text(
                                   "닫기",
                                   style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),

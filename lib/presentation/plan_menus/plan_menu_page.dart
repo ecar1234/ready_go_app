@@ -38,6 +38,7 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
   bool _isLoaded = false;
   final logger = Logger();
   List<String> itemList = ["예상 경비", "항공권", "채크 리스트", "로밍(E-SIM)", "사용 경비", "숙소", "일정"];
+  List<String> korItemList = ["예상 경비", "채크 리스트", "사용 경비", "숙소", "일정"];
 
   // List<String> itemList = ["항공권", "준비물", "로밍(E-SIM)", "사용 경비", "숙소"];
   // List<String> itemList = ["항공권", "준비물", "로밍 & ESIM", "여행 경비", "숙소", "일정"];
@@ -74,6 +75,8 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
     }
     bool isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
     final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
+    bool isKor = widget.plan.nation == "대한민국";
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -120,25 +123,46 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
                                         context.read<AdmobProvider>().showInterstitialAd();
                                       }
                                     }
-                                    switch (itemList[idx]) {
-                                      case "예상 경비":
-                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => ExpectationPage(planId: widget.plan.id)));
-                                      case "항공권":
-                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => AirTicketPage(planId: widget.plan.id!)));
-                                      case "채크 리스트":
-                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => SuppliesPage(planId: widget.plan.id!)));
-                                      case "로밍(E-SIM)":
-                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => RoamingPage(planId: widget.plan.id!)));
-                                      case "여행 경비":
-                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
-                                      case "숙소":
-                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccommodationPage(plan: widget.plan)));
-                                      case "사용 경비":
-                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
-                                      case "일정":
-                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => SchedulePage(plan: widget.plan)));
-                                      default:
-                                        return;
+                                    if (!isKor) {
+                                      switch (itemList[idx]) {
+                                        case "예상 경비":
+                                          Navigator.of(context)
+                                              .push(MaterialPageRoute(builder: (context) => ExpectationPage(planId: widget.plan.id)));
+                                        case "항공권":
+                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => AirTicketPage(planId: widget.plan.id!)));
+                                        case "채크 리스트":
+                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => SuppliesPage(planId: widget.plan.id!)));
+                                        case "로밍(E-SIM)":
+                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => RoamingPage(planId: widget.plan.id!)));
+                                        case "여행 경비":
+                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
+                                        case "숙소":
+                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccommodationPage(plan: widget.plan)));
+                                        case "사용 경비":
+                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
+                                        case "일정":
+                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => SchedulePage(plan: widget.plan)));
+                                        default:
+                                          return;
+                                      }
+                                    } else {
+                                      switch (korItemList[idx]) {
+                                        case "예상 경비":
+                                          Navigator.of(context)
+                                              .push(MaterialPageRoute(builder: (context) => ExpectationPage(planId: widget.plan.id)));
+                                        case "채크 리스트":
+                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => SuppliesPage(planId: widget.plan.id!)));
+                                        case "여행 경비":
+                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
+                                        case "숙소":
+                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccommodationPage(plan: widget.plan)));
+                                        case "사용 경비":
+                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
+                                        case "일정":
+                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => SchedulePage(plan: widget.plan)));
+                                        default:
+                                          return;
+                                      }
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(
@@ -146,16 +170,16 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
                                       side: BorderSide(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                                   label: Text(
-                                    itemList[idx],
+                                    isKor ? korItemList[idx] : itemList[idx],
                                     style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w600),
                                   ),
                                   iconAlignment: IconAlignment.end,
-                                  icon: _iconSelector(idx, isDarkMode),
+                                  icon: _iconSelector(idx, isKor, isDarkMode),
                                 ),
                               );
                             },
                             separatorBuilder: (context, idx) => const Gap(20),
-                            itemCount: itemList.length),
+                            itemCount:isKor? korItemList.length : itemList.length),
                       ),
                     ],
                   ),
@@ -174,48 +198,84 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
     );
   }
 
-  Widget _iconSelector(int idx, bool isDarkMode) {
-    switch (idx) {
-      case 0:
-        return Icon(
-          Icons.bar_chart,
-          color: isDarkMode ? Colors.white : Colors.black87,
-        );
-      case 1:
-        return Icon(
-          Icons.airplane_ticket,
-          color: isDarkMode ? Colors.white : Colors.black87,
-        );
-      case 2:
-        return Icon(
-          Icons.shopping_bag_rounded,
-          color: isDarkMode ? Colors.white : Colors.black87,
-        );
-      case 3:
-        return Icon(
-          Icons.sim_card,
-          color: isDarkMode ? Colors.white : Colors.black87,
-        );
-      case 4:
-        return Icon(
-          Icons.attach_money,
-          color: isDarkMode ? Colors.white : Colors.black87,
-        );
-      case 5:
-        return Icon(
-          Icons.hotel,
-          color: isDarkMode ? Colors.white : Colors.black87,
-        );
-      case 6:
-        return Icon(
-          Icons.schedule,
-          color: isDarkMode ? Colors.white : Colors.black87,
-        );
-      default:
-        return Icon(
-          Icons.abc,
-          color: isDarkMode ? Colors.white : Colors.black87,
-        );
+  Widget _iconSelector(int idx, bool isKor, bool isDarkMode) {
+    if(isKor){
+      switch (idx) {
+        case 0:
+          return Icon(
+            Icons.bar_chart,
+            color: isDarkMode ? Colors.white : Colors.black87,
+          );
+        case 1:
+          return Icon(
+            Icons.shopping_bag_rounded,
+            color: isDarkMode ? Colors.white : Colors.black87,
+          );
+        case 2:
+          return Icon(
+            Icons.attach_money,
+            color: isDarkMode ? Colors.white : Colors.black87,
+          );
+        case 3:
+          return Icon(
+            Icons.hotel,
+            color: isDarkMode ? Colors.white : Colors.black87,
+          );
+        case 4:
+          return Icon(
+            Icons.schedule,
+            color: isDarkMode ? Colors.white : Colors.black87,
+          );
+        default:
+          return Icon(
+            Icons.abc,
+            color: isDarkMode ? Colors.white : Colors.black87,
+          );
+      }
+    }
+    else{
+      switch (idx) {
+        case 0:
+          return Icon(
+            Icons.bar_chart,
+            color: isDarkMode ? Colors.white : Colors.black87,
+          );
+        case 1:
+          return Icon(
+            Icons.airplane_ticket,
+            color: isDarkMode ? Colors.white : Colors.black87,
+          );
+        case 2:
+          return Icon(
+            Icons.shopping_bag_rounded,
+            color: isDarkMode ? Colors.white : Colors.black87,
+          );
+        case 3:
+          return Icon(
+            Icons.sim_card,
+            color: isDarkMode ? Colors.white : Colors.black87,
+          );
+        case 4:
+          return Icon(
+            Icons.attach_money,
+            color: isDarkMode ? Colors.white : Colors.black87,
+          );
+        case 5:
+          return Icon(
+            Icons.hotel,
+            color: isDarkMode ? Colors.white : Colors.black87,
+          );
+        case 6:
+          return Icon(
+            Icons.schedule,
+            color: isDarkMode ? Colors.white : Colors.black87,
+          );
+        default:
+          return Icon(
+            Icons.abc,
+            color: isDarkMode ? Colors.white : Colors.black87,
+          );
+      }
     }
   }
 }

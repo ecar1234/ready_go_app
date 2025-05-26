@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get_it/get_it.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
@@ -393,13 +394,14 @@ class _AddPlanPageState extends State<AddPlanPage> {
                       if (selected != null) {
                         final nation = selected.split(" ")[1];
                         if (selected == "✈️ 기타") {
-                          nationController.text = "국가명";
+                          nationController.text = "여행 국가";
                         } else {
                           nationController.text = "$nation (${NationCurrencyUnitUtil.getNationCurrency(nation)})";
                         }
                       }
                     },
-                    dropdownMenuEntries: List.generate(nations.length, (int idx) => DropdownMenuEntry(value: nations[idx], label: nations[idx]))),
+                    dropdownMenuEntries: List.generate(nations.length, (int idx)
+                    => DropdownMenuEntry(value: nations[idx], label: nations[idx]))),
                 const Gap(10),
                 Expanded(
                   child: SizedBox(
@@ -407,6 +409,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                       controller: nationController,
                       readOnly: _nationRead,
                       autofocus: _nationRead ? false : true,
+                      style: GoogleFonts.notoSans(),
                     ),
                   ),
                 )

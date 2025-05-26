@@ -216,10 +216,13 @@ class _AddTemplatePageState extends State<AddTemplatePage> {
                                     Get.back();
                                   },
                                   style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                  child: const Text(
-                                    "뒤로가기",
-                                    style: TextStyle(color: Colors.black87),
+                                      backgroundColor: isDarkMode ? Theme.of(context).primaryColor : Colors.white,
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                    side: isDarkMode ? const BorderSide(color: Colors.white) : null
+                                  ),
+                                  child: Text(
+                                    "돌아가기",
+                                    style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                                   )),
                             ),
                             const Gap(20),
@@ -248,7 +251,7 @@ class _AddTemplatePageState extends State<AddTemplatePage> {
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                                   child: Text(
                                     widget.temp == null ? "생성" : "수정",
-                                    style: const TextStyle(color: Colors.white),
+                                    style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                                   )),
                             )
                           ],
@@ -292,9 +295,8 @@ class _AddTemplatePageState extends State<AddTemplatePage> {
                       controller: _tempTitleController,
                       autofocus: true,
                       style: const TextStyle(fontSize: 12),
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                        focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
+                      decoration: const InputDecoration(
+                        label: Text("템플릿 이름")
                       ),
                     ),
                   ),
@@ -311,7 +313,7 @@ class _AddTemplatePageState extends State<AddTemplatePage> {
                                 Navigator.of(context).pop(false);
                               },
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                  backgroundColor: isDarkMode ? Theme.of(context).primaryColor : Colors.white,
                                   padding: EdgeInsets.zero,
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                               child: Text(
