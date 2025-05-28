@@ -247,7 +247,28 @@ class _SchedulePageState extends State<SchedulePage> {
                                   style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w600, fontSize: 18))
                             ]));
                       }
-                      return SizedBox(
+                      return Container(
+                        padding: daySchedule[idx].details != null && daySchedule[idx].details!.isNotEmpty
+                            ? const EdgeInsets.only(bottom: 8) : null,
+                        decoration: BoxDecoration(
+                          color: isDarkMode? Theme.of(context).colorScheme.primary: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey[200]!, // 좀 더 연한 그림자 색상
+                              spreadRadius: 0.5, // 미세한 확산
+                              blurRadius: 0.5,    // 매우 흐릿하게 (상단으로 갈수록 퍼지면서 사라짐)
+                              offset: Offset(0, 2), // 그림자의 시작점을 하단에서 조금 더 아래로
+                            ),
+                            // 하단 그림자를 좀 더 명확하게 표현하기 위한 추가 그림자 (선택 사항)
+                            BoxShadow(
+                              color: Colors.grey[200]!, // 더 진한 부분
+                              spreadRadius: 0.4, // 아주 조금만 퍼짐
+                              blurRadius: 0.1,   // 덜 흐릿하게
+                              offset: Offset(0, 1), // 하단에 가깝게
+                            ),
+                          ]
+                        ),
                         child: Column(
                           children: [
                             Row(
@@ -266,7 +287,7 @@ class _SchedulePageState extends State<SchedulePage> {
                                               shape: BoxShape.circle,
                                               color: isAfterCheckScheduleTime(stringTimeList, widget.plan.schedule![0]!, _selected)
                                                   ? Colors.redAccent
-                                                  : Colors.green),
+                                                  : Colors.blue),
                                         ),
                                         const Gap(10),
                                         conversionTime
@@ -353,11 +374,11 @@ class _SchedulePageState extends State<SchedulePage> {
                                   children: [
                                     Flexible(
                                         flex: 3,
-                                        child: Container(
+                                        child: SizedBox(
                                           width: (MediaQuery.sizeOf(context).width - 40) * 0.3,
                                           height: daySchedule[idx].details!.length * 20,
-                                          decoration:
-                                              BoxDecoration(border: Border(left: BorderSide(color: isDarkMode ? Colors.white : Colors.black87))),
+                                          // decoration:
+                                          //     BoxDecoration(border: Border(left: BorderSide(color: isDarkMode ? Colors.white : Colors.black87))),
                                         )),
                                     Flexible(
                                       flex: 7,
@@ -393,6 +414,7 @@ class _SchedulePageState extends State<SchedulePage> {
                                                               child: const Icon(
                                                                 Icons.remove_circle,
                                                                 color: Colors.redAccent,
+                                                                size: 20,
                                                               ),
                                                             )),
                                                       ),

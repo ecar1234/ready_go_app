@@ -424,7 +424,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                           onPressed: () {
                                             if (list[idx].favorites == true) {
                                               if (favoriteList.isNotEmpty) {
-                                                context.read<PlanFavoritesProvider>().removeFavoriteList(favoriteList[idx].id!);
+                                                context.read<PlanFavoritesProvider>().removeFavoriteList(list[idx].id!);
                                               }
                                               list[idx].favorites = false;
                                               context.read<PlanListProvider>().changePlan(list[idx]);

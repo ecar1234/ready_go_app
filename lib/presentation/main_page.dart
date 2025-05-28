@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -180,13 +181,15 @@ class _MainPage2State extends State<MainPage2> {
 
       logger.i("ios need update: ${iosMinVersion < iosVersion}");
       logger.i("android need update: ${androidMinVersion < androidVersion}");
-      if(Platform.isAndroid){
-        if(currentVer < androidMinVersion){
-          update = true;
-        }
-      }else if(Platform.isIOS){
-        if(currentVer < iosMinVersion){
-          update = true;
+      if (kReleaseMode) {
+        if(Platform.isAndroid){
+          if(currentVer < androidMinVersion){
+            update = true;
+          }
+        }else if(Platform.isIOS){
+          if(currentVer < iosMinVersion){
+            update = true;
+          }
         }
       }
 
