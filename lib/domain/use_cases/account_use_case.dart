@@ -24,8 +24,10 @@ class AccountUseCase with AccountRepo {
       final daysIndex = DateUtil.datesDifference(startDate);
       if (res.usageHistory!.isEmpty || res.usageHistory!.length != daysIndex + 1) {
         for (var i = 0; i <= daysIndex; i++) {
-          List<AmountModel> blank = [];
-          res.usageHistory!.add(blank);
+          if(res.usageHistory![i] == null){
+            List<AmountModel> blank = [];
+            res.usageHistory!.add(blank);
+          }
         }
         if (res.usageHistory!.length > daysIndex + 1) {
           res.usageHistory!.removeRange(daysIndex + 1, res.usageHistory!.length);
@@ -57,26 +59,7 @@ class AccountUseCase with AccountRepo {
       }
 
       history[day]!.add(amount);
-      // if (history.isEmpty) {
-      //   List<AmountModel> list = [];
-      //   list.add(amount);
-      //   history.add(list);
-      // } else {
-      //   if (history.length >= day && history[day - 1] != null) {
-      //     if (history[day - 1]!.first.id != amount.id) {
-      //       List<AmountModel> list = [];
-      //       list.add(amount);
-      //       history.add(list);
-      //     }else{
-      //       history[day - 1]!.add(amount);
-      //     }
-      //   } else {
-      //     List<AmountModel> list = [];
-      //     list.add(amount);
-      //     history.add(list);
-      //   }
-      // }
-      // history.sort((a, b) => int.tryParse(a!.first.id!)!.compareTo(int.parse(b!.first.id!)));
+
       account.usageHistory = history;
       await _getIt.get<AccountLocalDataRepo>().updateAccountInfo(account, id);
       return account;

@@ -84,7 +84,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("준비물"),
+          title: const Text("체크 리스트"),
         ),
         body: SingleChildScrollView(
           child: Container(
