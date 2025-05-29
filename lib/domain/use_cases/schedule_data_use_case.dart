@@ -1,32 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
-import 'package:ready_go_project/data/models/plan_model/plan_list_model.dart';
 import 'package:ready_go_project/data/models/plan_model/plan_model.dart';
 import 'package:ready_go_project/data/models/schedule_model/schedule_list_model.dart';
 import 'package:ready_go_project/data/models/schedule_model/schedule_model.dart';
 import 'package:ready_go_project/data/repositories/schedule_local_data_repo.dart';
-import 'package:ready_go_project/domain/entities/provider/plan_list_provider.dart';
 import 'package:ready_go_project/domain/repositories/plan_repo.dart';
 import 'package:ready_go_project/domain/repositories/schedule_repo.dart';
 import 'package:ready_go_project/util/date_util.dart';
 
 final _getIt = GetIt.I.get<ScheduleLocalDataRepo>();
 final logger = Logger();
+
 class ScheduleDataUseCase with ScheduleRepo {
   @override
   Future<List<ScheduleListModel>> getScheduleList(int planId) async {
     try {
       final data = await _getIt.getScheduleList(planId);
-      if(data.isEmpty){
-        List<PlanModel> planList = await GetIt.I.get<PlanRepo>().getLocalList();
-        List<DateTime?>? startDate = planList.firstWhere((item) => item.id == planId).schedule!;
-        final daysIndex = DateUtil.datesDifference(startDate);
-        for(var i = 0; i <= daysIndex; i++){
-          data.add(ScheduleListModel()..id = i..scheduleList=[]);
+
+      List<PlanModel> planList = await GetIt.I.get<PlanRepo>().getLocalList();
+      List<DateTime?>? startDate = planList.firstWhere((item) => item.id == planId).schedule!;
+      final daysIndex = DateUtil.datesDifference(startDate);
+
+      if (data.isEmpty) {
+        for (var i = 0; i <= daysIndex; i++) {
+          data.add(ScheduleListModel()
+            ..id = i
+            ..scheduleList = []);
+        }
+        await _getIt.updateScheduleList(data, planId);
+      }else {
+        if(data.length != daysIndex+1){
+          if(data.length < daysIndex+1){
+            while (data.length < daysIndex+1) {
+              ScheduleListModel blank = ScheduleListModel()
+                ..scheduleList = [];
+              data.add(blank);
+            }
+          }else if(data.length > daysIndex+1){
+            data.removeRange(daysIndex, data.length);
+          }
+          await _getIt.updateScheduleList(data, planId);
         }
       }
-      _getIt.updateScheduleList(data, planId);
+
+
+
       return data;
     } on Exception catch (e) {
       // TODO
@@ -39,10 +58,10 @@ class ScheduleDataUseCase with ScheduleRepo {
   Future<List<ScheduleListModel>> createSchedule(ScheduleModel item, int roundIdx, int planId) async {
     List<ScheduleListModel> data = await _getIt.getScheduleList(planId);
 
-    if(data[roundIdx].scheduleList!.isEmpty){
+    if (data[roundIdx].scheduleList!.isEmpty) {
       item.id = 0;
       data[roundIdx].scheduleList!.add(item);
-    }else{
+    } else {
       item.id = data[roundIdx].scheduleList!.length;
       data[roundIdx].scheduleList!.add(item);
     }
@@ -53,7 +72,6 @@ class ScheduleDataUseCase with ScheduleRepo {
       return aTime.compareTo(bTime);
     });
 
-
     _getIt.updateScheduleList(data, planId);
     return data;
   }
@@ -62,7 +80,12 @@ class ScheduleDataUseCase with ScheduleRepo {
   Future<List<ScheduleListModel>> editSchedule(ScheduleModel item, int roundIdx, int planId) async {
     try {
       List<ScheduleListModel> data = await _getIt.getScheduleList(planId);
-      data[roundIdx].scheduleList!.removeWhere((remove) => remove.id == item.id);
+
+      ScheduleModel oldItem = data[roundIdx].scheduleList!.firstWhere((remove) => remove.id == item.id);
+      if(oldItem.details != null && oldItem.details!.isNotEmpty){
+        item.details = oldItem.details;
+      }
+      data[roundIdx].scheduleList!.remove(oldItem);
       data[roundIdx].scheduleList!.add(item);
 
       data[roundIdx].scheduleList!.sort((a, b) {
@@ -73,11 +96,10 @@ class ScheduleDataUseCase with ScheduleRepo {
 
       _getIt.updateScheduleList(data, planId);
       return data;
-    }on FormatException catch(e){
+    } on FormatException catch (e) {
       logger.e(e.toString());
       rethrow;
-    }
-    on Exception catch (e) {
+    } on Exception catch (e) {
       // TODO
       logger.e(e.toString());
       rethrow;
@@ -107,15 +129,14 @@ class ScheduleDataUseCase with ScheduleRepo {
   }
 
   @override
-  Future<List<ScheduleListModel>> addScheduleDetails(List<String> details, int roundIdx, int scheduleIdx, int planId)async {
+  Future<List<ScheduleListModel>> addScheduleDetails(List<String> details, int roundIdx, int scheduleIdx, int planId) async {
     List<ScheduleListModel> data = await _getIt.getScheduleList(planId);
     try {
-      if(data[roundIdx].scheduleList![scheduleIdx].details == null){
+      if (data[roundIdx].scheduleList![scheduleIdx].details == null) {
         data[roundIdx].scheduleList![scheduleIdx].details = [];
         data[roundIdx].scheduleList![scheduleIdx].details!.addAll(details);
-      }else {
-        data[roundIdx].scheduleList![scheduleIdx].details = {...data[roundIdx].scheduleList![scheduleIdx].details!, ...details}.toList();
-        // data[roundIdx].scheduleList![scheduleIdx].details!.addAll(details);
+      } else {
+        data[roundIdx].scheduleList![scheduleIdx].details = details;
       }
 
       _getIt.updateScheduleList(data, planId);
@@ -146,8 +167,4 @@ class ScheduleDataUseCase with ScheduleRepo {
   Future<void> removeAllScheduleList(int planId) async {
     await _getIt.removeAllScheduleData(planId);
   }
-
-
-
-
 }

@@ -566,7 +566,13 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                                   ),
                                   Selector<AccountProvider, int>(
-                                      selector: (context, provider) => provider.accountInfo!.totalExchangeCost ?? 0,
+                                      selector: (context, provider) {
+                                        if(provider.accountInfo != null){
+                                          return provider.accountInfo!.totalExchangeCost ?? 0;
+                                        }else {
+                                          return 0;
+                                        }
+                                      },
                                       builder: (context, total, child) {
                                         return RichText(
                                           text: TextSpan(
@@ -594,7 +600,12 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                                   ),
                                   Selector<AccountProvider, int>(
-                                      selector: (context, provider) => provider.accountInfo!.balance ?? 0,
+                                      selector: (context, provider) {
+                                        if(provider.accountInfo != null){
+                                          return provider.accountInfo!.balance ?? 0;
+                                        }
+                                        return 0;
+                                      },
                                       builder: (context, balance, child) {
                                         return RichText(
                                           text: TextSpan(
@@ -667,7 +678,13 @@ class _AccountBookPageState extends State<AccountBookPage> {
                 const Gap(10),
                 Expanded(
                   child: Selector<AccountProvider, List<AmountModel>?>(
-                      selector: (context, provider) => provider.accountInfo!.usageHistory![_selectedDay] ?? [],
+                      selector: (context, provider) {
+                        if(provider.accountInfo != null){
+                          return provider.accountInfo!.usageHistory![_selectedDay];
+                        }else{
+                          return [];
+                        }
+                      } ,
                       builder: (context, info, child) {
                         if (info == null || info.isEmpty) {
                           return SizedBox(
@@ -823,7 +840,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
-                  // height: 60,
+                  height: (hei - 70) * 0.1,
                   width: wid - 40,
                   child: Row(
                     children: [
@@ -838,9 +855,20 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                                   ),
                                   Selector<AccountProvider, AccountModel>(
-                                      selector: (context, provider) => provider.accountInfo!,
+                                      selector: (context, provider) {
+                                        if(provider.accountInfo != null){
+                                          return provider.accountInfo!;
+                                        }else {
+                                          return AccountModel()..totalExchangeCost = 0
+                                              ..balance = 0
+                                              ..useExchangeMoney = 0
+                                              ..useCard = 0
+                                              ..useKoCash = 0
+                                              ..usageHistory = [];
+                                        }
+                                      },
                                       builder: (context, item, child) {
-                                        var total = item.useExchangeMoney! + item.useCard!;
+                                        var total = (item.useExchangeMoney??0) + (item.useCard??0);
                                         return RichText(
                                           text: TextSpan(
                                               text: IntlUtils.stringIntAddComma(total),
@@ -871,7 +899,13 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                                   ),
                                   Selector<AccountProvider, int>(
-                                      selector: (context, provider) => provider.accountInfo!.useExchangeMoney ?? 0,
+                                      selector: (context, provider) {
+                                        if(provider.accountInfo != null){
+                                          return provider.accountInfo!.useExchangeMoney ?? 0;
+                                        }else {
+                                          return 0;
+                                        }
+                                      },
                                       builder: (context, exchange, child) {
                                         return RichText(
                                           text: TextSpan(
@@ -897,7 +931,14 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                                   ),
                                   Selector<AccountProvider, int>(
-                                      selector: (context, provider) => provider.accountInfo!.useCard ?? 0,
+                                      selector: (context, provider) {
+                                        if(provider.accountInfo != null){
+                                          return provider.accountInfo!.useCard ?? 0;
+                                        }else{
+                                          return 0;
+                                        }
+
+                                      },
                                       builder: (context, card, child) {
                                         return RichText(
                                           text: TextSpan(

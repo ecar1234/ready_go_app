@@ -169,6 +169,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                           // debugPrint(nationController.text);
                           // debugPrint("${plan.unit}");
                           context.read<PlanListProvider>().addPlanList(plan);
+                          // logger.i(plan.nation);
                         }
                       } catch (ex) {
                         throw (ex).toString();

@@ -1,3 +1,4 @@
+import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -199,7 +200,7 @@ class _SchedulePageState extends State<SchedulePage> {
       child: Selector<ScheduleProvider, List<ScheduleListModel>>(
           selector: (context, schedule) => schedule.scheduleList ?? [],
           builder: (context, allSchedule, child) {
-            if (allSchedule[_selected].scheduleList!.isEmpty) {
+            if (allSchedule.isEmpty || allSchedule[_selected].scheduleList!.isEmpty) {
               return const SizedBox(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -241,7 +242,7 @@ class _SchedulePageState extends State<SchedulePage> {
                         conversionTime = RichText(
                             text: TextSpan(
                                 text: "AM",
-                                style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600, fontSize: 18),
+                                style: TextStyle(color: isDarkMode ? Theme.of(context).primaryColor : Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600, fontSize: 18),
                                 children: [
                               TextSpan(
                                   text: " ${stringTimeList[0]}:${stringTimeList[1]}",
@@ -252,7 +253,7 @@ class _SchedulePageState extends State<SchedulePage> {
 
                       return SizedBox(
                         height: daySchedule[idx].details !=null && daySchedule[idx].details!.isNotEmpty
-                            ? (daySchedule[idx].details!.length*30)+40 : 40,
+                            ? ((daySchedule[idx].details!.length*20)+8)+40 : 40,
                         child: Row(
                           children: [
                             SizedBox(
@@ -279,9 +280,13 @@ class _SchedulePageState extends State<SchedulePage> {
 
                                   if(daySchedule[idx].details != null && daySchedule[idx].details!.isNotEmpty)
                                   Expanded(
-                                      child: Container(
+                                      child: SizedBox(
                                         width: 1,
-                                        decoration: BoxDecoration(color: isDarkMode ? Colors.white : Colors.black87),
+                                        // decoration: BoxDecoration(color: isDarkMode ? Colors.white : Colors.black87),
+                                        child: DottedLine(
+                                          direction: Axis.vertical,
+                                          dashColor: isDarkMode ? Colors.white : Colors.black87,
+                                        ),
                                       )
                                   )
                                 ],
@@ -290,16 +295,17 @@ class _SchedulePageState extends State<SchedulePage> {
                             // const Gap(10),
                             Expanded(
                               child: Container(
-                                padding: const EdgeInsets.only(left: 8),
+                                padding: daySchedule[idx].details == null || daySchedule[idx].details!.isEmpty?
+                                const EdgeInsets.only(left: 8) : const EdgeInsets.only(left: 8, bottom: 8),
                                 decoration: BoxDecoration(
                                   color: isDarkMode? Theme.of(context).colorScheme.primary: Colors.white,
                                   borderRadius: BorderRadius.circular(10),
-                                  boxShadow: [
+                                  boxShadow: isDarkMode ? null : [
                                     BoxShadow(
                                       color: Colors.grey[200]!, // 좀 더 연한 그림자 색상
                                       spreadRadius: 0.5, // 미세한 확산
                                       blurRadius: 0.5,    // 매우 흐릿하게 (상단으로 갈수록 퍼지면서 사라짐)
-                                      offset: const Offset(0, 2), // 그림자의 시작점을 하단에서 조금 더 아래로
+                                      offset: const Offset(0, 1), // 그림자의 시작점을 하단에서 조금 더 아래로
                                     ),
                                     // 하단 그림자를 좀 더 명확하게 표현하기 위한 추가 그림자 (선택 사항)
                                     BoxShadow(
@@ -321,11 +327,7 @@ class _SchedulePageState extends State<SchedulePage> {
                                             flex: 3,
                                             child: SizedBox(
                                               width: (MediaQuery.sizeOf(context).width - 40) * 0.3,
-                                              child: Row(
-                                                children: [
-                                                  conversionTime
-                                                ],
-                                              ),
+                                              child: conversionTime,
                                             ),
                                           ),
                                           // title

@@ -351,10 +351,10 @@ class _PlanMainPageState extends State<PlanMainPage> {
               child: Slidable(
                 endActionPane: ActionPane(extentRatio: 0.5, motion: const ScrollMotion(), children: [
                   SlidableAction(
-                      icon: Icons.edit_calendar,
+                      icon: Icons.edit,
                       label: "수정",
-                      foregroundColor: Theme.of(context).colorScheme.primary,
-                      backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                      foregroundColor: Colors.white,
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
                       borderRadius: BorderRadius.circular(10),
                       onPressed: (context) {
                         Get.to(() => AddPlanPage(
@@ -364,7 +364,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
                   SlidableAction(
                       icon: Icons.delete,
                       label: "삭제",
-                      foregroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Colors.white,
                       backgroundColor: Colors.redAccent,
                       borderRadius: BorderRadius.circular(10),
                       onPressed: (context) {

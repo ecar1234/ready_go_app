@@ -481,7 +481,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
                         // onChanged: _onChanged,
                         style: const TextStyle(fontSize: 14),
                         decoration: const InputDecoration(
-                          label: const Text("체크 아이템")
+                          label: Text("체크 아이템")
                         ),
                       ),
                     ),
@@ -576,11 +576,8 @@ class _SuppliesPageState extends State<SuppliesPage> {
                         height: 30,
                         child: TextField(
                           controller: _controller,
-                          // onChanged: _onChanged,
-                          style: const TextStyle(fontSize: 12),
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
-                            focusedBorder: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10)),
+                          decoration: const InputDecoration(
+                            label: Text("체크 아이템"),
                           ),
                         ),
                       ),
