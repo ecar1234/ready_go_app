@@ -230,12 +230,13 @@ class _PlanMainPageState extends State<PlanMainPage> {
                   LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
                     return list.isEmpty
                         ? SizedBox(
-                            height: height * 0.6,
+                            height: height * 0.7,
                             width: constraints.maxWidth > 640
                                 ? (constraints.maxWidth > 800 ? 650 : 520)
                                 : 320,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Center(
                                   child: Text(
@@ -249,7 +250,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                   children: [
                                     Text(
                                       "✅ 예상 경비",
-                                      style: TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 18, fontWeight: FontWeight.w500),
+                                      style: TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 18, fontWeight: FontWeight.w600),
                                       textAlign: TextAlign.center,
                                     ),
                                     const Text("- 여행 경비를 미리 정리하고 관리해 보세요.")
@@ -260,7 +261,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text("✅ E-Ticket 관리",
-                                        style: TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 18, fontWeight: FontWeight.w500),
+                                        style: TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 18, fontWeight: FontWeight.w600),
                                         textAlign: TextAlign.center),
                                     const Text("- 출력 할 필요 없이 쉽게 저장 하세요.")
                                   ],
@@ -270,7 +271,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text("✅ 준비물(체크리스트)",
-                                        style: TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w500),
+                                        style: TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
                                         textAlign: TextAlign.center),
                                     const Text("- 템플릿으로 만들고 쉽게 적용 할 수 있어요.")
                                   ],
@@ -280,7 +281,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text("✅ E-SIM 관리",
-                                        style: TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w500),
+                                        style: TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
                                         textAlign: TextAlign.center),
                                     const Text("- 활성화 코드를 저장하고 쉽게 활성화 복사 할 수 있어요.")
                                   ],
@@ -290,7 +291,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text("✅ 여행 경비",
-                                        style: TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w500),
+                                        style: TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
                                         textAlign: TextAlign.center),
                                     const Text("- 사용한 경비를 쉽게 기록 할 수 있어요.")
                                   ],
@@ -300,7 +301,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text("✅ 숙소 관리",
-                                        style: TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w500),
+                                        style: TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
                                         textAlign: TextAlign.center),
                                     const Text("- 숙소 정보를 저장하고 언제든 지도로 확인 할 수 있어요.")
                                   ],

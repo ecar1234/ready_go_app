@@ -37,8 +37,8 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
   final AdmobUtil _admobUtil = AdmobUtil();
   bool _isLoaded = false;
   final logger = Logger();
-  List<String> itemList = ["예상 경비", "항공권", "채크 리스트", "로밍(E-SIM)", "사용 경비", "숙소", "일정"];
-  List<String> korItemList = ["예상 경비", "채크 리스트", "사용 경비", "숙소", "일정"];
+  List<String> itemList = ["예상 경비", "항공권", "체크 리스트", "로밍(E-SIM)", "사용 경비", "숙소", "일정"];
+  List<String> korItemList = ["예상 경비", "체크 리스트", "사용 경비", "숙소", "일정"];
 
   // List<String> itemList = ["항공권", "준비물", "로밍(E-SIM)", "사용 경비", "숙소"];
   // List<String> itemList = ["항공권", "준비물", "로밍 & ESIM", "여행 경비", "숙소", "일정"];

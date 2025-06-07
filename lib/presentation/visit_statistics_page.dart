@@ -65,10 +65,10 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
     // TODO: implement initState
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_){
-      if(kReleaseMode){
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (kReleaseMode) {
         final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
-        if(!isRemove){
+        if (!isRemove) {
           _admobUtil.loadBannerAd(onAdLoaded: () {
             setState(() {
               _isLoaded = true;
@@ -82,7 +82,6 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
         }
       }
     });
-
   }
 
   @override
@@ -124,7 +123,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
                       right: 0,
                       child: Container(
                         width: 120,
-                        height: 40,
+                        height: 60,
                         decoration:
                             BoxDecoration(color: isDarkMode ? Theme.of(context).primaryColor : Colors.white, borderRadius: BorderRadius.circular(25)),
                         child: Row(
@@ -141,8 +140,9 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
                                     });
                                   },
                                   icon: Icon(
-                                    Icons.map,
+                                    Icons.public,
                                     color: selectIdx == 0 ? (isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary) : Colors.grey,
+                                    size: 30,
                                   )),
                             ),
                             SizedBox(
@@ -159,6 +159,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
                                   icon: Icon(
                                     Icons.money,
                                     color: selectIdx == 1 ? (isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary) : Colors.grey,
+                                    size: 30,
                                   )),
                             )
                           ],
@@ -198,11 +199,22 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
   Widget _nationChartContainer(BuildContext context, List<PlanModel> list, bool isDarkMode) {
     return list.isEmpty
         ? const SizedBox(
-            child: Center(
-                child: Text(
-              "✈️ 여행이 완료되면 여행 통계를 확인 할 수 있어요.",
-              style: TextStyle(fontSize: 22),textAlign: TextAlign.center,
-            )),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "여행이 종료되면",
+                  style: TextStyle(fontSize: 18),
+                  textAlign: TextAlign.center,
+                ),
+                Gap(10),
+                Text(
+                  "통계 차트를 확인 할 수 있어요.",
+                  style: TextStyle(fontSize: 18),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
           )
         : AspectRatio(
             aspectRatio: 1.0,
@@ -280,11 +292,22 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
   Widget _accountChartContainer(BuildContext context, List<PlanModel> list, bool isDarkMode) {
     return list.isEmpty
         ? const SizedBox(
-            child: Center(
-                child: Text(
-              "📊 여행이 완료되면 사용 경비 통계를 확인 할 수 있어요.",
-              style: TextStyle(fontSize: 22), textAlign: TextAlign.center,
-            )),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "여행이 종료되면 사용",
+                  style: TextStyle(fontSize: 18),
+                  textAlign: TextAlign.center,
+                ),
+                Gap(10),
+                Text(
+                  "사용 경비 통계를 확인 할 수 있어요.",
+                  style: TextStyle(fontSize: 18),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
           )
         : AspectRatio(
             aspectRatio: 1.0,
@@ -325,7 +348,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
       final offset = isTouched ? 1.4 : 1.0;
       final color = accountColors[idx % accountColors.length];
       return PieChartSectionData(
-          title: StatisticsUtil.getAccountValue(accountList, idx) == 0 ? "" :accountList[idx].keys.first,
+          title: StatisticsUtil.getAccountValue(accountList, idx) == 0 ? "" : accountList[idx].keys.first,
           value: StatisticsUtil.getAccountValue(accountList, idx),
           color: color,
           titleStyle: TextStyle(
@@ -333,28 +356,30 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
-          badgeWidget:StatisticsUtil.getAccountValue(accountList, idx) == 0 ? null : AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              width: widgetSize,
-              height: widgetSize,
-              padding: const EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                  border: Border.all(
-                    width: 2,
-                    color: accountColors[idx],
-                  ),
-                  shape: BoxShape.circle,
-                  color: Colors.white),
-              child: Center(
-                child: Text(
-                  "${StatisticsUtil.getAccountStatistics(accountList, idx)}%",
-                  maxLines: 1,
-                  style: TextStyle(
-                    overflow: TextOverflow.ellipsis,
-                    color: isDarkMode ? Colors.white : Colors.black87,
-                  ),
-                ),
-              )),
+          badgeWidget: StatisticsUtil.getAccountValue(accountList, idx) == 0
+              ? null
+              : AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  width: widgetSize,
+                  height: widgetSize,
+                  padding: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                        width: 2,
+                        color: accountColors[idx],
+                      ),
+                      shape: BoxShape.circle,
+                      color: Colors.white),
+                  child: Center(
+                    child: Text(
+                      "${StatisticsUtil.getAccountStatistics(accountList, idx)}%",
+                      maxLines: 1,
+                      style: TextStyle(
+                        overflow: TextOverflow.ellipsis,
+                        color: isDarkMode ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                  )),
           badgePositionPercentageOffset: offset,
           radius: radius);
     });
@@ -369,7 +394,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "방문 통계 데이터",
+            "방문 국가 통계",
             style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w600, fontSize: 20),
           ),
           const Gap(10),
@@ -382,7 +407,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
                 child: nationList.isEmpty
                     ? const SizedBox(
                         child: Center(
-                          child: Text("완료 된 여행이 없습니다."),
+                          child: Text("아직 완료 된 여행이 없습니다."),
                         ),
                       )
                     : GridView.builder(
@@ -418,9 +443,18 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "사용 금액 통계(현금 + 카드)",
-            style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w600, fontSize: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "사용 경비 통계",
+                style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w600, fontSize: 20),
+              ),
+              Text(
+                "(현금 + 카드)",
+                style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w400, fontSize: 14),
+              ),
+            ],
           ),
           const Gap(10),
           Expanded(
@@ -429,7 +463,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
                 decoration: BoxDecoration(
                     border: Border.all(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                     borderRadius: BorderRadius.circular(10)),
-                child: accountList.isEmpty
+                child: accountList.isEmpty || list.isEmpty
                     ? const SizedBox(
                         child: Center(
                           child: Text("완료 된 여행이 없습니다."),
