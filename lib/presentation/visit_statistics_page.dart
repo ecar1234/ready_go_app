@@ -209,7 +209,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
                 ),
                 Gap(10),
                 Text(
-                  "통계 차트를 확인 할 수 있어요.",
+                  "방문 국가 통계를 확인 할 수 있어요.",
                   style: TextStyle(fontSize: 18),
                   textAlign: TextAlign.center,
                 ),
@@ -407,7 +407,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
                 child: nationList.isEmpty
                     ? const SizedBox(
                         child: Center(
-                          child: Text("아직 완료 된 여행이 없습니다."),
+                          child: Text("완료 된 여행이 없습니다."),
                         ),
                       )
                     : GridView.builder(

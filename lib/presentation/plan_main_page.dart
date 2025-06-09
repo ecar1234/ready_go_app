@@ -6,6 +6,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:ready_go_project/bloc/data_bloc.dart';
@@ -19,6 +20,7 @@ import '../data/models/plan_model/plan_model.dart';
 import '../domain/entities/provider/plan_list_provider.dart';
 import '../domain/entities/provider/purchase_manager.dart';
 import '../domain/entities/provider/theme_mode_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // class PlanMainPage extends StatefulWidget {
 //   const PlanMainPage({super.key});
@@ -179,6 +181,8 @@ class _PlanMainPageState extends State<PlanMainPage> {
       final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
       // logger.d("body height : $height");
       final double bannerHeight = _isLoaded ? _admobUtil.bannerAd!.size.height.toDouble() : 0;
+
+      final isKor = Localizations.localeOf(context).languageCode == "ko";
       return Container(
         height: height - 80, // height - 하단바 높이 - gap(10) => body 크기
         // color: const Color(0xff192a56),
@@ -211,10 +215,10 @@ class _PlanMainPageState extends State<PlanMainPage> {
                             color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
                           ),
                           Text(
-                            "새 여행 만들기",
-                            style: TextStyle(
-                              color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
-                            ),
+                            AppLocalizations.of(context)!.createNewPlan,
+                            style: isKor ? TextStyle(
+                              color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600)
+                            : GoogleFonts.notoSans(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600),
                           ),
                           Icon(
                             Icons.arrow_forward_ios,
@@ -230,7 +234,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
                   LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
                     return list.isEmpty
                         ? SizedBox(
-                            height: height * 0.7,
+                            height: height * 0.75,
                             width: constraints.maxWidth > 640
                                 ? (constraints.maxWidth > 800 ? 650 : 520)
                                 : 320,
@@ -240,73 +244,90 @@ class _PlanMainPageState extends State<PlanMainPage> {
                               children: [
                                 Center(
                                   child: Text(
-                                    "✨ Ready Go와 함께 하는 여행!",
-                                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: constraints.maxWidth > 640 ? 34 : 22),
+                                    "✨ ${AppLocalizations.of(context)!.planMainDesc}!",
+                                    style: isKor ? TextStyle(fontWeight: FontWeight.w600, fontSize: constraints.maxWidth > 640 ? 34 : 22)
+                                    : GoogleFonts.notoSans(fontWeight: FontWeight.w600, fontSize: constraints.maxWidth > 640 ? 34 : 22),
                                   ),
                                 ),
-                                const Gap(20),
+                                Gap(isKor ? 20 : 10),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "✅ 예상 경비",
-                                      style: TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 18, fontWeight: FontWeight.w600),
+                                      "✅ ${AppLocalizations.of(context)!.expectedMenu}",
+                                      style: isKor ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
+                                      : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
                                       textAlign: TextAlign.center,
                                     ),
-                                    const Text("- 여행 경비를 미리 정리하고 관리해 보세요.")
+                                    Text(AppLocalizations.of(context)!.expectedDesc)
                                   ],
                                 ),
                                 const Gap(10),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("✅ E-Ticket 관리",
-                                        style: TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 18, fontWeight: FontWeight.w600),
+                                    Text("✅ ${AppLocalizations.of(context)!.eTicketMenu}",
+                                        style: isKor ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
+                                        : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
                                         textAlign: TextAlign.center),
-                                    const Text("- 출력 할 필요 없이 쉽게 저장 하세요.")
+                                    Text(AppLocalizations.of(context)!.eTicketDesc)
                                   ],
                                 ),
                                 const Gap(10),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("✅ 준비물(체크리스트)",
-                                        style: TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
+                                    Text("✅ ${AppLocalizations.of(context)!.checkListMenu}",
+                                        style: isKor ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
+                                        : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
                                         textAlign: TextAlign.center),
-                                    const Text("- 템플릿으로 만들고 쉽게 적용 할 수 있어요.")
+                                    Text(AppLocalizations.of(context)!.checkListDesc)
                                   ],
                                 ),
                                 const Gap(10),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("✅ E-SIM 관리",
-                                        style: TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
+                                    Text("✅ ${AppLocalizations.of(context)!.eSimMenu}",
+                                        style: isKor ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
+                                            : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
                                         textAlign: TextAlign.center),
-                                    const Text("- 활성화 코드를 저장하고 쉽게 활성화 복사 할 수 있어요.")
+                                    Text(AppLocalizations.of(context)!.eSimDesc)
                                   ],
                                 ),
                                 const Gap(10),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("✅ 여행 경비",
-                                        style: TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
+                                    Text("✅ ${AppLocalizations.of(context)!.expenseMenu}",
+                                        style: isKor ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
+                                        : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
                                         textAlign: TextAlign.center),
-                                    const Text("- 사용한 경비를 쉽게 기록 할 수 있어요.")
+                                    Text(AppLocalizations.of(context)!.expenseDesc)
                                   ],
                                 ),
                                 const Gap(10),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("✅ 숙소 관리",
-                                        style: TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
+                                    Text("✅ ${AppLocalizations.of(context)!.accommodationMenu}",
+                                        style: isKor ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
+                                        : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
                                         textAlign: TextAlign.center),
-                                    const Text("- 숙소 정보를 저장하고 언제든 지도로 확인 할 수 있어요.")
+                                    Text(AppLocalizations.of(context)!.accommodationDesc)
                                   ],
                                 ),
-                                // Text("✈️Ready Go와 함께 하는 여행!"),
+                                const Gap(10),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("✅ ${AppLocalizations.of(context)!.scheduleMenu}",
+                                        style: isKor ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
+                                            : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
+                                        textAlign: TextAlign.center),
+                                    Text(AppLocalizations.of(context)!.scheduleDesc)
+                                  ],
+                                ),
                               ],
                             ),
                           )

@@ -5,10 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 import 'package:ready_go_project/presentation/plan_menus/plan_menu_page.dart';
 import 'package:ready_go_project/util/admob_util.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../bloc/data_bloc.dart';
 import '../data/models/plan_model/plan_model.dart';
@@ -96,24 +98,26 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _favoritePlanListContainer(BuildContext context, List<PlanModel> favoriteList, bool isDarkMode, DataState state) {
+    final isKor = Localizations.localeOf(context).languageCode == "ko" ;
     if (favoriteList.isEmpty) {
       return SizedBox(
         height: 160,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(
+            SizedBox(
               child: Text(
-                "즐겨찾기",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                AppLocalizations.of(context)!.favorite,
+                style: isKor? const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)
+                    : GoogleFonts.notoSans(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ),
             const Gap(10),
             Container(
               height: 120,
               decoration: BoxDecoration(border: Border.all(), borderRadius: BorderRadius.circular(10)),
-              child: const Center(
-                child: Text("여행 계획을 즐겨찾기로 쉽게 관리하세요."),
+              child: Center(
+                child: Text(AppLocalizations.of(context)!.favoriteDesc),
               ),
             ),
           ],
@@ -128,7 +132,7 @@ class _HomePageState extends State<HomePage> {
             width: MediaQuery.sizeOf(context).width,
             height: 40,
             child: Text(
-              "즐겨찾기 (${favoriteList.length} / 2)",
+              "${AppLocalizations.of(context)!.favorite} (${favoriteList.length} / 2)",
               style: const TextStyle(
                   // color: Colors.white,
                   fontWeight: FontWeight.w600,
@@ -329,6 +333,7 @@ class _HomePageState extends State<HomePage> {
       {"assets/images/logo_jeju.png": "https://www.jejuair.net/ko/linkService/boardingProcessGuide/trustBaggage.do"},
       {"assets/images/logo_aerok.png": "https://www.aerok.com/service/free"},
     ];
+    final isKor = Localizations.localeOf(context).languageCode == "ko" ;
     return LayoutBuilder(
       builder: (context, constraints) {
       return SizedBox(
@@ -369,12 +374,14 @@ class _HomePageState extends State<HomePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '인천공항',
-                              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontSize: 14),
+                              AppLocalizations.of(context)!.incheonAirport,
+                              style: isKor ? TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontSize: 14)
+                                  : GoogleFonts.notoSans(color: isDarkMode ? Colors.white : Colors.black, fontSize: 14),
                             ),
                             Text(
-                              '기내반입 규정',
-                              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontSize: 16, fontWeight: FontWeight.w600),
+                              AppLocalizations.of(context)!.planRule,
+                              style: isKor ? TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontSize: 16, fontWeight: FontWeight.w600)
+                              : GoogleFonts.notoSans(color: isDarkMode ? Colors.white : Colors.black, fontSize: 14, fontWeight: FontWeight.w600),
                             ),
                           ],
                         ),
@@ -452,12 +459,14 @@ class _HomePageState extends State<HomePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '항공사 별',
-                              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontSize: 14),
+                              AppLocalizations.of(context)!.byAirline,
+                              style: isKor ? TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontSize: 14)
+                              : GoogleFonts.notoSans(color: isDarkMode ? Colors.white : Colors.black, fontSize: 14),
                             ),
                             Text(
-                              '수화물 규정',
-                              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontSize: 16, fontWeight: FontWeight.w600),
+                              AppLocalizations.of(context)!.baggage,
+                              style: isKor ? TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontSize: 16, fontWeight: FontWeight.w600)
+                              : GoogleFonts.notoSans(color: isDarkMode ? Colors.white : Colors.black, fontSize: 14, fontWeight: FontWeight.w600),
                             ),
                           ],
                         ),
@@ -472,6 +481,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _batteryInfoButton(BuildContext context, bool isDarkMode) {
+    final isKor = Localizations.localeOf(context).languageCode == "ko";
     return SizedBox(
       height: 50,
       width: MediaQuery.sizeOf(context).width,
@@ -481,7 +491,14 @@ class _HomePageState extends State<HomePage> {
               "https://www.airport.kr/ap_ko/1011/subview.do?enc=Zm5jdDF8QEB8JTJGYmJzJTJGYXBfa28lMkYxNzUlMkYxMzg1ODAlMkZhcnRjbFZpZXcuZG8lM0ZwYWdlJTNEMSUyNmZpbmRUeXBlJTNEJTI2ZmluZFdvcmQlM0QlMjZmaW5kQ2xTZXElM0QlMjZmaW5kT3Bud3JkJTNEJTI2cmdzQmduZGVTdHIlM0QlMjZyZ3NFbmRkZVN0ciUzRCUyNnBhc3N3b3JkJTNEJTI2dGVtcFJvdyUzRCUyNg%3D%3D"));
         },
         style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
-        label: const Text("보조배터리 및 전자담배 기내반입 규정"),
+        label: isKor ? Text(AppLocalizations.of(context)!.battery)
+            : Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(AppLocalizations.of(context)!.battery.split(",")[0]),
+            Text(AppLocalizations.of(context)!.battery.split(",")[1]),
+          ],
+        ),
         icon: Image.asset("assets/images/battery.png"),
       ),
     );

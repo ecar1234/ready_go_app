@@ -12,6 +12,7 @@ import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.da
 import 'package:ready_go_project/util/admob_util.dart';
 import 'package:ready_go_project/util/date_util.dart';
 import 'package:ready_go_project/util/nation_currency_unit_util.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../data/models/plan_model/plan_model.dart';
 import '../domain/entities/provider/admob_provider.dart';
@@ -183,7 +184,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                     },
                     style: TextButton.styleFrom(padding: EdgeInsets.zero),
                     label: Text(
-                      widget.plan != null ? "수정" : "생성",
+                      widget.plan != null ? AppLocalizations.of(context)!.modify : AppLocalizations.of(context)!.create,
                       style: TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w500, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                     ),
