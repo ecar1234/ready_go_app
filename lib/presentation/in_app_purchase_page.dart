@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get_it/get_it.dart';
@@ -9,6 +7,8 @@ import 'package:ready_go_project/data/models/purchases/purchase_model.dart';
 import 'package:ready_go_project/domain/entities/provider/purchase_manager.dart';
 import 'package:ready_go_project/domain/entities/provider/responsive_height_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:ready_go_project/util/localizations_util.dart';
 
 class InAppPurchasePage extends StatefulWidget {
   const InAppPurchasePage({super.key});
@@ -41,6 +41,8 @@ class _InAppPurchasePageState extends State<InAppPurchasePage> {
     final isDarkMode = context.read<ThemeModeProvider>().isDarkMode;
     final hei = GetIt.I.get<ResponsiveHeightProvider>().resHeight!;
     final wid = MediaQuery.sizeOf(context).width;
+
+    final isKor = Localizations.localeOf(context).languageCode == "ko";
     return Container(
         height: hei - 80,
         width: wid,
@@ -52,30 +54,36 @@ class _InAppPurchasePageState extends State<InAppPurchasePage> {
                 height: hei * 0.2,
                 width: wid - 40,
                 // color: Colors.teal,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "당신의 모든 여정을",
-                      style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontSize: 20, fontWeight: FontWeight.w400),
-                    ),
-                    RichText(
-                      text: TextSpan(
-                          text: "Ready Go",
-                          style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 20, fontWeight: FontWeight.w600),
-                          children: [
-                            TextSpan(
-                              text: "와",
-                              style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontSize: 20, fontWeight: FontWeight.w400),
-                            ),
-                          ]),
-                    ),
-                    Text(
-                      "함께 해보세요.",
-                      style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontSize: 20, fontWeight: FontWeight.w400),
-                    )
-                  ],
-                )),
+                child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Text(
+                    AppLocalizations.of(context)!.purchaseTitle1,
+                    style:
+                    LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Colors.black87, size: 20, fontWeight: FontWeight.w400),
+                  ),
+                  RichText(
+                    text: TextSpan(
+                        text: isKor ? AppLocalizations.of(context)!.purchaseTitle3 : AppLocalizations.of(context)!.purchaseTitle2,
+                        style: isKor
+                            ? LocalizationsUtil.setTextStyle(isKor, color: Theme.of(context).colorScheme.primary, size: 20, fontWeight: FontWeight.w600)
+                            : LocalizationsUtil.setTextStyle(isKor,
+                                color: isDarkMode ? Colors.white : Colors.black87, size: 20, fontWeight: FontWeight.w400),
+                        children: [
+                          TextSpan(
+                            text: isKor ? AppLocalizations.of(context)!.purchaseTitle2 : AppLocalizations.of(context)!.purchaseTitle3,
+                            style: !isKor
+                                ? LocalizationsUtil.setTextStyle(isKor,
+                                    color: Theme.of(context).colorScheme.primary, size: 20, fontWeight: FontWeight.w600)
+                                : LocalizationsUtil.setTextStyle(isKor,
+                                    color: isDarkMode ? Colors.white : Colors.black87, size: 20, fontWeight: FontWeight.w400),
+                          ),
+                        ]),
+                  ),
+                  Text(
+                    AppLocalizations.of(context)!.purchaseTitle4,
+                    style:
+                    LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Colors.black87, size: 20, fontWeight: FontWeight.w400),
+                  )
+                ])),
             Container(
               height: (hei * 0.8) - 100,
               width: wid - 40,
@@ -129,49 +137,49 @@ class _InAppPurchasePageState extends State<InAppPurchasePage> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           // 할인 정보
-                                          SizedBox(
-                                            // width: 110,
-                                            height: 30,
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              children: [
-                                                SizedBox(
-                                                  width: 110,
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      // Container(
-                                                      //   width: 50,
-                                                      //   height: 25,
-                                                      //   decoration: BoxDecoration(
-                                                      //       color: _selectedIdx == 0 || isRemove ? Colors.orangeAccent : const Color(0xff999999),
-                                                      //       border: _selectedIdx == 0 || isRemove ? null : Border.all(color: const Color(0xff999999)),
-                                                      //       borderRadius: BorderRadius.circular(25)),
-                                                      //   child: const Center(
-                                                      //       child: Text(
-                                                      //     "인기",
-                                                      //     style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-                                                      //   )),
-                                                      // ),
-                                                      Container(
-                                                        width: 50,
-                                                        height: 25,
-                                                        decoration: BoxDecoration(
-                                                            color: _selectedIdx == 0 || isRemove ? Colors.teal : const Color(0xff999999),
-                                                            border: _selectedIdx == 0 || isRemove ? null : Border.all(color: const Color(0xff999999)),
-                                                            borderRadius: BorderRadius.circular(25)),
-                                                        child: const Center(
-                                                            child: Text(
-                                                          "-20%",
-                                                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-                                                        )),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
+                                          // SizedBox(
+                                          //   // width: 110,
+                                          //   height: 30,
+                                          //   child: Row(
+                                          //     mainAxisAlignment: MainAxisAlignment.start,
+                                          //     children: [
+                                          //       SizedBox(
+                                          //         width: 110,
+                                          //         child: Row(
+                                          //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          //           children: [
+                                          //             // Container(
+                                          //             //   width: 50,
+                                          //             //   height: 25,
+                                          //             //   decoration: BoxDecoration(
+                                          //             //       color: _selectedIdx == 0 || isRemove ? Colors.orangeAccent : const Color(0xff999999),
+                                          //             //       border: _selectedIdx == 0 || isRemove ? null : Border.all(color: const Color(0xff999999)),
+                                          //             //       borderRadius: BorderRadius.circular(25)),
+                                          //             //   child: const Center(
+                                          //             //       child: Text(
+                                          //             //     "인기",
+                                          //             //     style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                                          //             //   )),
+                                          //             // ),
+                                          //             Container(
+                                          //               width: 50,
+                                          //               height: 25,
+                                          //               decoration: BoxDecoration(
+                                          //                   color: _selectedIdx == 0 || isRemove ? Colors.teal : const Color(0xff999999),
+                                          //                   border: _selectedIdx == 0 || isRemove ? null : Border.all(color: const Color(0xff999999)),
+                                          //                   borderRadius: BorderRadius.circular(25)),
+                                          //               child: const Center(
+                                          //                   child: Text(
+                                          //                 "-20%",
+                                          //                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                                          //               )),
+                                          //             )
+                                          //           ],
+                                          //         ),
+                                          //       ),
+                                          //     ],
+                                          //   ),
+                                          // ),
                                           // 구매 정보
                                           Expanded(
                                             child: SizedBox(
@@ -180,23 +188,21 @@ class _InAppPurchasePageState extends State<InAppPurchasePage> {
                                                 children: [
                                                   Row(
                                                     children: [
-                                                      Text(
-                                                        Platform.isIOS ? "광고 제거" : products.first.title.split(" ").first,
-                                                        style: TextStyle(
-                                                            fontWeight: FontWeight.w600,
-                                                            fontSize: 18,
-                                                            color: isDarkMode
-                                                                ? (_selectedIdx == 0 || isRemove ? Colors.white : const Color(0xff999999))
-                                                                : (_selectedIdx == 0 || isRemove ? Colors.black87 : const Color(0xff999999))),
-                                                      ),
+                                                      Text(AppLocalizations.of(context)!.removeAd,
+                                                          style: LocalizationsUtil.setTextStyle(isKor,
+                                                              fontWeight: FontWeight.w600,
+                                                              size: 18,
+                                                              color: isDarkMode
+                                                                  ? (_selectedIdx == 0 || isRemove ? Colors.white : const Color(0xff999999))
+                                                                  : (_selectedIdx == 0 || isRemove ? Colors.black87 : const Color(0xff999999)))),
                                                       if (isRemove) const Gap(10),
                                                       if (isRemove)
                                                         SizedBox(
                                                           // width: 50,
                                                           // height: 50,
                                                           child: Text(
-                                                            "(구입 완료)",
-                                                            style: TextStyle(
+                                                            AppLocalizations.of(context)!.purchaseCompleted,
+                                                            style: LocalizationsUtil.setTextStyle(isKor,
                                                                 color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
                                                                 fontWeight: FontWeight.w600),
                                                           ),
@@ -204,18 +210,18 @@ class _InAppPurchasePageState extends State<InAppPurchasePage> {
                                                     ],
                                                   ),
                                                   Column(
-                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    mainAxisAlignment: MainAxisAlignment.center,
                                                     children: [
+                                                      // Text(
+                                                      //   "₩4100",
+                                                      //   style: TextStyle(
+                                                      //       fontSize: 14,
+                                                      //       color: Colors.grey[400],
+                                                      //       decoration: TextDecoration.lineThrough,
+                                                      //       decorationColor: Colors.grey[400]),
+                                                      // ),
                                                       Text(
-                                                        "₩4100",
-                                                        style: TextStyle(
-                                                            fontSize: 14,
-                                                            color: Colors.grey[400],
-                                                            decoration: TextDecoration.lineThrough,
-                                                            decorationColor: Colors.grey[400]),
-                                                      ),
-                                                      Text(
-                                                        "₩3300",
+                                                        products.firstWhere((item) => item.id.contains("remove_ad")).price,
                                                         style: TextStyle(
                                                             fontSize: 18,
                                                             color: isDarkMode
@@ -232,8 +238,8 @@ class _InAppPurchasePageState extends State<InAppPurchasePage> {
                                           // 설명
                                           SizedBox(
                                             child: Text(
-                                              "광고 없이 서비스를 이용 할 수 있습니다.",
-                                              style: TextStyle(
+                                              AppLocalizations.of(context)!.removeAdDesc,
+                                              style: LocalizationsUtil.setTextStyle(isKor,
                                                   color: isDarkMode
                                                       ? (_selectedIdx == 0 || isRemove ? Colors.white : const Color(0xff999999))
                                                       : (_selectedIdx == 0 || isRemove ? Colors.black87 : const Color(0xff999999))),
@@ -368,9 +374,10 @@ class _InAppPurchasePageState extends State<InAppPurchasePage> {
                             : null,
                         style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
                         child: Text(
-                          "결제하기",
-                          style: TextStyle(
-                              color: isDarkMode ? Colors.white : (_selectedIdx != -1 ? Theme.of(context).colorScheme.primary : Colors.grey[400])),
+                          AppLocalizations.of(context)!.buy,
+                          style:
+                          LocalizationsUtil.setTextStyle(isKor,
+                                color: isDarkMode ? Colors.white : (_selectedIdx != -1 ? Theme.of(context).colorScheme.primary : Colors.grey[400])),
                         )),
                   )
                 ],

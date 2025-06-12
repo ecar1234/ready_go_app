@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 import 'package:ready_go_project/presentation/plan_menus/plan_menu_page.dart';
 import 'package:ready_go_project/util/admob_util.dart';
+import 'package:ready_go_project/util/localizations_util.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -133,10 +134,8 @@ class _HomePageState extends State<HomePage> {
             height: 40,
             child: Text(
               "${AppLocalizations.of(context)!.favorite} (${favoriteList.length} / 2)",
-              style: const TextStyle(
-                  // color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 18),
+              style: LocalizationsUtil.setTextStyle(isKor, fontWeight: FontWeight.w600,
+                  size: 18)
             ),
           ),
           ListView.separated(
@@ -226,23 +225,25 @@ class _HomePageState extends State<HomePage> {
                                       children: [
                                         SizedBox(
                                             child: Text(
-                                          "${favoriteList[idx].nation} (${DateUtil.datesDifference(favoriteList[idx].schedule!) + 1}일)",
-                                          style: const TextStyle(
-                                              // color: Colors.white,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w600),
-                                        )),
-                                        const Gap(10),
+                                                "${favoriteList[idx].nation} (${DateUtil.datesDifference(favoriteList[idx].schedule!) + 1}${AppLocalizations.of(context)!.days})",
+                                                style: LocalizationsUtil.setTextStyle(isKor,  // color: Colors.white,
+                                                    size: 18,
+                                                    fontWeight: FontWeight.w600)
+                                            )),
+                                        const Gap(4),
+                                        const SizedBox(
+                                          child: Icon(Icons.arrow_right),
+                                        ),
+                                        const Gap(4),
                                         Expanded(
                                           child: SizedBox(
                                               child: Text(
-                                            "주제: ${favoriteList[idx].subject}",
-                                            maxLines: 1,
-                                            style: const TextStyle(
-                                                // color: Colors.white,
+                                                "${favoriteList[idx].subject}",
+                                                maxLines: 1,
+                                                style: LocalizationsUtil.setTextStyle(isKor,
+                                                    fontWeight: FontWeight.w600),
                                                 overflow: TextOverflow.ellipsis,
-                                                fontWeight: FontWeight.w600),
-                                          )),
+                                              )),
                                         ),
                                       ],
                                     ),

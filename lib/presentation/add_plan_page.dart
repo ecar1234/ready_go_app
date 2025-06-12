@@ -37,18 +37,132 @@ class _AddPlanPageState extends State<AddPlanPage> {
   TextEditingController nationController = TextEditingController();
   TextEditingController subjectController = TextEditingController();
   List<DateTime?> _dates = [];
-  Timer? _debounce;
 
-  _onChanged(String value) {
-    if (_debounce?.isActive ?? false) {
-      _debounce?.cancel();
-    }
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      if (kDebugMode) {
-        logger.d(value);
-      }
-    });
-  }
+  List<String> nationsKo = [
+    "선택",
+    "🇰🇷 대한민국",
+    "🇯🇵 일본",
+    "🇨🇳 중국",
+    "🇹🇼 대만",
+    "🇲🇳 몽골",
+    "🇭🇰 홍콩",
+    "🇹🇭 태국",
+    "🇻🇳 베트남",
+    "🇵🇭 필리핀",
+    "🇰🇭 캄보디아",
+    "🇱🇦 라오스",
+    "🇲🇾 말레이시아",
+    "🇸🇬 싱가포르",
+    "🇮🇩 인도네시아",
+    "🇲🇲 미얀마",
+    "🇦🇺 호주",
+    "🇳🇿 뉴질랜드",
+    "🇮🇳 인도",
+    "🇬🇧 영국",
+    "🇫🇷 프랑스",
+    "🇩🇪 독일",
+    "🇪🇸 스페인",
+    "🇵🇹 포르투칼",
+    "🇮🇹 이탈리아",
+    "🇬🇷 그리스",
+    "🇹🇷 튀르키예",
+    "🇨🇦 캐나다",
+    "🇺🇸 미국",
+    "🇲🇽 맥시코",
+    "🇨🇴 콜롬비아",
+    "🇧🇷 브라질",
+    "🇦🇷 아르헨티나",
+    "🇨🇱 칠레",
+    "✈️ 기타"
+  ];
+  List<String> nationsEn = [
+    "Select",
+    "🇦🇷 Argentina",
+    "🇦🇺 Australia",
+    "🇧🇷 Brazil",
+    "🇰🇭 Cambodia",
+    "🇨🇦 Canada",
+    "🇨🇱 Chile",
+    "🇨🇳 China",
+    "🇨🇴 Colombia",
+    "🇫🇷 France",
+    "🇩🇪 Germany",
+    "🇬🇷 Greece",
+    "🇭🇰 Hong Kong",
+    "🇮🇳 India",
+    "🇮🇩 Indonesia",
+    "🇮🇹 Italy",
+    "🇯🇵 Japan",
+    "🇱🇦 Laos",
+    "🇲🇾 Malaysia",
+    "🇲🇳 Mongolia",
+    "🇲🇲 Myanmar",
+    "🇲🇽 Mexico",
+    "🇳🇿 New Zealand",
+    "🇵🇭 Philippines",
+    "🇵🇹 Portugal",
+    "🇸🇬 Singapore",
+    "🇰🇷 South Korea",
+    "🇪🇸 Spain",
+    "🇸🇪 Sweden", // 🇸🇪 스웨덴이 없었지만 알파벳 순서 참고용 예시로 임의 추가 가능
+    "🇹🇭 Thailand",
+    "🇹🇷 Türkiye",
+    "🇹🇼 Taiwan",
+    "🇬🇧 United Kingdom",
+    "🇺🇸 United States",
+    "🇻🇳 Vietnam",
+    "✈️ Others"
+  ];
+  List<String> nationsJa = [
+    "選択",
+    "🇰🇷 韓国",
+    "🇯🇵 日本",
+    "🇨🇳 中国",
+    "🇹🇼 台湾",
+    "🇲🇳 モンゴル",
+    "🇭🇰 香港",
+    "🇹🇭 タイ",
+    "🇻🇳 ベトナム",
+    "🇵🇭 フィリピン",
+    "🇰🇭 カンボジア",
+    "🇱🇦 ラオス",
+    "🇲🇾 マレーシア",
+    "🇸🇬 シンガポール",
+    "🇮🇩 インドネシア",
+    "🇲🇲 ミャンマー",
+    "🇦🇺 オーストラリア",
+    "🇳🇿 ニュージーランド",
+    "🇮🇳 インド",
+    "🇬🇧 イギリス",
+    "🇫🇷 フランス",
+    "🇩🇪 ドイツ",
+    "🇪🇸 スペイン",
+    "🇵🇹 ポルトガル",
+    "🇮🇹 イタリア",
+    "🇬🇷 ギリシャ",
+    "🇹🇷 トルコ",
+    "🇨🇦 カナダ",
+    "🇺🇸 アメリカ合衆国",
+    "🇲🇽 メキシコ",
+    "🇨🇴 コロンビア",
+    "🇧🇷 ブラジル",
+    "🇦🇷 アルゼンチン",
+    "🇨🇱 チリ",
+    "✈️ その他"
+  ];
+
+  // Timer? _debounce;
+  //
+  // _onChanged(String value) {
+  //   if (_debounce?.isActive ?? false) {
+  //     _debounce?.cancel();
+  //   }
+  //   _debounce = Timer(const Duration(milliseconds: 500), () {
+  //     if (kDebugMode) {
+  //       logger.d(value);
+  //     }
+  //   });
+  // }
 
   @override
   void initState() {
@@ -84,7 +198,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
     super.dispose();
     nationController.dispose();
     subjectController.dispose();
-    _debounce?.cancel();
+    // _debounce?.cancel();
     _admobUtil.dispose();
   }
 
@@ -95,6 +209,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
     final isDarkMode = context.read<ThemeModeProvider>().isDarkMode;
     final hei = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
     final double bannerHei = _isLoaded ? _admobUtil.bannerAd!.size.height.toDouble() : 0;
+    final isKor = Localizations.localeOf(context).languageCode == "ko";
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
@@ -103,9 +218,9 @@ class _AddPlanPageState extends State<AddPlanPage> {
         child: Scaffold(
             resizeToAvoidBottomInset: false,
             appBar: AppBar(
-              title: const Text(
-                "여행 계획 추가",
-                style: TextStyle(fontWeight: FontWeight.w600),
+              title: Text(
+                AppLocalizations.of(context)!.titleAddPlan,
+                style: isKor ? const TextStyle(fontWeight: FontWeight.w600) : GoogleFonts.notoSans(fontWeight: FontWeight.w600),
               ),
               actions: [
                 SizedBox(
@@ -212,9 +327,9 @@ class _AddPlanPageState extends State<AddPlanPage> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    _nationSelection(context),
+                                    _nationSelection(context, isKor),
                                     const Gap(10),
-                                    _titleSection(),
+                                    _titleSection(isKor),
                                     const Gap(10),
                                     Expanded(
                                       child: SingleChildScrollView(
@@ -225,7 +340,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                                                 border: Border.all(),
                                                 borderRadius: BorderRadius.circular(10),
                                                 color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
-                                            child: _calendarSection(isDarkMode, hei)),
+                                            child: _calendarSection(isDarkMode, hei, isKor)),
                                       ),
                                     ),
                                     // const Gap(30),
@@ -319,44 +434,16 @@ class _AddPlanPageState extends State<AddPlanPage> {
     );
   }
 
-  Widget _nationSelection(BuildContext context) {
-    List<String> nations = [
-      "선택",
-      "🇰🇷 대한민국",
-      "🇯🇵 일본",
-      "🇨🇳 중국",
-      "🇹🇼 대만",
-      "🇲🇳 몽골",
-      "🇭🇰 홍콩",
-      "🇹🇭 태국",
-      "🇻🇳 베트남",
-      "🇵🇭 필리핀",
-      "🇰🇭 캄보디아",
-      "🇱🇦 라오스",
-      "🇲🇾 말레이시아",
-      "🇸🇬 싱가포르",
-      "🇮🇩 인도네시아",
-      "🇲🇲 미얀마",
-      "🇦🇺 호주",
-      "🇳🇿 뉴질랜드",
-      "🇮🇳 인도",
-      "🇬🇧 영국",
-      "🇫🇷 프랑스",
-      "🇩🇪 독일",
-      "🇪🇸 스페인",
-      "🇵🇹 포르투칼",
-      "🇮🇹 이탈리아",
-      "🇬🇷 그리스",
-      "🇹🇷 튀르키예",
-      "🇨🇦 캐나다",
-      "🇺🇸 미국",
-      "🇲🇽 맥시코",
-      "🇨🇴 콜롬비아",
-      "🇧🇷 브라질",
-      "🇦🇷 아르헨티나",
-      "🇨🇱 칠레",
-      "✈️ 기타"
-    ];
+  Widget _nationSelection(BuildContext context, isKor) {
+    List<String> nations = [];
+    if (Localizations.localeOf(context).languageCode == "ko") {
+      nations = nationsKo;
+    } else if (Localizations.localeOf(context).languageCode == "en") {
+      nations = nationsEn;
+    } else {
+      nations = nationsJa;
+    }
+
     if (nationController.text.isEmpty) {
       nationController.text = nations[0];
     }
@@ -366,10 +453,12 @@ class _AddPlanPageState extends State<AddPlanPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(
+          SizedBox(
             child: Text(
-              "여행 국가",
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+              AppLocalizations.of(context)!.addNation,
+              style: isKor
+                  ? const TextStyle(fontWeight: FontWeight.w600, fontSize: 16)
+                  : GoogleFonts.notoSans(fontWeight: FontWeight.w600, fontSize: 16),
             ),
           ),
           const Gap(10),
@@ -380,11 +469,13 @@ class _AddPlanPageState extends State<AddPlanPage> {
               children: [
                 DropdownMenu(
                     width: 200,
-                    initialSelection: widget.plan == null ? "선택" : (nations.contains(widget.plan!.nation!) ? widget.plan!.nation! : "✈️ 기타"),
+                    initialSelection: widget.plan == null
+                        ? AppLocalizations.of(context)!.select
+                        : (nations.contains(widget.plan!.nation!) ? widget.plan!.nation! : "✈️ ${AppLocalizations.of(context)!.others}"),
                     trailingIcon: null,
                     menuHeight: 250,
                     onSelected: (selected) {
-                      if (selected == "✈️ 기타") {
+                      if (selected == "✈️ ${AppLocalizations.of(context)!.others}") {
                         setState(() {
                           _nationRead = false;
                         });
@@ -395,15 +486,14 @@ class _AddPlanPageState extends State<AddPlanPage> {
                       }
                       if (selected != null) {
                         final nation = selected.split(" ")[1];
-                        if (selected == "✈️ 기타") {
-                          nationController.text = "여행 국가";
+                        if (selected == "✈️ ${AppLocalizations.of(context)!.others}") {
+                          nationController.text = AppLocalizations.of(context)!.addNation;
                         } else {
                           nationController.text = "$nation (${NationCurrencyUnitUtil.getNationCurrency(nation)})";
                         }
                       }
                     },
-                    dropdownMenuEntries: List.generate(nations.length, (int idx)
-                    => DropdownMenuEntry(value: nations[idx], label: nations[idx]))),
+                    dropdownMenuEntries: List.generate(nations.length, (int idx) => DropdownMenuEntry(value: nations[idx], label: nations[idx]))),
                 const Gap(10),
                 Expanded(
                   child: SizedBox(
@@ -423,41 +513,39 @@ class _AddPlanPageState extends State<AddPlanPage> {
     );
   }
 
-  Widget _titleSection() {
+  Widget _titleSection(bool isKor) {
     return SizedBox(
       height: 90,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "여행 제목",
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+          Text(
+            AppLocalizations.of(context)!.addTitle,
+            style:
+                isKor ? const TextStyle(fontWeight: FontWeight.w600, fontSize: 16) : GoogleFonts.notoSans(fontWeight: FontWeight.w600, fontSize: 16),
           ),
           const Gap(10),
           SizedBox(
             height: 50,
             child: TextField(
-              controller: subjectController,
-              // onChanged: _onChanged,
-              decoration: const InputDecoration(
-                  hintText: "도시명 or 여행목적(친목여행, 가족여행 등)",
-                  border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black87), borderRadius: BorderRadius.all(Radius.circular(10))),
-                  focusedBorder:
-                      OutlineInputBorder(borderSide: BorderSide(color: Colors.black87), borderRadius: BorderRadius.all(Radius.circular(10)))),
-            ),
+                controller: subjectController,
+                // onChanged: _onChanged,
+                decoration: InputDecoration(
+                  hintText: AppLocalizations.of(context)!.addPlanHint,
+                )),
           )
         ],
       ),
     );
   }
 
-  Widget _calendarSection(bool isDarkMode, double hei) {
+  Widget _calendarSection(bool isDarkMode, double hei, bool isKor) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text(
-          "일정",
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+        Text(
+          AppLocalizations.of(context)!.addPeriod,
+          style: isKor ? const TextStyle(fontWeight: FontWeight.w600, fontSize: 16) : GoogleFonts.notoSans(fontWeight: FontWeight.w600, fontSize: 16),
         ),
         const Gap(10),
         LayoutBuilder(
@@ -470,7 +558,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                         firstDate: DateTime.now(),
                         firstDayOfWeek: 0,
                         calendarType: CalendarDatePicker2Type.range,
-                        weekdayLabels: ["일", "월", "화", "수", "목", "금", "토"],
+                        weekdayLabels: isKor ? ["일", "월", "화", "수", "목", "금", "토"] : ["Sun", "Mon", "Tue", "Wen", "Thu", "Fri", "Sat"],
                         selectedDayHighlightColor: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                     value: _dates,
                     onValueChanged: (list) => setState(() {
@@ -478,15 +566,18 @@ class _AddPlanPageState extends State<AddPlanPage> {
                         })));
           },
         ),
-        SizedBox(
-            height: 30,
-            child: _dates.isNotEmpty
-                ? Text(
-                    "${DateUtil.dateToString(_dates.first ?? DateTime.now())} "
-                    "~ ${DateUtil.dateToString(_dates.last ?? DateTime.now())}",
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                  )
-                : const Text("일정 선택"))
+        if (_dates.isNotEmpty)
+          SizedBox(
+              height: 20,
+              child: Text(
+                "${DateUtil.dateToString(_dates.first ?? DateTime.now())} "
+                "~ ${DateUtil.dateToString(_dates.last ?? DateTime.now())}",
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ))
+        else if (_dates.isEmpty)
+          const SizedBox(
+            height: 20,
+          )
       ],
     );
   }

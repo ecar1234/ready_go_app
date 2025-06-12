@@ -15,6 +15,7 @@ import 'package:ready_go_project/domain/entities/provider/responsive_height_prov
 import 'package:ready_go_project/presentation/add_plan_page.dart';
 import 'package:ready_go_project/presentation/plan_menus/plan_menu_page.dart';
 import 'package:ready_go_project/util/admob_util.dart';
+import 'package:ready_go_project/util/localizations_util.dart';
 import 'package:ready_go_project/util/date_util.dart';
 import '../data/models/plan_model/plan_model.dart';
 import '../domain/entities/provider/plan_list_provider.dart';
@@ -334,7 +335,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
                         : SizedBox(
                             width: MediaQuery.sizeOf(context).width,
                             height: height - 180 - bannerHeight, // height - button+gap(100) + banner(50) + bottom(70)
-                            child: _planListSection(context, list, isDarkMode, state));
+                            child: _planListSection(context, list, isDarkMode, state, isKor));
                   }),
                 ]),
               ),
@@ -349,7 +350,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
     });
   }
 
-  Widget _planListSection(BuildContext context, List<PlanModel> list, bool isDarkMode, DataState state) {
+  Widget _planListSection(BuildContext context, List<PlanModel> list, bool isDarkMode, DataState state, bool isKor) {
     double? height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
     final favoriteList = context.read<PlanFavoritesProvider>().favoriteList;
     // if(favorite > 0){
@@ -483,11 +484,10 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                     children: [
                                       SizedBox(
                                           child: Text(
-                                        "${list[idx].nation} (${DateUtil.datesDifference(list[idx].schedule!) + 1}일)",
-                                        style: const TextStyle(
-                                            // color: Colors.white,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w600),
+                                        "${list[idx].nation} (${DateUtil.datesDifference(list[idx].schedule!) + 1}${AppLocalizations.of(context)!.days})",
+                                        style: LocalizationsUtil.setTextStyle(isKor,  // color: Colors.white,
+                                            size: 18,
+                                            fontWeight: FontWeight.w600)
                                       )),
                                       const Gap(4),
                                       const SizedBox(
@@ -499,10 +499,9 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                             child: Text(
                                           "${list[idx].subject}",
                                           maxLines: 1,
-                                          style: const TextStyle(
-                                              // color: Colors.white,
-                                              overflow: TextOverflow.ellipsis,
-                                              fontWeight: FontWeight.w600),
+                                          style: LocalizationsUtil.setTextStyle(isKor,
+                                                fontWeight: FontWeight.w600),
+                                          overflow: TextOverflow.ellipsis,
                                         )),
                                       ),
                                     ],

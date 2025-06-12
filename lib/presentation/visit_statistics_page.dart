@@ -10,8 +10,10 @@ import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.da
 import 'package:fl_chart/fl_chart.dart';
 import 'package:ready_go_project/domain/use_cases/statistics_use_case.dart';
 import 'package:ready_go_project/util/admob_util.dart';
+import 'package:ready_go_project/util/localizations_util.dart';
 import 'package:ready_go_project/util/intl_utils.dart';
 import 'package:ready_go_project/util/statistics_util.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../data/models/plan_model/plan_model.dart';
 import '../domain/entities/provider/purchase_manager.dart';
@@ -93,6 +95,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
     final bannerHei = _isLoaded ? _admobUtil.bannerAd!.size.height + 10 : 0;
     List<PlanModel> completedPlanList = planList.where((item) => item.schedule!.last!.isBefore(DateTime.now())).toList();
 
+    final isKor = Localizations.localeOf(context).languageCode == "ko";
     return SizedBox(
         height: hei,
         width: wid,
@@ -114,8 +117,8 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
                           height: hei * 0.4,
                           width: wid,
                           child: selectIdx == 0
-                              ? _nationChartContainer(context, completedPlanList, isDarkMode)
-                              : _accountChartContainer(context, completedPlanList, isDarkMode)),
+                              ? _nationChartContainer(context, completedPlanList, isDarkMode, isKor)
+                              : _accountChartContainer(context, completedPlanList, isDarkMode, isKor)),
                     ],
                   ),
                   Positioned(
@@ -179,8 +182,8 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
                   SizedBox(
                     width: wid,
                     child: selectIdx == 0
-                        ? _nationStatistics(context, completedPlanList, isDarkMode, (hei * 0.5) - bannerHei)
-                        : _accountStatistics(context, completedPlanList, isDarkMode, (hei * 0.5) - bannerHei),
+                        ? _nationStatistics(context, completedPlanList, isDarkMode, (hei * 0.5) - bannerHei, isKor)
+                        : _accountStatistics(context, completedPlanList, isDarkMode, (hei * 0.5) - bannerHei, isKor),
                   )
                 ],
               ),
@@ -196,21 +199,21 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
         ));
   }
 
-  Widget _nationChartContainer(BuildContext context, List<PlanModel> list, bool isDarkMode) {
+  Widget _nationChartContainer(BuildContext context, List<PlanModel> list, bool isDarkMode, bool isKor) {
     return list.isEmpty
-        ? const SizedBox(
+        ? SizedBox(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "여행이 종료되면",
-                  style: TextStyle(fontSize: 18),
+                  AppLocalizations.of(context)!.visitEmptyTop,
+                  style: LocalizationsUtil.setTextStyle(isKor ,size: 18),
                   textAlign: TextAlign.center,
                 ),
-                Gap(10),
+                const Gap(10),
                 Text(
-                  "방문 국가 통계를 확인 할 수 있어요.",
-                  style: TextStyle(fontSize: 18),
+                  AppLocalizations.of(context)!.visitEmptyData1,
+                  style: LocalizationsUtil.setTextStyle(isKor, size: 18),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -289,21 +292,21 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
     });
   }
 
-  Widget _accountChartContainer(BuildContext context, List<PlanModel> list, bool isDarkMode) {
+  Widget _accountChartContainer(BuildContext context, List<PlanModel> list, bool isDarkMode, bool isKor) {
     return list.isEmpty
-        ? const SizedBox(
+        ? SizedBox(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "여행이 종료되면 사용",
-                  style: TextStyle(fontSize: 18),
+                  AppLocalizations.of(context)!.visitEmptyTop,
+                  style: LocalizationsUtil.setTextStyle(isKor, size: 18),
                   textAlign: TextAlign.center,
                 ),
-                Gap(10),
+                const Gap(10),
                 Text(
-                  "사용 경비 통계를 확인 할 수 있어요.",
-                  style: TextStyle(fontSize: 18),
+                  AppLocalizations.of(context)!.visitEmptyData2,
+                  style: LocalizationsUtil.setTextStyle(isKor, size: 18),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -385,7 +388,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
     });
   }
 
-  Widget _nationStatistics(BuildContext context, List<PlanModel> list, bool isDarkMode, double hei) {
+  Widget _nationStatistics(BuildContext context, List<PlanModel> list, bool isDarkMode, double hei, bool isKor) {
     List<Map<String, int>> nationList = context.read<StatisticsUseCase>().nations ?? [];
 
     return SizedBox(
@@ -394,8 +397,8 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "방문 국가 통계",
-            style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w600, fontSize: 20),
+            AppLocalizations.of(context)!.visitStatistics,
+            style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Colors.black87, size: 20, fontWeight: FontWeight.w600),
           ),
           const Gap(10),
           Expanded(
@@ -405,9 +408,9 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
                     border: Border.all(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                     borderRadius: BorderRadius.circular(10)),
                 child: nationList.isEmpty
-                    ? const SizedBox(
+                    ? SizedBox(
                         child: Center(
-                          child: Text("완료 된 여행이 없습니다."),
+                          child: Text(AppLocalizations.of(context)!.visitEmptyBottom),
                         ),
                       )
                     : GridView.builder(
@@ -435,7 +438,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
     );
   }
 
-  Widget _accountStatistics(BuildContext context, List<PlanModel> list, bool isDarkMode, double hei) {
+  Widget _accountStatistics(BuildContext context, List<PlanModel> list, bool isDarkMode, double hei, bool isKor) {
     List<Map<String, List<int>>> accountList = context.read<StatisticsUseCase>().accounts ?? [];
 
     return SizedBox(
@@ -447,12 +450,12 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "사용 경비 통계",
-                style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w600, fontSize: 20),
+                AppLocalizations.of(context)!.costUse,
+                style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w600, size: 20),
               ),
               Text(
-                "(현금 + 카드)",
-                style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w400, fontSize: 14),
+                AppLocalizations.of(context)!.cashAndCard,
+                style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w400, size: 14),
               ),
             ],
           ),
@@ -464,9 +467,9 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
                     border: Border.all(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                     borderRadius: BorderRadius.circular(10)),
                 child: accountList.isEmpty || list.isEmpty
-                    ? const SizedBox(
+                    ? SizedBox(
                         child: Center(
-                          child: Text("완료 된 여행이 없습니다."),
+                          child: Text(AppLocalizations.of(context)!.visitEmptyBottom),
                         ),
                       )
                     : GridView.builder(
