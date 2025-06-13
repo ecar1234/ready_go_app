@@ -1,5 +1,5 @@
-import 'package:expandable_page_view/expandable_page_view.dart';
-import 'package:fl_chart/fl_chart.dart';
+// import 'package:expandable_page_view/expandable_page_view.dart';
+// import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -37,7 +37,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
   final AdmobUtil _admobUtil = AdmobUtil();
   bool _isLoaded = false;
 
-  int _chartIdx = -1;
+  // int _chartIdx = -1;
 
   final TextEditingController _methodController = TextEditingController();
   final TextEditingController _currencyController = TextEditingController();
@@ -239,7 +239,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                               child: Container(
                                                 width: (wid - 60) * 0.2,
                                                 height: 50,
-                                                padding: EdgeInsets.all(2),
+                                                padding: const EdgeInsets.all(2),
                                                 child: Card(
                                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                                   color: StatisticsUtil.getCardColor(list[idx].type!),

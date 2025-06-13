@@ -13,6 +13,8 @@ import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/roaming_model/roaming_period_model.dart';
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:ready_go_project/util/localizations_util.dart';
 
 import '../../domain/entities/provider/admob_provider.dart';
 import '../../domain/entities/provider/purchase_manager.dart';
@@ -86,6 +88,9 @@ class _RoamingPageState extends State<RoamingPage> {
     final isDarkMode = context.read<ThemeModeProvider>().isDarkMode;
     final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
     final double bannerHei = _isLoaded ? _admobUtil.bannerAd!.size.height.toDouble() : 0;
+    final isKor = Localizations.localeOf(context).languageCode == "ko";
+    final localization = AppLocalizations.of(context)!;
+
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
@@ -94,7 +99,7 @@ class _RoamingPageState extends State<RoamingPage> {
         child: Scaffold(
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
-            title: const Text("로밍(E-SIM)"),
+            title: Text(localization.roamingTitle),
           ),
           body: SingleChildScrollView(
             child: Container(
@@ -111,13 +116,13 @@ class _RoamingPageState extends State<RoamingPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _codeSection(context, roamingData!.activeCode ?? "", roamingData.dpAddress ?? "", isDarkMode),
+                            _codeSection(context, localization, roamingData!.activeCode ?? "", roamingData.dpAddress ?? "", isDarkMode, isKor),
                             // _dpAddressSection(context, address),
                             // _activeCodeSection(context, code),
                             const Gap(20),
-                            _periodSection(context, roamingData.period!, isDarkMode),
+                            _periodSection(context, localization, roamingData.period!, isDarkMode, isKor),
                             const Gap(20),
-                            _voucherImageSection(context, roamingData.imgList!, isDarkMode),
+                            _voucherImageSection(context, localization, roamingData.imgList!, isDarkMode, isKor),
                           ],
                         ),
                       ),
@@ -138,7 +143,7 @@ class _RoamingPageState extends State<RoamingPage> {
     );
   }
 
-  Widget _voucherImageSection(BuildContext context, List<String> imgPath, bool isDarkMode) {
+  Widget _voucherImageSection(BuildContext context, AppLocalizations localization, List<String> imgPath, bool isDarkMode, bool isKor) {
     List<File> list = imgPath.map((path) => File(path)).toList();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,12 +153,12 @@ class _RoamingPageState extends State<RoamingPage> {
           width: MediaQuery.sizeOf(context).width - 40,
           child: ElevatedButton.icon(
               onPressed: () async {
-                await _showImageSourceDialog(context, isDarkMode);
+                await _showImageSourceDialog(context, localization, isDarkMode, isKor);
               },
               style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
               label: Text(
-                "E-SIM 바우쳐 이미지 등록",
-                style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                localization.addEsimImg,
+                style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
               ),
               icon: Icon(Icons.image_search, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary)),
         ),
@@ -165,15 +170,7 @@ class _RoamingPageState extends State<RoamingPage> {
               Expanded(
                   child: Container(
                       child: list.isEmpty
-                          ? const SizedBox(
-                              height: 100,
-                              child: Center(
-                                child: Text(
-                                  "🌠 바우처 QR 코드를 등록 할 수도 있어요.",
-                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                                ),
-                              ),
-                            )
+                          ? const SizedBox()
                           : GridView.builder(
                               physics: const NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
@@ -227,7 +224,7 @@ class _RoamingPageState extends State<RoamingPage> {
     );
   }
 
-  Widget _codeSection(BuildContext context, String code, String address, bool isDarkMode) {
+  Widget _codeSection(BuildContext context, AppLocalizations localization, String code, String address, bool isDarkMode, bool isKor) {
     return SizedBox(
       child: Column(
         children: [
@@ -237,12 +234,12 @@ class _RoamingPageState extends State<RoamingPage> {
               width: MediaQuery.sizeOf(context).width - 40,
               child: ElevatedButton.icon(
                 onPressed: () {
-                  _showSetCodeDialog(context, code, address, isDarkMode);
+                  _showSetCodeDialog(context, localization, code, address, isDarkMode, isKor);
                 },
                 style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
                 label: Text(
-                  "E-SIM 활성화 주소 입력",
-                  style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                  localization.addEsimCode,
+                  style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                 ),
                 icon: Icon(Icons.sim_card_outlined, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
               )),
@@ -264,9 +261,9 @@ class _RoamingPageState extends State<RoamingPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
-                              "SM-DP주소",
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                            Text(
+                              localization.dpAddressTitle,
+                              style: LocalizationsUtil.setTextStyle(isKor, size: 20, fontWeight: FontWeight.w600),
                             ),
                             if (address.isNotEmpty)
                               SizedBox(
@@ -282,12 +279,12 @@ class _RoamingPageState extends State<RoamingPage> {
                                         onPressed: () {
                                           Clipboard.setData(ClipboardData(text: dpAddressController.text));
                                           ScaffoldMessenger.of(context).showSnackBar(
-                                              const SnackBar(content: Text("SM-DP주소가 복사 되었습니다."), duration: Duration(milliseconds: 500)));
+                                              SnackBar(content: Text(localization.copyDpAddress), duration: const Duration(milliseconds: 500)));
                                         },
                                         style: ElevatedButton.styleFrom(
                                           padding: EdgeInsets.zero,
                                         ),
-                                        child: const Text("복사"),
+                                        child: Text(localization.copy),
                                       ),
                                     ),
                                     const Gap(10),
@@ -300,9 +297,9 @@ class _RoamingPageState extends State<RoamingPage> {
                                               context: context,
                                               builder: (context) => AlertDialog(
                                                     actionsAlignment: MainAxisAlignment.center,
-                                                    content: const Text(
-                                                      "SM-DP주소를 삭제 하시겠습니까?",
-                                                      style: TextStyle(fontSize: 18),
+                                                    content: Text(
+                                                      localization.codeDeleteDesc,
+                                                      style: LocalizationsUtil.setTextStyle(isKor, size: 18),
                                                       textAlign: TextAlign.center,
                                                     ),
                                                     actions: [
@@ -315,7 +312,7 @@ class _RoamingPageState extends State<RoamingPage> {
                                                                 foregroundColor: Theme.of(context).colorScheme.onSurface,
                                                                 backgroundColor: Theme.of(context).colorScheme.surface,
                                                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                                            child: const Text("취소")),
+                                                            child: Text(localization.cancel)),
                                                       ),
                                                       SizedBox(
                                                         child: ElevatedButton(
@@ -328,7 +325,7 @@ class _RoamingPageState extends State<RoamingPage> {
                                                               foregroundColor: Theme.of(context).colorScheme.onSecondary,
                                                               backgroundColor: Theme.of(context).colorScheme.secondary,
                                                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                                          child: const Text("삭제"),
+                                                          child: Text(localization.delete),
                                                         ),
                                                       )
                                                     ],
@@ -337,7 +334,7 @@ class _RoamingPageState extends State<RoamingPage> {
                                         style: ElevatedButton.styleFrom(
                                           padding: EdgeInsets.zero,
                                         ),
-                                        child: const Text("삭제"),
+                                        child: Text(localization.delete),
                                       ),
                                     )
                                   ],
@@ -350,11 +347,11 @@ class _RoamingPageState extends State<RoamingPage> {
                       SizedBox(
                           width: MediaQuery.sizeOf(context).width - 40,
                           child: Text(
-                            address.isNotEmpty ? address : "SM-DP 주소를 등록 할 수 있습니다.",
+                            address.isNotEmpty ? address : localization.dpAddressDesc,
                             textAlign: TextAlign.start,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 16),
+                            style: LocalizationsUtil.setTextStyle(isKor, size: 16),
                           )),
                       const Gap(5),
                     ],
@@ -367,9 +364,9 @@ class _RoamingPageState extends State<RoamingPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            "활성화 코드",
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                          Text(
+                            localization.activeCodeTitle,
+                            style: LocalizationsUtil.setTextStyle(isKor, size: 20, fontWeight: FontWeight.w600),
                           ),
                           if (code.isNotEmpty)
                             SizedBox(
@@ -384,15 +381,15 @@ class _RoamingPageState extends State<RoamingPage> {
                                     child: ElevatedButton(
                                       onPressed: () {
                                         Clipboard.setData(ClipboardData(text: activeCodeController.text));
-                                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                          content: Text("활성화 코드가 복사 되었습니다."),
-                                          duration: Duration(milliseconds: 500),
+                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                          content: Text(localization.copyActiveCode),
+                                          duration: const Duration(milliseconds: 500),
                                         ));
                                       },
                                       style: ElevatedButton.styleFrom(
                                         padding: EdgeInsets.zero,
                                       ),
-                                      child: const Text("복사"),
+                                      child: Text(localization.copy),
                                     ),
                                   ),
                                   const Gap(10),
@@ -404,8 +401,8 @@ class _RoamingPageState extends State<RoamingPage> {
                                         showDialog(
                                             context: context,
                                             builder: (context) => AlertDialog(
-                                                  content:
-                                                      const Text("활성화 코드를 삭제 하시겠습니까?", style: TextStyle(fontSize: 18), textAlign: TextAlign.center),
+                                                  content: Text(localization.codeDeleteDesc,
+                                                      style: LocalizationsUtil.setTextStyle(isKor, size: 18), textAlign: TextAlign.center),
                                                   actionsAlignment: MainAxisAlignment.center,
                                                   insetPadding: const EdgeInsets.symmetric(horizontal: 20),
                                                   actions: [
@@ -417,7 +414,7 @@ class _RoamingPageState extends State<RoamingPage> {
                                                         style: ElevatedButton.styleFrom(
                                                             backgroundColor: Theme.of(context).colorScheme.surface,
                                                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                                        child: const Text("취소"),
+                                                        child: Text(localization.cancel),
                                                       ),
                                                     ),
                                                     SizedBox(
@@ -430,9 +427,9 @@ class _RoamingPageState extends State<RoamingPage> {
                                                           style: ElevatedButton.styleFrom(
                                                               backgroundColor: Theme.of(context).colorScheme.secondary,
                                                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                                          child: const Text(
-                                                            "삭제",
-                                                            style: TextStyle(color: Colors.white),
+                                                          child: Text(
+                                                            localization.delete,
+                                                            style: LocalizationsUtil.setTextStyle(isKor, color: Colors.white),
                                                           )),
                                                     )
                                                   ],
@@ -441,7 +438,7 @@ class _RoamingPageState extends State<RoamingPage> {
                                       style: ElevatedButton.styleFrom(
                                         padding: EdgeInsets.zero,
                                       ),
-                                      child: const Text("삭제"),
+                                      child: Text(localization.delete),
                                     ),
                                   )
                                 ],
@@ -454,11 +451,11 @@ class _RoamingPageState extends State<RoamingPage> {
                     SizedBox(
                         width: MediaQuery.sizeOf(context).width - 40,
                         child: Text(
-                          code.isNotEmpty ? code : "활성화 코드를 등록 할 수 있습니다.",
+                          code.isNotEmpty ? code : localization.activeCodeDesc,
                           textAlign: TextAlign.start,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 16),
+                          style: LocalizationsUtil.setTextStyle(isKor, size: 16),
                         )),
                   ],
                 ),
@@ -470,7 +467,7 @@ class _RoamingPageState extends State<RoamingPage> {
     );
   }
 
-  Widget _periodSection(BuildContext context, RoamingPeriodModel period, bool isDarkMode) {
+  Widget _periodSection(BuildContext context, AppLocalizations localization, RoamingPeriodModel period, bool isDarkMode, bool isKor) {
     int? selectedValue = period.period ?? 0;
     DateTime startDate = period.startDate ?? DateTime.now();
     DateTime endDate = period.endDate ?? DateTime.now();
@@ -487,13 +484,13 @@ class _RoamingPageState extends State<RoamingPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(
+          SizedBox(
             height: 40,
             child: Row(
               children: [
                 Text(
-                  "사용기간 설정",
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+                  localization.periodEsimTitle,
+                  style: LocalizationsUtil.setTextStyle(isKor, fontWeight: FontWeight.w600, size: 20),
                 ),
               ],
             ),
@@ -508,52 +505,55 @@ class _RoamingPageState extends State<RoamingPage> {
                 menuHeight: 300,
                 dropdownMenuEntries: List.generate(31, (idx) {
                   if (idx == 0) {
-                    return DropdownMenuEntry(value: idx, label: "기간 선택");
+                    return DropdownMenuEntry(value: idx, label: localization.selectPeriod);
                   }
-                  return DropdownMenuEntry(value: idx, label: "$idx일");
+                  return DropdownMenuEntry(value: idx, label: "$idx ${localization.days}");
                 }),
                 onSelected: (value) {
-                  if (period.isActive == true) {
-                    showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                              content: const SizedBox(
-                                height: 100,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [Text("사용시간을 변경하면 활성화된 데이터가"), Text(" 변경 될 수 있습니다."), Gap(10), Text("변경 하시겠습니까?")],
-                                ),
-                              ),
-                              actions: [
-                                SizedBox(
-                                  width: 120,
-                                  height: 40,
-                                  child: ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                        context.read<RoamingProvider>().setPeriodDate(period.period!, widget.planId);
-                                        selectedValue = period.period;
-                                      },
-                                      child: const Text("취소")),
-                                ),
-                                SizedBox(
-                                  width: 120,
-                                  height: 40,
-                                  child: ElevatedButton(
-                                      onPressed: () {
-                                        context.read<RoamingProvider>().setPeriodDate(value!, widget.planId);
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text("확인")),
-                                )
-                              ],
-                            ));
-                  } else {
-                    if (value != null) {
-                      context.read<RoamingProvider>().setPeriodDate(value, widget.planId);
-                    }
+                  if (value != null) {
+                    context.read<RoamingProvider>().setPeriodDate(value, widget.planId);
                   }
+                  // if (period.isActive == true) {
+                  //   showDialog(
+                  //       context: context,
+                  //       builder: (context) => AlertDialog(
+                  //             content: const SizedBox(
+                  //               height: 100,
+                  //               child: Column(
+                  //                 mainAxisAlignment: MainAxisAlignment.center,
+                  //                 crossAxisAlignment: CrossAxisAlignment.center,
+                  //                 children: [Text("사용시간을 변경하면 활성화된 데이터가"), Text(" 변경 될 수 있습니다."), Gap(10), Text("변경 하시겠습니까?")],
+                  //               ),
+                  //             ),
+                  //             actions: [
+                  //               SizedBox(
+                  //                 width: 120,
+                  //                 height: 40,
+                  //                 child: ElevatedButton(
+                  //                     onPressed: () {
+                  //                       Navigator.of(context).pop();
+                  //                       context.read<RoamingProvider>().setPeriodDate(period.period!, widget.planId);
+                  //                       selectedValue = period.period;
+                  //                     },
+                  //                     child: Text(localization.cancel)),
+                  //               ),
+                  //               SizedBox(
+                  //                 width: 120,
+                  //                 height: 40,
+                  //                 child: ElevatedButton(
+                  //                     onPressed: () {
+                  //                       context.read<RoamingProvider>().setPeriodDate(value!, widget.planId);
+                  //                       Navigator.of(context).pop();
+                  //                     },
+                  //                     child: Text(localization.confirm)),
+                  //               )
+                  //             ],
+                  //           ));
+                  // } else {
+                  //   if (value != null) {
+                  //     context.read<RoamingProvider>().setPeriodDate(value, widget.planId);
+                  //   }
+                  // }
                 },
               ),
               const Gap(20),
@@ -571,12 +571,17 @@ class _RoamingPageState extends State<RoamingPage> {
                             showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(
-                                      content: const SizedBox(
+                                      content: SizedBox(
                                         height: 150,
                                         child: Column(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [Text("데이터 초기화"), Text("사용 정보가 초가화 됩니다."), Gap(10), Text("변경 하시겠습니까?")],
+                                          children: [
+                                            Text(localization.resetInfo1),
+                                            Text(localization.resetInfo2, textAlign: TextAlign.center,),
+                                            const Gap(10),
+                                            Text(localization.resetInfo3)
+                                          ],
                                         ),
                                       ),
                                       actions: [
@@ -589,7 +594,7 @@ class _RoamingPageState extends State<RoamingPage> {
                                                 // context.read<RoamingProvider>().setPeriodDate(period.period!, widget.planId);
                                                 // selectedValue = period.period;
                                               },
-                                              child: const Text("취소")),
+                                              child: Text(localization.cancel)),
                                         ),
                                         SizedBox(
                                           width: 120,
@@ -600,20 +605,20 @@ class _RoamingPageState extends State<RoamingPage> {
                                                 selectedValue = period.period;
                                                 context.read<RoamingProvider>().resetPeriod(widget.planId);
                                                 Navigator.of(context).pop();
-                                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text(("데이터가 초기화 되었습니다"))));
+                                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text((localization.resetCompleted))));
                                               },
-                                              child: const Text("확인")),
+                                              child: Text(localization.confirm)),
                                         )
                                       ],
                                     ));
                           },
-                          child: const Text(
-                            "초기화",
-                            style: TextStyle(color: Colors.black87, fontSize: 16),
+                          child: Text(
+                            localization.reset,
+                            style: LocalizationsUtil.setTextStyle(isKor, color: Colors.black87, size: 16),
                           )),
                     )
                   : SizedBox(
-                      width: 80,
+                      width: 120,
                       height: 40,
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
@@ -622,14 +627,14 @@ class _RoamingPageState extends State<RoamingPage> {
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                           onPressed: () {
                             if (period.period == 0) {
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("사용기간을 설정 또는 재설정 해주세요")));
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(localization.startUsingSnack)));
                               return;
                             }
                             context.read<RoamingProvider>().startPeriod(widget.planId);
                           },
                           child: Text(
-                            "활성화",
-                            style: TextStyle(color: Theme.of(context).colorScheme.surface, fontSize: 16),
+                            localization.startUsing,
+                            style: LocalizationsUtil.setTextStyle(isKor, color: Theme.of(context).colorScheme.surface, size: 16),
                           )),
                     ),
               const Gap(10),
@@ -645,12 +650,14 @@ class _RoamingPageState extends State<RoamingPage> {
                   child: Row(
                     children: [
                       useDuration.inSeconds < totalDuration.inSeconds
-                          ? Text("사용시간(분): ${useDuration.inMinutes}분")
-                          : Text("사용시간(분): ${totalDuration.inMinutes}분"),
+                          ? Text("${localization.timeUsed}: ${useDuration.inMinutes} ${localization.min}")
+                          : Text("${localization.timeUsed}: ${localization.end}"),
                       const Gap(10),
                       const Text("/"),
                       const Gap(10),
-                      useDuration.inSeconds < totalDuration.inSeconds ? Text("잔여시간(분): ${remainDuration.inMinutes}분") : const Text("잔여시간(분): 사용완료")
+                      useDuration.inSeconds < totalDuration.inSeconds
+                          ? Text("${localization.remainingTime}: ${remainDuration.inMinutes}${localization.min}")
+                          : Text("${localization.remainingTime}: ${localization.end}")
                     ],
                   ),
                 ),
@@ -672,12 +679,12 @@ class _RoamingPageState extends State<RoamingPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "시작: ${startDate.month}월 ${startDate.day}일 ${startDate.hour}시 ${startDate.minute}분",
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                        "${localization.start}: ${startDate.month}.${startDate.day} / ${startDate.hour}${localization.hour} ${startDate.minute}${localization.min}",
+                        style: LocalizationsUtil.setTextStyle(isKor, size: 16, fontWeight: FontWeight.w600),
                       ),
                       Text(
-                        "종료: ${endDate.month}월 ${endDate.day}일 ${endDate.hour}시 ${endDate.minute - 1}분",
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                        "${localization.end}: ${endDate.month}.${endDate.day} / ${endDate.hour}${localization.hour} ${endDate.minute - 1}${localization.min}",
+                        style: LocalizationsUtil.setTextStyle(isKor, size: 16, fontWeight: FontWeight.w600),
                       ),
                     ],
                   ),
@@ -689,13 +696,13 @@ class _RoamingPageState extends State<RoamingPage> {
     );
   }
 
-  Future<void> _showImageSourceDialog(BuildContext context, bool isDarkMode) async {
+  Future<void> _showImageSourceDialog(BuildContext context, AppLocalizations localization, bool isDarkMode, bool isKore) async {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("이미지 선택"),
-          content: const Text("갤러리 또는 카메라 중 하나를 선택하세요."),
+          title: Text(localization.select),
+          content: Text(localization.selectContent),
           actionsAlignment: MainAxisAlignment.center,
           actions: [
             ElevatedButton(
@@ -710,8 +717,8 @@ class _RoamingPageState extends State<RoamingPage> {
               },
               style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
               child: Text(
-                "카메라",
-                style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                localization.camera,
+                style: LocalizationsUtil.setTextStyle(isKore, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
               ),
             ),
             ElevatedButton(
@@ -720,7 +727,7 @@ class _RoamingPageState extends State<RoamingPage> {
                 if (image != null) {
                   if (context.mounted) {
                     final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
-                    if(kReleaseMode && !isRemove){
+                    if (kReleaseMode && !isRemove) {
                       context.read<AdmobProvider>().loadAdInterstitialAd();
                       context.read<AdmobProvider>().showInterstitialAd();
                     }
@@ -731,8 +738,8 @@ class _RoamingPageState extends State<RoamingPage> {
               },
               style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
               child: Text(
-                "갤러리",
-                style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                localization.gallery,
+                style: LocalizationsUtil.setTextStyle(isKore, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
               ),
             ),
           ],
@@ -741,11 +748,12 @@ class _RoamingPageState extends State<RoamingPage> {
     );
   }
 
-  Future<void> _showSetCodeDialog(BuildContext context, String? code, String? address, bool isDarkMode) async {
-    if(code != null){
+  Future<void> _showSetCodeDialog(
+      BuildContext context, AppLocalizations localization, String? code, String? address, bool isDarkMode, bool isKor) async {
+    if (code != null) {
       activeCodeController.text = code;
     }
-    if(address != null){
+    if (address != null) {
       dpAddressController.text = address;
     }
     showDialog(
@@ -766,8 +774,8 @@ class _RoamingPageState extends State<RoamingPage> {
                           height: 70,
                           child: TextField(
                             controller: dpAddressController,
-                            decoration: const InputDecoration(
-                              labelText: "SM-DP 주소",
+                            decoration: InputDecoration(
+                              labelText: localization.dpAddressTitle,
                             ),
                           ),
                         ),
@@ -775,8 +783,8 @@ class _RoamingPageState extends State<RoamingPage> {
                         height: 70,
                         child: TextField(
                           controller: activeCodeController,
-                          decoration: const InputDecoration(
-                            labelText: "활성화 코드",
+                          decoration: InputDecoration(
+                            labelText: localization.activeCodeTitle,
                           ),
                         ),
                       ),
@@ -801,8 +809,9 @@ class _RoamingPageState extends State<RoamingPage> {
                                     backgroundColor: isDarkMode ? Theme.of(context).primaryColor : Colors.white,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                                 child: Text(
-                                  "닫기",
-                                  style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                                  localization.close,
+                                  style:
+                                      LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                                 ))),
                         const Gap(10),
                         SizedBox(
@@ -822,7 +831,7 @@ class _RoamingPageState extends State<RoamingPage> {
                                     dpAddressController.text = "";
                                   }
                                   final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
-                                  if(kReleaseMode && !isRemove){
+                                  if (kReleaseMode && !isRemove) {
                                     context.read<AdmobProvider>().loadAdInterstitialAd();
                                     context.read<AdmobProvider>().showInterstitialAd();
                                   }
@@ -835,9 +844,9 @@ class _RoamingPageState extends State<RoamingPage> {
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: Theme.of(context).colorScheme.primary,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                child: const Text(
-                                  "등록",
-                                  style: TextStyle(color: Colors.white),
+                                child: Text(
+                                  localization.add,
+                                  style: LocalizationsUtil.setTextStyle(isKor, color: Colors.white),
                                 ))),
                       ],
                     ),
