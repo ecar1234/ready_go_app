@@ -15,7 +15,9 @@ import 'package:ready_go_project/data/models/account_model/amount_model.dart';
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
 import 'package:ready_go_project/util/date_util.dart';
 import 'package:ready_go_project/util/intl_utils.dart';
+import 'package:ready_go_project/util/localizations_util.dart';
 import 'package:ready_go_project/util/statistics_util.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../data/models/plan_model/plan_model.dart';
 import '../../domain/entities/provider/account_provider.dart';
@@ -141,16 +143,6 @@ class _AccountBookPageState extends State<AccountBookPage> {
             ]),
           ),
         ),
-        // floatingActionButton: FloatingActionButton(
-        //   foregroundColor: Theme.of(context).colorScheme.surface,
-        //   backgroundColor: Theme.of(context).colorScheme.secondary,
-        //   onPressed: () {
-        //     _addAmountDialog(context, info);
-        //   },
-        //   child: const Icon(
-        //     Icons.add,
-        //   ),
-        // ),
       ),
     );
   }
@@ -491,6 +483,9 @@ class _AccountBookPageState extends State<AccountBookPage> {
   Widget _totalInfoSection(BuildContext context, double hei, bool isDarkMode) {
     final wid = MediaQuery.sizeOf(context).width;
     final unit = widget.plan.unit;
+
+    final isKor = Localizations.localeOf(context).languageCode == "ko";
+    final localization = AppLocalizations.of(context)!;
     return SizedBox(
       child: Column(
         children: [
@@ -504,15 +499,15 @@ class _AccountBookPageState extends State<AccountBookPage> {
                   width: (MediaQuery.sizeOf(context).width - 50) / 2,
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      _setTotalAmountDialog(context, isDarkMode);
+                      _setTotalAmountDialog(context, localization, isDarkMode, isKor);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
                       padding: EdgeInsets.zero,
                     ),
                     label: Text(
-                      "여행 경비 추가",
-                      style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                      localization.addExpenses,
+                      style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                     ),
                     icon: Icon(Icons.add, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                     iconAlignment: IconAlignment.end,
@@ -522,15 +517,15 @@ class _AccountBookPageState extends State<AccountBookPage> {
                   width: (MediaQuery.sizeOf(context).width - 50) / 2,
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      _addAmountDialog(context, null, null, isDarkMode);
+                      _addAmountDialog(context, localization, null, null, isDarkMode, isKor);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
                       padding: EdgeInsets.zero,
                     ),
                     label: Text(
-                      "지출",
-                      style: TextStyle(color: isDarkMode ? Theme.of(context).colorScheme.secondary : Colors.red),
+                      localization.spent,
+                      style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Theme.of(context).colorScheme.secondary : Colors.red),
                     ),
                     icon: Icon(Icons.remove, color: isDarkMode ? Theme.of(context).colorScheme.secondary : Colors.red),
                     iconAlignment: IconAlignment.end,
@@ -561,9 +556,9 @@ class _AccountBookPageState extends State<AccountBookPage> {
                               width: (wid - 40) / 2,
                               child: Column(
                                 children: [
-                                  const Text(
-                                    "여행 경비",
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                  Text(
+                                    localization.travelExpenses,
+                                    style: LocalizationsUtil.setTextStyle(isKor, size: 16, fontWeight: FontWeight.w600),
                                   ),
                                   Selector<AccountProvider, int>(selector: (context, provider) {
                                     if (provider.accountInfo != null) {
@@ -592,9 +587,9 @@ class _AccountBookPageState extends State<AccountBookPage> {
                               width: (wid - 40) / 2,
                               child: Column(
                                 children: [
-                                  const Text(
-                                    "잔여 경비",
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                  Text(
+                                    localization.remainExpenses,
+                                    style: LocalizationsUtil.setTextStyle(isKor, size: 16, fontWeight: FontWeight.w600),
                                   ),
                                   Selector<AccountProvider, int>(selector: (context, provider) {
                                     if (provider.accountInfo != null) {
@@ -658,8 +653,10 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                         : (isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary)),
                                 borderRadius: BorderRadius.circular(24)),
                             child: Text(
-                              "${scheduleDay.month}월${scheduleDay.day}일 (${idx + 1}일차)",
-                              style: TextStyle(
+                              isKor
+                                  ? "${scheduleDay.month}월${scheduleDay.day}일 (${idx + 1}일차)"
+                                  : "${scheduleDay.month}.${scheduleDay.day} (${localization.day} ${idx + 1})",
+                              style: LocalizationsUtil.setTextStyle(isKor,
                                   color: _selectedDay == idx ? Colors.white : (isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                                   fontWeight: _selectedDay == idx ? FontWeight.w600 : FontWeight.w400),
                             ),
@@ -683,21 +680,22 @@ class _AccountBookPageState extends State<AccountBookPage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text(
-                              "여행 경비를 관리해 보세요.",
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                            Text(
+                              localization.accountEmptyTitle,
+                              style: LocalizationsUtil.setTextStyle(isKor, size: isKor ? 20 : 18, fontWeight: FontWeight.w600),
                             ),
                             const Gap(24),
                             RichText(
                                 text: TextSpan(
-                                    text: "${_selectedDay + 1} 일차에는 ",
-                                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: isDarkMode ? Colors.white : Colors.black87),
+                                    text: isKor ? "${_selectedDay + 1} ${localization.day} " : "${localization.day} ${_selectedDay + 1}",
+                                    style: LocalizationsUtil.setTextStyle(isKor,
+                                        fontWeight: FontWeight.w600, size: 16, color: isDarkMode ? Colors.white : Colors.black87),
                                     children: [
                                   TextSpan(
-                                      text: "아직 등록 된",
-                                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: isDarkMode ? Colors.white : Colors.black87))
+                                      text: localization.accountEmptyDesc,
+                                      style: LocalizationsUtil.setTextStyle(isKor,
+                                          size: 14, fontWeight: FontWeight.w400, color: isDarkMode ? Colors.white : Colors.black87))
                                 ])),
-                            const Text("여행경비 내역이 없어요."),
                           ],
                         ),
                       );
@@ -716,9 +714,9 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                 children: [
                                   // title + amount
                                   Flexible(
-                                    flex: 5,
+                                    flex: 6,
                                     child: Container(
-                                        width: (wid - 60) * 0.5,
+                                        width: (wid - 60) * 0.6,
                                         padding: const EdgeInsets.only(left: 8),
                                         child: Column(
                                           mainAxisAlignment: MainAxisAlignment.center,
@@ -726,13 +724,13 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                           children: [
                                             Text(
                                               info[idx].title!,
-                                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                              style: LocalizationsUtil.setTextStyle(isKor, size: 16, fontWeight: FontWeight.w600),
                                             ),
                                             RichText(
                                               text: TextSpan(
                                                   text: IntlUtils.stringIntAddComma(info[idx].amount!),
-                                                  style: TextStyle(
-                                                      fontSize: 16,
+                                                  style: LocalizationsUtil.setTextStyle(isKor,
+                                                      size: 16,
                                                       fontWeight: FontWeight.w600,
                                                       color: info[idx].type == AmountType.add
                                                           ? Colors.blueAccent
@@ -766,44 +764,48 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                   //   ),
                                   // ),
                                   Flexible(
-                                    flex: 2,
+                                    flex: 3,
                                     child: SizedBox(
-                                      width: (wid - 60) * 0.2,
-                                      height: 40,
+                                      width: (wid - 60) * 0.3,
+                                      height: 45,
                                       child: info[idx].type == AmountType.add
                                           ? const Center(child: Text("-"))
                                           : Card(
                                               color: StatisticsUtil.getCardColor(info[idx].methodType ?? MethodType.ect),
-                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                                               child: Center(
-                                                  child: Text(
-                                                StatisticsUtil.conversionMethodTypeToString(
-                                                    Localizations.localeOf(context).languageCode, info[idx].methodType ?? MethodType.ect),
-                                                style: const TextStyle(color: Colors.white),
+                                                  child: Padding(
+                                                padding: const EdgeInsets.all(4.0),
+                                                child: Text(
+                                                  StatisticsUtil.conversionMethodTypeToString(
+                                                      Localizations.localeOf(context).languageCode, info[idx].methodType ?? MethodType.ect),
+                                                  style: LocalizationsUtil.setTextStyle(isKor, color: Colors.white),
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
                                               )),
                                             ),
                                     ),
                                   ),
+                                  // Flexible(
+                                  //     flex: 1,
+                                  //     child: SizedBox(
+                                  //       width: (wid - 60) * 0.2,
+                                  //     )),
                                   Flexible(
                                       flex: 1,
                                       child: SizedBox(
-                                        width: (wid - 60) * 0.2,
-                                      )),
-                                  Flexible(
-                                      flex: 2,
-                                      child: SizedBox(
                                         height: 50,
-                                        width: (wid - 60) * 0.2,
+                                        width: (wid - 60) * 0.1,
                                         child: PopupMenuButton(
                                           itemBuilder: (context) {
-                                            return const [
-                                              PopupMenuItem(value: "edit", child: Text("수정")),
-                                              PopupMenuItem(value: "delete", child: Text("삭제")),
+                                            return [
+                                              PopupMenuItem(value: "edit", child: Text(localization.modify)),
+                                              PopupMenuItem(value: "delete", child: Text(localization.delete)),
                                             ];
                                           },
                                           onSelected: (value) {
                                             if (value == "edit") {
-                                              _addAmountDialog(context, info[idx], idx, isDarkMode);
+                                              _addAmountDialog(context, localization, info[idx], idx, isDarkMode, isKor);
                                             } else {
                                               context.read<AccountProvider>().removeAmountItem(_selectedDay, idx, widget.plan.id!);
                                             }
@@ -840,10 +842,11 @@ class _AccountBookPageState extends State<AccountBookPage> {
                           child: SizedBox(
                               width: (wid - 40) / 3,
                               child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Text(
-                                    "총 사용 경비",
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                  Text(
+                                    localization.totalCost,
+                                    style: LocalizationsUtil.setTextStyle(isKor, size: 18, fontWeight: FontWeight.w600),
                                   ),
                                   Selector<AccountProvider, AccountModel>(selector: (context, provider) {
                                     if (provider.accountInfo != null) {
@@ -862,8 +865,8 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                     return RichText(
                                       text: TextSpan(
                                           text: IntlUtils.stringIntAddComma(total),
-                                          style: TextStyle(
-                                              fontSize: 16,
+                                          style: LocalizationsUtil.setTextStyle(isKor,
+                                              size: 16,
                                               fontWeight: FontWeight.w600,
                                               color: isDarkMode ? Theme.of(context).colorScheme.secondary : Colors.brown),
                                           children: [
@@ -883,10 +886,11 @@ class _AccountBookPageState extends State<AccountBookPage> {
                           child: SizedBox(
                               width: (wid - 40) / 3,
                               child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Text(
-                                    "현금 사용",
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                  Text(
+                                    localization.cashUsed,
+                                    style: LocalizationsUtil.setTextStyle(isKor, size: 18, fontWeight: FontWeight.w600),
                                   ),
                                   Selector<AccountProvider, int>(selector: (context, provider) {
                                     if (provider.accountInfo != null) {
@@ -898,7 +902,8 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                     return RichText(
                                       text: TextSpan(
                                           text: IntlUtils.stringIntAddComma(exchange),
-                                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.redAccent),
+                                          style:
+                                              LocalizationsUtil.setTextStyle(isKor, size: 16, fontWeight: FontWeight.w600, color: Colors.redAccent),
                                           children: [
                                             TextSpan(
                                                 text: " $unit",
@@ -913,10 +918,11 @@ class _AccountBookPageState extends State<AccountBookPage> {
                           child: SizedBox(
                               width: (wid - 40) / 3,
                               child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Text(
-                                    "카드 사용",
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                  Text(
+                                    localization.cardUsed,
+                                    style: LocalizationsUtil.setTextStyle(isKor, size: 18, fontWeight: FontWeight.w600),
                                   ),
                                   Selector<AccountProvider, int>(selector: (context, provider) {
                                     if (provider.accountInfo != null) {
@@ -949,7 +955,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
     );
   }
 
-  Future<void> _addAmountDialog(BuildContext context, AmountModel? item, int? itemIdx, bool isDarkMode) {
+  Future<void> _addAmountDialog(BuildContext context, AppLocalizations localization, AmountModel? item, int? itemIdx, bool isDarkMode, bool isKor) {
     // AmountModel newAmount = AmountModel();
     // final info = context.read<AccountProvider>().accountInfo!;
     // int selectDayInit = 0;
@@ -959,7 +965,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
       _payAmountController.text = IntlUtils.stringIntAddComma(item.amount!);
       _categoryController.text =
           StatisticsUtil.conversionMethodTypeToString(Localizations.localeOf(context).languageCode, item.methodType ?? MethodType.ect);
-      _usedTypeController.text = item.category == 0 ? "현금" : "카드";
+      _usedTypeController.text = item.category == 0 ? localization.cash : localization.card;
     }
     // else {
     //   if (info.usageHistory != null && info.usageHistory!.isNotEmpty) {
@@ -987,8 +993,10 @@ class _AccountBookPageState extends State<AccountBookPage> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Text(
-                                item == null ? "지출 (${_selectedDay + 1}일차)" : "내용 수정",
-                                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                                item == null
+                                    ? (isKor ? "지출 (${_selectedDay + 1}일차)" : "${localization.day} ${_selectedDay + 1} ${localization.spent}")
+                                    : localization.modify,
+                                style: LocalizationsUtil.setTextStyle(isKor, size: 20, fontWeight: FontWeight.w600),
                               ),
                             ],
                           )),
@@ -1029,19 +1037,18 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                   height: 60,
                                   child: DropdownMenu(
                                     controller: _categoryController,
-                                    dropdownMenuEntries: const [
-                                      DropdownMenuEntry(value: "카테고리", label: "카테고리"),
-                                      DropdownMenuEntry(value: "쇼핑", label: "쇼핑"),
-                                      DropdownMenuEntry(value: "교통비", label: "교통비"),
-                                      DropdownMenuEntry(value: "음식", label: "음식"),
-                                      DropdownMenuEntry(value: "유흥", label: "유흥"),
-                                      DropdownMenuEntry(value: "여행", label: "여행"),
-                                      DropdownMenuEntry(value: "레져", label: "레져"),
-                                      DropdownMenuEntry(value: "숙소", label: "숙소"),
-                                      DropdownMenuEntry(value: "기타", label: "기타"),
-                                    ],
+                                    dropdownMenuEntries: List.generate(MethodType.values.length + 1, (idx) {
+                                      if (idx == 0) {
+                                        return DropdownMenuEntry(
+                                            value: AppLocalizations.of(context)!.select, label: AppLocalizations.of(context)!.select);
+                                      }
+                                      String value = "";
+                                      value = StatisticsUtil.conversionMethodTypeToString(
+                                          Localizations.localeOf(context).languageCode, MethodType.values[idx - 1]);
+                                      return DropdownMenuEntry(value: value, label: value);
+                                    }),
                                     initialSelection: item == null
-                                        ? "카테고리"
+                                        ? localization.select
                                         : StatisticsUtil.conversionMethodTypeToString(
                                             Localizations.localeOf(context).languageCode, item.methodType ?? MethodType.ect),
                                     width: 160,
@@ -1064,7 +1071,10 @@ class _AccountBookPageState extends State<AccountBookPage> {
                           child: TextField(
                             controller: _titleController,
                             // onChanged: _onChanged,
-                            decoration: const InputDecoration(label: Text("상세 내용"), counterText: ""),
+                            decoration: InputDecoration(
+                                label: Text(localization.details,
+                                    style: isKor ? null : LocalizationsUtil.setTextStyle(isKor, size: 12, color: isDarkMode ? Colors.white : Colors.black87)),
+                                counterText: ""),
                             textAlign: TextAlign.end,
                             maxLines: 1,
                           ),
@@ -1087,15 +1097,10 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                   controller: _payAmountController,
                                   // onChanged: _onChanged,
                                   decoration: InputDecoration(
-                                      border: OutlineInputBorder(
-                                          borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
-                                          borderRadius: BorderRadius.circular(10)),
-                                      focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
-                                          borderRadius: BorderRadius.circular(10)),
                                       counterText: "",
-                                      labelText: "사용 금액",
-                                      labelStyle: const TextStyle(fontSize: 12)),
+                                      label: Text(localization.amount,
+                                      style: isKor ? null : LocalizationsUtil.setTextStyle(isKor,  size: 12, color: isDarkMode ? Colors.white : Colors.black87),),
+                                  ),
                                   maxLines: 1,
                                   maxLength: 13,
                                   keyboardType: TextInputType.number,
@@ -1110,18 +1115,19 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                 ),
                               ),
                             ),
+                            const Gap(10),
                             // 통화 선택
                             Flexible(
-                              flex: 3,
+                              flex: 4,
                               child: SizedBox(
                                 height: 60,
-                                width: (MediaQuery.sizeOf(context).width - 80) * 0.3,
+                                width: (MediaQuery.sizeOf(context).width - 80) * 0.4,
                                 child: DropdownMenu(
                                   controller: _usedTypeController,
-                                  initialSelection: item == null ? "현금" : (item.category == 0 ? "현금" : "카드"),
-                                  dropdownMenuEntries: const [
-                                    DropdownMenuEntry(value: "현금", label: "현금"),
-                                    DropdownMenuEntry(value: "카드", label: "카드")
+                                  initialSelection: item == null ? localization.cash : (item.category == 0 ? localization.cash : localization.card),
+                                  dropdownMenuEntries: [
+                                    DropdownMenuEntry(value: localization.cash, label: localization.cash),
+                                    DropdownMenuEntry(value: localization.card, label: localization.card)
                                   ],
                                   onSelected: (value) {
                                     _usedTypeController.text = value.toString();
@@ -1146,7 +1152,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                   onPressed: () {
                                     _titleController.clear();
                                     _payAmountController.clear();
-                                    _usedTypeController.text = "현금";
+                                    _usedTypeController.text = localization.cash;
                                     _categoryController.clear();
                                     Get.back();
                                   },
@@ -1155,8 +1161,9 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                       padding: EdgeInsets.zero),
                                   child: Text(
-                                    "닫기",
-                                    style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                                    localization.close,
+                                    style: LocalizationsUtil.setTextStyle(isKor,
+                                        color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                                   )),
                             ),
                             const Gap(20),
@@ -1195,7 +1202,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                       newAmount.id = _daysController.text.split(" ").first;
                                       newAmount.title = _titleController.text;
                                       newAmount.amount = IntlUtils.removeComma(_payAmountController.text);
-                                      newAmount.category = _usedTypeController.text == "현금" ? 0 : 2;
+                                      newAmount.category = _usedTypeController.text == localization.cash ? 0 : 2;
                                       newAmount.methodType = StatisticsUtil.conversionStringToMethodType(
                                           Localizations.localeOf(context).languageCode, _categoryController.text);
                                       newAmount.type = item.type;
@@ -1232,7 +1239,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                       newAmount.title = _titleController.text;
                                       newAmount.type = AmountType.use;
                                       newAmount.amount = IntlUtils.removeComma(_payAmountController.text);
-                                      newAmount.category = _usedTypeController.text == "현금" ? 0 : 2;
+                                      newAmount.category = _usedTypeController.text == localization.cash ? 0 : 2;
                                       // int day = int.parse(_daysController.text.split(" ").first);
                                       if (_selectedDay == 0) {
                                         newAmount.usageTime = widget.plan.schedule!.first;
@@ -1244,7 +1251,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                       // _daysController.clear();
                                       _titleController.clear();
                                       _payAmountController.clear();
-                                      _usedTypeController.text = "현금";
+                                      _usedTypeController.text = localization.cash;
                                       // _categoryController.clear();
                                       // Get.back();
                                     }
@@ -1254,7 +1261,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                       padding: EdgeInsets.zero),
                                   child: Text(
-                                    item != null ? "수정하기" : "추가하기",
+                                    item != null ? localization.modify : localization.add,
                                     style: const TextStyle(color: Colors.white),
                                   )),
                             ),
@@ -1268,7 +1275,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
             ));
   }
 
-  Future<void> _setTotalAmountDialog(BuildContext context, bool isDarkMode) {
+  Future<void> _setTotalAmountDialog(BuildContext context, AppLocalizations localization, bool isDarkMode, bool isKor) {
     final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
     return showDialog(
         context: context,
@@ -1287,16 +1294,16 @@ class _AccountBookPageState extends State<AccountBookPage> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           // 일 차 선택
-                          const SizedBox(
+                          SizedBox(
                             child: Text(
-                              "경비 추가",
-                              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+                              localization.addExpenses,
+                              style: LocalizationsUtil.setTextStyle(isKor, fontWeight: FontWeight.w600, size: 20),
                             ),
                           ),
                           SizedBox(
                             child: Text(
-                              "(${_selectedDay + 1}일차)",
-                              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+                              isKor ? "(${_selectedDay + 1}${localization.day})" : "(${localization.day} ${_selectedDay + 1})",
+                              style: LocalizationsUtil.setTextStyle(isKor, fontWeight: FontWeight.w600, size: 20),
                             ),
                           ),
                           // SizedBox(
@@ -1339,7 +1346,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                       child: TextField(
                         controller: _totalAmountController,
                         // onChanged: _onChanged,
-                        decoration: const InputDecoration(labelText: "추가 금액", labelStyle: TextStyle(fontSize: 12)),
+                        decoration: InputDecoration(labelText: localization.amountToAdd),
                         maxLines: 1,
                         keyboardType: TextInputType.number,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -1372,8 +1379,8 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                     side: isDarkMode ? const BorderSide(color: Colors.white) : null,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                     padding: EdgeInsets.zero),
-                                child: const Text(
-                                  "취소",
+                                child: Text(
+                                  localization.cancel,
                                 )),
                           ),
                           const Gap(20),
@@ -1395,13 +1402,21 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                     return;
                                   }
                                   int amount = IntlUtils.removeComma(_totalAmountController.text);
+                                  String title = "";
+                                  if (Localizations.localeOf(context).languageCode == "ko") {
+                                    title = "경비 추가";
+                                  } else if (Localizations.localeOf(context).languageCode == "ja") {
+                                    title = "経費追加";
+                                  } else {
+                                    title = "Additional expenses";
+                                  }
                                   // int days = int.parse(_totalDaysController.text.split(" ").first);
 
                                   if (kReleaseMode && !isRemove) {
                                     context.read<AdmobProvider>().interstitialAd!.show();
                                   }
 
-                                  context.read<AccountProvider>().addTotalAmount(amount, _selectedDay, widget.plan.id!);
+                                  context.read<AccountProvider>().addTotalAmount(title, amount, _selectedDay, widget.plan.id!);
                                   _totalAmountController.clear();
                                   Get.back();
                                 },
@@ -1410,10 +1425,8 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                     padding: EdgeInsets.zero),
                                 child: Text(
-                                  "추가하기",
-                                  style: TextStyle(
-                                    color: Theme.of(context).colorScheme.surface,
-                                  ),
+                                  localization.add,
+                                  style: LocalizationsUtil.setTextStyle(isKor, color: Colors.white),
                                 )),
                           ),
                         ],

@@ -16,6 +16,7 @@ import 'package:ready_go_project/presentation/plan_menus/schedule_page/schedule_
 import 'package:ready_go_project/presentation/plan_menus/supplies_page/supplies_page.dart';
 import 'package:ready_go_project/util/intl_utils.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:ready_go_project/util/localizations_util.dart';
 
 import '../../data/models/plan_model/plan_model.dart';
 import '../../domain/entities/provider/admob_provider.dart';
@@ -179,7 +180,7 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                                   label: Text(
                                     isKor ? korItemList[idx] : itemList[idx],
-                                    style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w600),
+                                    style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w600),
                                   ),
                                   iconAlignment: IconAlignment.end,
                                   icon: _iconSelector(idx, isKor, isPlanKor, isDarkMode),

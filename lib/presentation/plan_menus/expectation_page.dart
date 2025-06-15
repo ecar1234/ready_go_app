@@ -339,18 +339,16 @@ class _ExpectationPageState extends State<ExpectationPage> {
                               if (list.isNotEmpty) {
                                 return Text(
                                   "${IntlUtils.stringIntAddComma(totalAmount)} ${list[0].unit}",
-                                  style: TextStyle(
-                                      color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
-                                      fontSize: 16,
+                                  style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
+                                      size: 16,
                                       fontWeight: FontWeight.w600),
                                 );
                               } else {
                                 return Text(
                                   isNationKor && isKor ? "0 ₩" :
                                   (Localizations.localeOf(context).languageCode == "ja" ? "0 ¥" : "0 \$"),
-                                  style: TextStyle(
-                                      color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
-                                      fontSize: 16,
+                                  style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
+                                      size: 16,
                                       fontWeight: FontWeight.w600),
                                 );
                               }
@@ -394,7 +392,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                   return RichText(
                                     text: TextSpan(
                                         text: IntlUtils.stringIntAddComma(totalAmount),
-                                        style: const TextStyle(fontFamily: "Nanum", color: Colors.green, fontSize: 16, fontWeight: FontWeight.w600),
+                                        style: LocalizationsUtil.setTextStyle(isKor, color: Colors.green, size: 16, fontWeight: FontWeight.w600),
                                         children: [
                                           TextSpan(
                                             text: " ${list[0].unit}",
@@ -406,7 +404,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                   return RichText(
                                     text: TextSpan(
                                         text: "0",
-                                        style: const TextStyle(color: Colors.green, fontSize: 16, fontWeight: FontWeight.w600),
+                                        style: LocalizationsUtil.setTextStyle(isKor, color: Colors.green, size: 16, fontWeight: FontWeight.w600),
                                         children: [
                                           TextSpan(
                                             text: " ${plan.unit}",
@@ -618,7 +616,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                   decoration: InputDecoration(counterText: "", labelText: AppLocalizations.of(context)!.amount),
                                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                   keyboardType: TextInputType.number,
-                                  style: const TextStyle(fontWeight: FontWeight.w600),
+                                  style: LocalizationsUtil.setTextStyle(isKor, fontWeight: FontWeight.w600),
                                   textAlign: TextAlign.end,
                                   onChanged: (value) {
                                     if (value.isNotEmpty) {
@@ -732,9 +730,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                                 child: Text(
                                   cur == null ? AppLocalizations.of(context)!.add : AppLocalizations.of(context)!.modify,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                  ),
+                                  style: LocalizationsUtil.setTextStyle(isKor, color: Colors.white),
                                 ),
                               ),
                             ),

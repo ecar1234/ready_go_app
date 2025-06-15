@@ -109,8 +109,7 @@ class _HomePageState extends State<HomePage> {
             SizedBox(
               child: Text(
                 AppLocalizations.of(context)!.favorite,
-                style: isKor? const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)
-                    : GoogleFonts.notoSans(fontSize: 16, fontWeight: FontWeight.w600),
+                style: LocalizationsUtil.setTextStyle(isKor, fontWeight: FontWeight.w600, size: 16)
               ),
             ),
             const Gap(10),
@@ -376,8 +375,7 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             Text(
                               AppLocalizations.of(context)!.incheonAirport,
-                              style: isKor ? TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontSize: 14)
-                                  : GoogleFonts.notoSans(color: isDarkMode ? Colors.white : Colors.black, fontSize: 14),
+                              style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Colors.black, size: 14)
                             ),
                             Text(
                               AppLocalizations.of(context)!.planRule,

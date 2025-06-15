@@ -10,9 +10,11 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/accommodation_model/accommodation_model.dart';
 import 'package:accordion/accordion.dart';
-
+import 'package:ready_go_project/util/date_util.dart';
 import 'package:ready_go_project/util/intl_utils.dart';
+import 'package:ready_go_project/util/localizations_util.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../data/models/plan_model/plan_model.dart';
 import '../../domain/entities/provider/accommodation_provider.dart';
@@ -52,10 +54,11 @@ class _AccommodationPageState extends State<AccommodationPage> {
     _debounce = Timer(const Duration(milliseconds: 500), () {
       logger.d(value);
     });
-    if(int.parse(value) > 24){
+    if (int.parse(value) > 24) {
       _checkInController.text = "24";
     }
   }
+
   _onChangedCheckOut(String value) {
     if (_debounce?.isActive ?? false) {
       _debounce?.cancel();
@@ -63,7 +66,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
     _debounce = Timer(const Duration(milliseconds: 500), () {
       logger.d(value);
     });
-    if(int.parse(value) > 24){
+    if (int.parse(value) > 24) {
       _checkOutController.text = "24";
     }
   }
@@ -92,10 +95,10 @@ class _AccommodationPageState extends State<AccommodationPage> {
     // TODO: implement initState
     super.initState();
     // WidgetsBinding.instance.addPostFrameCallback((_) => context.read<AdmobProvider>().loadAdBanner());
-    WidgetsBinding.instance.addPostFrameCallback((_){
-      if(kReleaseMode){
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (kReleaseMode) {
         final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
-        if(!isRemove){
+        if (!isRemove) {
           context.read<AdmobProvider>().interstitialAd!.show();
           _admobUtil.loadBannerAd(onAdLoaded: () {
             setState(() {
@@ -145,6 +148,9 @@ class _AccommodationPageState extends State<AccommodationPage> {
     final isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
     final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
     final double bannerHei = _isLoaded ? _admobUtil.bannerAd!.size.height.toDouble() : 0;
+    final isKor = Localizations.localeOf(context).languageCode == "ko";
+    final localization = AppLocalizations.of(context)!;
+
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
@@ -153,18 +159,18 @@ class _AccommodationPageState extends State<AccommodationPage> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
-            title: const Text("숙소정보"),
+            title: FittedBox(child: Text(localization.accommodationTitle)),
             actions: [
               SizedBox(
                 width: 100,
                 child: TextButton.icon(
                     onPressed: () {
-                      _addAccommodation(context, month, day, height);
+                      _addAccommodation(context, localization, month, day, height, isKor);
                     },
                     style: IconButton.styleFrom(padding: EdgeInsets.zero),
                     label: Text(
-                      "추가",
-                      style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                      localization.add,
+                      style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                     ),
                     iconAlignment: IconAlignment.end,
                     icon: Icon(Icons.add, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary)),
@@ -179,28 +185,32 @@ class _AccommodationPageState extends State<AccommodationPage> {
                 builder: (BuildContext context, BoxConstraints constraints) => SizedBox(
                     child: list?.isEmpty == true || list == null
                         ? SizedBox(
-                            height: height - bannerHei -170,
-                            width: MediaQuery.sizeOf(context).width-40,
-                            child: const Column(
+                            height: height - bannerHei - 170,
+                            width: MediaQuery.sizeOf(context).width - 40,
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.hotel),
-                                    Gap(5),
-                                    Text("숙소 예약 정보를 저장 하고", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),),
+                                    const Icon(Icons.hotel),
+                                    const Gap(5),
+                                    Text(localization.accInfoDesc1,
+                                        style: LocalizationsUtil.setTextStyle(isKor, fontWeight: FontWeight.w600, size: 16)),
                                   ],
                                 ),
-                                Gap(10),
-                                Text("쉬게 확인해 보세요.", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),),
+                                const Gap(10),
+                                Text(
+                                  localization.accInfoDesc2,
+                                  style: LocalizationsUtil.setTextStyle(isKor, fontWeight: FontWeight.w600, size: 16),
+                                ),
                               ],
                             ),
                           )
                         : SizedBox(
                             height: height - bannerHei - 50,
                             width: constraints.maxWidth <= 600 ? MediaQuery.sizeOf(context).width : 600,
-                            child: SingleChildScrollView(child: _accordionSection(context, list, isDarkMode)))),
+                            child: SingleChildScrollView(child: _accordionSection(context, localization, list, isDarkMode, isKor)))),
               ),
               if (_isLoaded && _admobUtil.bannerAd != null)
                 SizedBox(
@@ -223,7 +233,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
     );
   }
 
-  Future<void> _addAccommodation(BuildContext context, int month, int day, double hei) {
+  Future<void> _addAccommodation(BuildContext context, AppLocalizations localization, int month, int day, double hei, bool isKor) {
     // final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
     return showDialog(
         context: context,
@@ -249,9 +259,9 @@ class _AccommodationPageState extends State<AccommodationPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              "숙소 정보",
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                            Text(
+                              localization.addToInfo,
+                              style: LocalizationsUtil.setTextStyle(isKor, size: 20, fontWeight: FontWeight.w600),
                             ),
                             const Gap(10),
                             // 숙소 이름
@@ -260,9 +270,10 @@ class _AccommodationPageState extends State<AccommodationPage> {
                               child: TextField(
                                 controller: _nameController,
                                 // onChanged: _onChanged,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   label: Text(
-                                    "숙소명",
+                                    localization.accName,
+                                    style: isKor ? null : LocalizationsUtil.setTextStyle(isKor),
                                   ),
                                 ),
                               ),
@@ -274,9 +285,10 @@ class _AccommodationPageState extends State<AccommodationPage> {
                               child: TextField(
                                 controller: _addressController,
                                 // onChanged: _onChanged,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   label: Text(
-                                    "주소",
+                                    localization.address,
+                                    style: isKor ? null : LocalizationsUtil.setTextStyle(isKor),
                                   ),
                                 ),
                               ),
@@ -292,13 +304,14 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                 maxLength: 9,
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                     label: Text(
-                                      "결제금액",
+                                      localization.amount,
+                                      style: isKor ? null : LocalizationsUtil.setTextStyle(isKor),
                                     ),
                                     counterText: ""),
-                                onChanged: (value){
-                                  if(value.isNotEmpty){
+                                onChanged: (value) {
+                                  if (value.isNotEmpty) {
                                     _paymentController.text = IntlUtils.stringIntAddComma(int.parse(value));
                                   }
                                 },
@@ -313,9 +326,9 @@ class _AccommodationPageState extends State<AccommodationPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              "숙박 일정",
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                            Text(
+                              localization.enterPeriod,
+                              style: LocalizationsUtil.setTextStyle(isKor, size: 20, fontWeight: FontWeight.w600),
                             ),
                             const Gap(10),
                             SizedBox(
@@ -326,6 +339,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                 children: [
                                   DropdownMenu(
                                     width: 110,
+                                    menuHeight: 300,
                                     // enabled: false,
                                     menuStyle: const MenuStyle(
                                       visualDensity: VisualDensity.compact, // 밀도 조정
@@ -337,11 +351,16 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                       });
                                     },
                                     // selectedTrailingIcon: null,
-                                    dropdownMenuEntries: [...List.generate(12, (idx) => DropdownMenuEntry(value: idx + 1, label: "${idx + 1}월"))],
+                                    dropdownMenuEntries: [
+                                      ...List.generate(
+                                          12,
+                                          (idx) => DropdownMenuEntry(
+                                              value: idx + 1, label: DateUtil.getMonth(Localizations.localeOf(context).languageCode, idx + 1)))
+                                    ],
                                   ),
                                   const Gap(10),
                                   DropdownMenu(
-                                    width: 110,
+                                    width: 90,
                                     // enabled: false,
                                     menuStyle: const MenuStyle(
                                       visualDensity: VisualDensity.compact, // 밀도 조정
@@ -361,8 +380,16 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                       });
                                     },
                                     dropdownMenuEntries: [
-                                      ...List.generate(getDaysOfMouth(widget.plan.schedule!.first!.year, month),
-                                          (idx) => DropdownMenuEntry(value: idx + 1, label: "${idx + 1}일"))
+                                      ...List.generate(getDaysOfMouth(widget.plan.schedule!.first!.year, month), (idx) {
+                                        if (isKor) {
+                                          return DropdownMenuEntry(value: idx + 1, label: "${idx + 1}일");
+                                        } else {
+                                          if (idx == 0) {
+                                            return DropdownMenuEntry(value: idx + 1, label: "${idx + 1}");
+                                          }
+                                          return DropdownMenuEntry(value: idx + 1, label: "${idx + 1}");
+                                        }
+                                      })
                                     ],
                                   ),
                                   const Gap(10),
@@ -377,11 +404,11 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                       keyboardType: TextInputType.number,
                                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                       textAlign: TextAlign.end,
-                                      decoration: const InputDecoration(label: Text("기간"), counterText: ""),
+                                      decoration: InputDecoration(label: Text(localization.period, style: isKor ? null : LocalizationsUtil.setTextStyle(isKor),), counterText: ""),
                                     ),
                                   ),
                                   const Gap(5),
-                                  const Text("박")
+                                  Text(localization.days)
                                 ],
                               ),
                             ),
@@ -394,52 +421,90 @@ class _AccommodationPageState extends State<AccommodationPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              "체크인 & 아웃",
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                            Text(
+                              localization.checkInAndCheckout,
+                              style: LocalizationsUtil.setTextStyle(isKor, size: 20, fontWeight: FontWeight.w600),
                             ),
                             const Gap(10),
                             SizedBox(
                               height: 50,
                               width: MediaQuery.sizeOf(context).width,
                               child: Row(
-                                children: [
-                                  SizedBox(
-                                    width: 80,
-                                    child: TextField(
-                                      controller: _checkInController,
-                                      onChanged: _onChangedCheckIn,
-                                      maxLines: 1,
-                                      maxLength: 2,
-                                      textAlign: TextAlign.end,
-                                      keyboardType: TextInputType.number,
-                                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                      decoration: const InputDecoration(
-                                          counterText: "",
+                                children: Localizations.localeOf(context).languageCode == "ko" || Localizations.localeOf(context).languageCode == "ja"
+                                    ? [
+                                        SizedBox(
+                                          width: 80,
+                                          child: TextField(
+                                            controller: _checkInController,
+                                            onChanged: _onChangedCheckIn,
+                                            maxLines: 1,
+                                            maxLength: 2,
+                                            textAlign: TextAlign.end,
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                            decoration: const InputDecoration(
+                                              counterText: "",
+                                            ),
+                                          ),
                                         ),
-                                    ),
-                                  ),
-                                  const Gap(10),
-                                  const Text("시 부터"),
-                                  const Gap(10),
-                                  SizedBox(
-                                    width: 80,
-                                    child: TextField(
-                                      controller: _checkOutController,
-                                      onChanged: _onChangedCheckOut,
-                                      maxLines: 1,
-                                      maxLength: 2,
-                                      textAlign: TextAlign.end,
-                                      keyboardType: TextInputType.number,
-                                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                      decoration: InputDecoration(
-                                          counterText: "",
-                                          border: OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(10))),
-                                    ),
-                                  ),
-                                  const Gap(10),
-                                  const Text("시 까지")
-                                ],
+                                        const Gap(10),
+                                        Text(localization.from),
+                                        const Gap(10),
+                                        SizedBox(
+                                          width: 80,
+                                          child: TextField(
+                                            controller: _checkOutController,
+                                            onChanged: _onChangedCheckOut,
+                                            maxLines: 1,
+                                            maxLength: 2,
+                                            textAlign: TextAlign.end,
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                            decoration: const InputDecoration(
+                                                counterText: "",
+                                            ),
+                                          ),
+                                        ),
+                                        const Gap(10),
+                                        Text(localization.to)
+                                      ]
+                                    : [
+                                        Text(localization.from),
+                                        const Gap(10),
+                                        SizedBox(
+                                          width: 80,
+                                          child: TextField(
+                                            controller: _checkInController,
+                                            onChanged: _onChangedCheckIn,
+                                            maxLines: 1,
+                                            maxLength: 2,
+                                            textAlign: TextAlign.end,
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                            decoration: const InputDecoration(
+                                              counterText: "",
+                                            ),
+                                          ),
+                                        ),
+                                        const Gap(10),
+                                        Text(localization.to),
+                                        const Gap(10),
+                                        SizedBox(
+                                          width: 80,
+                                          child: TextField(
+                                            controller: _checkOutController,
+                                            onChanged: _onChangedCheckOut,
+                                            maxLines: 1,
+                                            maxLength: 2,
+                                            textAlign: TextAlign.end,
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                            decoration: const InputDecoration(
+                                                counterText: "",
+                                            )
+                                          ),
+                                        ),
+                                      ],
                               ),
                             ),
                           ],
@@ -451,16 +516,16 @@ class _AccommodationPageState extends State<AccommodationPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text("예약 정보 (선택)", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),),
+                            Text(
+                              localization.reservationInfo,
+                              style: LocalizationsUtil.setTextStyle(isKor, size: 20, fontWeight: FontWeight.w600),
+                            ),
                             const Gap(10),
                             SizedBox(
                               height: 50,
                               child: TextField(
                                 controller: _bookingAppController,
-                                decoration: const InputDecoration(
-                                  label: Text("예약 App"),
-                                  counterText: ""
-                                ),
+                                decoration: InputDecoration(label: Text(localization.reservationApp, style: isKor ? null : LocalizationsUtil.setTextStyle(isKor),), counterText: ""),
                               ),
                             ),
                             const Gap(10),
@@ -468,10 +533,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                               height: 50,
                               child: TextField(
                                 controller: _bookingNumController,
-                                decoration: const InputDecoration(
-                                  label: Text("예약 번호"),
-                                  counterText: ""
-                                ),
+                                decoration: InputDecoration(label: Text(localization.reservationNum, style: isKor ? null : LocalizationsUtil.setTextStyle(isKor),), counterText: ""),
                               ),
                             )
                           ],
@@ -494,8 +556,8 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                   },
                                   style: ElevatedButton.styleFrom(
                                       elevation: 0, side: const BorderSide(), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                  child: const Text(
-                                    "닫기",
+                                  child: Text(
+                                    localization.close,
                                   )),
                             ),
                             const Gap(20),
@@ -553,7 +615,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                       return;
                                     }
                                     final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
-                                    if(kReleaseMode && !isRemove){
+                                    if (kReleaseMode && !isRemove) {
                                       context.read<AdmobProvider>().loadAdInterstitialAd();
                                       context.read<AdmobProvider>().showInterstitialAd();
                                     }
@@ -586,8 +648,8 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                       elevation: 0,
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                                   child: Text(
-                                    "추가",
-                                    style: TextStyle(color: Theme.of(context).colorScheme.surface),
+                                    localization.add,
+                                    style: LocalizationsUtil.setTextStyle(isKor, color: Colors.white),
                                   )),
                             )
                           ],
@@ -602,7 +664,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
         });
   }
 
-  Widget _accordionSection(BuildContext context, List<AccommodationModel> list, bool isDarkMode) {
+  Widget _accordionSection(BuildContext context, AppLocalizations localization, List<AccommodationModel> list, bool isDarkMode, bool isKor) {
     return Accordion(
         disableScrolling: true,
         rightIcon: null,
@@ -622,8 +684,8 @@ class _AccommodationPageState extends State<AccommodationPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "${list[idx].name} (${list[idx].period}박)",
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      "${list[idx].name} (${list[idx].period} ${localization.days})",
+                      style: LocalizationsUtil.setTextStyle(isKor, size: 16, fontWeight: FontWeight.w600),
                     ),
                     SizedBox(
                       width: 50,
@@ -634,8 +696,8 @@ class _AccommodationPageState extends State<AccommodationPage> {
                           },
                           style: TextButton.styleFrom(padding: EdgeInsets.zero),
                           child: Text(
-                            "삭제",
-                            style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                            localization.delete,
+                            style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                           )),
                     ),
                   ],
@@ -653,9 +715,9 @@ class _AccommodationPageState extends State<AccommodationPage> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text(
-                                    "주소",
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                  Text(
+                                    localization.address,
+                                    style: LocalizationsUtil.setTextStyle(isKor, size: 16, fontWeight: FontWeight.w600),
                                   ),
                                   Row(
                                     children: [
@@ -666,7 +728,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                             await _openGoogleMap(list[idx].address!);
                                           },
                                           style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                                          child: const Text("지도 열기"),
+                                          child: Text(localization.viewMap),
                                         ),
                                       ),
                                       const Gap(10),
@@ -682,7 +744,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("숙소 주소가 복사 되었습니다.")));
                                           },
                                           style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                                          child: const Text("주소 복사"),
+                                          child: Text(localization.copy),
                                         ),
                                       )
                                     ],
@@ -705,11 +767,11 @@ class _AccommodationPageState extends State<AccommodationPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const SizedBox(
+                              SizedBox(
                                 height: 30,
                                 child: Text(
-                                  "숙박 일정",
-                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                  localization.enterPeriod,
+                                  style: LocalizationsUtil.setTextStyle(isKor, size: 16, fontWeight: FontWeight.w600),
                                 ),
                               ),
                               SizedBox(
@@ -717,7 +779,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                 child: Text("${list[idx].startDay!.year}.${list[idx].startDay!.month}.${list[idx].startDay!.day} "
                                     "~ ${list[idx].startDay!.add(Duration(days: list[idx].period!)).year}."
                                     "${list[idx].startDay!.add(Duration(days: list[idx].period!)).month}."
-                                    "${list[idx].startDay!.add(Duration(days: list[idx].period!)).day} (${list[idx].period}박)"),
+                                    "${list[idx].startDay!.add(Duration(days: list[idx].period!)).day} (${list[idx].period}${localization.days})"),
                               )
                             ],
                           ),
@@ -728,23 +790,25 @@ class _AccommodationPageState extends State<AccommodationPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const SizedBox(
+                              SizedBox(
                                 height: 30,
                                 child: Text(
-                                  "옵션",
-                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                  localization.option,
+                                  style: LocalizationsUtil.setTextStyle(isKor, size: 16, fontWeight: FontWeight.w600),
                                 ),
                               ),
                               SizedBox(
-                                height: 30,
                                 child: Row(
-                                  children: [const SizedBox(width: 60, child: Text("체크인")), Text(": ${list[idx].checkInTime} 시")],
+                                  children: [
+                                    SizedBox(width: 80, child: Text(localization.checkIn)),
+                                    Text(" : ${list[idx].checkInTime} ${localization.hour}")],
                                 ),
                               ),
                               SizedBox(
-                                height: 30,
                                 child: Row(
-                                  children: [const SizedBox(width: 60, child: Text("체크아웃")), Text(": ${list[idx].checkOutTime} 시")],
+                                  children: [
+                                    SizedBox(width: 80, child: Text(localization.checkout)),
+                                    Text(" : ${list[idx].checkOutTime} ${localization.hour}")],
                                 ),
                               )
                             ],
@@ -755,20 +819,28 @@ class _AccommodationPageState extends State<AccommodationPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const SizedBox(child: Text("예약 정보", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),)),
+                              SizedBox(
+                                  child: Text(
+                                localization.reservationInfo,
+                                style: LocalizationsUtil.setTextStyle(isKor, size: 16, fontWeight: FontWeight.w600),
+                              )),
                               const Gap(10),
                               Column(
                                 children: [
                                   Row(
                                     children: [
-                                      const SizedBox(width: 80, child: Text("예약 App : ")),
-                                      SizedBox(child: Text(list[idx].bookApp??"데이터가 없습니다."),)
+                                      SizedBox(width: 140, child: Text("${localization.reservationApp} : ")),
+                                      SizedBox(
+                                        child: Text(list[idx].bookApp ?? localization.noData),
+                                      )
                                     ],
                                   ),
                                   Row(
                                     children: [
-                                      const SizedBox(width: 80, child: Text("예약 번호 : ")),
-                                      SizedBox(child: Text(list[idx].bookNum??"데이터가 없습니다."),)
+                                      SizedBox(width: 140, child: Text("${localization.reservationNum} : ")),
+                                      SizedBox(
+                                        child: Text(list[idx].bookNum ?? localization.noData),
+                                      )
                                     ],
                                   )
                                 ],
@@ -782,9 +854,9 @@ class _AccommodationPageState extends State<AccommodationPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
-                                "결제금액",
-                                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                              Text(
+                                localization.amount,
+                                style: LocalizationsUtil.setTextStyle(isKor, fontWeight: FontWeight.w600, size: 16),
                               ),
                               Text(
                                 list[idx].payment!,

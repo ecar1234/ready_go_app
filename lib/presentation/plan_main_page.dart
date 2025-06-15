@@ -246,8 +246,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                 Center(
                                   child: Text(
                                     "✨ ${AppLocalizations.of(context)!.planMainDesc}!",
-                                    style: isKor ? TextStyle(fontWeight: FontWeight.w600, fontSize: constraints.maxWidth > 640 ? 34 : 22)
-                                    : GoogleFonts.notoSans(fontWeight: FontWeight.w600, fontSize: constraints.maxWidth > 640 ? 34 : 22),
+                                    style: LocalizationsUtil.setTextStyle(isKor, fontWeight: FontWeight.w600, size: constraints.maxWidth > 640 ? 34 : 22)
                                   ),
                                 ),
                                 Gap(isKor ? 20 : 10),
@@ -256,8 +255,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                   children: [
                                     Text(
                                       "✅ ${AppLocalizations.of(context)!.expectedMenu}",
-                                      style: isKor ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
-                                      : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
+                                      style: LocalizationsUtil.setTextStyle(isKor, size: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
                                       textAlign: TextAlign.center,
                                     ),
                                     Text(AppLocalizations.of(context)!.expectedDesc)
@@ -268,8 +266,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text("✅ ${AppLocalizations.of(context)!.eTicketMenu}",
-                                        style: isKor ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
-                                        : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
+                                        style: LocalizationsUtil.setTextStyle(isKor, size: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
                                         textAlign: TextAlign.center),
                                     Text(AppLocalizations.of(context)!.eTicketDesc)
                                   ],

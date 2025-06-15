@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
 import 'package:ready_go_project/util/admob_util.dart';
 import 'package:ready_go_project/util/date_util.dart';
+import 'package:ready_go_project/util/localizations_util.dart';
 import 'package:ready_go_project/util/nation_currency_unit_util.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -220,7 +221,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
             appBar: AppBar(
               title: Text(
                 AppLocalizations.of(context)!.titleAddPlan,
-                style: isKor ? const TextStyle(fontWeight: FontWeight.w600) : GoogleFonts.notoSans(fontWeight: FontWeight.w600),
+                style: LocalizationsUtil.setTextStyle(isKor, fontWeight: FontWeight.w600),
               ),
               actions: [
                 SizedBox(
@@ -300,8 +301,8 @@ class _AddPlanPageState extends State<AddPlanPage> {
                     style: TextButton.styleFrom(padding: EdgeInsets.zero),
                     label: Text(
                       widget.plan != null ? AppLocalizations.of(context)!.modify : AppLocalizations.of(context)!.create,
-                      style: TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.w500, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                      style: LocalizationsUtil.setTextStyle(isKor,
+                          size: 15, fontWeight: FontWeight.w500, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                     ),
                     icon: Icon(
                       Icons.add,
@@ -454,12 +455,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            child: Text(
-              AppLocalizations.of(context)!.addNation,
-              style: isKor
-                  ? const TextStyle(fontWeight: FontWeight.w600, fontSize: 16)
-                  : GoogleFonts.notoSans(fontWeight: FontWeight.w600, fontSize: 16),
-            ),
+            child: Text(AppLocalizations.of(context)!.addNation, style: LocalizationsUtil.setTextStyle(isKor, fontWeight: FontWeight.w600, size: 16)),
           ),
           const Gap(10),
           SizedBox(
@@ -530,9 +526,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
             child: TextField(
                 controller: subjectController,
                 // onChanged: _onChanged,
-                decoration: InputDecoration(
-                  hintText: AppLocalizations.of(context)!.addPlanHint,
-                )),
+                decoration: InputDecoration(hintText: AppLocalizations.of(context)!.addPlanHint, hintStyle: LocalizationsUtil.setTextStyle(isKor))),
           )
         ],
       ),

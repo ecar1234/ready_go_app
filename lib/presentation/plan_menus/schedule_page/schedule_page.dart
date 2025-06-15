@@ -13,6 +13,8 @@ import 'package:ready_go_project/domain/entities/provider/schedule_provider.dart
 import 'package:ready_go_project/presentation/plan_menus/schedule_page/add_schedule_page.dart';
 import 'package:ready_go_project/util/admob_util.dart';
 import 'package:ready_go_project/util/date_util.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:ready_go_project/util/localizations_util.dart';
 
 import '../../../data/models/plan_model/plan_model.dart';
 import '../../../domain/entities/provider/purchase_manager.dart';
@@ -84,10 +86,13 @@ class _SchedulePageState extends State<SchedulePage> {
     final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
     final bannerHei = _isLoaded ? _admobUtil.bannerAd!.size.height.toDouble() : 0;
     // final allScheduleList = context.watch<ScheduleProvider>().scheduleList ?? [];
+
+    final isKor = Localizations.localeOf(context).languageCode == 'ko';
+    final localization = AppLocalizations.of(context)!;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("일정 관리"),
+          title: Text(localization.scheduleTitle),
         ),
         body: SingleChildScrollView(
           child: Container(
@@ -105,7 +110,7 @@ class _SchedulePageState extends State<SchedulePage> {
                         width: MediaQuery.sizeOf(context).width - 40,
                         child: ElevatedButton(
                             onPressed: () {
-                              _scheduleDialog(context, null, _selected, isDarkMode);
+                              _scheduleDialog(context, localization, null, _selected, isDarkMode, isKor);
                             },
                             style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
                             child: Row(
@@ -119,8 +124,11 @@ class _SchedulePageState extends State<SchedulePage> {
                                   ),
                                 ),
                                 Text(
-                                  "주요 일정 추가",
-                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                                  localization.addMainSchedule,
+                                  style: LocalizationsUtil.setTextStyle(isKor,
+                                      size: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                                 ),
                                 SizedBox(
                                   child: Icon(
@@ -133,10 +141,10 @@ class _SchedulePageState extends State<SchedulePage> {
                       ),
                       const Gap(20),
                       // schedule index
-                      _scheduleIndex(context, isDarkMode),
+                      _scheduleIndex(context, localization, isDarkMode, isKor),
                       const Gap(10),
                       // schedule data for days
-                      _scheduleDataForDays(context, isDarkMode),
+                      _scheduleDataForDays(context, localization, isDarkMode, isKor),
                     ],
                   ),
                 ),
@@ -155,7 +163,7 @@ class _SchedulePageState extends State<SchedulePage> {
     );
   }
 
-  Widget _scheduleIndex(BuildContext context, bool isDarkMode) {
+  Widget _scheduleIndex(BuildContext context, AppLocalizations localization, bool isDarkMode, bool isKor) {
     return SizedBox(
         height: 40,
         child: ListView.separated(
@@ -182,8 +190,10 @@ class _SchedulePageState extends State<SchedulePage> {
                             : (isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary)),
                     borderRadius: BorderRadius.circular(24)),
                 child: Text(
-                  "${scheduleDay.month}월${scheduleDay.day}일 (${idx + 1}일차)",
-                  style: TextStyle(
+                  isKor
+                      ? "${scheduleDay.month}월${scheduleDay.day}일 (${idx + 1}일차)"
+                      : "${scheduleDay.month}.${scheduleDay.day} (${localization.day} ${idx + 1})",
+                  style: LocalizationsUtil.setTextStyle(isKor,
                       color: _selected == idx ? Colors.white : (isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                       fontWeight: _selected == idx ? FontWeight.w600 : FontWeight.w400),
                 ),
@@ -195,23 +205,23 @@ class _SchedulePageState extends State<SchedulePage> {
         ));
   }
 
-  Widget _scheduleDataForDays(BuildContext context, bool isDarkMode) {
+  Widget _scheduleDataForDays(BuildContext context, AppLocalizations localization, bool isDarkMode, bool isKor) {
     return Expanded(
       child: Selector<ScheduleProvider, List<ScheduleListModel>>(
           selector: (context, schedule) => schedule.scheduleList ?? [],
           builder: (context, allSchedule, child) {
             if (allSchedule.isEmpty || allSchedule[_selected].scheduleList!.isEmpty) {
-              return const SizedBox(
+              return SizedBox(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "주요 일정을 등록해보세요.",
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                      localization.scheduleEmptyDescTitle,
+                      style: LocalizationsUtil.setTextStyle(isKor, size: isKor ? 20 : 18, fontWeight: FontWeight.w600),
                     ),
                     const Gap(24),
-                    Text("주요일정 등록 후"),
-                    Text("세부 일정을 등록 할 수 있어요."),
+                    Text(localization.scheduleEmptyDesc1),
+                    Text(localization.scheduleEmptyDesc2),
                   ],
                 ),
               );
@@ -220,6 +230,7 @@ class _SchedulePageState extends State<SchedulePage> {
                 width: MediaQuery.sizeOf(context).width - 40,
                 // decoration: BoxDecoration(border: Border.all()),
                 child: ListView.separated(
+                    shrinkWrap: true,
                     itemBuilder: (context, idx) {
                       final daySchedule = allSchedule[_selected].scheduleList;
                       final stringTimeList = daySchedule![idx].time!.split(":");
@@ -235,88 +246,92 @@ class _SchedulePageState extends State<SchedulePage> {
                                 children: [
                               TextSpan(
                                   text: " ${int.parse(stringTimeList[0]) - 12}:${stringTimeList[1]}",
-                                  style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87,
-                                      fontWeight: FontWeight.w600, fontSize: 20))
+                                  style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w600, fontSize: 20))
                             ]));
                       } else {
                         conversionTime = RichText(
                             text: TextSpan(
                                 text: "AM",
-                                style: TextStyle(color: isDarkMode ? Theme.of(context).primaryColor : Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600, fontSize: 18),
+                                style: TextStyle(
+                                    color: isDarkMode ? Theme.of(context).primaryColor : Theme.of(context).colorScheme.primary,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 18),
                                 children: [
                               TextSpan(
                                   text: " ${stringTimeList[0]}:${stringTimeList[1]}",
-                                  style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87,
-                                      fontWeight: FontWeight.w600, fontSize: 20))
+                                  style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w600, fontSize: 20))
                             ]));
                       }
 
                       return SizedBox(
-                        height: daySchedule[idx].details !=null && daySchedule[idx].details!.isNotEmpty
-                            ? ((daySchedule[idx].details!.length*20)+8)+40 : 40,
+                        height: daySchedule[idx].details != null && daySchedule[idx].details!.isNotEmpty
+                            ? ((daySchedule[idx].details!.length * 20) + 8) + 80
+                            : 80,
                         child: Row(
                           children: [
                             SizedBox(
                               width: 20,
                               child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.only(top: 12),
+                                    padding: const EdgeInsets.only(top: 18),
                                     child: SizedBox(
-                                      height: 20,
-                                      child: Center(
-                                        child: Container(
-                                          height: 8,
-                                          width: 8,
-                                          decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: isAfterCheckScheduleTime(stringTimeList, widget.plan.schedule![0]!, _selected)
-                                                  ? Colors.redAccent
-                                                  : Colors.blue),
-                                        ),
+                                      // height: 20,
+                                      child: Container(
+                                        height: 8,
+                                        width: 8,
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: isAfterCheckScheduleTime(stringTimeList, widget.plan.schedule![0]!, _selected)
+                                                ? Colors.redAccent
+                                                : Colors.blue),
                                       ),
                                     ),
                                   ),
-
-                                  if(daySchedule[idx].details != null && daySchedule[idx].details!.isNotEmpty)
-                                  Expanded(
-                                      child: SizedBox(
-                                        width: 1,
-                                        // decoration: BoxDecoration(color: isDarkMode ? Colors.white : Colors.black87),
-                                        child: DottedLine(
-                                          direction: Axis.vertical,
-                                          dashColor: isDarkMode ? Colors.white : Colors.black87,
-                                        ),
-                                      )
-                                  )
+                                  // dot Line
+                                  if (daySchedule[idx].details != null && daySchedule[idx].details!.isNotEmpty)
+                                    Expanded(
+                                        child: SizedBox(
+                                      width: 1,
+                                      // decoration: BoxDecoration(color: isDarkMode ? Colors.white : Colors.black87),
+                                      child: DottedLine(
+                                        direction: Axis.vertical,
+                                        dashColor: isDarkMode ? Colors.white : Colors.black87,
+                                      ),
+                                    ))
                                 ],
                               ),
                             ),
                             // const Gap(10),
                             Expanded(
+                              flex: 9,
                               child: Container(
-                                padding: daySchedule[idx].details == null || daySchedule[idx].details!.isEmpty?
-                                const EdgeInsets.only(left: 8) : const EdgeInsets.only(left: 8, bottom: 8),
+                                padding: daySchedule[idx].details == null || daySchedule[idx].details!.isEmpty
+                                    ? const EdgeInsets.only(left: 8)
+                                    : const EdgeInsets.only(left: 8, bottom: 8),
                                 decoration: BoxDecoration(
-                                  color: isDarkMode? Theme.of(context).colorScheme.primary: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                  boxShadow: isDarkMode ? null : [
-                                    BoxShadow(
-                                      color: Colors.grey[200]!, // 좀 더 연한 그림자 색상
-                                      spreadRadius: 0.5, // 미세한 확산
-                                      blurRadius: 0.5,    // 매우 흐릿하게 (상단으로 갈수록 퍼지면서 사라짐)
-                                      offset: const Offset(0, 1), // 그림자의 시작점을 하단에서 조금 더 아래로
-                                    ),
-                                    // 하단 그림자를 좀 더 명확하게 표현하기 위한 추가 그림자 (선택 사항)
-                                    BoxShadow(
-                                      color: Colors.grey[200]!, // 더 진한 부분
-                                      spreadRadius: 0.4, // 아주 조금만 퍼짐
-                                      blurRadius: 0.1,   // 덜 흐릿하게
-                                      offset: const Offset(0, 1), // 하단에 가깝게
-                                    ),
-                                  ]
-                                ),
+                                    color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: isDarkMode
+                                        ? null
+                                        : [
+                                            BoxShadow(
+                                              color: Colors.grey[200]!, // 좀 더 연한 그림자 색상
+                                              spreadRadius: 0.5, // 미세한 확산
+                                              blurRadius: 0.5, // 매우 흐릿하게 (상단으로 갈수록 퍼지면서 사라짐)
+                                              offset: const Offset(0, 1), // 그림자의 시작점을 하단에서 조금 더 아래로
+                                            ),
+                                            // 하단 그림자를 좀 더 명확하게 표현하기 위한 추가 그림자 (선택 사항)
+                                            BoxShadow(
+                                              color: Colors.grey[200]!, // 더 진한 부분
+                                              spreadRadius: 0.4, // 아주 조금만 퍼짐
+                                              blurRadius: 0.1, // 덜 흐릿하게
+                                              offset: const Offset(0, 1), // 하단에 가깝게
+                                            ),
+                                          ]),
                                 child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     SizedBox(
                                       height: 40,
@@ -334,11 +349,8 @@ class _SchedulePageState extends State<SchedulePage> {
                                           Flexible(
                                               flex: 5,
                                               child: SizedBox(
-                                                  width: (MediaQuery.sizeOf(context).width - 40) * 0.5,
-                                                  child: Text(
-                                                    "${daySchedule[idx].title}",
-                                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, overflow: TextOverflow.ellipsis),
-                                                  ))),
+                                                width: (MediaQuery.sizeOf(context).width - 40) * 0.5,
+                                              )),
                                           // button menus
                                           Flexible(
                                               flex: 2,
@@ -349,14 +361,14 @@ class _SchedulePageState extends State<SchedulePage> {
                                                     itemBuilder: (context) => [
                                                           PopupMenuItem(
                                                             value: "edit",
-                                                            child: const Text("일정 수정"),
+                                                            child: Text(localization.modify),
                                                             onTap: () {
-                                                              _scheduleDialog(context, daySchedule[idx], _selected, isDarkMode);
+                                                              _scheduleDialog(context, localization, daySchedule[idx], _selected, isDarkMode, isKor);
                                                             },
                                                           ),
                                                           PopupMenuItem(
                                                             value: "add",
-                                                            child: const Text("세부 정보 추가"),
+                                                            child: Text(localization.addDetailSchedule),
                                                             onTap: () {
                                                               Navigator.push(
                                                                   context,
@@ -371,19 +383,19 @@ class _SchedulePageState extends State<SchedulePage> {
                                                           ),
                                                           PopupMenuItem(
                                                             value: "remove",
-                                                            child: const Text("삭제"),
+                                                            child: Text(localization.delete),
                                                             onTap: () {
                                                               showDialog(
                                                                   context: context,
                                                                   builder: (context) => AlertDialog(
-                                                                        title: const Text("일정을 삭제 합니다."),
+                                                                        title: Text(localization.deleteScheduleDesc),
                                                                         actions: [
                                                                           SizedBox(
                                                                             child: ElevatedButton(
                                                                                 onPressed: () {
                                                                                   Navigator.pop(context);
                                                                                 },
-                                                                                child: const Text("취소")),
+                                                                                child: Text(localization.cancel)),
                                                                           ),
                                                                           SizedBox(
                                                                             child: ElevatedButton(
@@ -393,7 +405,7 @@ class _SchedulePageState extends State<SchedulePage> {
                                                                                       .removeSchedule(_selected, idx, widget.plan.id!);
                                                                                   Navigator.pop(context);
                                                                                 },
-                                                                                child: const Text("삭제")),
+                                                                                child: Text(localization.delete)),
                                                                           ),
                                                                         ],
                                                                       ));
@@ -404,68 +416,66 @@ class _SchedulePageState extends State<SchedulePage> {
                                         ],
                                       ),
                                     ),
+                                    SizedBox(
+                                        // width: (MediaQuery.sizeOf(context).width - 40) ,
+                                        height: 40,
+                                        child: Text("${daySchedule[idx].title}",
+                                            style: LocalizationsUtil.setTextStyle(isKor, size: 16, fontWeight: FontWeight.w600),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis)),
                                     if (daySchedule[idx].details != null && daySchedule[idx].details!.isNotEmpty)
                                       SizedBox(
                                         height: daySchedule[idx].details!.length * 20,
-                                        child: Row(
-                                          children: [
-                                            Flexible(
-                                                flex: 3,
-                                                child: SizedBox(
-                                                  width: (MediaQuery.sizeOf(context).width - 40) * 0.3,
-                                                  height: daySchedule[idx].details!.length * 20,
-                                                  // decoration:
-                                                  //     BoxDecoration(border: Border(left: BorderSide(color: isDarkMode ? Colors.white : Colors.black87))),
-                                                )),
-                                            Flexible(
-                                              flex: 7,
-                                              child: SizedBox(
-                                                width: (MediaQuery.sizeOf(context).width - 40) * 0.7,
-                                                height: daySchedule[idx].details!.length * 20,
-                                                child: ListView.separated(
-                                                    shrinkWrap: true,
-                                                    physics: const NeverScrollableScrollPhysics(),
-                                                    scrollDirection: Axis.vertical,
-                                                    itemBuilder: (context, detailIdx) {
-                                                      return SizedBox(
-                                                          height: 20,
-                                                          width: (MediaQuery.sizeOf(context).width - 40) * 0.7,
-                                                          child: Row(
-                                                            children: [
-                                                              Flexible(
-                                                                flex: 7,
-                                                                child: SizedBox(
-                                                                    width: ((MediaQuery.sizeOf(context).width - 40) * 0.7) * 0.7,
-                                                                    child: Text(daySchedule[idx].details![detailIdx],
-                                                                      style: const TextStyle(fontSize: 16,overflow: TextOverflow.ellipsis),)),
+                                        child: ListView.separated(
+                                            shrinkWrap: true,
+                                            physics: const NeverScrollableScrollPhysics(),
+                                            scrollDirection: Axis.vertical,
+                                            itemBuilder: (context, detailIdx) {
+                                              return SizedBox(
+                                                  height: 20,
+                                                  // width: (MediaQuery.sizeOf(context).width - 40),
+                                                  child: Row(
+                                                    children: [
+                                                      Flexible(
+                                                          flex: 1, 
+                                                          child: SizedBox(
+                                                              width: (MediaQuery.sizeOf(context).width - 40) * 0.1,
+                                                            child: const Center(child: Icon(Icons.add, size: 12,),),
+                                                          )
+                                                      ),
+                                                      Flexible(
+                                                        flex: 7,
+                                                        child: SizedBox(
+                                                            width: (MediaQuery.sizeOf(context).width - 40) * 0.7,
+                                                            child: Text(
+                                                              daySchedule[idx].details![detailIdx],
+                                                              style: LocalizationsUtil.setTextStyle(isKor, size: 16),
+                                                              overflow: TextOverflow.ellipsis,
+                                                            )),
+                                                      ),
+                                                      Flexible(
+                                                        flex: 2,
+                                                        child: SizedBox(
+                                                            height: 20,
+                                                            width: (MediaQuery.sizeOf(context).width - 40) * 0.2,
+                                                            child: GestureDetector(
+                                                              onTap: () {
+                                                                context
+                                                                    .read<ScheduleProvider>()
+                                                                    .removeScheduleDetail(_selected, idx, detailIdx, widget.plan.id!);
+                                                              },
+                                                              child: const Icon(
+                                                                Icons.remove_circle,
+                                                                color: Colors.redAccent,
+                                                                size: 20,
                                                               ),
-                                                              Flexible(
-                                                                flex: 3,
-                                                                child: SizedBox(
-                                                                    height: 20,
-                                                                    width: ((MediaQuery.sizeOf(context).width - 40) * 0.7) * 0.3,
-                                                                    child: GestureDetector(
-                                                                      onTap: () {
-                                                                        context
-                                                                            .read<ScheduleProvider>()
-                                                                            .removeScheduleDetail(_selected, idx, detailIdx, widget.plan.id!);
-                                                                      },
-                                                                      child: const Icon(
-                                                                        Icons.remove_circle,
-                                                                        color: Colors.redAccent,
-                                                                        size: 20,
-                                                                      ),
-                                                                    )),
-                                                              ),
-                                                            ],
-                                                          ));
-                                                    },
-                                                    separatorBuilder: (context, idx) => const Gap(0),
-                                                    itemCount: daySchedule[idx].details!.length),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                                            )),
+                                                      ),
+                                                    ],
+                                                  ));
+                                            },
+                                            separatorBuilder: (context, idx) => const Gap(0),
+                                            itemCount: daySchedule[idx].details!.length),
                                       )
                                   ],
                                 ),
@@ -481,7 +491,8 @@ class _SchedulePageState extends State<SchedulePage> {
     );
   }
 
-  Future<void> _scheduleDialog(BuildContext context, ScheduleModel? schedule, int roundIdx, bool isDarkMode) async {
+  Future<void> _scheduleDialog(
+      BuildContext context, AppLocalizations localization, ScheduleModel? schedule, int roundIdx, bool isDarkMode, bool isKor) async {
     showDialog(
         context: context,
         builder: (context) {
@@ -491,7 +502,6 @@ class _SchedulePageState extends State<SchedulePage> {
             _minController.text = schedule.time!.split(":")[1];
           }
           ScheduleListModel dayScheduleList = context.read<ScheduleProvider>().scheduleList![roundIdx];
-
           return Dialog(
             insetPadding: const EdgeInsets.all(20),
             // backgroundColor: isDarkMode ? const Color(0xffADD8E6) : Colors.white,
@@ -505,9 +515,9 @@ class _SchedulePageState extends State<SchedulePage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "시간",
-                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+                      Text(
+                        localization.time,
+                        style: LocalizationsUtil.setTextStyle(isKor, fontWeight: FontWeight.w600, size: 20),
                       ),
                       const Gap(8),
                       Row(
@@ -521,19 +531,19 @@ class _SchedulePageState extends State<SchedulePage> {
                                 dropdownMenuEntries: List.generate(24, (idx) => DropdownMenuEntry(value: idx, label: idx == 0 ? "0" : "$idx"))),
                           ),
                           const Gap(8),
-                          const Text("시"),
+                          Text(localization.hour),
                           const Gap(16),
                           SizedBox(
                             width: 100,
                             child: DropdownMenu(
                                 controller: _minController,
-                                initialSelection: schedule != null ?
-                                (schedule.time!.split(":")[1] == "00" ? 0 : int.parse(schedule.time!.split(":")[1]) / 10) : 0,
+                                initialSelection:
+                                    schedule != null ? (schedule.time!.split(":")[1] == "00" ? 0 : int.parse(schedule.time!.split(":")[1]) / 10) : 0,
                                 dropdownMenuEntries:
                                     List.generate(6, (idx) => DropdownMenuEntry(value: idx, label: idx == 0 ? "00" : "${idx * 10}"))),
                           ),
                           const Gap(8),
-                          const Text("분")
+                          Text(localization.min)
                         ],
                       ),
                     ],
@@ -542,9 +552,9 @@ class _SchedulePageState extends State<SchedulePage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "여행 일정",
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                      Text(
+                        localization.mainSchedule,
+                        style: LocalizationsUtil.setTextStyle(isKor, size: 20, fontWeight: FontWeight.w600),
                       ),
                       const Gap(8),
                       SizedBox(
@@ -552,7 +562,7 @@ class _SchedulePageState extends State<SchedulePage> {
                         child: TextField(
                           controller: _titleController,
                           maxLines: 1,
-                          style: const TextStyle(overflow: TextOverflow.ellipsis),
+                          style: LocalizationsUtil.setTextStyle(isKor),
                         ),
                       )
                     ],
@@ -577,8 +587,9 @@ class _SchedulePageState extends State<SchedulePage> {
                                   side: isDarkMode ? const BorderSide(color: Colors.white) : null,
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                               child: Text(
-                                "닫기",
-                                style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                                localization.close,
+                                style:
+                                    LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                               )),
                         ),
                         const Gap(20),
@@ -618,8 +629,8 @@ class _SchedulePageState extends State<SchedulePage> {
                                   backgroundColor: Theme.of(context).colorScheme.primary,
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                               child: Text(
-                                schedule == null ? "생성" : "수정",
-                                style: const TextStyle(color: Colors.white),
+                                schedule == null ? localization.add : localization.modify,
+                                style: LocalizationsUtil.setTextStyle(isKor, color: Colors.white),
                               )),
                         )
                       ],
