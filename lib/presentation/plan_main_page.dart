@@ -373,8 +373,8 @@ class _PlanMainPageState extends State<PlanMainPage> {
                   SlidableAction(
                       icon: Icons.edit,
                       label: "수정",
-                      foregroundColor: Colors.white,
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                      foregroundColor: Theme.of(context).colorScheme.primary,
+                      backgroundColor: Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(10),
                       onPressed: (context) {
                         Get.to(() => AddPlanPage(
@@ -384,7 +384,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
                   SlidableAction(
                       icon: Icons.delete,
                       label: "삭제",
-                      foregroundColor: Colors.white,
+                      foregroundColor: Theme.of(context).colorScheme.primary,
                       backgroundColor: Colors.redAccent,
                       borderRadius: BorderRadius.circular(10),
                       onPressed: (context) {
@@ -450,8 +450,10 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                               context.read<PlanListProvider>().changePlan(list[idx]);
                                             } else {
                                               if (favoriteList.length == 2) {
-                                                Get.snackbar("즐겨찾기에 추가 할 수 없습니다.", "즐겨찾기는 최대 2개의 플랜만 추가가 가능합니다.",
-                                                    backgroundColor: Theme.of(context).colorScheme.surface);
+                                                Get.snackbar(AppLocalizations.of(context)!.snackFavoriteTitle,
+                                                  AppLocalizations.of(context)!.snackFavoriteDesc,
+                                                  backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                                );
                                                 return;
                                               }
                                               list[idx].favorites = true;

@@ -490,12 +490,12 @@ class _HomePageState extends State<HomePage> {
               "https://www.airport.kr/ap_ko/1011/subview.do?enc=Zm5jdDF8QEB8JTJGYmJzJTJGYXBfa28lMkYxNzUlMkYxMzg1ODAlMkZhcnRjbFZpZXcuZG8lM0ZwYWdlJTNEMSUyNmZpbmRUeXBlJTNEJTI2ZmluZFdvcmQlM0QlMjZmaW5kQ2xTZXElM0QlMjZmaW5kT3Bud3JkJTNEJTI2cmdzQmduZGVTdHIlM0QlMjZyZ3NFbmRkZVN0ciUzRCUyNnBhc3N3b3JkJTNEJTI2dGVtcFJvdyUzRCUyNg%3D%3D"));
         },
         style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
-        label: isKor ? Text(AppLocalizations.of(context)!.battery)
+        label: isKor ? Text(AppLocalizations.of(context)!.batteries)
             : Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(AppLocalizations.of(context)!.battery.split(",")[0]),
-            Text(AppLocalizations.of(context)!.battery.split(",")[1]),
+            Text(AppLocalizations.of(context)!.batteries.split(Localizations.localeOf(context).languageCode == "ja" ? "・" :",")[0]),
+            Text(AppLocalizations.of(context)!.batteries.split(Localizations.localeOf(context).languageCode == "ja" ? "・" :",")[1]),
           ],
         ),
         icon: Image.asset("assets/images/battery.png"),

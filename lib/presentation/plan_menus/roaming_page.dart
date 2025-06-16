@@ -820,11 +820,15 @@ class _RoamingPageState extends State<RoamingPage> {
                             child: ElevatedButton(
                                 onPressed: () {
                                   if (Platform.isIOS && dpAddressController.text.isEmpty) {
-                                    Get.snackbar("SM-DP 주소가 빈 값 입니다.", "빈 값은 등록 할 수 없습니다.");
+                                    Get.snackbar(localization.snackTitle, localization.snackDetail(localization.dpAddressTitle),
+                                      backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                    );
                                     return;
                                   }
                                   if (activeCodeController.text.isEmpty) {
-                                    Get.snackbar("활성화 주소가 빈 값 입니다.", "빈 값은 등록 할 수 없습니다.");
+                                    Get.snackbar(localization.snackTitle, localization.snackDetail(localization.activeCodeTitle),
+                                      backgroundColor: Theme.of(context).colorScheme.surface,
+                                    );
                                     return;
                                   }
                                   if (Platform.isAndroid) {

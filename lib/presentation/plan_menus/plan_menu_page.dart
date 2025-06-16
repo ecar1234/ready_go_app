@@ -14,7 +14,6 @@ import 'package:ready_go_project/presentation/plan_menus/expectation_page.dart';
 import 'package:ready_go_project/presentation/plan_menus/roaming_page.dart';
 import 'package:ready_go_project/presentation/plan_menus/schedule_page/schedule_page.dart';
 import 'package:ready_go_project/presentation/plan_menus/supplies_page/supplies_page.dart';
-import 'package:ready_go_project/util/intl_utils.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:ready_go_project/util/localizations_util.dart';
 
@@ -24,7 +23,6 @@ import '../../domain/entities/provider/purchase_manager.dart';
 import '../../domain/entities/provider/responsive_height_provider.dart';
 import '../../domain/entities/provider/theme_mode_provider.dart';
 import '../../util/admob_util.dart';
-import '../../util/date_util.dart';
 
 class PlanMenuPage extends StatefulWidget {
   final PlanModel plan;
@@ -179,7 +177,7 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
                                       side: BorderSide(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                                   label: Text(
-                                    isKor ? korItemList[idx] : itemList[idx],
+                                    isKor && isPlanKor ? korItemList[idx] : itemList[idx],
                                     style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w600),
                                   ),
                                   iconAlignment: IconAlignment.end,
@@ -188,7 +186,7 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
                               );
                             },
                             separatorBuilder: (context, idx) => const Gap(20),
-                            itemCount: isKor ? korItemList.length : itemList.length),
+                            itemCount: isKor && isPlanKor ? korItemList.length : itemList.length),
                       ),
                     ],
                   ),

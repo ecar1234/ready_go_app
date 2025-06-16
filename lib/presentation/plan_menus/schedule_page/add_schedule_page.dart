@@ -110,7 +110,7 @@ class _AddSchedulePageState extends State<AddSchedulePage> {
     final localization = AppLocalizations.of(context)!;
     return SafeArea(
         child: Scaffold(
-      appBar: AppBar(title: const Text("세부일정 및 메모"),),
+      appBar: AppBar(title:  FittedBox(child: Text(localization.detailAndMemo)),),
       body:  GestureDetector(
         onTap: (){
           FocusManager.instance.primaryFocus!.unfocus();
@@ -185,7 +185,9 @@ class _AddSchedulePageState extends State<AddSchedulePage> {
                               onPressed: () {
                                 setState(() {
                                   if(_detailController.text.isEmpty){
-                                    Get.snackbar("빈 값은 추가 할 수 없습니다.", "세부 일정 또는 메모 값을 입력해 주세요.");
+                                    Get.snackbar(localization.snackTitle, localization.snackDetail(localization.detailAndMemo),
+                                      backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                    );
                                     return;
                                   }
                                   details.add(_detailController.text);

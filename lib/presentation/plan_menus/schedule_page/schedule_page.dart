@@ -599,13 +599,17 @@ class _SchedulePageState extends State<SchedulePage> {
                           child: ElevatedButton(
                               onPressed: () {
                                 if (_titleController.text.isEmpty) {
-                                  Get.snackbar("일정 내용을 입력해 주세요.", "일정의 타이틀 없이 셍성 할 수 없습니다.");
+                                  Get.snackbar(localization.snackTitle, localization.snackDetail(localization.scheduleMenu),
+                                    backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                  );
                                   return;
                                 }
 
                                 if (schedule == null &&
                                     dayScheduleList.scheduleList!.any((item) => item.time == "${_hourController.text}:${_minController.text}")) {
-                                  Get.snackbar("일정의 시간을 확인해 주세요.", "선택한 시간에 일정이 존재 합니다.");
+                                  Get.snackbar(localization.snackTitle, localization.snackCheckScheduleTime,
+                                    backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                  );
                                   return;
                                 }
 

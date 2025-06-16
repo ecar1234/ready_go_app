@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -233,6 +231,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                         if ((widget.plan!.nation! == nationController.text) &&
                             (widget.plan!.subject! == subjectController.text) &&
                             (widget.plan!.schedule! == _dates)) {
+                          FocusManager.instance.primaryFocus!.unfocus();
                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                             content: Text("변경 사항이 존재 하지 않습니다."),
                             duration: Duration(seconds: 1),
@@ -241,23 +240,34 @@ class _AddPlanPageState extends State<AddPlanPage> {
                         }
                       }
                       if (nationController.text.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text("여행 국가를 입력해 주세요."),
-                          duration: Duration(seconds: 1),
+                        FocusManager.instance.primaryFocus!.unfocus();
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(AppLocalizations.of(context)!.snackEmptyNation),
+                          duration: const Duration(seconds: 1),
                         ));
                         return;
                       }
                       if (subjectController.text.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text("여행 제목을 입력해 주세요."),
-                          duration: Duration(seconds: 1),
+                        FocusManager.instance.primaryFocus!.unfocus();
+                        ScaffoldMessenger.of(context).showSnackBar( SnackBar(
+                          content: Text(AppLocalizations.of(context)!.snackEmptySubject),
+                          duration: const Duration(seconds: 1),
                         ));
                         return;
                       }
                       if (_dates.length > 2 || _dates.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text("일정을 선택해 주세요"),
-                          duration: Duration(seconds: 1),
+                        FocusManager.instance.primaryFocus!.unfocus();
+                        ScaffoldMessenger.of(context).showSnackBar( SnackBar(
+                          content: Text(AppLocalizations.of(context)!.snackEmptyPeriod),
+                          duration: const Duration(seconds: 1),
+                        ));
+                        return;
+                      }
+                      if(nationController.text == AppLocalizations.of(context)!.select){
+                        FocusManager.instance.primaryFocus!.unfocus();
+                        ScaffoldMessenger.of(context).showSnackBar( SnackBar(
+                          content: Text(AppLocalizations.of(context)!.snackEmptyNation),
+                          duration: const Duration(seconds: 1),
                         ));
                         return;
                       }
@@ -471,21 +481,25 @@ class _AddPlanPageState extends State<AddPlanPage> {
                     trailingIcon: null,
                     menuHeight: 250,
                     onSelected: (selected) {
-                      if (selected == "✈️ ${AppLocalizations.of(context)!.others}") {
-                        setState(() {
-                          _nationRead = false;
-                        });
-                      } else {
-                        setState(() {
-                          _nationRead = true;
-                        });
-                      }
                       if (selected != null) {
-                        final nation = selected.split(" ")[1];
                         if (selected == "✈️ ${AppLocalizations.of(context)!.others}") {
                           nationController.text = AppLocalizations.of(context)!.addNation;
-                        } else {
+                          setState(() {
+                            _nationRead = false;
+                          });
+                        }
+                        else if(selected == AppLocalizations.of(context)!.select){
+                          nationController.text = AppLocalizations.of(context)!.select;
+                          setState(() {
+                            _nationRead = true;
+                          });
+                        }
+                        else {
+                          final nation = selected.split(" ")[1];
                           nationController.text = "$nation (${NationCurrencyUnitUtil.getNationCurrency(nation)})";
+                          setState(() {
+                            _nationRead = true;
+                          });
                         }
                       }
                     },

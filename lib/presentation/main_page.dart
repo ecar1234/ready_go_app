@@ -371,7 +371,10 @@ class _MainPage2State extends State<MainPage2> {
                               OpenFile.open(passImg.path);
                             } else {
                               Get.snackbar(AppLocalizations.of(context)!.passportAlertTitle,
-                                  AppLocalizations.of(context)!.passportAlertContent);
+                                  AppLocalizations.of(context)!.passportAlertContent,
+                                backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                              );
+                              return;
                             }
                           },
                         ),

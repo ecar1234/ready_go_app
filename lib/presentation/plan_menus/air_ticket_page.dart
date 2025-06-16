@@ -367,7 +367,13 @@ class _AirTicketPageState extends State<AirTicketPage> {
                           }
                           Navigator.of(context).pop(); // 다이얼로그 닫기
                         } else {
-                          Get.snackbar("카메라 이미지 오류", "알 수 없는 이유로 이미지를 불러오지 못했습니다.");
+                          if(context.mounted){
+                            Get.snackbar(AppLocalizations.of(context)!.snackLoadFailedTitle,
+                              AppLocalizations.of(context)!.snackLoadFailedDesc,
+                              backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                            );
+                            return;
+                          }
                         }
                       },
                       style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
@@ -405,7 +411,13 @@ class _AirTicketPageState extends State<AirTicketPage> {
                           }
                           Navigator.of(context).pop(); // 다이얼로그 닫기
                         } else {
-                          Get.snackbar("이미지 불러오기 실패", "알 수 없는 문제로 이미지 불러오기 실패.");
+                          if(context.mounted){
+                            Get.snackbar(AppLocalizations.of(context)!.snackLoadFailedTitle,
+                                AppLocalizations.of(context)!.snackLoadFailedDesc,
+                              backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                            );
+                            return;
+                          }
                         }
                       },
                       style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
@@ -447,7 +459,13 @@ class _AirTicketPageState extends State<AirTicketPage> {
                           }
                         Navigator.of(context).pop(); // 다이얼로그 닫기
                         }else{
-                          Get.snackbar("파일 불러오기 실패", "알 수 없는 문제로 파일 불러오기 실패.");
+                          if(context.mounted){
+                            Get.snackbar(AppLocalizations.of(context)!.snackLoadFailedTitle,
+                              AppLocalizations.of(context)!.snackLoadFailedDesc,
+                              backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                            );
+                            return;
+                          }
                         }
                       },
                       style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),

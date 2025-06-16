@@ -11,6 +11,7 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/account_model/amount_model.dart';
 import 'package:ready_go_project/data/models/expectation_model/expectation_model.dart';
+import 'package:ready_go_project/data/models/plan_model/plan_model.dart';
 import 'package:ready_go_project/domain/entities/provider/expectation_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/plan_list_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
@@ -223,13 +224,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                                       overflow: TextOverflow.ellipsis,
                                                     ),
                                                     const Gap(4),
-                                                    Text(
-                                                      "${IntlUtils.stringIntAddComma(list[idx].amount ?? 0)} ${list[idx].unit}",
-                                                      style: LocalizationsUtil.setTextStyle(isKor,
-                                                          size: 16,
-                                                          color: list[idx].unit != plan.unit ? Theme.of(context).colorScheme.primary : Colors.green,
-                                                          fontWeight: FontWeight.w600),
-                                                    ),
+                                                    setExpectationItem(list[idx], plan.unit!, isKor),
                                                   ],
                                                 ),
                                               ),
@@ -318,16 +313,31 @@ class _ExpectationPageState extends State<ExpectationPage> {
                           ),
                           Selector<ExpectationProvider, List<ExpectationModel>>(
                             selector: (context, expectation) {
-                              final ownList = expectation.expectationList!.where((item) {
-                                if(isKor){
-                                  return item.unit == "₩";
-                                }else if(Localizations.localeOf(context).languageCode == "ja"){
-                                  return item.unit == "¥";
-                                }
-                                else {
-                                  return item.unit == "\$";
-                                }
-                              }).toList();
+                              List<ExpectationModel> ownList = [];
+                              if(expectation.expectationList!.any((item) => item.unit!.contains("Own"))){
+                                ownList = expectation.expectationList!.where((item) {
+                                  if(isKor){
+                                    return item.unit == "₩";
+                                  }else if(Localizations.localeOf(context).languageCode == "ja"){
+                                    return item.unit == "¥";
+                                  }
+                                  else {
+                                    return item.unit == "\$ (Own)";
+                                  }
+                                }).toList();
+                              }else {
+                                ownList = expectation.expectationList!.where((item) {
+                                  if(isKor){
+                                    return item.unit == "₩";
+                                  }else if(Localizations.localeOf(context).languageCode == "ja"){
+                                    return item.unit == "¥";
+                                  }
+                                  else {
+                                    return item.unit == "\$";
+                                  }
+                                }).toList();
+                              }
+
                               return ownList;
                             },
                             builder: (context, list, child) {
@@ -338,6 +348,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                               // print(totalAmount);
                               if (list.isNotEmpty) {
                                 return Text(
+                                  list[0].unit!.length > 1 ? "${IntlUtils.stringIntAddComma(totalAmount)} ${list[0].unit!.split("")[0]}" :
                                   "${IntlUtils.stringIntAddComma(totalAmount)} ${list[0].unit}",
                                   style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
                                       size: 16,
@@ -372,15 +383,29 @@ class _ExpectationPageState extends State<ExpectationPage> {
                             ),
                             Selector<ExpectationProvider, List<ExpectationModel>>(
                               selector: (context, expectation) {
-                                final foreignList = expectation.expectationList!.where((item) {
-                                  if(isKor){
-                                    return item.unit != "₩";
-                                  }else if(Localizations.localeOf(context).languageCode == "ja"){
-                                    return item.unit != "¥";
-                                  }else {
-                                    return item.unit != "\$";
+                                List<ExpectationModel> foreignList = [];
+                                if(expectation.expectationList!.any((item) => item.unit!.contains("Own"))){
+                                  foreignList = expectation.expectationList!.where((item) {
+                                    if(isKor){
+                                      return item.unit != "₩";
+                                    }else if(Localizations.localeOf(context).languageCode == "ja"){
+                                      return item.unit != "¥";
+                                    }else {
+                                      return item.unit == "\$";
+                                    }
+                                  }).toList();
+                                }else {
+                                  foreignList = expectation.expectationList!.where((item) {
+                                    if(isKor){
+                                      return item.unit != "₩";
+                                    }else if(Localizations.localeOf(context).languageCode == "ja"){
+                                      return item.unit != "¥";
+                                    }else {
+                                      return item.unit != "\$";
+                                    }
+                                  }).toList();
                                 }
-                                }).toList();
+
                                 return foreignList;
                               },
                               builder: (context, list, child) {
@@ -392,7 +417,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                   return RichText(
                                     text: TextSpan(
                                         text: IntlUtils.stringIntAddComma(totalAmount),
-                                        style: LocalizationsUtil.setTextStyle(isKor, color: Colors.green, size: 16, fontWeight: FontWeight.w600),
+                                        style: const TextStyle(color: Colors.green, fontSize: 16, fontWeight: FontWeight.w600),
                                         children: [
                                           TextSpan(
                                             text: " ${list[0].unit}",
@@ -404,7 +429,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                   return RichText(
                                     text: TextSpan(
                                         text: "0",
-                                        style: LocalizationsUtil.setTextStyle(isKor, color: Colors.green, size: 16, fontWeight: FontWeight.w600),
+                                        style: const TextStyle(color: Colors.green, fontSize: 16, fontWeight: FontWeight.w600),
                                         children: [
                                           TextSpan(
                                             text: " ${plan.unit}",
@@ -633,18 +658,18 @@ class _ExpectationPageState extends State<ExpectationPage> {
                               child: DropdownMenu(
                                 dropdownMenuEntries: [
                                   DropdownMenuEntry(
-                                      value: "₩",
-                                      label: isKor && isNationKor
-                                          ? "₩"
-                                          : Localizations.localeOf(context).languageCode == "ja"
-                                              ? "¥"
-                                              : "\$"),
+                                      value: getOwnUnit(plan),
+                                      label: getOwnUnit(plan)
+                                  ),
                                   DropdownMenuEntry(value: "$currency", label: "$currency")
                                 ],
-                                width: 100,
+                                width: 120,
                                 controller: _currencyController,
+                                onSelected: (value){
+                                  logger.i(value);
+                                },
                                 // menuHeight: 300,
-                                initialSelection: "₩",
+                                initialSelection: isKor ? "₩" : getOwnUnit(plan),
                                 menuStyle: MenuStyle(
                                     backgroundColor:
                                         WidgetStatePropertyAll<Color>(isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white)),
@@ -687,12 +712,13 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                       _titleController.text.isEmpty ||
                                       _amountController.text.isEmpty) {
                                     Get.snackbar(
-                                      "정보 확인",
-                                      "빈 값은 입력 할 수 없습니다.",
+                                      AppLocalizations.of(context)!.snackTitle,
+                                      AppLocalizations.of(context)!.snackCommonDetail,
                                       backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
                                     );
                                     return;
                                   }
+
                                   if (cur != null) {
                                     if (_methodController.text ==
                                             StatisticsUtil.conversionMethodTypeToString(
@@ -701,19 +727,23 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                         _amountController.text == cur.amount!.toString() &&
                                         _currencyController.text == cur.unit) {
                                       Get.snackbar(
-                                        "정보 확인",
-                                        "변경 된 데이터가 없습니다",
+                                        AppLocalizations.of(context)!.snackNoChangeTitle,
+                                        AppLocalizations.of(context)!.snackNoChangeDesc,
                                         backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
                                       );
                                       return;
                                     }
                                   }
+
                                   ExpectationModel item = ExpectationModel()
                                     ..title = _titleController.text
                                     ..amount = IntlUtils.removeComma(_amountController.text)
                                     ..type = StatisticsUtil.conversionStringToMethodType(
                                         Localizations.localeOf(context).languageCode, _methodController.text)
-                                    ..unit = _currencyController.text;
+                                  ..unit = _currencyController.text;
+                                  // if(!isKor){
+                                  //   item.unit = _currencyController.text.split(" ")[0];
+                                  // }
 
                                   // logger.d(item.type);
                                   if (cur != null) {
@@ -766,5 +796,74 @@ class _ExpectationPageState extends State<ExpectationPage> {
     resultList.addAll(mergedMap.values);
 
     return resultList;
+  }
+
+  String getOwnUnit(PlanModel plan){
+    final locale = Localizations.localeOf(context).languageCode;
+    if(locale == "ko"){
+      return "₩";
+    }else if(locale == "ja"){
+      if(plan.unit == "¥"){
+        return "¥ (Own)";
+      }else {
+        return "¥";
+      }
+    }else {
+      if(plan.unit == "\$"){
+        return "\$ (Own)";
+      }else {
+        return "\$";
+      }
+    }
+  }
+  Widget setExpectationItem(ExpectationModel item, String planUnit, bool isKor){
+    if(isKor){
+      if(item.unit! != planUnit){
+        return Text(
+          "${IntlUtils.stringIntAddComma(item.amount ?? 0)} ${item.unit!}",
+          style: LocalizationsUtil.setTextStyle(isKor,
+              size: 16,
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.w600),
+        );
+      }else {
+        return Text(
+          "${IntlUtils.stringIntAddComma(item.amount ?? 0)} ${item.unit!}",
+          style: LocalizationsUtil.setTextStyle(isKor,
+              size: 16,
+              color: Colors.green,
+              fontWeight: FontWeight.w600),
+        );
+      }
+    }else {
+      if(item.unit!.contains("Own")){
+        return Text(
+          "${IntlUtils.stringIntAddComma(item.amount ?? 0)} ${item.unit!.split(" ")[0]}",
+          style: LocalizationsUtil.setTextStyle(isKor,
+              size: 16,
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.w600),
+        );
+      }
+      else{
+        if(item.unit! != planUnit){
+          return Text(
+            "${IntlUtils.stringIntAddComma(item.amount ?? 0)} ${item.unit!}",
+            style: LocalizationsUtil.setTextStyle(isKor,
+                size: 16,
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.w600),
+          );
+        }else {
+          return Text(
+            "${IntlUtils.stringIntAddComma(item.amount ?? 0)} ${item.unit!}",
+            style: LocalizationsUtil.setTextStyle(isKor,
+                size: 16,
+                color: Colors.green,
+                fontWeight: FontWeight.w600),
+          );
+        }
+      }
+    }
   }
 }

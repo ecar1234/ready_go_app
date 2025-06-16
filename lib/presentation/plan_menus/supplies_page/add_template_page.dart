@@ -132,7 +132,9 @@ class _AddTemplatePageState extends State<AddTemplatePage> {
                                       child: ElevatedButton(
                                           onPressed: () {
                                             if (_textController.text.isEmpty) {
-                                              Get.snackbar("준비물 확인.", "빈 값은 추가 할 수 없습니다.", backgroundColor: Theme.of(context).colorScheme.surface);
+                                              Get.snackbar(AppLocalizations.of(context)!.snackTitle, AppLocalizations.of(context)!.snackDetail("item"),
+                                                backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                              );
                                               return;
                                             }
                                             setState(() {
@@ -331,7 +333,10 @@ class _AddTemplatePageState extends State<AddTemplatePage> {
                             child: ElevatedButton(
                               onPressed: () {
                                 if (_tempTitleController.text.isEmpty) {
-                                  Get.snackbar("템플릿 이름 입력", "템플릿 이름은 빈 값으로 입력 할 수 없습니다.");
+                                  Get.snackbar(AppLocalizations.of(context)!.snackTitle,
+                                    AppLocalizations.of(context)!.snackCommonDetail,
+                                    backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                  );
                                   return;
                                 }
                                 final temp = TemplateModel(tempTitle: _tempTitleController.text);

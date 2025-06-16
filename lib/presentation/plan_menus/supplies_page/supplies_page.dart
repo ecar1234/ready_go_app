@@ -444,7 +444,10 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                 onPressed: () {
                                   final selected = context.read<SuppliesTemplateProvider>().selectedList;
                                   if (selected.isEmpty) {
-                                    Get.snackbar("탬플릿 선택", "추가 할 탬플릿을 선택해 주세요.", backgroundColor: Theme.of(context).colorScheme.surface);
+                                    Get.snackbar(AppLocalizations.of(context)!.snackTitle,
+                                      AppLocalizations.of(context)!.snackTemplateSelectDesc,
+                                      backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                    );
                                     return;
                                   }
                                   context.read<SuppliesProvider>().addTemplateList(selected, widget.planId);
@@ -480,7 +483,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
                 width: 600,
                 height: 200,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     SizedBox(
                       height: 60,

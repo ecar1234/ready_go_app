@@ -165,7 +165,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                 width: 100,
                 child: TextButton.icon(
                     onPressed: () {
-                      _addAccommodation(context, localization, month, day, height, isKor);
+                      _addAccommodation(context, localization, month, day, height, isDarkMode, isKor);
                     },
                     style: IconButton.styleFrom(padding: EdgeInsets.zero),
                     label: Text(
@@ -233,7 +233,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
     );
   }
 
-  Future<void> _addAccommodation(BuildContext context, AppLocalizations localization, int month, int day, double hei, bool isKor) {
+  Future<void> _addAccommodation(BuildContext context, AppLocalizations localization, int month, int day, double hei, bool isDarkMode, bool isKor) {
     // final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
     return showDialog(
         context: context,
@@ -369,11 +369,15 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                     onSelected: (value) {
                                       setState(() {
                                         if (value! < day) {
-                                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("여행 시작일 보다 이전의 날짜로 설정 할 수 없습니다.")));
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                  content: Text(localization.snackRejectAccPeriod1)));
                                           return;
                                         }
                                         if (value > widget.plan.schedule!.last!.day) {
-                                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("여행 종료일 보다 이후 날짜로 설정 할 수 없습니다.")));
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                  content: Text(localization.snackRejectAccPeriod2)));
                                           return;
                                         }
                                         day = value;
@@ -384,9 +388,6 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                         if (isKor) {
                                           return DropdownMenuEntry(value: idx + 1, label: "${idx + 1}일");
                                         } else {
-                                          if (idx == 0) {
-                                            return DropdownMenuEntry(value: idx + 1, label: "${idx + 1}");
-                                          }
                                           return DropdownMenuEntry(value: idx + 1, label: "${idx + 1}");
                                         }
                                       })
@@ -567,50 +568,51 @@ class _AccommodationPageState extends State<AccommodationPage> {
                               child: ElevatedButton(
                                   onPressed: () {
                                     if (_nameController.text.isEmpty) {
-                                      Get.snackbar("입력 정보 확인", "숙소명을 입력해 주세요",
-                                          colorText: Theme.of(context).colorScheme.onSurface,
-                                          backgroundColor: Theme.of(context).colorScheme.surface,
-                                          snackPosition: SnackPosition.BOTTOM);
+                                      Get.snackbar(localization.snackTitle, localization.snackDetail(localization.accName),
+                                          backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                        snackPosition: SnackPosition.BOTTOM
+                                      );
+                                      return;
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("여행 종료일 보다 이후 날짜로 설정 할 수 없습니다.")));
                                       return;
                                     }
                                     if (_addressController.text.isEmpty) {
-                                      Get.snackbar("입력 정보 확인", "주소를 입력해 주세요.",
-                                          colorText: Theme.of(context).colorScheme.onSurface,
-                                          backgroundColor: Theme.of(context).colorScheme.surface,
-                                          snackPosition: SnackPosition.BOTTOM);
+                                      Get.snackbar(localization.snackTitle, localization.snackDetail(localization.address),
+                                          backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                          snackPosition: SnackPosition.BOTTOM
+                                      );
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("숙소 주소를 확인해 주세요")));
                                       return;
                                     }
                                     if (_paymentController.text.isEmpty) {
-                                      Get.snackbar("입력 정보 확인", "숙박 가격을 입력해 주세요.",
-                                          colorText: Theme.of(context).colorScheme.onSurface,
-                                          backgroundColor: Theme.of(context).colorScheme.surface,
-                                          snackPosition: SnackPosition.BOTTOM);
+                                      Get.snackbar(localization.snackTitle, localization.snackDetail(localization.amount),
+                                          backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                          snackPosition: SnackPosition.BOTTOM
+                                      );
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("숙소 가격을 확인해 주세요")));
                                       return;
                                     }
                                     if (_periodController.text.isEmpty) {
-                                      Get.snackbar("입력 정보 확인", "숙박 일 수를 입력해 주세요.",
-                                          colorText: Theme.of(context).colorScheme.onSurface,
-                                          backgroundColor: Theme.of(context).colorScheme.surface,
-                                          snackPosition: SnackPosition.BOTTOM);
+                                      Get.snackbar(localization.snackTitle, localization.snackDetail(localization.enterPeriod),
+                                          backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                          snackPosition: SnackPosition.BOTTOM
+                                      );
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("숙박 기간을 확인해 주세요")));
                                       return;
                                     }
                                     if (_checkInController.text.isEmpty) {
-                                      Get.snackbar("입력 정보 확인", "체크인 시간을 입력해 주세요.",
-                                          colorText: Theme.of(context).colorScheme.onSurface,
-                                          backgroundColor: Theme.of(context).colorScheme.surface,
-                                          snackPosition: SnackPosition.BOTTOM);
+                                      Get.snackbar(localization.snackTitle, localization.snackDetail(localization.checkIn),
+                                          backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                          snackPosition: SnackPosition.BOTTOM
+                                      );
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("체크인 시간을 확인해 주세요")));
                                       return;
                                     }
                                     if (_checkOutController.text.isEmpty) {
-                                      Get.snackbar("입력 정보 확인", "체크 아웃 시간을 입력해 주세요.",
-                                          colorText: Theme.of(context).colorScheme.onSurface,
-                                          backgroundColor: Theme.of(context).colorScheme.surface,
-                                          snackPosition: SnackPosition.BOTTOM);
+                                      Get.snackbar(localization.snackTitle, localization.snackDetail(localization.checkout),
+                                          backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                          snackPosition: SnackPosition.BOTTOM
+                                      );
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("체크아웃 시간을 확인해 주세요")));
                                       return;
                                     }

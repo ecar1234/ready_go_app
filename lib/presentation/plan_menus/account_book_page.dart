@@ -655,7 +655,9 @@ class _AccountBookPageState extends State<AccountBookPage> {
                             child: Text(
                               isKor
                                   ? "${scheduleDay.month}월${scheduleDay.day}일 (${idx + 1}일차)"
-                                  : "${scheduleDay.month}.${scheduleDay.day} (${localization.day} ${idx + 1})",
+                                  : (Localizations.localeOf(context).languageCode == "ja"
+                                  ? "${scheduleDay.month}.${scheduleDay.day} (${idx + 1}${localization.day})"
+                                  : "${scheduleDay.month}.${scheduleDay.day} (${localization.day} ${idx + 1})"),
                               style: LocalizationsUtil.setTextStyle(isKor,
                                   color: _selectedDay == idx ? Colors.white : (isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                                   fontWeight: _selectedDay == idx ? FontWeight.w600 : FontWeight.w400),
@@ -1179,21 +1181,21 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                     //   return;
                                     // }
                                     if (_titleController.text.isEmpty) {
-                                      Get.snackbar("사용 상세 내역을 입력해 주세요.", "사용 상세 내용은 빈 값으로 저장 할 수 없습니다.",
-                                          colorText: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
-                                          backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white);
+                                      Get.snackbar(localization.snackTitle, localization.snackCommonDetail,
+                                        backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                      );
                                       return;
                                     }
                                     if (_payAmountController.text.isEmpty) {
-                                      Get.snackbar("사용금액을 입력해 주세요.", "사용 금액은 빈 값으로 저장 할 수 없습니다.",
-                                          colorText: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
-                                          backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white);
+                                      Get.snackbar(localization.snackTitle, localization.snackDetail(localization.amount),
+                                        backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                      );
                                       return;
                                     }
                                     if (_categoryController.text.isEmpty) {
-                                      Get.snackbar("카테고리를 선택해 주세요", "카테고리는 빈 값으로 저장 할 수 없습니다.",
-                                          colorText: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
-                                          backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white);
+                                      Get.snackbar(localization.snackTitle, localization.snackDetail("category"),
+                                        backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                      );
                                       return;
                                     }
 
@@ -1219,9 +1221,9 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                           newAmount.amount == item.amount &&
                                           newAmount.category == item.category &&
                                           newAmount.methodType == item.methodType) {
-                                        Get.snackbar("수정 내용을 확인해 주세요", "변경 사항이 존재하지 않아 수정 할 수 없습니다.",
-                                            colorText: Theme.of(context).colorScheme.onSurface,
-                                            backgroundColor: Theme.of(context).colorScheme.surface);
+                                        Get.snackbar(localization.snackNoChangeTitle, localization.snackNoChangeDesc,
+                                          backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                        );
                                         return;
                                       }
                                       // _daysController.clear();
@@ -1390,17 +1392,18 @@ class _AccountBookPageState extends State<AccountBookPage> {
                             child: ElevatedButton(
                                 onPressed: () {
                                   if (_totalAmountController.text.isEmpty) {
-                                    Get.snackbar("추가경비 입력 확인", "추가 경비를 입력해 주세요.",
-                                        colorText: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
-                                        backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white);
+                                    Get.snackbar(localization.snackTitle, localization.snackDetail(localization.amount),
+                                      backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                    );
                                     return;
                                   }
-                                  if (_totalDaysController.text == "일차선택") {
-                                    Get.snackbar("일 차 선택을 해주세요.", "경비 추가 일차를 선택해 주세요.",
-                                        colorText: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
-                                        backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white);
-                                    return;
-                                  }
+                                  // if (_totalDaysController.text == "일차선택") {
+                                  //   Get.snackbar(localization.snackTitle, localization.snackDetail(localization.days),
+                                  //     backgroundColor: Theme.of(context).colorScheme.surface,
+                                  //   );
+                                  //   return;
+                                  // }
+
                                   int amount = IntlUtils.removeComma(_totalAmountController.text);
                                   String title = "";
                                   if (Localizations.localeOf(context).languageCode == "ko") {
