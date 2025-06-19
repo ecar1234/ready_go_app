@@ -21,6 +21,7 @@ import 'package:ready_go_project/presentation/option_page.dart';
 import 'package:ready_go_project/presentation/plan_main_page.dart';
 import 'package:ready_go_project/presentation/visit_statistics_page.dart';
 import 'package:ready_go_project/service_locator.dart';
+import 'package:ready_go_project/util/localizations_util.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -104,6 +105,9 @@ class _MainPageState extends State<MainPage> {
           borderRadius: BorderRadius.all(Radius.circular(10))),
     ),
     textSelectionTheme: const TextSelectionThemeData(cursorColor: Colors.black87),
+    textTheme: TextTheme(
+      labelLarge: LocalizationsUtil.setTextStyle(false)
+    ),
     fontFamily: 'Nanum',
   );
 

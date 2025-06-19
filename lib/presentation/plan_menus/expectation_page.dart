@@ -314,25 +314,23 @@ class _ExpectationPageState extends State<ExpectationPage> {
                           Selector<ExpectationProvider, List<ExpectationModel>>(
                             selector: (context, expectation) {
                               List<ExpectationModel> ownList = [];
-                              if(expectation.expectationList!.any((item) => item.unit!.contains("Own"))){
+                              if (expectation.expectationList!.any((item) => item.unit!.contains("Own"))) {
                                 ownList = expectation.expectationList!.where((item) {
-                                  if(isKor){
+                                  if (isKor) {
                                     return item.unit == "₩";
-                                  }else if(Localizations.localeOf(context).languageCode == "ja"){
+                                  } else if (Localizations.localeOf(context).languageCode == "ja") {
                                     return item.unit == "¥";
-                                  }
-                                  else {
+                                  } else {
                                     return item.unit == "\$ (Own)";
                                   }
                                 }).toList();
-                              }else {
+                              } else {
                                 ownList = expectation.expectationList!.where((item) {
-                                  if(isKor){
+                                  if (isKor) {
                                     return item.unit == "₩";
-                                  }else if(Localizations.localeOf(context).languageCode == "ja"){
+                                  } else if (Localizations.localeOf(context).languageCode == "ja") {
                                     return item.unit == "¥";
-                                  }
-                                  else {
+                                  } else {
                                     return item.unit == "\$";
                                   }
                                 }).toList();
@@ -348,17 +346,19 @@ class _ExpectationPageState extends State<ExpectationPage> {
                               // print(totalAmount);
                               if (list.isNotEmpty) {
                                 return Text(
-                                  list[0].unit!.length > 1 ? "${IntlUtils.stringIntAddComma(totalAmount)} ${list[0].unit!.split("")[0]}" :
-                                  "${IntlUtils.stringIntAddComma(totalAmount)} ${list[0].unit}",
-                                  style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
+                                  list[0].unit!.length > 1
+                                      ? "${IntlUtils.stringIntAddComma(totalAmount)} ${list[0].unit!.split(" ")[0]}"
+                                      : "${IntlUtils.stringIntAddComma(totalAmount)} ${list[0].unit}",
+                                  style: LocalizationsUtil.setTextStyle(isKor,
+                                      color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
                                       size: 16,
                                       fontWeight: FontWeight.w600),
                                 );
                               } else {
                                 return Text(
-                                  isNationKor && isKor ? "0 ₩" :
-                                  (Localizations.localeOf(context).languageCode == "ja" ? "0 ¥" : "0 \$"),
-                                  style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
+                                  isKor ? "0 ₩" : (Localizations.localeOf(context).languageCode == "ja" ? "0 ¥" : "0 \$"),
+                                  style: LocalizationsUtil.setTextStyle(isKor,
+                                      color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
                                       size: 16,
                                       fontWeight: FontWeight.w600),
                                 );
@@ -384,23 +384,23 @@ class _ExpectationPageState extends State<ExpectationPage> {
                             Selector<ExpectationProvider, List<ExpectationModel>>(
                               selector: (context, expectation) {
                                 List<ExpectationModel> foreignList = [];
-                                if(expectation.expectationList!.any((item) => item.unit!.contains("Own"))){
+                                if (expectation.expectationList!.any((item) => item.unit!.contains("Own"))) {
                                   foreignList = expectation.expectationList!.where((item) {
-                                    if(isKor){
+                                    if (isKor) {
                                       return item.unit != "₩";
-                                    }else if(Localizations.localeOf(context).languageCode == "ja"){
+                                    } else if (Localizations.localeOf(context).languageCode == "ja") {
                                       return item.unit != "¥";
-                                    }else {
+                                    } else {
                                       return item.unit == "\$";
                                     }
                                   }).toList();
-                                }else {
+                                } else {
                                   foreignList = expectation.expectationList!.where((item) {
-                                    if(isKor){
+                                    if (isKor) {
                                       return item.unit != "₩";
-                                    }else if(Localizations.localeOf(context).languageCode == "ja"){
+                                    } else if (Localizations.localeOf(context).languageCode == "ja") {
                                       return item.unit != "¥";
-                                    }else {
+                                    } else {
                                       return item.unit != "\$";
                                     }
                                   }).toList();
@@ -417,7 +417,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                   return RichText(
                                     text: TextSpan(
                                         text: IntlUtils.stringIntAddComma(totalAmount),
-                                        style: const TextStyle(color: Colors.green, fontSize: 16, fontWeight: FontWeight.w600),
+                                        style: const TextStyle(fontFamily: "Nanum", color: Colors.green, fontSize: 16, fontWeight: FontWeight.w600),
                                         children: [
                                           TextSpan(
                                             text: " ${list[0].unit}",
@@ -626,46 +626,48 @@ class _ExpectationPageState extends State<ExpectationPage> {
                         ],
                       ),
                       const Gap(10),
-                      SizedBox(
-                        height: 60,
-                        width: wid,
-                        child: Row(
-                          children: [
-                            // subject
-                            Expanded(
-                              child: SizedBox(
-                                height: 60,
-                                width: 60,
-                                child: TextField(
-                                  controller: _amountController,
-                                  decoration: InputDecoration(counterText: "", labelText: AppLocalizations.of(context)!.amount),
-                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                  keyboardType: TextInputType.number,
-                                  style: LocalizationsUtil.setTextStyle(isKor, fontWeight: FontWeight.w600),
-                                  textAlign: TextAlign.end,
-                                  onChanged: (value) {
-                                    if (value.isNotEmpty) {
-                                      _amountController.text = IntlUtils.stringIntAddComma(int.parse(value));
-                                    }
-                                  },
-                                ),
+                      Row(
+                        children: [
+                          // subject
+                          Flexible(
+                            flex: 6,
+                            child: SizedBox(
+                              height: 60,
+                              // width: 60,
+                              child: TextField(
+                                controller: _amountController,
+                                decoration: InputDecoration(
+                                    isDense: true,
+                                    contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 10),
+                                    counterText: '',
+                                    labelText: AppLocalizations.of(context)!.amount),
+                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                keyboardType: TextInputType.number,
+                                style: LocalizationsUtil.setTextStyle(isKor, size: 16, fontWeight: FontWeight.w600),
+                                textAlign: TextAlign.end,
+                                onChanged: (value) {
+                                  if (value.isNotEmpty) {
+                                    _amountController.text = IntlUtils.stringIntAddComma(int.parse(value));
+                                  }
+                                },
                               ),
                             ),
-                            const Gap(10),
-                            // currency unit
-                            SizedBox(
+                          ),
+                          const Gap(10),
+                          // currency unit
+                          Flexible(
+                            flex: 4,
+                            child: SizedBox(
                               height: 60,
                               child: DropdownMenu(
+                                textStyle: LocalizationsUtil.setTextStyle(false),
                                 dropdownMenuEntries: [
-                                  DropdownMenuEntry(
-                                      value: getOwnUnit(plan),
-                                      label: getOwnUnit(plan)
-                                  ),
+                                  DropdownMenuEntry(value: getOwnUnit(plan), label: getOwnUnit(plan)),
                                   DropdownMenuEntry(value: "$currency", label: "$currency")
                                 ],
                                 width: 120,
                                 controller: _currencyController,
-                                onSelected: (value){
+                                onSelected: (value) {
                                   logger.i(value);
                                 },
                                 // menuHeight: 300,
@@ -675,8 +677,8 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                         WidgetStatePropertyAll<Color>(isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white)),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                       const Gap(10),
                       SizedBox(
@@ -740,7 +742,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                     ..amount = IntlUtils.removeComma(_amountController.text)
                                     ..type = StatisticsUtil.conversionStringToMethodType(
                                         Localizations.localeOf(context).languageCode, _methodController.text)
-                                  ..unit = _currencyController.text;
+                                    ..unit = _currencyController.text;
                                   // if(!isKor){
                                   //   item.unit = _currencyController.text.split(" ")[0];
                                   // }
@@ -798,71 +800,58 @@ class _ExpectationPageState extends State<ExpectationPage> {
     return resultList;
   }
 
-  String getOwnUnit(PlanModel plan){
+  String getOwnUnit(PlanModel plan) {
     final locale = Localizations.localeOf(context).languageCode;
-    if(locale == "ko"){
+    if (locale == "ko") {
       return "₩";
-    }else if(locale == "ja"){
-      if(plan.unit == "¥"){
+    } else if (locale == "ja") {
+      if (plan.unit == "¥") {
         return "¥ (Own)";
-      }else {
+      } else {
         return "¥";
       }
-    }else {
-      if(plan.unit == "\$"){
+    } else {
+      if (plan.unit == "\$") {
         return "\$ (Own)";
-      }else {
+      } else {
         return "\$";
       }
     }
   }
-  Widget setExpectationItem(ExpectationModel item, String planUnit, bool isKor){
-    if(isKor){
-      if(item.unit! != planUnit){
-        return Text(
-          "${IntlUtils.stringIntAddComma(item.amount ?? 0)} ${item.unit!}",
-          style: LocalizationsUtil.setTextStyle(isKor,
-              size: 16,
-              color: Theme.of(context).colorScheme.primary,
-              fontWeight: FontWeight.w600),
-        );
-      }else {
-        return Text(
-          "${IntlUtils.stringIntAddComma(item.amount ?? 0)} ${item.unit!}",
-          style: LocalizationsUtil.setTextStyle(isKor,
-              size: 16,
-              color: Colors.green,
-              fontWeight: FontWeight.w600),
-        );
-      }
-    }else {
-      if(item.unit!.contains("Own")){
+
+  Widget setExpectationItem(ExpectationModel item, String planUnit, bool isKor) {
+    if (isKor) {
+      return RichText(
+          text: TextSpan(
+              text: IntlUtils.stringIntAddComma(item.amount ?? 0),
+              style: LocalizationsUtil.setTextStyle(isKor,
+                  size: 16, color: item.unit! != planUnit ? Theme.of(context).colorScheme.primary : Colors.green, fontWeight: FontWeight.w600),
+              children: [
+            TextSpan(
+              text: " ${item.unit!}",
+              style: LocalizationsUtil.setTextStyle(false,
+                  size: 16, color: item.unit! != planUnit ? Theme.of(context).colorScheme.primary : Colors.green, fontWeight: FontWeight.w600),
+            )
+          ]));
+    } else {
+      if (item.unit!.contains("Own")) {
         return Text(
           "${IntlUtils.stringIntAddComma(item.amount ?? 0)} ${item.unit!.split(" ")[0]}",
-          style: LocalizationsUtil.setTextStyle(isKor,
-              size: 16,
-              color: Theme.of(context).colorScheme.primary,
-              fontWeight: FontWeight.w600),
+          style: LocalizationsUtil.setTextStyle(isKor, size: 16, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600),
         );
-      }
-      else{
-        if(item.unit! != planUnit){
-          return Text(
-            "${IntlUtils.stringIntAddComma(item.amount ?? 0)} ${item.unit!}",
-            style: LocalizationsUtil.setTextStyle(isKor,
-                size: 16,
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.w600),
-          );
-        }else {
-          return Text(
-            "${IntlUtils.stringIntAddComma(item.amount ?? 0)} ${item.unit!}",
-            style: LocalizationsUtil.setTextStyle(isKor,
-                size: 16,
-                color: Colors.green,
-                fontWeight: FontWeight.w600),
-          );
-        }
+      } else {
+        return RichText(
+            text: TextSpan(
+                text: IntlUtils.stringIntAddComma(item.amount ?? 0),
+                style: LocalizationsUtil.setTextStyle(isKor,
+                    size: 16, color: item.unit! != planUnit ? Theme.of(context).colorScheme.primary : Colors.green, fontWeight: FontWeight.w600),
+                children: [
+              TextSpan(
+                text: " ${item.unit!}",
+                style: LocalizationsUtil.setTextStyle(false,
+                    size: 16, color: item.unit! != planUnit ? Theme.of(context).colorScheme.primary : Colors.green, fontWeight: FontWeight.w600),
+              )
+            ]));
       }
     }
   }
