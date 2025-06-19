@@ -78,7 +78,7 @@ class AccountUseCase with AccountRepo {
   }
 
   @override
-  Future<AccountModel> addTotalAmount(int total, int day, int id) async {
+  Future<AccountModel> addTotalAmount(title, int total, int day, int id) async {
     try {
       AccountModel account = await _getIt.getAccountInfo(id);
       account.totalExchangeCost = account.totalExchangeCost! + total;
@@ -121,7 +121,7 @@ class AccountUseCase with AccountRepo {
             amount.type = AmountType.add;
             amount.amount = total;
             amount.usageTime = useDay;
-            amount.title = "경비 추가";
+            amount.title = title;
             amount.category = 0;
 
             history[day]!.add(amount);

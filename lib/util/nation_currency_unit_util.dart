@@ -1,6 +1,6 @@
 class NationCurrencyUnitUtil {
   static String getNationCurrency(String nation) {
-    final Map<String, String> unit = {
+    final Map<String, String> unitKo = {
       "대한민국": "₩",
       "일본": "¥",
       "중국": "¥",
@@ -36,7 +36,86 @@ class NationCurrencyUnitUtil {
       "칠레": "\$",
       "️기타": "-"
     };
-    return unit[nation] ?? "-";
+    final Map<String, String> unitEn = {
+      "South Korea": "₩",
+      "Japan": "¥",
+      "China": "¥",
+      "Taiwan": "\$",
+      "Mongolia": "₮",
+      "Hong Kong": "\$",
+      "Thailand": "฿",
+      "Vietnam": "₫",
+      "Philippines": "₱",
+      "Laos": "₭",
+      "Cambodia": "៛",
+      "Malaysia": "RM",
+      "Singapore": "\$",
+      "Myanmar": "K",
+      "Australia": "\$",
+      "Indonesia": "Rp",
+      "New Zealand": "\$",
+      "India": "₹",
+      "United Kingdom": "£",
+      "France": "€",
+      "Germany": "€",
+      "Spain": "€",
+      "Portugal": "€",
+      "Italy": "€",
+      "Greece": "€",
+      "Türkiye": "₺",
+      "Canada": "\$",
+      "United States": "\$",
+      "Mexico": "\$",
+      "Colombia": "\$",
+      "Brazil": "R\$",
+      "Argentina": "\$",
+      "Chile": "\$",
+      "Others": "-"
+    };
+    final Map<String, String> unitJa = {
+      "韓国": "₩",
+      "日本": "¥",
+      "中国": "¥",
+      "台湾": "\$",
+      "モンゴル": "₮",
+      "香港": "\$",
+      "タイ": "฿",
+      "ベトナム": "₫",
+      "フィリピン": "₱",
+      "ラオス": "₭",
+      "カンボジア": "៛",
+      "マレーシア": "RM",
+      "シンガポール": "\$",
+      "ミャンマー": "K",
+      "オーストラリア": "\$",
+      "インドネシア": "Rp",
+      "ニュージーランド": "\$",
+      "インド": "₹",
+      "イギリス": "£",
+      "フランス": "€",
+      "ドイツ": "€",
+      "スペイン": "€",
+      "ポルトガル": "€",
+      "イタリア": "€",
+      "ギリシャ": "€",
+      "トルコ": "₺", // 최신 표기 기준 반영
+      "カナダ": "\$",
+      "アメリカ合衆国": "\$",
+      "メキシコ": "\$",
+      "コロンビア": "\$",
+      "ブラジル": "R\$",
+      "アルゼンチン": "\$",
+      "チリ": "\$",
+      "その他": "-"
+    };
+
+    if(unitKo.keys.contains(nation)){
+      return unitKo[nation]??"-";
+    }else if(unitEn.keys.contains(nation)){
+      return unitEn[nation]??"-";
+    }else {
+      return unitJa[nation]??"-";
+    }
   }
 
   static String getNationFlag(String nation) {

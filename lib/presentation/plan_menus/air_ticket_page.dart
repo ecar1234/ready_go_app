@@ -11,7 +11,9 @@ import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:ready_go_project/util/localizations_util.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../domain/entities/provider/admob_provider.dart';
 import '../../domain/entities/provider/images_provider.dart';
@@ -76,10 +78,12 @@ class _AirTicketPageState extends State<AirTicketPage> {
     final isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
     final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
     final double bannerHei = _isLoaded ? _admobUtil.bannerAd!.size.height.toDouble() : 0;
+    final isKor = Localizations.localeOf(context).languageCode == "ko";
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("항공권(E-ticket)"),
+          title: Text(AppLocalizations.of(context)!.flightTicketTitle),
         ),
         body: Container(
           height: height,
@@ -92,8 +96,8 @@ class _AirTicketPageState extends State<AirTicketPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: (height - bannerHei - 40) / 2, child: _departureSection(context, isDarkMode)),
-                    SizedBox(height: (height - bannerHei - 40) / 2, child: _arrivalSection(context, isDarkMode))
+                    SizedBox(height: (height - bannerHei - 40) / 2, child: _departureSection(context, isDarkMode, isKor)),
+                    SizedBox(height: (height - bannerHei - 40) / 2, child: _arrivalSection(context, isDarkMode, isKor))
                   ],
                 ),
               ),
@@ -110,7 +114,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
     );
   }
 
-  Widget _departureSection(BuildContext context, isDarkMode) {
+  Widget _departureSection(BuildContext context, isDarkMode, bool isKor) {
     final list = context.watch<ImagesProvider>().departureImg;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,12 +124,12 @@ class _AirTicketPageState extends State<AirTicketPage> {
           width: MediaQuery.sizeOf(context).width,
           child: ElevatedButton.icon(
             onPressed: () {
-              _showImageSourceDialog("departure", isDarkMode);
+              _showImageSourceDialog("departure", isDarkMode, isKor);
             },
             style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
             label: Text(
-              "출발(Departure) 파일(이미지) 추가",
-              style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+              AppLocalizations.of(context)!.ticketDepartureButton,
+              style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
             ),
             icon: Icon(Icons.flight_takeoff, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
           ),
@@ -134,9 +138,9 @@ class _AirTicketPageState extends State<AirTicketPage> {
         Expanded(
           child: Container(
               child: list.isEmpty
-                  ? const SizedBox(
+                  ? SizedBox(
                       child: Center(
-                        child: Text("출발(Departure) E-Ticket 등록해 보세요."),
+                        child: Text(AppLocalizations.of(context)!.ticketDepartureDesc),
                       ),
                     )
                   : GridView.builder(
@@ -218,7 +222,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
     );
   }
 
-  Widget _arrivalSection(BuildContext context, bool isDarkMode) {
+  Widget _arrivalSection(BuildContext context, bool isDarkMode, bool isKor) {
     final list = context.watch<ImagesProvider>().arrivalImg;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -228,12 +232,12 @@ class _AirTicketPageState extends State<AirTicketPage> {
           width: MediaQuery.sizeOf(context).width,
           child: ElevatedButton.icon(
             onPressed: () {
-              _showImageSourceDialog("arrival", isDarkMode);
+              _showImageSourceDialog("arrival", isDarkMode, isKor);
             },
             style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
             label: Text(
-              "도착(Arrival) 파일(이미지) 추가",
-              style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+              AppLocalizations.of(context)!.ticketArrivalButton,
+              style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
             ),
             icon: Icon(Icons.flight_land, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
           ),
@@ -242,9 +246,9 @@ class _AirTicketPageState extends State<AirTicketPage> {
         Expanded(
           child: Container(
               child: list.isEmpty
-                  ? const SizedBox(
+                  ? SizedBox(
                       child: Center(
-                        child: Text("도착(Arrival) E-Ticket 등록해 보세요."),
+                        child: Text(AppLocalizations.of(context)!.ticketArrivalDesc),
                       ),
                     )
                   : GridView.builder(
@@ -326,7 +330,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
     );
   }
 
-  void _showImageSourceDialog(String type, bool isDarkMode) {
+  void _showImageSourceDialog(String type, bool isDarkMode, bool isKor) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -363,13 +367,19 @@ class _AirTicketPageState extends State<AirTicketPage> {
                           }
                           Navigator.of(context).pop(); // 다이얼로그 닫기
                         } else {
-                          Get.snackbar("카메라 이미지 오류", "알 수 없는 이유로 이미지를 불러오지 못했습니다.");
+                          if(context.mounted){
+                            Get.snackbar(AppLocalizations.of(context)!.snackLoadFailedTitle,
+                              AppLocalizations.of(context)!.snackLoadFailedDesc,
+                              backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                            );
+                            return;
+                          }
                         }
                       },
                       style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
                       label: Text(
-                        "카메라",
-                        style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                        AppLocalizations.of(context)!.camera,
+                        style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                       ),
                       icon: Icon(
                         Icons.camera_alt,
@@ -401,13 +411,19 @@ class _AirTicketPageState extends State<AirTicketPage> {
                           }
                           Navigator.of(context).pop(); // 다이얼로그 닫기
                         } else {
-                          Get.snackbar("이미지 불러오기 실패", "알 수 없는 문제로 이미지 불러오기 실패.");
+                          if(context.mounted){
+                            Get.snackbar(AppLocalizations.of(context)!.snackLoadFailedTitle,
+                                AppLocalizations.of(context)!.snackLoadFailedDesc,
+                              backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                            );
+                            return;
+                          }
                         }
                       },
                       style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
                       label: Text(
-                        "갤러리",
-                        style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                        AppLocalizations.of(context)!.gallery,
+                        style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                       ),
                       icon: Icon(
                         Icons.camera,
@@ -443,13 +459,19 @@ class _AirTicketPageState extends State<AirTicketPage> {
                           }
                         Navigator.of(context).pop(); // 다이얼로그 닫기
                         }else{
-                          Get.snackbar("파일 불러오기 실패", "알 수 없는 문제로 파일 불러오기 실패.");
+                          if(context.mounted){
+                            Get.snackbar(AppLocalizations.of(context)!.snackLoadFailedTitle,
+                              AppLocalizations.of(context)!.snackLoadFailedDesc,
+                              backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                            );
+                            return;
+                          }
                         }
                       },
                       style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
                       label: Text(
-                        "파일",
-                        style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                        AppLocalizations.of(context)!.file,
+                        style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                       ),
                       icon: Icon(
                         Icons.file_copy,
@@ -465,13 +487,14 @@ class _AirTicketPageState extends State<AirTicketPage> {
                         Navigator.of(context).pop(); // 다이얼로그 닫기
                       },
                       style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.zero,
                           backgroundColor: isDarkMode ? Theme.of(context).primaryColor : Theme.of(context).colorScheme.primary,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         side: isDarkMode ? const BorderSide(color: Colors.white) : null
                       ),
-                      child: const Text(
-                        "취소",
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                      child: Text(
+                        AppLocalizations.of(context)!.cancel,
+                        style: LocalizationsUtil.setTextStyle(isKor, color: Colors.white, fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),

@@ -5,6 +5,7 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
@@ -20,7 +21,9 @@ import 'package:ready_go_project/presentation/option_page.dart';
 import 'package:ready_go_project/presentation/plan_main_page.dart';
 import 'package:ready_go_project/presentation/visit_statistics_page.dart';
 import 'package:ready_go_project/service_locator.dart';
+import 'package:ready_go_project/util/localizations_util.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../bloc/data_bloc.dart';
 import '../domain/entities/provider/passport_provider.dart';
@@ -102,6 +105,9 @@ class _MainPageState extends State<MainPage> {
           borderRadius: BorderRadius.all(Radius.circular(10))),
     ),
     textSelectionTheme: const TextSelectionThemeData(cursorColor: Colors.black87),
+    textTheme: TextTheme(
+      labelLarge: LocalizationsUtil.setTextStyle(false)
+    ),
     fontFamily: 'Nanum',
   );
 
@@ -129,6 +135,27 @@ class _MainPageState extends State<MainPage> {
       child: GetMaterialApp(
           navigatorObservers: [FirebaseAnalyticsObserver(analytics: _analytics)],
           debugShowCheckedModeBanner: false,
+          supportedLocales: const [
+            Locale('en', ''), // English
+            Locale('ko', ''), // Korean
+            Locale('ja', ''), // Japan
+          ],
+          localizationsDelegates: const [
+            AppLocalizations.delegate, // 자동으로 생성된 delegate
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          // localeResolutionCallback: (locale, supportedLocales) {
+          //   if (locale != null) {
+          //     for (var supportedLocale in supportedLocales) {
+          //       if (supportedLocale.languageCode == locale.languageCode) {
+          //         return supportedLocale;
+          //       }
+          //     }
+          //   }
+          //   return supportedLocales.first;
+          // },
           theme: lightTheme,
           darkTheme: darkTheme,
           themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
@@ -291,15 +318,15 @@ class _MainPage2State extends State<MainPage2> {
                           color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
                           items: [
                         PopupMenuItem(
-                          child: const Text("여권 등록 및 수정"),
+                          child: Text(AppLocalizations.of(context)!.passportRS),
                           onTap: () {
                             final provider = context.read<PassportProvider>();
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  title: const Text("여권 이미지 선택"),
-                                  content: const Text("갤러리 또는 카메라 중 하나를 선택하세요."),
+                                  title: Text(AppLocalizations.of(context)!.selectTitle),
+                                  content: Text(AppLocalizations.of(context)!.selectContent),
                                   actions: [
                                     SizedBox(
                                       child: ElevatedButton(
@@ -313,7 +340,7 @@ class _MainPage2State extends State<MainPage2> {
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
                                         ),
-                                        child: Text("카메라", style: TextStyle(
+                                        child: Text(AppLocalizations.of(context)!.camera, style: TextStyle(
                                           color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary
                                         ),),
                                       ),
@@ -330,7 +357,7 @@ class _MainPage2State extends State<MainPage2> {
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
                                         ),
-                                        child: Text("갤러리", style: TextStyle(
+                                        child: Text(AppLocalizations.of(context)!.gallery, style: TextStyle(
                                           color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary
                                         ),),
                                       ),
@@ -342,12 +369,16 @@ class _MainPage2State extends State<MainPage2> {
                           },
                         ),
                         PopupMenuItem(
-                          child: const Text("여권 보기"),
+                          child: Text(AppLocalizations.of(context)!.viewPassport),
                           onTap: () async {
                             if (passImg != null) {
                               OpenFile.open(passImg.path);
                             } else {
-                              Get.snackbar("여권 이미지 확인", "여권 이미지가 저장된 상황에서만 가능합니다.");
+                              Get.snackbar(AppLocalizations.of(context)!.passportAlertTitle,
+                                  AppLocalizations.of(context)!.passportAlertContent,
+                                backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                              );
+                              return;
                             }
                           },
                         ),

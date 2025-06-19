@@ -1,9 +1,11 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:ready_go_project/domain/entities/provider/purchase_manager.dart';
+import 'package:ready_go_project/util/localizations_util.dart';
+import 'package:ready_go_project/util/nation_currency_unit_util.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 import '../domain/entities/provider/theme_mode_provider.dart';
 
@@ -23,8 +25,9 @@ class _OptionPageState extends State<OptionPage> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
-    
+    final isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
+    final isKor = Localizations.localeOf(context).languageCode == "ko";
+    final localization = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Setting"),
@@ -41,11 +44,11 @@ class _OptionPageState extends State<OptionPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const SizedBox(
+                      SizedBox(
                         width: 100,
                         child: Text(
-                          "Dark 모드",
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                          localization.darkMode,
+                          style: LocalizationsUtil.setTextStyle(isKor, size: 18, fontWeight: FontWeight.w600),
                         ),
                       ),
                       SizedBox(
@@ -85,27 +88,27 @@ class _OptionPageState extends State<OptionPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const SizedBox(
+                      SizedBox(
                         child: Text(
-                          "구매 복원 하기",
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                          localization.restorePurchases,
+                          style: LocalizationsUtil.setTextStyle(isKor, size: 18, fontWeight: FontWeight.w600),
                         ),
                       ),
                       SizedBox(
-                        width: 80,
+                        width: isKor ? 80 : 100,
                         child: ElevatedButton(
                             onPressed: () async{
                               context.read<PurchaseManager>().loadPastPurchases();
                               showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
-                                        title: const Text(
-                                          "구매 복원 완료",
-                                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                                        title: Text(
+                                          localization.restoreResultTitle,
+                                          style: LocalizationsUtil.setTextStyle(isKor, size: 20, fontWeight: FontWeight.w600),
                                         ),
-                                        content: const Text(
-                                          "구매 복원이 완료 되었습니다.",
-                                          style: TextStyle(fontSize: 16),
+                                        content: Text(
+                                          localization.restoreResultDetail,
+                                          style: LocalizationsUtil.setTextStyle(isKor, size: 16),
                                         ),
                                         actions: [
                                           SizedBox(
@@ -116,7 +119,7 @@ class _OptionPageState extends State<OptionPage> {
                                                 style: ElevatedButton.styleFrom(
                                                     backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
                                                 child: Text(
-                                                  "닫기",
+                                                  localization.close,
                                                   style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                                                 )),
                                           )
@@ -124,7 +127,8 @@ class _OptionPageState extends State<OptionPage> {
                                       ));
                             },
                             style: ElevatedButton.styleFrom(backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
-                            child: Text("복원", style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary))),
+                            child: Text(localization.restore,
+                                style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary))),
                       )
                     ],
                   ),
@@ -138,8 +142,8 @@ class _OptionPageState extends State<OptionPage> {
                 String? buildNum = info.data != null ? info.data!.version : "";
                 return Column(
                 children: [
-                 const SizedBox(
-                    child: Text("버전 정보"),
+                 SizedBox(
+                    child: Text(localization.version),
                   ),
                   SizedBox(
                     child: Text("v.$buildNum", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),),

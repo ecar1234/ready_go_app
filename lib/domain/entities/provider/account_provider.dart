@@ -55,9 +55,9 @@ class AccountProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addTotalAmount(int total, int day, int id)async {
+  Future<void> addTotalAmount(String title, int total, int day, int id)async {
    try{
-     var account =  await _getIt.get<AccountRepo>().addTotalAmount(total, day, id);
+     var account =  await _getIt.get<AccountRepo>().addTotalAmount(title, total, day, id);
      _accountInfo = account;
    }catch(ex){
      logger.e(ex.toString());

@@ -5,12 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/supply_model/supply_model.dart';
 import 'package:ready_go_project/domain/entities/provider/purchase_manager.dart';
 import 'package:ready_go_project/domain/entities/provider/supplies_template_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:ready_go_project/util/localizations_util.dart';
 
 import '../../../domain/entities/provider/admob_provider.dart';
 import '../../../domain/entities/provider/responsive_height_provider.dart';
@@ -81,10 +82,11 @@ class _SuppliesPageState extends State<SuppliesPage> {
     final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
     final double bannerHei = _isLoaded ? _admobUtil.bannerAd!.size.height.toDouble() : 0;
     final isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
+    final isKor = Localizations.localeOf(context).languageCode == "ko";
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("체크 리스트"),
+          title: Text(AppLocalizations.of(context)!.checkListTitle),
         ),
         body: SingleChildScrollView(
           child: Container(
@@ -109,13 +111,14 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                 width: (MediaQuery.sizeOf(context).width - 50) / 2,
                                 child: ElevatedButton.icon(
                                   onPressed: () {
-                                    _suppliesTemplateDialog(context, isDarkMode);
+                                    _suppliesTemplateDialog(context, isDarkMode, isKor);
                                   },
                                   style: ElevatedButton.styleFrom(
                                       padding: EdgeInsets.zero, backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
                                   label: Text(
-                                    "템플릿 선택",
-                                    style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                                    AppLocalizations.of(context)!.templateSelect,
+                                    style: LocalizationsUtil.setTextStyle(isKor,
+                                        color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                                   ),
                                   icon: Icon(
                                     Icons.list,
@@ -129,13 +132,14 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                 width: (MediaQuery.sizeOf(context).width - 50) / 2,
                                 child: ElevatedButton.icon(
                                   onPressed: () {
-                                    _itemAddDialog(context, isDarkMode);
+                                    _itemAddDialog(context, isDarkMode, isKor);
                                   },
                                   style: ElevatedButton.styleFrom(
                                       padding: EdgeInsets.zero, backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
                                   label: Text(
-                                    "체크리스트 추가",
-                                    style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                                    AppLocalizations.of(context)!.addListItem,
+                                    style: LocalizationsUtil.setTextStyle(isKor,
+                                        color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                                   ),
                                   icon: Icon(
                                     Icons.add,
@@ -149,11 +153,11 @@ class _SuppliesPageState extends State<SuppliesPage> {
                         ),
                         const Gap(10),
                         Container(
-                            height: height - 160,
+                            height: height - bannerHei - 90,
                             decoration: BoxDecoration(border: Border.all(color: const Color(0xff666666)), borderRadius: BorderRadius.circular(10)),
                             child: list.isEmpty
-                                ? const Center(
-                                    child: Text("목록을 추가해 주세요"),
+                                ? Center(
+                                    child: Text(AppLocalizations.of(context)!.checkListDesc),
                                   )
                                 : Scrollbar(
                                     child: ListView.separated(
@@ -193,8 +197,8 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                                           const Gap(10),
                                                           Text(
                                                             "${list[idx].item}",
-                                                            style: TextStyle(
-                                                                fontSize: 18,
+                                                            style: LocalizationsUtil.setTextStyle(isKor,
+                                                                size: 18,
                                                                 color: list[idx].isCheck == true
                                                                     ? (isDarkMode ? Colors.white : Colors.grey)
                                                                     : (isDarkMode ? Colors.white : Colors.black87),
@@ -210,22 +214,22 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                                       padding: EdgeInsets.zero,
                                                       color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
                                                       itemBuilder: (context) => [
-                                                        const PopupMenuItem(
+                                                         PopupMenuItem(
                                                             value: "edit",
                                                             child: Text(
-                                                              "수정",
+                                                              AppLocalizations.of(context)!.modify,
                                                             )),
-                                                        const PopupMenuItem(
+                                                         PopupMenuItem(
                                                             value: "delete",
                                                             child: Text(
-                                                              "삭제",
+                                                              AppLocalizations.of(context)!.delete,
                                                             )),
                                                       ],
                                                       onSelected: (value) {
                                                         switch (value) {
                                                           case "edit":
                                                             _controller.text = list[idx].item!;
-                                                            _itemEditDialog(context, idx, isDarkMode);
+                                                            _itemEditDialog(context, idx, isDarkMode, isKor);
                                                           case "delete":
                                                             context.read<SuppliesProvider>().removeItem(idx, widget.planId);
                                                         }
@@ -256,7 +260,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
     );
   }
 
-  Future<dynamic> _suppliesTemplateDialog(BuildContext context, bool isDarkMode) {
+  Future<dynamic> _suppliesTemplateDialog(BuildContext context, bool isDarkMode, bool isKor) {
     return showDialog(
         context: context,
         builder: (context) => Dialog(
@@ -277,8 +281,9 @@ class _SuppliesPageState extends State<SuppliesPage> {
                           children: [
                             SizedBox(
                               child: Text(
-                                "템플릿 추가 & 선택",
-                                style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontSize: 16, fontWeight: FontWeight.w600),
+                                AppLocalizations.of(context)!.addTemp,
+                                style: LocalizationsUtil.setTextStyle(isKor,
+                                    color: isDarkMode ? Colors.white : Colors.black87, size: 16, fontWeight: FontWeight.w600),
                               ),
                             ),
                             const Gap(5),
@@ -286,7 +291,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
                               return SizedBox(
                                 child: Text(
                                   "(${temp.tempList!.length} / 2)",
-                                  style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87),
+                                  style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Colors.black87),
                                 ),
                               );
                             })
@@ -301,8 +306,8 @@ class _SuppliesPageState extends State<SuppliesPage> {
                             },
                             style: IconButton.styleFrom(padding: EdgeInsets.zero),
                             label: Text(
-                              "생성",
-                              style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                              AppLocalizations.of(context)!.create,
+                              style: LocalizationsUtil.setTextStyle(isKor, color: Theme.of(context).colorScheme.primary),
                             ),
                             icon: Icon(Icons.add, color: Theme.of(context).colorScheme.primary),
                           ),
@@ -312,10 +317,10 @@ class _SuppliesPageState extends State<SuppliesPage> {
                     Consumer<SuppliesTemplateProvider>(builder: (context, temp, child) {
                       final isDarkMode = context.read<ThemeModeProvider>().isDarkMode;
                       if (temp.tempList!.isEmpty) {
-                        return const SizedBox(
+                        return SizedBox(
                             height: 160,
                             child: Center(
-                              child: Text("템플릿을 생성 할 수 있습니다."),
+                              child: Text(AppLocalizations.of(context)!.templateDesc),
                             ));
                       }
                       return SizedBox(
@@ -366,7 +371,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                                 SizedBox(
                                                   child: Text(
                                                     temp.tempList![idx].tempTitle!,
-                                                    style: TextStyle(
+                                                    style: LocalizationsUtil.setTextStyle(isKor,
                                                         color: temp.selectedList == temp.tempList![idx].temp
                                                             ? (isDarkMode ? Colors.black87 : Colors.white)
                                                             : (isDarkMode ? Colors.white : Colors.black87),
@@ -382,7 +387,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                                       ? (isDarkMode ? Colors.black87 : Colors.white)
                                                       : (isDarkMode ? Colors.white : Colors.black87),
                                                   onSelected: (value) {
-                                                    if (value == "수정") {
+                                                    if (value == AppLocalizations.of(context)!.modify) {
                                                       Navigator.push(
                                                           context,
                                                           MaterialPageRoute(
@@ -396,8 +401,12 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                                   },
                                                   itemBuilder: (context) {
                                                     return <PopupMenuEntry<String>>[
-                                                      const PopupMenuItem(value: "수정", child: Text("수정")),
-                                                      const PopupMenuItem(value: "삭제", child: Text("삭제")),
+                                                      PopupMenuItem(
+                                                          value: AppLocalizations.of(context)!.modify,
+                                                          child: Text(AppLocalizations.of(context)!.modify)),
+                                                      PopupMenuItem(
+                                                          value: AppLocalizations.of(context)!.delete,
+                                                          child: Text(AppLocalizations.of(context)!.delete)),
                                                     ];
                                                   }))
                                         ],
@@ -423,8 +432,8 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                 style: ElevatedButton.styleFrom(
                                     padding: EdgeInsets.zero, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                                 child: Text(
-                                  "닫기",
-                                  style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87),
+                                  AppLocalizations.of(context)!.close,
+                                  style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Colors.black87),
                                 )),
                           ),
                           const Gap(10),
@@ -435,7 +444,10 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                 onPressed: () {
                                   final selected = context.read<SuppliesTemplateProvider>().selectedList;
                                   if (selected.isEmpty) {
-                                    Get.snackbar("탬플릿 선택", "추가 할 탬플릿을 선택해 주세요.", backgroundColor: Theme.of(context).colorScheme.surface);
+                                    Get.snackbar(AppLocalizations.of(context)!.snackTitle,
+                                      AppLocalizations.of(context)!.snackTemplateSelectDesc,
+                                      backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                    );
                                     return;
                                   }
                                   context.read<SuppliesProvider>().addTemplateList(selected, widget.planId);
@@ -446,9 +458,9 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                     backgroundColor: Theme.of(context).colorScheme.primary,
                                     padding: EdgeInsets.zero,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                child: const Text(
-                                  "추가하기",
-                                  style: TextStyle(color: Colors.white),
+                                child: Text(
+                                  AppLocalizations.of(context)!.add,
+                                  style: LocalizationsUtil.setTextStyle(isKor, color: Colors.white),
                                 ),
                               ))
                         ],
@@ -460,7 +472,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
             ));
   }
 
-  Future<dynamic> _itemAddDialog(BuildContext context, bool isDarkMode) {
+  Future<dynamic> _itemAddDialog(BuildContext context, bool isDarkMode, bool isKor) {
     return showDialog(
         context: context,
         builder: (context) => Dialog(
@@ -471,7 +483,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
                 width: 600,
                 height: 200,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     SizedBox(
                       height: 60,
@@ -479,10 +491,8 @@ class _SuppliesPageState extends State<SuppliesPage> {
                         controller: _controller,
                         autofocus: true,
                         // onChanged: _onChanged,
-                        style: const TextStyle(fontSize: 14),
-                        decoration: const InputDecoration(
-                          label: Text("체크 아이템")
-                        ),
+                        style: LocalizationsUtil.setTextStyle(isKor, size: 14),
+                        decoration: InputDecoration(label: Text(AppLocalizations.of(context)!.addListItem)),
                       ),
                     ),
                     SizedBox(
@@ -498,13 +508,13 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                   Get.back();
                                 },
                                 style: ElevatedButton.styleFrom(
-                                    padding: EdgeInsets.zero,
-                                    backgroundColor: isDarkMode ? Theme.of(context).primaryColor : Colors.white,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                  padding: EdgeInsets.zero,
+                                  backgroundColor: isDarkMode ? Theme.of(context).primaryColor : Colors.white,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                 ),
                                 child: Text(
-                                  "닫기",
-                                  style: TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                                  AppLocalizations.of(context)!.close,
+                                  style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                                 )),
                           ),
                           const Gap(10),
@@ -525,9 +535,9 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                     backgroundColor: Theme.of(context).colorScheme.primary,
                                     padding: EdgeInsets.zero,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                child: const Text(
-                                  "추가하기",
-                                  style: TextStyle(color: Colors.white),
+                                child: Text(
+                                  AppLocalizations.of(context)!.add,
+                                  style: LocalizationsUtil.setTextStyle(isKor, color: Colors.white),
                                 ),
                               ))
                         ],
@@ -539,7 +549,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
             ));
   }
 
-  Future<dynamic> _itemEditDialog(BuildContext context, int idx, bool isDarkMode) {
+  Future<dynamic> _itemEditDialog(BuildContext context, int idx, bool isDarkMode, bool isKor) {
     return showDialog(
         context: context,
         builder: (context) => Dialog(
@@ -576,8 +586,8 @@ class _SuppliesPageState extends State<SuppliesPage> {
                         height: 30,
                         child: TextField(
                           controller: _controller,
-                          decoration: const InputDecoration(
-                            label: Text("체크 아이템"),
+                          decoration: InputDecoration(
+                            label: Text(AppLocalizations.of(context)!.addListItem),
                           ),
                         ),
                       ),
@@ -605,9 +615,9 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                     backgroundColor: Theme.of(context).colorScheme.primary,
                                     padding: EdgeInsets.zero,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                child: const Text(
-                                  "수정하기",
-                                  style: TextStyle(color: Colors.white),
+                                child: Text(
+                                  AppLocalizations.of(context)!.modify,
+                                  style: LocalizationsUtil.setTextStyle(isKor, color: Colors.white),
                                 ),
                               ))
                         ],

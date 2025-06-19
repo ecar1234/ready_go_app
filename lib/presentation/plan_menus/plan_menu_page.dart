@@ -14,7 +14,8 @@ import 'package:ready_go_project/presentation/plan_menus/expectation_page.dart';
 import 'package:ready_go_project/presentation/plan_menus/roaming_page.dart';
 import 'package:ready_go_project/presentation/plan_menus/schedule_page/schedule_page.dart';
 import 'package:ready_go_project/presentation/plan_menus/supplies_page/supplies_page.dart';
-import 'package:ready_go_project/util/intl_utils.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:ready_go_project/util/localizations_util.dart';
 
 import '../../data/models/plan_model/plan_model.dart';
 import '../../domain/entities/provider/admob_provider.dart';
@@ -22,7 +23,6 @@ import '../../domain/entities/provider/purchase_manager.dart';
 import '../../domain/entities/provider/responsive_height_provider.dart';
 import '../../domain/entities/provider/theme_mode_provider.dart';
 import '../../util/admob_util.dart';
-import '../../util/date_util.dart';
 
 class PlanMenuPage extends StatefulWidget {
   final PlanModel plan;
@@ -37,8 +37,6 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
   final AdmobUtil _admobUtil = AdmobUtil();
   bool _isLoaded = false;
   final logger = Logger();
-  List<String> itemList = ["예상 경비", "항공권", "체크 리스트", "로밍(E-SIM)", "사용 경비", "숙소", "일정"];
-  List<String> korItemList = ["예상 경비", "체크 리스트", "사용 경비", "숙소", "일정"];
 
   // List<String> itemList = ["항공권", "준비물", "로밍(E-SIM)", "사용 경비", "숙소"];
   // List<String> itemList = ["항공권", "준비물", "로밍 & ESIM", "여행 경비", "숙소", "일정"];
@@ -75,12 +73,25 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
     }
     bool isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
     final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
-    bool isKor = widget.plan.nation == "대한민국";
+
+    List<String> itemList = [
+      AppLocalizations.of(context)!.menuExpensePlan,
+      AppLocalizations.of(context)!.menuFlightTicket,
+      AppLocalizations.of(context)!.menuCheckList,
+      AppLocalizations.of(context)!.menuRoaming,
+      AppLocalizations.of(context)!.menuSpentBudget,
+      AppLocalizations.of(context)!.menuAccommodation,
+      AppLocalizations.of(context)!.menuSchedule
+    ];
+
+    List<String> korItemList = ["예상 경비", "체크 리스트", "사용 경비", "숙소", "일정"];
+    bool isPlanKor = widget.plan.nation == "대한민국";
+    bool isKor = Localizations.localeOf(context).languageCode == "ko";
 
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("여행준비"),
+          title: Text(AppLocalizations.of(context)!.planMainTitle),
           leading: IconButton(
             onPressed: () {
               Get.back();
@@ -115,37 +126,15 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
                                   onPressed: () {
                                     final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
                                     if (kReleaseMode && !isRemove) {
-                                      if (itemList[idx] == "채크 리스트" ||
-                                          itemList[idx] == "숙소" ||
-                                          itemList[idx] == "예상 경비" ||
-                                          itemList[idx] == "로밍(E-SIM)") {
+                                      if (itemList[idx] == AppLocalizations.of(context)!.menuCheckList ||
+                                          itemList[idx] == AppLocalizations.of(context)!.menuAccommodation ||
+                                          itemList[idx] == AppLocalizations.of(context)!.menuExpensePlan ||
+                                          itemList[idx] == AppLocalizations.of(context)!.menuRoaming) {
                                         context.read<AdmobProvider>().loadAdInterstitialAd();
                                         context.read<AdmobProvider>().showInterstitialAd();
                                       }
                                     }
-                                    if (!isKor) {
-                                      switch (itemList[idx]) {
-                                        case "예상 경비":
-                                          Navigator.of(context)
-                                              .push(MaterialPageRoute(builder: (context) => ExpectationPage(planId: widget.plan.id)));
-                                        case "항공권":
-                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => AirTicketPage(planId: widget.plan.id!)));
-                                        case "채크 리스트":
-                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => SuppliesPage(planId: widget.plan.id!)));
-                                        case "로밍(E-SIM)":
-                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => RoamingPage(planId: widget.plan.id!)));
-                                        case "여행 경비":
-                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
-                                        case "숙소":
-                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccommodationPage(plan: widget.plan)));
-                                        case "사용 경비":
-                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
-                                        case "일정":
-                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => SchedulePage(plan: widget.plan)));
-                                        default:
-                                          return;
-                                      }
-                                    } else {
+                                    if (isKor && isPlanKor) {
                                       switch (korItemList[idx]) {
                                         case "예상 경비":
                                           Navigator.of(context)
@@ -163,6 +152,24 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
                                         default:
                                           return;
                                       }
+                                    } else {
+                                      if(itemList[idx] == AppLocalizations.of(context)!.menuExpensePlan){
+                                        Navigator.of(context)
+                                            .push(MaterialPageRoute(builder: (context) => ExpectationPage(planId: widget.plan.id)));
+                                      }else if(itemList[idx] == AppLocalizations.of(context)!.menuFlightTicket){
+                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => AirTicketPage(planId: widget.plan.id!)));
+                                      }else if(itemList[idx] == AppLocalizations.of(context)!.menuCheckList){
+                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => SuppliesPage(planId: widget.plan.id!)));
+                                      }else if(itemList[idx] == AppLocalizations.of(context)!.menuRoaming){
+                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => RoamingPage(planId: widget.plan.id!)));
+                                      }else if(itemList[idx] == AppLocalizations.of(context)!.menuSpentBudget){
+                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
+                                      }else if(itemList[idx] == AppLocalizations.of(context)!.menuAccommodation){
+                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccommodationPage(plan: widget.plan)));
+                                      }else {
+                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => SchedulePage(plan: widget.plan)));
+                                      }
+
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(
@@ -170,16 +177,16 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
                                       side: BorderSide(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                                   label: Text(
-                                    isKor ? korItemList[idx] : itemList[idx],
-                                    style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w600),
+                                    isKor && isPlanKor ? korItemList[idx] : itemList[idx],
+                                    style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w600),
                                   ),
                                   iconAlignment: IconAlignment.end,
-                                  icon: _iconSelector(idx, isKor, isDarkMode),
+                                  icon: _iconSelector(idx, isKor, isPlanKor, isDarkMode),
                                 ),
                               );
                             },
                             separatorBuilder: (context, idx) => const Gap(20),
-                            itemCount:isKor? korItemList.length : itemList.length),
+                            itemCount: isKor && isPlanKor ? korItemList.length : itemList.length),
                       ),
                     ],
                   ),
@@ -198,8 +205,8 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
     );
   }
 
-  Widget _iconSelector(int idx, bool isKor, bool isDarkMode) {
-    if(isKor){
+  Widget _iconSelector(int idx, bool isKor, bool isPlanKor, bool isDarkMode) {
+    if (isKor && isPlanKor) {
       switch (idx) {
         case 0:
           return Icon(
@@ -232,8 +239,7 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
             color: isDarkMode ? Colors.white : Colors.black87,
           );
       }
-    }
-    else{
+    } else {
       switch (idx) {
         case 0:
           return Icon(
