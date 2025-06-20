@@ -261,83 +261,91 @@ class _RoamingPageState extends State<RoamingPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              localization.dpAddressTitle,
-                              style: LocalizationsUtil.setTextStyle(isKor, size: 20, fontWeight: FontWeight.w600),
+                            Flexible(
+                              flex: 5,
+                              child: FittedBox(
+                                child: Text(
+                                  localization.dpAddressTitle,
+                                  style: LocalizationsUtil.setTextStyle(isKor, size: 20, fontWeight: FontWeight.w600),
+                                ),
+                              ),
                             ),
                             if (address.isNotEmpty)
-                              SizedBox(
-                                height: 40,
-                                width: 220,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      width: 80,
-                                      height: 30,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          Clipboard.setData(ClipboardData(text: dpAddressController.text));
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                              SnackBar(content: Text(localization.copyDpAddress), duration: const Duration(milliseconds: 500)));
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          padding: EdgeInsets.zero,
+                              Flexible(
+                                flex: 5,
+                                child: SizedBox(
+                                  height: 40,
+                                  width: 220,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: 80,
+                                        height: 30,
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            Clipboard.setData(ClipboardData(text: dpAddressController.text));
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(content: Text(localization.copyDpAddress), duration: const Duration(milliseconds: 1000)));
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            padding: EdgeInsets.zero,
+                                          ),
+                                          child: Text(localization.copy),
                                         ),
-                                        child: Text(localization.copy),
                                       ),
-                                    ),
-                                    const Gap(10),
-                                    SizedBox(
-                                      width: 80,
-                                      height: 30,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          showDialog(
-                                              context: context,
-                                              builder: (context) => AlertDialog(
-                                                    actionsAlignment: MainAxisAlignment.center,
-                                                    content: Text(
-                                                      localization.codeDeleteDesc,
-                                                      style: LocalizationsUtil.setTextStyle(isKor, size: 18),
-                                                      textAlign: TextAlign.center,
-                                                    ),
-                                                    actions: [
-                                                      SizedBox(
-                                                        child: ElevatedButton(
+                                      const Gap(10),
+                                      SizedBox(
+                                        width: 80,
+                                        height: 30,
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) => AlertDialog(
+                                                      actionsAlignment: MainAxisAlignment.center,
+                                                      content: Text(
+                                                        localization.codeDeleteDesc,
+                                                        style: LocalizationsUtil.setTextStyle(isKor, size: 18),
+                                                        textAlign: TextAlign.center,
+                                                      ),
+                                                      actions: [
+                                                        SizedBox(
+                                                          child: ElevatedButton(
+                                                              onPressed: () {
+                                                                Navigator.of(context).pop();
+                                                              },
+                                                              style: ElevatedButton.styleFrom(
+                                                                  foregroundColor: Theme.of(context).colorScheme.onSurface,
+                                                                  backgroundColor: Theme.of(context).colorScheme.surface,
+                                                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                                                              child: Text(localization.cancel)),
+                                                        ),
+                                                        SizedBox(
+                                                          child: ElevatedButton(
                                                             onPressed: () {
+                                                              dpAddressController.text = "";
+                                                              context.read<RoamingProvider>().removeAddress(widget.planId);
                                                               Navigator.of(context).pop();
                                                             },
                                                             style: ElevatedButton.styleFrom(
-                                                                foregroundColor: Theme.of(context).colorScheme.onSurface,
-                                                                backgroundColor: Theme.of(context).colorScheme.surface,
+                                                                foregroundColor: Theme.of(context).colorScheme.onSecondary,
+                                                                backgroundColor: Theme.of(context).colorScheme.secondary,
                                                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                                            child: Text(localization.cancel)),
-                                                      ),
-                                                      SizedBox(
-                                                        child: ElevatedButton(
-                                                          onPressed: () {
-                                                            dpAddressController.text = "";
-                                                            context.read<RoamingProvider>().removeAddress(widget.planId);
-                                                            Navigator.of(context).pop();
-                                                          },
-                                                          style: ElevatedButton.styleFrom(
-                                                              foregroundColor: Theme.of(context).colorScheme.onSecondary,
-                                                              backgroundColor: Theme.of(context).colorScheme.secondary,
-                                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                                          child: Text(localization.delete),
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ));
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          padding: EdgeInsets.zero,
+                                                            child: Text(localization.delete),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ));
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            padding: EdgeInsets.zero,
+                                          ),
+                                          child: Text(localization.delete),
                                         ),
-                                        child: Text(localization.delete),
-                                      ),
-                                    )
-                                  ],
+                                      )
+                                    ],
+                                  ),
                                 ),
                               )
                           ],
@@ -364,84 +372,92 @@ class _RoamingPageState extends State<RoamingPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            localization.activeCodeTitle,
-                            style: LocalizationsUtil.setTextStyle(isKor, size: 20, fontWeight: FontWeight.w600),
+                          Flexible(
+                            flex: 5,
+                            child: FittedBox(
+                              child: Text(
+                                localization.activeCodeTitle,
+                                style: LocalizationsUtil.setTextStyle(isKor, size: 20, fontWeight: FontWeight.w600),
+                              ),
+                            ),
                           ),
                           if (code.isNotEmpty)
-                            SizedBox(
-                              height: 40,
-                              width: 220,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 80,
-                                    height: 30,
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        Clipboard.setData(ClipboardData(text: activeCodeController.text));
-                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                          content: Text(localization.copyActiveCode),
-                                          duration: const Duration(milliseconds: 500),
-                                        ));
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        padding: EdgeInsets.zero,
+                            Flexible(
+                              flex: 5,
+                              child: SizedBox(
+                                height: 40,
+                                width: 220,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 80,
+                                      height: 30,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          Clipboard.setData(ClipboardData(text: activeCodeController.text));
+                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                            content: Text(localization.copyActiveCode),
+                                            duration: const Duration(milliseconds: 1000),
+                                          ));
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          padding: EdgeInsets.zero,
+                                        ),
+                                        child: Text(localization.copy),
                                       ),
-                                      child: Text(localization.copy),
                                     ),
-                                  ),
-                                  const Gap(10),
-                                  SizedBox(
-                                    width: 80,
-                                    height: 30,
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        showDialog(
-                                            context: context,
-                                            builder: (context) => AlertDialog(
-                                                  content: Text(localization.codeDeleteDesc,
-                                                      style: LocalizationsUtil.setTextStyle(isKor, size: 18), textAlign: TextAlign.center),
-                                                  actionsAlignment: MainAxisAlignment.center,
-                                                  insetPadding: const EdgeInsets.symmetric(horizontal: 20),
-                                                  actions: [
-                                                    SizedBox(
-                                                      child: ElevatedButton(
-                                                        onPressed: () {
-                                                          Navigator.of(context).pop();
-                                                        },
-                                                        style: ElevatedButton.styleFrom(
-                                                            backgroundColor: Theme.of(context).colorScheme.surface,
-                                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                                        child: Text(localization.cancel),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      child: ElevatedButton(
+                                    const Gap(10),
+                                    SizedBox(
+                                      width: 80,
+                                      height: 30,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) => AlertDialog(
+                                                    content: Text(localization.codeDeleteDesc,
+                                                        style: LocalizationsUtil.setTextStyle(isKor, size: 18), textAlign: TextAlign.center),
+                                                    actionsAlignment: MainAxisAlignment.center,
+                                                    insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+                                                    actions: [
+                                                      SizedBox(
+                                                        child: ElevatedButton(
                                                           onPressed: () {
-                                                            activeCodeController.text = "";
-                                                            context.read<RoamingProvider>().removeCode(widget.planId);
                                                             Navigator.of(context).pop();
                                                           },
                                                           style: ElevatedButton.styleFrom(
-                                                              backgroundColor: Theme.of(context).colorScheme.secondary,
+                                                              backgroundColor: Theme.of(context).colorScheme.surface,
                                                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                                          child: Text(
-                                                            localization.delete,
-                                                            style: LocalizationsUtil.setTextStyle(isKor, color: Colors.white),
-                                                          )),
-                                                    )
-                                                  ],
-                                                ));
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        padding: EdgeInsets.zero,
+                                                          child: Text(localization.cancel),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        child: ElevatedButton(
+                                                            onPressed: () {
+                                                              activeCodeController.text = "";
+                                                              context.read<RoamingProvider>().removeCode(widget.planId);
+                                                              Navigator.of(context).pop();
+                                                            },
+                                                            style: ElevatedButton.styleFrom(
+                                                                backgroundColor: Theme.of(context).colorScheme.secondary,
+                                                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                                                            child: Text(
+                                                              localization.delete,
+                                                              style: LocalizationsUtil.setTextStyle(isKor, color: Colors.white),
+                                                            )),
+                                                      )
+                                                    ],
+                                                  ));
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          padding: EdgeInsets.zero,
+                                        ),
+                                        child: Text(localization.delete),
                                       ),
-                                      child: Text(localization.delete),
-                                    ),
-                                  )
-                                ],
+                                    )
+                                  ],
+                                ),
                               ),
                             )
                         ],

@@ -345,15 +345,16 @@ class _ExpectationPageState extends State<ExpectationPage> {
                               }
                               // print(totalAmount);
                               if (list.isNotEmpty) {
-                                return Text(
-                                  list[0].unit!.length > 1
-                                      ? "${IntlUtils.stringIntAddComma(totalAmount)} ${list[0].unit!.split(" ")[0]}"
-                                      : "${IntlUtils.stringIntAddComma(totalAmount)} ${list[0].unit}",
-                                  style: LocalizationsUtil.setTextStyle(isKor,
-                                      color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
-                                      size: 16,
-                                      fontWeight: FontWeight.w600),
-                                );
+                                return RichText(
+                                    text: TextSpan(
+                                        text: "${IntlUtils.stringIntAddComma(totalAmount)} ",
+                                        style: TextStyle(
+                                            fontFamily: "Nanum", color: Theme.of(context).colorScheme.primary, fontSize: 16, fontWeight: FontWeight.w600),
+                                        children: [
+                                          TextSpan(text: list[0].unit!.length > 1 ? list[0].unit!.split(" ")[0] : "${list[0].unit}",
+                                          style: LocalizationsUtil.setTextStyle(false, color: Theme.of(context).colorScheme.primary, size: 16, fontWeight: FontWeight.w600)
+                                          )
+                                        ]));
                               } else {
                                 return Text(
                                   isKor ? "0 ₩" : (Localizations.localeOf(context).languageCode == "ja" ? "0 ¥" : "0 \$"),
@@ -421,7 +422,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                         children: [
                                           TextSpan(
                                             text: " ${list[0].unit}",
-                                            style: GoogleFonts.notoSans(color: Colors.green, fontSize: 16, fontWeight: FontWeight.w600),
+                                            style: LocalizationsUtil.setTextStyle(false, color: Colors.green, size: 16, fontWeight: FontWeight.w600),
                                           )
                                         ]),
                                   );
@@ -429,7 +430,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                   return RichText(
                                     text: TextSpan(
                                         text: "0",
-                                        style: const TextStyle(color: Colors.green, fontSize: 16, fontWeight: FontWeight.w600),
+                                        style: const TextStyle(fontFamily: "Nanum", color: Colors.green, fontSize: 16, fontWeight: FontWeight.w600),
                                         children: [
                                           TextSpan(
                                             text: " ${plan.unit}",
@@ -556,9 +557,9 @@ class _ExpectationPageState extends State<ExpectationPage> {
   //   });
   // }
 
-  void _expectationDialog(BuildContext context, double wid, bool isDarkMode, ExpectationModel? cur, int? idx) {
+  Future<void> _expectationDialog(BuildContext context, double wid, bool isDarkMode, ExpectationModel? cur, int? idx) async {
     final plan = context.read<PlanListProvider>().planList.firstWhere((item) => item.id == widget.planId);
-    final isNationKor = plan.nation == "대한민국";
+    // final isNationKor = plan.nation == "대한민국";
     final isKor = Localizations.localeOf(context).languageCode == "ko";
 
     if (cur != null) {
@@ -571,11 +572,11 @@ class _ExpectationPageState extends State<ExpectationPage> {
         _methodController.text = StatisticsUtil.conversionMethodTypeToString(Localizations.localeOf(context).languageCode, cur.type!);
       }
     }
-    showDialog(
+    final result = await showDialog(
         context: context,
         builder: (context) {
           final currency = context.read<PlanListProvider>().planList.firstWhere((item) => item.id == widget.planId).unit;
-          return GestureDetector(
+          return  GestureDetector(
             onTap: () {
               FocusManager.instance.primaryFocus?.unfocus();
             },
@@ -694,7 +695,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                   _methodController.text = AppLocalizations.of(context)!.select;
                                   _titleController.clear();
                                   _amountController.clear();
-                                  Get.back();
+                                  Get.back(result: "close");
                                 },
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
@@ -774,6 +775,15 @@ class _ExpectationPageState extends State<ExpectationPage> {
                 )),
           );
         });
+
+    if(result == null){
+      print("dlakjsdlfkjasdhlkfjashdlf ");
+      if(context.mounted){
+        _methodController.text = AppLocalizations.of(context)!.select;
+        _titleController.clear();
+        _amountController.clear();
+      }
+    }
   }
 
   List<ExpectationModel> mergeByType(List<ExpectationModel> list) {

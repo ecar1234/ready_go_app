@@ -185,5 +185,6 @@
   "snackTemplateSelectDesc": "Please select the template you added.",
   "snackEmptyNation": "Please select your country of travel.",
   "snackEmptySubject": "Please enter your title of travel.",
-  "snackEmptyPeriod": "Please select your period of travel."
+  "snackEmptyPeriod": "Please select your period of travel.",
+  "snackAccommodationCopy": "The accommodation address has been copied to the clipboard."
 }

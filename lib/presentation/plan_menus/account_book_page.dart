@@ -118,7 +118,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("여행경비"),
+          title: Text(AppLocalizations.of(context)!.accountBookTitle),
         ),
         body: SingleChildScrollView(
           child: Container(

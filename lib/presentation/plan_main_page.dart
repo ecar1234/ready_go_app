@@ -369,10 +369,10 @@ class _PlanMainPageState extends State<PlanMainPage> {
                 Get.to(() => PlanMenuPage(plan: list[idx]));
               },
               child: Slidable(
-                endActionPane: ActionPane(extentRatio: 0.5, motion: const ScrollMotion(), children: [
+                endActionPane: ActionPane(extentRatio: 0.6, motion: const ScrollMotion(), children: [
                   SlidableAction(
                       icon: Icons.edit,
-                      label: "수정",
+                      label: AppLocalizations.of(context)!.modify,
                       foregroundColor: Theme.of(context).colorScheme.primary,
                       backgroundColor: Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(10),
@@ -383,7 +383,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
                       }),
                   SlidableAction(
                       icon: Icons.delete,
-                      label: "삭제",
+                      label: AppLocalizations.of(context)!.delete,
                       foregroundColor: Theme.of(context).colorScheme.primary,
                       backgroundColor: Colors.redAccent,
                       borderRadius: BorderRadius.circular(10),

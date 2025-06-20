@@ -185,5 +185,6 @@
   "snackTemplateSelectDesc": "추가 할 템플릿을 선택해 주세요.",
   "snackEmptyNation": "여행 국가를 선택해 주세요.",
   "snackEmptySubject": "여행 제목을 입력해 주세요.",
-  "snackEmptyPeriod": "여행 기간을 선택해 주세요."
+  "snackEmptyPeriod": "여행 기간을 선택해 주세요.",
+  "snackAccommodationCopy": "숙소 주소가 클립보드에 복사 되었습니다."
 }

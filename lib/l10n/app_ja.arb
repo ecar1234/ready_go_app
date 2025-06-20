@@ -185,5 +185,6 @@
   "snackTemplateSelectDesc": "追加するテンプレートを選択してください。",
   "snackEmptyNation": "旅行国を選択してください。",
   "snackEmptySubject": "旅行タイトルを入力してください。",
-  "snackEmptyPeriod": "旅行期間を選択してください。"
+  "snackEmptyPeriod": "旅行期間を選択してください。",
+  "snackAccommodationCopy": "住所がクリップボードにコピーされました。"
 }

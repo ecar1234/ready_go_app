@@ -209,6 +209,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
     final hei = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
     final double bannerHei = _isLoaded ? _admobUtil.bannerAd!.size.height.toDouble() : 0;
     final isKor = Localizations.localeOf(context).languageCode == "ko";
+    final localization = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
@@ -218,7 +219,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
             resizeToAvoidBottomInset: false,
             appBar: AppBar(
               title: Text(
-                AppLocalizations.of(context)!.titleAddPlan,
+                localization.titleAddPlan,
                 style: LocalizationsUtil.setTextStyle(isKor, fontWeight: FontWeight.w600),
               ),
               actions: [
@@ -242,7 +243,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                       if (nationController.text.isEmpty) {
                         FocusManager.instance.primaryFocus!.unfocus();
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(AppLocalizations.of(context)!.snackEmptyNation),
+                          content: Text(localization.snackEmptyNation),
                           duration: const Duration(seconds: 1),
                         ));
                         return;
@@ -250,7 +251,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                       if (subjectController.text.isEmpty) {
                         FocusManager.instance.primaryFocus!.unfocus();
                         ScaffoldMessenger.of(context).showSnackBar( SnackBar(
-                          content: Text(AppLocalizations.of(context)!.snackEmptySubject),
+                          content: Text(localization.snackEmptySubject),
                           duration: const Duration(seconds: 1),
                         ));
                         return;
@@ -258,15 +259,15 @@ class _AddPlanPageState extends State<AddPlanPage> {
                       if (_dates.length > 2 || _dates.isEmpty) {
                         FocusManager.instance.primaryFocus!.unfocus();
                         ScaffoldMessenger.of(context).showSnackBar( SnackBar(
-                          content: Text(AppLocalizations.of(context)!.snackEmptyPeriod),
+                          content: Text(localization.snackEmptyPeriod),
                           duration: const Duration(seconds: 1),
                         ));
                         return;
                       }
-                      if(nationController.text == AppLocalizations.of(context)!.select){
+                      if(nationController.text == localization.select){
                         FocusManager.instance.primaryFocus!.unfocus();
                         ScaffoldMessenger.of(context).showSnackBar( SnackBar(
-                          content: Text(AppLocalizations.of(context)!.snackEmptyNation),
+                          content: Text(localization.snackEmptyNation),
                           duration: const Duration(seconds: 1),
                         ));
                         return;
@@ -310,7 +311,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                     },
                     style: TextButton.styleFrom(padding: EdgeInsets.zero),
                     label: Text(
-                      widget.plan != null ? AppLocalizations.of(context)!.modify : AppLocalizations.of(context)!.create,
+                      widget.plan != null ? localization.modify : localization.create,
                       style: LocalizationsUtil.setTextStyle(isKor,
                           size: 15, fontWeight: FontWeight.w500, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                     ),
@@ -338,9 +339,9 @@ class _AddPlanPageState extends State<AddPlanPage> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    _nationSelection(context, isKor),
+                                    _nationSelection(context, localization, isKor),
                                     const Gap(10),
-                                    _titleSection(isKor),
+                                    _titleSection(localization, isKor),
                                     const Gap(10),
                                     Expanded(
                                       child: SingleChildScrollView(
@@ -351,7 +352,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                                                 border: Border.all(),
                                                 borderRadius: BorderRadius.circular(10),
                                                 color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white),
-                                            child: _calendarSection(isDarkMode, hei, isKor)),
+                                            child: _calendarSection(isDarkMode, hei, localization, isKor)),
                                       ),
                                     ),
                                     // const Gap(30),
@@ -445,7 +446,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
     );
   }
 
-  Widget _nationSelection(BuildContext context, isKor) {
+  Widget _nationSelection(BuildContext context, AppLocalizations localization, bool isKor) {
     List<String> nations = [];
     if (Localizations.localeOf(context).languageCode == "ko") {
       nations = nationsKo;
@@ -458,6 +459,9 @@ class _AddPlanPageState extends State<AddPlanPage> {
     if (nationController.text.isEmpty) {
       nationController.text = nations[0];
     }
+    if(widget.plan != null){
+      nationController.text = nations.firstWhere((item) => item.contains(widget.plan!.nation!));
+    }
     return SizedBox(
       // height: 90,
       width: MediaQuery.sizeOf(context).width,
@@ -465,7 +469,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            child: Text(AppLocalizations.of(context)!.addNation, style: LocalizationsUtil.setTextStyle(isKor, fontWeight: FontWeight.w600, size: 16)),
+            child: Text(localization.addNation, style: LocalizationsUtil.setTextStyle(isKor, fontWeight: FontWeight.w600, size: 16)),
           ),
           const Gap(10),
           SizedBox(
@@ -476,20 +480,20 @@ class _AddPlanPageState extends State<AddPlanPage> {
                 DropdownMenu(
                     width: 200,
                     initialSelection: widget.plan == null
-                        ? AppLocalizations.of(context)!.select
-                        : (nations.contains(widget.plan!.nation!) ? widget.plan!.nation! : "✈️ ${AppLocalizations.of(context)!.others}"),
+                        ? localization.select
+                        : (nations.any((item) => item.contains(widget.plan!.nation!)) ? nations.firstWhere((item) => item.contains(widget.plan!.nation!)) : "✈️ ${localization.others}"),
                     trailingIcon: null,
                     menuHeight: 250,
                     onSelected: (selected) {
                       if (selected != null) {
-                        if (selected == "✈️ ${AppLocalizations.of(context)!.others}") {
-                          nationController.text = AppLocalizations.of(context)!.addNation;
+                        if (selected == "✈️ ${localization.others}") {
+                          nationController.text = localization.addNation;
                           setState(() {
                             _nationRead = false;
                           });
                         }
-                        else if(selected == AppLocalizations.of(context)!.select){
-                          nationController.text = AppLocalizations.of(context)!.select;
+                        else if(selected == localization.select){
+                          nationController.text = localization.select;
                           setState(() {
                             _nationRead = true;
                           });
@@ -503,7 +507,12 @@ class _AddPlanPageState extends State<AddPlanPage> {
                         }
                       }
                     },
-                    dropdownMenuEntries: List.generate(nations.length, (int idx) => DropdownMenuEntry(value: nations[idx], label: nations[idx]))),
+                    dropdownMenuEntries: List.generate(nations.length, (int idx) {
+                      if(idx == 0){
+                        return DropdownMenuEntry(value: localization.select, label: localization.select);
+                      }
+                      return DropdownMenuEntry(value: nations[idx], label: nations[idx]);
+                    })),
                 const Gap(10),
                 Expanded(
                   child: SizedBox(
@@ -523,14 +532,14 @@ class _AddPlanPageState extends State<AddPlanPage> {
     );
   }
 
-  Widget _titleSection(bool isKor) {
+  Widget _titleSection(AppLocalizations localization, bool isKor) {
     return SizedBox(
       height: 90,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            AppLocalizations.of(context)!.addTitle,
+            localization.addTitle,
             style:
                 isKor ? const TextStyle(fontWeight: FontWeight.w600, fontSize: 16) : GoogleFonts.notoSans(fontWeight: FontWeight.w600, fontSize: 16),
           ),
@@ -540,19 +549,19 @@ class _AddPlanPageState extends State<AddPlanPage> {
             child: TextField(
                 controller: subjectController,
                 // onChanged: _onChanged,
-                decoration: InputDecoration(hintText: AppLocalizations.of(context)!.addPlanHint, hintStyle: LocalizationsUtil.setTextStyle(isKor))),
+                decoration: InputDecoration(hintText: localization.addPlanHint, hintStyle: LocalizationsUtil.setTextStyle(isKor))),
           )
         ],
       ),
     );
   }
 
-  Widget _calendarSection(bool isDarkMode, double hei, bool isKor) {
+  Widget _calendarSection(bool isDarkMode, double hei, AppLocalizations localization, bool isKor) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          AppLocalizations.of(context)!.addPeriod,
+          localization.addPeriod,
           style: isKor ? const TextStyle(fontWeight: FontWeight.w600, fontSize: 16) : GoogleFonts.notoSans(fontWeight: FontWeight.w600, fontSize: 16),
         ),
         const Gap(10),

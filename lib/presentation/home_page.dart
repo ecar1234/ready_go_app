@@ -115,7 +115,7 @@ class _HomePageState extends State<HomePage> {
             const Gap(10),
             Container(
               height: 120,
-              decoration: BoxDecoration(border: Border.all(), borderRadius: BorderRadius.circular(10)),
+              decoration: BoxDecoration(border: Border.all(color: isDarkMode ? Colors.white : Colors.black87), borderRadius: BorderRadius.circular(10)),
               child: Center(
                 child: Text(AppLocalizations.of(context)!.favoriteDesc),
               ),

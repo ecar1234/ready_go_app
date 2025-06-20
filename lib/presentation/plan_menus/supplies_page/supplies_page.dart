@@ -174,66 +174,81 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   crossAxisAlignment: CrossAxisAlignment.center,
                                                   children: [
-                                                    SizedBox(
-                                                      child: Row(
-                                                        children: [
-                                                          Container(
-                                                            height: 16,
-                                                            width: 16,
-                                                            decoration: BoxDecoration(
-                                                              border: Border.all(color: const Color(0xff666666)),
-                                                              shape: BoxShape.circle,
-                                                            ),
-                                                            child: Container(
-                                                              decoration: BoxDecoration(
-                                                                  border: Border.all(
-                                                                      width: 1.5, color: list[idx].isCheck! ? Colors.white : Colors.transparent),
+                                                    Flexible(
+                                                      flex: 9,
+                                                      child: SizedBox(
+                                                        child: Row(
+                                                          children: [
+                                                            Flexible(
+                                                              flex:1,
+                                                              child: Container(
+                                                                height: 16,
+                                                                width: 16,
+                                                                decoration: BoxDecoration(
+                                                                  border: Border.all(color: const Color(0xff666666)),
                                                                   shape: BoxShape.circle,
-                                                                  color: list[idx].isCheck!
-                                                                      ? Theme.of(context).colorScheme.primary
-                                                                      : Colors.transparent),
+                                                                ),
+                                                                child: Container(
+                                                                  decoration: BoxDecoration(
+                                                                      border: Border.all(
+                                                                          width: 1.5, color: list[idx].isCheck! ? Colors.white : Colors.transparent),
+                                                                      shape: BoxShape.circle,
+                                                                      color: list[idx].isCheck!
+                                                                          ? Theme.of(context).colorScheme.primary
+                                                                          : Colors.transparent),
+                                                                ),
+                                                              ),
                                                             ),
-                                                          ),
-                                                          const Gap(10),
-                                                          Text(
-                                                            "${list[idx].item}",
-                                                            style: LocalizationsUtil.setTextStyle(isKor,
-                                                                size: 18,
-                                                                color: list[idx].isCheck == true
-                                                                    ? (isDarkMode ? Colors.white : Colors.grey)
-                                                                    : (isDarkMode ? Colors.white : Colors.black87),
-                                                                decoration:
-                                                                    list[idx].isCheck == true ? TextDecoration.lineThrough : TextDecoration.none),
-                                                            overflow: TextOverflow.ellipsis,
-                                                          ),
-                                                        ],
+                                                            const Gap(10),
+                                                            Flexible(
+                                                              flex: 9,
+                                                              child: SizedBox(
+                                                                child: Text(
+                                                                  "${list[idx].item}",
+                                                                  style: LocalizationsUtil.setTextStyle(isKor,
+                                                                      size: 18,
+                                                                      color: list[idx].isCheck == true
+                                                                          ? (isDarkMode ? Colors.white : Colors.grey)
+                                                                          : (isDarkMode ? Colors.white : Colors.black87),
+                                                                      decoration:
+                                                                          list[idx].isCheck == true ? TextDecoration.lineThrough : TextDecoration.none),
+                                                                  maxLines: 2,
+                                                                  overflow: TextOverflow.ellipsis,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ),
                                                     ),
-                                                    PopupMenuButton(
-                                                      iconColor: isDarkMode ? Colors.white : Colors.black87,
-                                                      padding: EdgeInsets.zero,
-                                                      color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
-                                                      itemBuilder: (context) => [
-                                                         PopupMenuItem(
-                                                            value: "edit",
-                                                            child: Text(
-                                                              AppLocalizations.of(context)!.modify,
-                                                            )),
-                                                         PopupMenuItem(
-                                                            value: "delete",
-                                                            child: Text(
-                                                              AppLocalizations.of(context)!.delete,
-                                                            )),
-                                                      ],
-                                                      onSelected: (value) {
-                                                        switch (value) {
-                                                          case "edit":
-                                                            _controller.text = list[idx].item!;
-                                                            _itemEditDialog(context, idx, isDarkMode, isKor);
-                                                          case "delete":
-                                                            context.read<SuppliesProvider>().removeItem(idx, widget.planId);
-                                                        }
-                                                      },
+                                                    Flexible(
+                                                      flex: 1,
+                                                      child: PopupMenuButton(
+                                                        iconColor: isDarkMode ? Colors.white : Colors.black87,
+                                                        padding: EdgeInsets.zero,
+                                                        color: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                                        itemBuilder: (context) => [
+                                                           PopupMenuItem(
+                                                              value: "edit",
+                                                              child: Text(
+                                                                AppLocalizations.of(context)!.modify,
+                                                              )),
+                                                           PopupMenuItem(
+                                                              value: "delete",
+                                                              child: Text(
+                                                                AppLocalizations.of(context)!.delete,
+                                                              )),
+                                                        ],
+                                                        onSelected: (value) {
+                                                          switch (value) {
+                                                            case "edit":
+                                                              _controller.text = list[idx].item!;
+                                                              _itemEditDialog(context, idx, isDarkMode, isKor);
+                                                            case "delete":
+                                                              context.read<SuppliesProvider>().removeItem(idx, widget.planId);
+                                                          }
+                                                        },
+                                                      ),
                                                     )
                                                   ],
                                                 )),

@@ -685,22 +685,43 @@ class _AccommodationPageState extends State<AccommodationPage> {
                 header: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "${list[idx].name} (${list[idx].period} ${localization.days})",
-                      style: LocalizationsUtil.setTextStyle(isKor, size: 16, fontWeight: FontWeight.w600),
+                    Flexible(
+                      flex: 7,
+                      child: SizedBox(
+                        child: Text(
+                          "${list[idx].name} ",
+                          style: LocalizationsUtil.setTextStyle(isKor, size: 16, fontWeight: FontWeight.w600),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1
+                        ),
+                      ),
                     ),
-                    SizedBox(
-                      width: 50,
-                      height: 20,
-                      child: TextButton(
-                          onPressed: () {
-                            context.read<AccommodationProvider>().removeAccommodation(idx, widget.plan.id!);
-                          },
-                          style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                          child: Text(
-                            localization.delete,
-                            style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
-                          )),
+                    Flexible(
+                      flex: 2,
+                      child: SizedBox(
+                        child: Text(
+                            "(${list[idx].period} ${localization.days})",
+                            style: LocalizationsUtil.setTextStyle(isKor, size: 16, fontWeight: FontWeight.w600),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1
+                        ),
+                      ),
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: SizedBox(
+                        width: 50,
+                        height: 20,
+                        child: TextButton(
+                            onPressed: () {
+                              context.read<AccommodationProvider>().removeAccommodation(idx, widget.plan.id!);
+                            },
+                            style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                            child: Text(
+                              localization.delete,
+                              style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                            )),
+                      ),
                     ),
                   ],
                 ),
@@ -743,7 +764,9 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                               return;
                                             }
                                             Clipboard.setData(ClipboardData(text: list[idx].address!));
-                                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("숙소 주소가 복사 되었습니다.")));
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(content: Text(localization.snackAccommodationCopy,
+                                                  style: LocalizationsUtil.setTextStyle(isKor),)));
                                           },
                                           style: TextButton.styleFrom(padding: EdgeInsets.zero),
                                           child: Text(localization.copy),
