@@ -139,7 +139,7 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
                                         case "예상 경비":
                                           Navigator.of(context)
                                               .push(MaterialPageRoute(builder: (context) => ExpectationPage(planId: widget.plan.id)));
-                                        case "채크 리스트":
+                                        case "체크 리스트":
                                           Navigator.of(context).push(MaterialPageRoute(builder: (context) => SuppliesPage(planId: widget.plan.id!)));
                                         case "여행 경비":
                                           Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
