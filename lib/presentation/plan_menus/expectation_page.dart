@@ -224,7 +224,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                                       overflow: TextOverflow.ellipsis,
                                                     ),
                                                     const Gap(4),
-                                                    setExpectationItem(list[idx], plan.unit!, isKor),
+                                                    setExpectationItem(list[idx], plan.unit!, isKor, isNationKor),
                                                   ],
                                                 ),
                                               ),
@@ -559,7 +559,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
 
   Future<void> _expectationDialog(BuildContext context, double wid, bool isDarkMode, ExpectationModel? cur, int? idx) async {
     final plan = context.read<PlanListProvider>().planList.firstWhere((item) => item.id == widget.planId);
-    // final isNationKor = plan.nation == "대한민국";
+    final isNationKor = plan.nation == "대한민국";
     final isKor = Localizations.localeOf(context).languageCode == "ko";
 
     if (cur != null) {
@@ -662,7 +662,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                               height: 60,
                               child: DropdownMenu(
                                 textStyle: LocalizationsUtil.setTextStyle(false),
-                                dropdownMenuEntries: [
+                                dropdownMenuEntries: isKor && isNationKor ? [DropdownMenuEntry(value: getOwnUnit(plan), label: getOwnUnit(plan)),]: [
                                   DropdownMenuEntry(value: getOwnUnit(plan), label: getOwnUnit(plan)),
                                   DropdownMenuEntry(value: "$currency", label: "$currency")
                                 ],
@@ -829,18 +829,18 @@ class _ExpectationPageState extends State<ExpectationPage> {
     }
   }
 
-  Widget setExpectationItem(ExpectationModel item, String planUnit, bool isKor) {
-    if (isKor) {
+  Widget setExpectationItem(ExpectationModel item, String planUnit, bool isKor, bool isNationKor) {
+    if (isKor && isNationKor) {
       return RichText(
           text: TextSpan(
               text: IntlUtils.stringIntAddComma(item.amount ?? 0),
               style: LocalizationsUtil.setTextStyle(isKor,
-                  size: 16, color: item.unit! != planUnit ? Theme.of(context).colorScheme.primary : Colors.green, fontWeight: FontWeight.w600),
+                  size: 16, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600),
               children: [
             TextSpan(
               text: " ${item.unit!}",
               style: LocalizationsUtil.setTextStyle(false,
-                  size: 16, color: item.unit! != planUnit ? Theme.of(context).colorScheme.primary : Colors.green, fontWeight: FontWeight.w600),
+                  size: 16, color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600),
             )
           ]));
     } else {

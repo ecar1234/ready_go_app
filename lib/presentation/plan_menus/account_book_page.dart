@@ -936,7 +936,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                     return RichText(
                                       text: TextSpan(
                                           text: IntlUtils.stringIntAddComma(card),
-                                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.green),
+                                          style: LocalizationsUtil.setTextStyle(isKor, size: 16, fontWeight: FontWeight.w600, color: Colors.green),
                                           children: [
                                             TextSpan(
                                                 text: " $unit",
