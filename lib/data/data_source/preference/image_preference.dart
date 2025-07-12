@@ -1,9 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ImagePreference {
@@ -16,7 +13,7 @@ class ImagePreference {
   final logger = Logger();
 
   // Images provider
-  Future<List<String>> getDepartImgList(int id) async {
+  Future<List<String>> getDepartImgList(String id) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
 
     try {
@@ -33,7 +30,7 @@ class ImagePreference {
     }
   }
 
-  Future<List<String>> getArrivalImgList(int id) async {
+  Future<List<String>> getArrivalImgList(String id) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
 
     try {
@@ -50,7 +47,7 @@ class ImagePreference {
     }
   }
 
-  Future<void> setDepartureImage(List<String> list, int id) async {
+  Future<void> setDepartureImage(List<String> list, String id) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     try {
       String? jsonList = jsonEncode(list);
@@ -61,7 +58,7 @@ class ImagePreference {
     }
   }
 
-  Future<void> setArrivalImage(List<String> list, int id) async {
+  Future<void> setArrivalImage(List<String> list, String id) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     try {
       String? jsonList = jsonEncode(list);
@@ -72,7 +69,7 @@ class ImagePreference {
     }
   }
 
-  Future<void> removeAllData(int id) async {
+  Future<void> removeAllData(String id) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     pref.remove("arrivalImg$id");
     pref.remove("departureImg$id");

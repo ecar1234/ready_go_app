@@ -14,7 +14,7 @@ class SchedulePreference {
   static SchedulePreference get singleton => _singleton;
   final logger = Logger();
 
-  Future<List<ScheduleListModel>> getScheduleList(int planId) async {
+  Future<List<ScheduleListModel>> getScheduleList(String planId) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
 
     try {
@@ -38,7 +38,7 @@ class SchedulePreference {
     }
   }
 
-  Future<void> updateScheduleList(List<ScheduleListModel> data, int planId) async {
+  Future<void> updateScheduleList(List<ScheduleListModel> data, String planId) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
 
     try {
@@ -52,7 +52,7 @@ class SchedulePreference {
     }
   }
 
-  Future<void> removeAllScheduleData(int planId) async {
+  Future<void> removeAllScheduleData(String planId) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
 
     try {

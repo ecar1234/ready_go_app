@@ -22,7 +22,7 @@ class RoamingProvider with ChangeNotifier {
   String get tempAddress => _tempAddress;
   RoamingModel? get roamingData => _roamingData;
 
-  Future<void> getRoamingDate(int id) async {
+  Future<void> getRoamingDate(String id) async {
     try {
       var data = await _getIt.get<RoamingRepo>().getRoamingData(id);
      _roamingData = data;
@@ -34,13 +34,13 @@ class RoamingProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addImage(XFile image, int id) async {
+  Future<void> addImage(XFile image, String id) async {
     final data = await _getIt.get<RoamingRepo>().addRoamingImage(image, id);
     _roamingData = data;
     notifyListeners();
   }
 
-  Future<void> removeImage(File image, int id) async {
+  Future<void> removeImage(File image, String id) async {
     final data = await _getIt.get<RoamingRepo>().removeRoamingImage(image, id);
     _roamingData = data;
     notifyListeners();
@@ -53,46 +53,46 @@ class RoamingProvider with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  Future<void> removeAddress(int id) async {
+  Future<void> removeAddress(String id) async {
     await _getIt.get<RoamingRepo>().removeAddress(id);
     _roamingData!.dpAddress = "";
 
     notifyListeners();
   }
 
-  Future<void> enterCode(String address, String code, int id) async {
+  Future<void> enterCode(String address, String code, String id) async {
     await _getIt.get<RoamingRepo>().enterCode(address, code, id);
     _roamingData!.activeCode = code;
     _roamingData!.dpAddress = address;
     notifyListeners();
   }
 
-  Future<void> removeCode(int id) async {
+  Future<void> removeCode(String id) async {
     await _getIt.get<RoamingRepo>().removeCode(id);
     _roamingData!.activeCode = "";
 
     notifyListeners();
   }
 
-  Future<void> setPeriodDate(int day, int id) async {
+  Future<void> setPeriodDate(int day, String id) async {
     final data = await _getIt.get<RoamingRepo>().setPeriodDate(day, id);
     _roamingData = data;
     notifyListeners();
   }
 
-  Future<void> startPeriod(int id) async {
+  Future<void> startPeriod(String id) async {
     var data = await _getIt.get<RoamingRepo>().startPeriod(id);
     _roamingData = data;
     notifyListeners();
   }
 
-  Future<void> resetPeriod(int id) async {
+  Future<void> resetPeriod(String id) async {
     var data = await _getIt.get<RoamingRepo>().resetPeriod(id);
     _roamingData = data;
     notifyListeners();
   }
 
-  Future<void> removeAllData(int id) async {
+  Future<void> removeAllData(String id) async {
     await _getIt.get<RoamingRepo>().removeAllData(id);
     _roamingData!
     ..period = null

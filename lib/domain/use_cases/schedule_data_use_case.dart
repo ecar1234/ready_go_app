@@ -4,8 +4,8 @@ import 'package:logger/logger.dart';
 import 'package:ready_go_project/data/models/plan_model/plan_model.dart';
 import 'package:ready_go_project/data/models/schedule_model/schedule_list_model.dart';
 import 'package:ready_go_project/data/models/schedule_model/schedule_model.dart';
+import 'package:ready_go_project/data/repositories/plan_local_data_repo.dart';
 import 'package:ready_go_project/data/repositories/schedule_local_data_repo.dart';
-import 'package:ready_go_project/domain/repositories/plan_repo.dart';
 import 'package:ready_go_project/domain/repositories/schedule_repo.dart';
 import 'package:ready_go_project/util/date_util.dart';
 
@@ -14,11 +14,11 @@ final logger = Logger();
 
 class ScheduleDataUseCase with ScheduleRepo {
   @override
-  Future<List<ScheduleListModel>> getScheduleList(int planId) async {
+  Future<List<ScheduleListModel>> getScheduleList(String planId) async {
     try {
       final data = await _getIt.getScheduleList(planId);
 
-      List<PlanModel> planList = await GetIt.I.get<PlanRepo>().getLocalList();
+      List<PlanModel> planList = await GetIt.I.get<PlanLocalDataRepo>().getLocalList();
       List<DateTime?>? startDate = planList.firstWhere((item) => item.id == planId).schedule!;
       final daysIndex = DateUtil.datesDifference(startDate);
 
@@ -55,7 +55,7 @@ class ScheduleDataUseCase with ScheduleRepo {
   }
 
   @override
-  Future<List<ScheduleListModel>> createSchedule(ScheduleModel item, int roundIdx, int planId) async {
+  Future<List<ScheduleListModel>> createSchedule(ScheduleModel item, int roundIdx, String planId) async {
     List<ScheduleListModel> data = await _getIt.getScheduleList(planId);
 
     if (data[roundIdx].scheduleList!.isEmpty) {
@@ -77,7 +77,7 @@ class ScheduleDataUseCase with ScheduleRepo {
   }
 
   @override
-  Future<List<ScheduleListModel>> editSchedule(ScheduleModel item, int roundIdx, int planId) async {
+  Future<List<ScheduleListModel>> editSchedule(ScheduleModel item, int roundIdx, String planId) async {
     try {
       List<ScheduleListModel> data = await _getIt.getScheduleList(planId);
 
@@ -107,7 +107,7 @@ class ScheduleDataUseCase with ScheduleRepo {
   }
 
   @override
-  Future<List<ScheduleListModel>> removeSchedule(int roundIdx, int itemIdx, int planId) async {
+  Future<List<ScheduleListModel>> removeSchedule(int roundIdx, int itemIdx, String planId) async {
     List<ScheduleListModel> data = await _getIt.getScheduleList(planId);
     try {
       final dayScheduleList = data.firstWhere((item) => item.id == roundIdx);
@@ -123,13 +123,13 @@ class ScheduleDataUseCase with ScheduleRepo {
   }
 
   @override
-  Future<List<ScheduleListModel>> removeScheduleList(int planId) async {
+  Future<List<ScheduleListModel>> removeScheduleList(String planId) async {
     // TODO: implement removeScheduleList
     throw UnimplementedError();
   }
 
   @override
-  Future<List<ScheduleListModel>> addScheduleDetails(List<String> details, int roundIdx, int scheduleIdx, int planId) async {
+  Future<List<ScheduleListModel>> addScheduleDetails(List<String> details, int roundIdx, int scheduleIdx, String planId) async {
     List<ScheduleListModel> data = await _getIt.getScheduleList(planId);
     try {
       if (data[roundIdx].scheduleList![scheduleIdx].details == null) {
@@ -149,7 +149,7 @@ class ScheduleDataUseCase with ScheduleRepo {
   }
 
   @override
-  Future<List<ScheduleListModel>> removeScheduleDetail(int roundIdx, int scheduleIdx, int detailIdx, int planId) async {
+  Future<List<ScheduleListModel>> removeScheduleDetail(int roundIdx, int scheduleIdx, int detailIdx, String planId) async {
     List<ScheduleListModel> data = await _getIt.getScheduleList(planId);
 
     try {
@@ -164,7 +164,7 @@ class ScheduleDataUseCase with ScheduleRepo {
   }
 
   @override
-  Future<void> removeAllScheduleList(int planId) async {
+  Future<void> removeAllScheduleList(String planId) async {
     await _getIt.removeAllScheduleData(planId);
   }
 }

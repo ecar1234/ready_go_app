@@ -18,7 +18,7 @@ class ImagesProvider with ChangeNotifier {
 
   List<File> get arrivalImg => _arrivalImage;
 
-  Future<void> getImgList(int id) async {
+  Future<void> getImgList(String id) async {
     try {
       var imgList = await _getIt.get<ImageRepo>().getImageList(id);
       _departureImage = imgList[0];
@@ -31,7 +31,7 @@ class ImagesProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addDepartureImage(XFile? image, List<PlatformFile>? files, int id) async {
+  Future<void> addDepartureImage(XFile? image, List<PlatformFile>? files, String id) async {
 
     try {
       if(image != null){
@@ -48,7 +48,7 @@ class ImagesProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addArrivalImage(XFile? image, List<PlatformFile>? files, int id) async {
+  Future<void> addArrivalImage(XFile? image, List<PlatformFile>? files, String id) async {
     try {
       if(image != null && files == null){
         final list = await GetIt.I.get<ImageRepo>().addArrivalImg(image, id);
@@ -65,7 +65,7 @@ class ImagesProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> removeDepartureImage(File image, int id) async {
+  Future<void> removeDepartureImage(File image, String id) async {
     try {
       final list = await GetIt.I.get<ImageRepo>().removeDepartureImg(image, id);
       _departureImage = list;
@@ -76,7 +76,7 @@ class ImagesProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> removeArrivalImage(File image, int id) async {
+  Future<void> removeArrivalImage(File image, String id) async {
     try {
       final list = await GetIt.I.get<ImageRepo>().removeArrivalImg(image, id);
       _arrivalImage = list;
@@ -87,7 +87,7 @@ class ImagesProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> removeAllData(int id) async {
+  Future<void> removeAllData(String id) async {
     await _getIt.get<ImageRepo>().removeAllData(id);
     _arrivalImage = [];
     _departureImage = [];

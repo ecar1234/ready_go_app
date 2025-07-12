@@ -11,7 +11,7 @@ final _getIt = GetIt.I;
 final logger = Logger();
 
   @override
-  Future<List<AccommodationModel>> getAccommodationList(int id)async{
+  Future<List<AccommodationModel>> getAccommodationList(String id)async{
     try{
       var list = _getIt.get<AccommodationLocalDateRepo>().getAccommodationList(id);
       return list;
@@ -22,7 +22,7 @@ final logger = Logger();
   }
 
   @override
-  Future<List<AccommodationModel>> addAccommodation(AccommodationModel info, int id) async {
+  Future<List<AccommodationModel>> addAccommodation(AccommodationModel info, String id) async {
     List<AccommodationModel> list = [];
 
     try{
@@ -38,7 +38,7 @@ final logger = Logger();
   }
 
   @override
-  Future<List<AccommodationModel>> removeAccommodation(int idx, int id) async {
+  Future<List<AccommodationModel>> removeAccommodation(int idx, String id) async {
     List<AccommodationModel> list = [];
     try{
       list = await _getIt<AccommodationLocalDateRepo>().getAccommodationList(id);
@@ -54,7 +54,7 @@ final logger = Logger();
   }
 
   @override
-  Future<List<AccommodationModel>> removeAllData(int id)async{
+  Future<List<AccommodationModel>> removeAllData(String id)async{
     await _getIt.get<AccommodationLocalDateRepo>().removeAllData(id);
     return [];
   }

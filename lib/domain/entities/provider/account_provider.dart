@@ -24,15 +24,15 @@ class AccountProvider with ChangeNotifier {
     final planList = await _getIt.get<PlanRepo>().getLocalList();
     final allAccountInfo = await GetIt.I.get<AccountRepo>().getTotalUseAccountInfo(planList.length);
     Map<String, int> accountInfo = {};
-    planList.map((item){
-      accountInfo[item.nation!] = allAccountInfo[item.id!].useExchangeMoney!+allAccountInfo[item.id!].useCard!;
-    });
+    for(var i = 0; i > planList.length; i++){
+      accountInfo[planList[i].nation!] = allAccountInfo[i].useExchangeMoney! + allAccountInfo[i].useCard!;
+    }
     _totalUseAccountInfo = accountInfo.entries.map((e) => {e.key:e.value}).toList();
 
     notifyListeners();
   }
 
-  Future<void> getAccountInfo(int id)async{
+  Future<void> getAccountInfo(String id)async{
     try{
       var accountInfo = await GetIt.I.get<AccountRepo>().getAccountInfo(id);
       _accountInfo = accountInfo;
@@ -43,7 +43,7 @@ class AccountProvider with ChangeNotifier {
     }
     notifyListeners();
   }
-  Future<void> addAmount(AmountModel amount, int day, int id)async{
+  Future<void> addAmount(AmountModel amount, int day, String id)async{
     try{
       var account = await _getIt.get<AccountRepo>().addAmount(amount, day, id);
       _accountInfo = account;
@@ -55,7 +55,7 @@ class AccountProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addTotalAmount(String title, int total, int day, int id)async {
+  Future<void> addTotalAmount(String title, int total, int day, String id)async {
    try{
      var account =  await _getIt.get<AccountRepo>().addTotalAmount(title, total, day, id);
      _accountInfo = account;
@@ -66,18 +66,18 @@ class AccountProvider with ChangeNotifier {
 
     notifyListeners();
   }
-  Future<void> removeAmountItem(int firstIdx, secondIdx, int id)async{
+  Future<void> removeAmountItem(int firstIdx, secondIdx, String id)async{
     var account = await _getIt.get<AccountRepo>().removeAmountItem(firstIdx, secondIdx, id);
     _accountInfo = account;
     notifyListeners();
   }
-  Future<void> editeAmountItem(int firstIdx, int secondIdx, AmountModel newAmount, int id)async{
+  Future<void> editeAmountItem(int firstIdx, int secondIdx, AmountModel newAmount, String id)async{
     var account = await _getIt.get<AccountRepo>().editAmountItem(firstIdx, secondIdx, newAmount, id);
     _accountInfo = account;
     notifyListeners();
   }
 
-  Future<void> removeAllData(int id)async{
+  Future<void> removeAllData(String id)async{
     var account =  await _getIt.get<AccountRepo>().removeAllData(id);
     _accountInfo = account;
     notifyListeners();

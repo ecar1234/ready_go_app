@@ -25,7 +25,7 @@ import '../../util/admob_util.dart';
 import '../../util/statistics_util.dart';
 
 class ExpectationPage extends StatefulWidget {
-  final int? planId;
+  final String? planId;
 
   const ExpectationPage({super.key, required this.planId});
 

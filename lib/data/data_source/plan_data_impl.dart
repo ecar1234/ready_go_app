@@ -17,4 +17,19 @@ class PlanDataImpl implements PlanLocalDataRepo {
   Future<void> updatePlanList(List<PlanModel> list)async {
     await pref.updatePlanList(list);
   }
+
+  @override
+  Future<int> getMigratedVer() async{
+    return await pref.getPlanIdMigratedVer();
+  }
+
+  @override
+  Future<void> updateMigratedVer(int ver)async {
+    await pref.updatePlanMigratedVer(ver);
+  }
+
+  @override
+  Future<void> planDataMigration(int oldId, String newId) async{
+    await pref.planDataMigration(oldId, newId);
+  }
 }

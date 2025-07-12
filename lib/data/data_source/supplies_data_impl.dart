@@ -8,33 +8,33 @@ class SuppliesDataImpl implements SuppliesLocalDataRepo {
   SuppliesPreference get pref => SuppliesPreference.singleton;
 
   @override
-  Future<List<SupplyModel>> getSuppliesList(int id) async {
+  Future<List<SupplyModel>> getSuppliesList(String id) async {
     var list = await pref.getSuppliesList(id);
     return list;
   }
 
   @override
-  Future<void> addSuppliesItem(List<SupplyModel> list, int id) async {
+  Future<void> addSuppliesItem(List<SupplyModel> list, String id) async {
     await pref.updateSupplyList(list, id);
   }
 
   @override
-  Future<void> removeSuppliesItem(List<SupplyModel> list, int id) async {
+  Future<void> removeSuppliesItem(List<SupplyModel> list, String id) async {
     await pref.updateSupplyList(list, id);
   }
 
   @override
-  Future<void> updateSuppliesItem(List<SupplyModel> list, int id) async {
+  Future<void> updateSuppliesItem(List<SupplyModel> list, String id) async {
     await pref.updateSupplyList(list, id);
   }
 
   @override
-  Future<void> editSuppliesItem(List<SupplyModel> list, int id) async {
+  Future<void> editSuppliesItem(List<SupplyModel> list, String id) async {
     await pref.updateSupplyList(list, id);
   }
 
   @override
-  Future<void> removeAllData(int id) async {
+  Future<void> removeAllData(String id) async {
     await pref.removeAllData(id);
   }
 }

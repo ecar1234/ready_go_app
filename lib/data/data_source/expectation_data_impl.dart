@@ -7,19 +7,19 @@ class ExpectationDataImpl with ExpectationLocalDataRepo {
   ExpectationPreference get pref => ExpectationPreference.singleton;
 
   @override
-  Future<List<ExpectationModel>> getExpectationData(int id)async {
+  Future<List<ExpectationModel>> getExpectationData(String id)async {
     final list = await pref.getExpectationData(id);
     return list;
 
   }
 
   @override
-  Future<void> updateExpectationData(List<ExpectationModel> list, int id) async{
+  Future<void> updateExpectationData(List<ExpectationModel> list, String id) async{
     await pref.updateExpectationDate(list, id);
   }
 
   @override
-  Future<void> removeAllData(int id)async {
+  Future<void> removeAllData(String id)async {
     await pref.removeAllData(id);
   }
 

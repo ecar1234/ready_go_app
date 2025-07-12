@@ -9,7 +9,7 @@ class ImageDataImpl implements ImageLocalDataRepo {
   final logger = Logger();
 
   @override
-  Future<List<String>> getArrivalImgList(int id) async {
+  Future<List<String>> getArrivalImgList(String id) async {
     try {
       List<String> list = await pref.getArrivalImgList(id);
       return list;
@@ -20,7 +20,7 @@ class ImageDataImpl implements ImageLocalDataRepo {
   }
 
   @override
-  Future<List<String>> getDepartureImgList(int id) async {
+  Future<List<String>> getDepartureImgList(String id) async {
     try {
       final list = await pref.getDepartImgList(id);
       return list;
@@ -31,7 +31,7 @@ class ImageDataImpl implements ImageLocalDataRepo {
   }
 
   @override
-  Future<void> addArrivalImage(List<String> list, int id)async {
+  Future<void> addArrivalImage(List<String> list, String id)async {
     try {
        await pref.setArrivalImage(list, id);
     } catch (ex) {
@@ -41,7 +41,7 @@ class ImageDataImpl implements ImageLocalDataRepo {
   }
 
   @override
-  Future<void> addDepartureImage(List<String> list, int id)async {
+  Future<void> addDepartureImage(List<String> list, String id)async {
     try {
       await pref.setDepartureImage(list, id);
     } catch (ex) {
@@ -51,7 +51,7 @@ class ImageDataImpl implements ImageLocalDataRepo {
   }
 
   @override
-  Future<void> removeArrivalImage(List<String> list, int id) async {
+  Future<void> removeArrivalImage(List<String> list, String id) async {
     try {
       await pref.setArrivalImage(list, id);
     } catch (ex) {
@@ -61,7 +61,7 @@ class ImageDataImpl implements ImageLocalDataRepo {
   }
 
   @override
-  Future<void> removeDepartureImage(List<String> list, int id) async {
+  Future<void> removeDepartureImage(List<String> list, String id) async {
     try {
       await pref.setDepartureImage(list, id);
     } catch (ex) {
@@ -71,7 +71,7 @@ class ImageDataImpl implements ImageLocalDataRepo {
   }
 
   @override
-  Future<void> removeAllData(int id) async {
+  Future<void> removeAllData(String id) async {
     await pref.removeAllData(id);
   }
 

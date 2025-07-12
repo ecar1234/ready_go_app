@@ -19,7 +19,7 @@ class PlanFavoritesProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void removeFavoriteList(int planId) {
+  void removeFavoriteList(String planId) {
     _favoriteList.removeWhere((item) => item.id == planId);
     notifyListeners();
   }

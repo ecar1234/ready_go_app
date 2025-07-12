@@ -99,7 +99,8 @@ class _AccommodationPageState extends State<AccommodationPage> {
       if (kReleaseMode) {
         final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
         if (!isRemove) {
-          context.read<AdmobProvider>().interstitialAd!.show();
+          context.read<AdmobProvider>().loadAdInterstitialAd();
+          context.read<AdmobProvider>().showInterstitialAd();
           _admobUtil.loadBannerAd(onAdLoaded: () {
             setState(() {
               _isLoaded = true;

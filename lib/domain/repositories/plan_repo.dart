@@ -4,5 +4,8 @@ mixin PlanRepo {
   Future<List<PlanModel>> getLocalList();
   Future<List<PlanModel>> addToPlanList(PlanModel plan);
   Future<List<PlanModel>> changePlan(PlanModel plan);
-  Future<List<PlanModel>> removePlan(int id);
+  Future<List<PlanModel>> removePlan(String id);
+  Future<int> getMigratedVer();
+  Future<void> updateMigratedVer(int ver);
+  Future<void> planDataMigration(int oldId, String newId);
 }

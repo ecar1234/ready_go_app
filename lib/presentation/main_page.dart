@@ -10,6 +10,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:logger/logger.dart';
 import 'package:open_file/open_file.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -20,7 +21,6 @@ import 'package:ready_go_project/presentation/in_app_purchase_page.dart';
 import 'package:ready_go_project/presentation/option_page.dart';
 import 'package:ready_go_project/presentation/plan_main_page.dart';
 import 'package:ready_go_project/presentation/visit_statistics_page.dart';
-import 'package:ready_go_project/service_locator.dart';
 import 'package:ready_go_project/util/localizations_util.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -172,6 +172,7 @@ class MainPage2 extends StatefulWidget {
 }
 
 class _MainPage2State extends State<MainPage2> {
+  Logger logger = Logger();
   ImagePicker picker = ImagePicker();
   int _selected = 0;
   List<Widget> pageOption = [const HomePage(), const PlanMainPage(), const VisitStatisticsPage(), const InAppPurchasePage()];

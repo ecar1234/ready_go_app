@@ -20,32 +20,30 @@ import 'domain/entities/provider/supplies_provider.dart';
 import 'domain/entities/provider/theme_mode_provider.dart';
 import 'service_locator.dart';
 
-
-
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await serviceLocator();
-  runApp(
-    MultiProvider(providers: [
-      ChangeNotifierProvider(create: (_) => PlanListProvider()),
-      ChangeNotifierProvider(create: (_) => ImagesProvider()),
-      ChangeNotifierProvider(create: (_) => SuppliesProvider()),
-      ChangeNotifierProvider(create: (_) => RoamingProvider()),
-      ChangeNotifierProvider(create: (_) => AccountProvider()),
-      ChangeNotifierProvider(create: (_) => AccommodationProvider()),
-      ChangeNotifierProvider(create: (_) => ThemeModeProvider()),
-      ChangeNotifierProvider(create: (_) => AdmobProvider()),
-      ChangeNotifierProvider(create: (_) => PassportProvider()),
-      ChangeNotifierProvider(create: (_) => SuppliesTemplateProvider()),
-      ChangeNotifierProvider(create: (_) => PlanFavoritesProvider()),
-      ChangeNotifierProvider(create: (_) => StatisticsUseCase()),
-      ChangeNotifierProvider(create: (_) => ExpectationProvider()),
-      ChangeNotifierProvider(create: (_) => PurchaseManager()),
-      ChangeNotifierProvider(create: (_) => ScheduleProvider()),
 
-      // ChangeNotifierProvider(create: (_) => ResponsiveHeightProvider())
-    ],
-    child: const MainPage(),)
+  runApp(
+      MultiProvider(providers: [
+        ChangeNotifierProvider(create: (_) => PlanListProvider()),
+        ChangeNotifierProvider(create: (_) => ImagesProvider()),
+        ChangeNotifierProvider(create: (_) => SuppliesProvider()),
+        ChangeNotifierProvider(create: (_) => RoamingProvider()),
+        ChangeNotifierProvider(create: (_) => AccountProvider()),
+        ChangeNotifierProvider(create: (_) => AccommodationProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeModeProvider()),
+        ChangeNotifierProvider(create: (_) => AdmobProvider()),
+        ChangeNotifierProvider(create: (_) => PassportProvider()),
+        ChangeNotifierProvider(create: (_) => SuppliesTemplateProvider()),
+        ChangeNotifierProvider(create: (_) => PlanFavoritesProvider()),
+        ChangeNotifierProvider(create: (_) => StatisticsUseCase()),
+        ChangeNotifierProvider(create: (_) => ExpectationProvider()),
+        ChangeNotifierProvider(create: (_) => PurchaseManager()),
+        ChangeNotifierProvider(create: (_) => ScheduleProvider()),
+        // ChangeNotifierProvider(create: (_) => ResponsiveHeightProvider())
+      ],
+      child: const MainPage(),)
   );
 }

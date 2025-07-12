@@ -11,7 +11,7 @@ class AccommodationProvider with ChangeNotifier {
   List<AccommodationModel>? get accommodation => _accommodation;
   final logger = Logger();
 
-  Future<void> getAccommodationList(int id) async {
+  Future<void> getAccommodationList(String id) async {
     try {
       List<AccommodationModel> list = await GetIt.I.get<AccommodationRepo>().getAccommodationList(id);
       _accommodation = list;
@@ -23,7 +23,7 @@ class AccommodationProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addAccommodation(AccommodationModel info, int id) async {
+  Future<void> addAccommodation(AccommodationModel info, String id) async {
     try {
       var list = await GetIt.I.get<AccommodationRepo>().addAccommodation(info, id);
       _accommodation = list;
@@ -35,7 +35,7 @@ class AccommodationProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> removeAccommodation(int idx, int id) async {
+  Future<void> removeAccommodation(int idx, String id) async {
     try{
       var list = await GetIt.I.get<AccommodationRepo>().removeAccommodation(idx, id);
       _accommodation = list;
@@ -47,7 +47,7 @@ class AccommodationProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> removeAllData(int id)async{
+  Future<void> removeAllData(String id)async{
     await GetIt.I.get<AccommodationRepo>().removeAllData(id);
   }
 }

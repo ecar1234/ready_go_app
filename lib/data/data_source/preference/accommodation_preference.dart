@@ -13,7 +13,7 @@ class AccommodationPreference {
   static AccommodationPreference get singleton => _singleton;
   final logger = Logger();
 
-  Future<List<AccommodationModel>> getAccommodationList(int id)async{
+  Future<List<AccommodationModel>> getAccommodationList(String id)async{
     SharedPreferences pref = await SharedPreferences.getInstance();
     try{
       String? stringJson = pref.getString("accommodation$id");
@@ -30,7 +30,7 @@ class AccommodationPreference {
     }
   }
 
-  Future<void> updateAccommodationList(List<AccommodationModel> list, int id)async{
+  Future<void> updateAccommodationList(List<AccommodationModel> list, String id)async{
     SharedPreferences pref = await SharedPreferences.getInstance();
     try{
       List<Map<String, dynamic>> jsonList = list.map((item) => item.toJson()).toList();
@@ -42,7 +42,7 @@ class AccommodationPreference {
     }
   }
 
-  Future<void> removeAllData(int id)async{
+  Future<void> removeAllData(String id)async{
     SharedPreferences pref = await SharedPreferences.getInstance();
     pref.remove("accommodation$id");
   }

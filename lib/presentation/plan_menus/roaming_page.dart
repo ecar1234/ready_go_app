@@ -23,7 +23,7 @@ import '../../domain/entities/provider/roaming_provider.dart';
 import '../../util/admob_util.dart';
 
 class RoamingPage extends StatefulWidget {
-  final int planId;
+  final String planId;
 
   const RoamingPage({super.key, required this.planId});
 

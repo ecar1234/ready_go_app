@@ -22,7 +22,7 @@ import '../../domain/entities/provider/responsive_height_provider.dart';
 import '../../util/admob_util.dart';
 
 class AirTicketPage extends StatefulWidget {
-  final int planId;
+  final String planId;
 
   const AirTicketPage({super.key, required this.planId});
 

@@ -166,6 +166,12 @@ class _PlanMainPageState extends State<PlanMainPage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    context.read<DataBloc>().add(BackToPlanListEvent());
+  }
+
+  @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
@@ -184,6 +190,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
       final double bannerHeight = _isLoaded ? _admobUtil.bannerAd!.size.height.toDouble() : 0;
 
       final isKor = Localizations.localeOf(context).languageCode == "ko";
+      // logger.i("plan list page bloc state: ${state.state}");
       return Container(
         height: height - 80, // height - 하단바 높이 - gap(10) => body 크기
         // color: const Color(0xff192a56),
@@ -217,9 +224,10 @@ class _PlanMainPageState extends State<PlanMainPage> {
                           ),
                           Text(
                             AppLocalizations.of(context)!.createNewPlan,
-                            style: isKor ? TextStyle(
-                              color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600)
-                            : GoogleFonts.notoSans(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600),
+                            style: isKor
+                                ? TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600)
+                                : GoogleFonts.notoSans(
+                                    color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600),
                           ),
                           Icon(
                             Icons.arrow_forward_ios,
@@ -236,18 +244,15 @@ class _PlanMainPageState extends State<PlanMainPage> {
                     return list.isEmpty
                         ? SizedBox(
                             height: height * 0.75,
-                            width: constraints.maxWidth > 640
-                                ? (constraints.maxWidth > 800 ? 650 : 520)
-                                : 320,
+                            width: constraints.maxWidth > 640 ? (constraints.maxWidth > 800 ? 650 : 520) : 320,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Center(
-                                  child: Text(
-                                    "✨ ${AppLocalizations.of(context)!.planMainDesc}!",
-                                    style: LocalizationsUtil.setTextStyle(isKor, fontWeight: FontWeight.w600, size: constraints.maxWidth > 640 ? 34 : 22)
-                                  ),
+                                  child: Text("✨ ${AppLocalizations.of(context)!.planMainDesc}!",
+                                      style: LocalizationsUtil.setTextStyle(isKor,
+                                          fontWeight: FontWeight.w600, size: constraints.maxWidth > 640 ? 34 : 22)),
                                 ),
                                 Gap(isKor ? 20 : 10),
                                 Column(
@@ -255,7 +260,8 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                   children: [
                                     Text(
                                       "✅ ${AppLocalizations.of(context)!.expectedMenu}",
-                                      style: LocalizationsUtil.setTextStyle(isKor, size: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
+                                      style: LocalizationsUtil.setTextStyle(isKor,
+                                          size: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
                                       textAlign: TextAlign.center,
                                     ),
                                     Text(AppLocalizations.of(context)!.expectedDesc)
@@ -266,7 +272,8 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text("✅ ${AppLocalizations.of(context)!.eTicketMenu}",
-                                        style: LocalizationsUtil.setTextStyle(isKor, size: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
+                                        style: LocalizationsUtil.setTextStyle(isKor,
+                                            size: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
                                         textAlign: TextAlign.center),
                                     Text(AppLocalizations.of(context)!.eTicketDesc)
                                   ],
@@ -276,8 +283,9 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text("✅ ${AppLocalizations.of(context)!.checkListMenu}",
-                                        style: isKor ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
-                                        : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
+                                        style: isKor
+                                            ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
+                                            : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
                                         textAlign: TextAlign.center),
                                     Text(AppLocalizations.of(context)!.checkListDesc)
                                   ],
@@ -287,7 +295,8 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text("✅ ${AppLocalizations.of(context)!.eSimMenu}",
-                                        style: isKor ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
+                                        style: isKor
+                                            ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
                                             : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
                                         textAlign: TextAlign.center),
                                     Text(AppLocalizations.of(context)!.eSimDesc)
@@ -298,8 +307,9 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text("✅ ${AppLocalizations.of(context)!.expenseMenu}",
-                                        style: isKor ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
-                                        : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
+                                        style: isKor
+                                            ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
+                                            : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
                                         textAlign: TextAlign.center),
                                     Text(AppLocalizations.of(context)!.expenseDesc)
                                   ],
@@ -309,8 +319,9 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text("✅ ${AppLocalizations.of(context)!.accommodationMenu}",
-                                        style: isKor ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
-                                        : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
+                                        style: isKor
+                                            ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
+                                            : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
                                         textAlign: TextAlign.center),
                                     Text(AppLocalizations.of(context)!.accommodationDesc)
                                   ],
@@ -320,7 +331,8 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text("✅ ${AppLocalizations.of(context)!.scheduleMenu}",
-                                        style: isKor ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
+                                        style: isKor
+                                            ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
                                             : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
                                         textAlign: TextAlign.center),
                                     Text(AppLocalizations.of(context)!.scheduleDesc)
@@ -363,7 +375,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
             return InkWell(
               onTap: () {
                 // Navigator.of(context).push(MaterialPageRoute(builder: (context) => const PlanPage(), settings: RouteSettings(arguments: list[idx])));
-                if (state.state == DataStatus.endPlan) {
+                if (state.state == DataStatus.endPlan || state.state == DataStatus.loadedPlan) {
                   context.read<DataBloc>().add(DataLoadingPlanListEvent());
                 }
                 Get.to(() => PlanMenuPage(plan: list[idx]));
@@ -389,7 +401,6 @@ class _PlanMainPageState extends State<PlanMainPage> {
                       borderRadius: BorderRadius.circular(10),
                       onPressed: (context) {
                         context.read<DataBloc>().add(PlanAllDataRemoveEvent(context: context, planId: list[idx].id!));
-
                       }),
                 ]),
                 child: Container(
@@ -450,7 +461,8 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                               context.read<PlanListProvider>().changePlan(list[idx]);
                                             } else {
                                               if (favoriteList.length == 2) {
-                                                Get.snackbar(AppLocalizations.of(context)!.snackFavoriteTitle,
+                                                Get.snackbar(
+                                                  AppLocalizations.of(context)!.snackFavoriteTitle,
                                                   AppLocalizations.of(context)!.snackFavoriteDesc,
                                                   backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
                                                 );
@@ -483,11 +495,10 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                     children: [
                                       SizedBox(
                                           child: Text(
-                                        "${list[idx].nation} (${DateUtil.datesDifference(list[idx].schedule!) + 1}${AppLocalizations.of(context)!.days})",
-                                        style: LocalizationsUtil.setTextStyle(isKor,  // color: Colors.white,
-                                            size: 18,
-                                            fontWeight: FontWeight.w600)
-                                      )),
+                                              "${list[idx].nation} (${DateUtil.datesDifference(list[idx].schedule!) + 1}${AppLocalizations.of(context)!.days})",
+                                              style: LocalizationsUtil.setTextStyle(isKor, // color: Colors.white,
+                                                  size: 18,
+                                                  fontWeight: FontWeight.w600))),
                                       const Gap(4),
                                       const SizedBox(
                                         child: Icon(Icons.arrow_right),
@@ -498,8 +509,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                             child: Text(
                                           "${list[idx].subject}",
                                           maxLines: 1,
-                                          style: LocalizationsUtil.setTextStyle(isKor,
-                                                fontWeight: FontWeight.w600),
+                                          style: LocalizationsUtil.setTextStyle(isKor, fontWeight: FontWeight.w600),
                                           overflow: TextOverflow.ellipsis,
                                         )),
                                       ),

@@ -10,7 +10,7 @@ class RoamingDataImpl implements RoamingLocalDataRepo {
   RoamingPreference get pref => RoamingPreference.singleton;
   final logger = Logger();
   @override
-  Future<RoamingModel> getRoamingData(int id) async {
+  Future<RoamingModel> getRoamingData(String id) async {
     try {
       var data = await pref.getRoamingData(id);
       if(data == null){
@@ -31,14 +31,14 @@ class RoamingDataImpl implements RoamingLocalDataRepo {
   }
 
   @override
-  Future<void> setRoamingData(RoamingModel newData, int id) async {
+  Future<void> setRoamingData(RoamingModel newData, String id) async {
     await pref.setRoamingData(newData, id);
   }
 
 
 
   @override
-  Future<void> setRoamingImgList(List<String> paths, int id) async {
+  Future<void> setRoamingImgList(List<String> paths, String id) async {
     var res = await pref.getRoamingData(id);
     if (res != null) {
       res.imgList = paths;
@@ -52,7 +52,7 @@ class RoamingDataImpl implements RoamingLocalDataRepo {
 
 
   @override
-  Future<void> removeAllData(int id) async {
+  Future<void> removeAllData(String id) async {
     await pref.removeAllData(id);
   }
 }

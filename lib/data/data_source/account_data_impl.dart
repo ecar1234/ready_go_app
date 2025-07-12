@@ -7,18 +7,18 @@ class AccountDataImpl implements AccountLocalDataRepo {
   AccountPreference get pref => AccountPreference.singleton;
 
   @override
-  Future<AccountModel> getAccountInfo(int id)async {
+  Future<AccountModel> getAccountInfo(String id)async {
     var res = await pref.getAccountInfo(id);
     return res;
   }
 
   @override
-  Future<void> updateAccountInfo(AccountModel info, int id)async {
+  Future<void> updateAccountInfo(AccountModel info, String id)async {
     await pref.updateAccountInfo(info, id);
   }
 
   @override
-  Future<void> removeAllData(int id)async {
+  Future<void> removeAllData(String id)async {
     await pref.removeAllData(id);
   }
 

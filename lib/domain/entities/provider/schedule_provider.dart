@@ -12,43 +12,43 @@ class ScheduleProvider with ChangeNotifier {
   List<ScheduleListModel>? _scheduleList;
   List<ScheduleListModel>? get scheduleList => _scheduleList;
 
-  Future<void> getScheduleList(int planId)async{
+  Future<void> getScheduleList(String planId)async{
     final data = await _getIt.getScheduleList(planId);
     _scheduleList = data;
     notifyListeners();
   }
 
-  Future<void> createSchedule(ScheduleModel item, int roundIdx, int planId)async{
+  Future<void> createSchedule(ScheduleModel item, int roundIdx, String planId)async{
     final data = await _getIt.createSchedule(item, roundIdx ,planId);
     _scheduleList = data;
     notifyListeners();
   }
 
-  Future<void> editSchedule(ScheduleModel item, int roundIdx, int planId)async{
+  Future<void> editSchedule(ScheduleModel item, int roundIdx, String planId)async{
     final data = await _getIt.editSchedule(item, roundIdx, planId);
     _scheduleList = data;
     notifyListeners();
   }
 
-  Future<void> removeSchedule(int roundIdx, int itemIdx, int planId)async{
+  Future<void> removeSchedule(int roundIdx, int itemIdx, String planId)async{
     final data = await _getIt.removeSchedule(roundIdx, itemIdx ,planId);
     _scheduleList = data;
     notifyListeners();
   }
 
-  Future<void> addScheduleDetails(List<String> details, int roundIdx, int scheduleIdx, int planId)async{
+  Future<void> addScheduleDetails(List<String> details, int roundIdx, int scheduleIdx, String planId)async{
     final data = await _getIt.addScheduleDetails(details, roundIdx, scheduleIdx, planId);
     _scheduleList = data;
     notifyListeners();
   }
 
-  Future<void> removeScheduleDetail(int roundIdx, int scheduleIdx, int detailIdx, int planId)async{
+  Future<void> removeScheduleDetail(int roundIdx, int scheduleIdx, int detailIdx, String planId)async{
     final data = await _getIt.removeScheduleDetail(roundIdx, scheduleIdx, detailIdx, planId);
     _scheduleList = data;
     notifyListeners();
   }
 
-  Future<void> removeAllSchedule(int planId)async{
+  Future<void> removeAllSchedule(String planId)async{
     await _getIt.removeAllScheduleList(planId);
     notifyListeners();
   }

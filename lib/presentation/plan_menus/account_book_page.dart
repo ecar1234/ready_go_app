@@ -41,7 +41,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
   final TextEditingController _totalAmountController = TextEditingController();
 
   // 수정 및 지출
-  final TextEditingController _daysController = TextEditingController();
+  // final TextEditingController _daysController = TextEditingController();
   final TextEditingController _usedTypeController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _categoryController = TextEditingController();
@@ -76,7 +76,8 @@ class _AccountBookPageState extends State<AccountBookPage> {
       if (kReleaseMode) {
         final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
         if (!isRemove) {
-          context.read<AdmobProvider>().interstitialAd!.show();
+          context.read<AdmobProvider>().loadAdInterstitialAd();
+          context.read<AdmobProvider>().showInterstitialAd();
           _admobUtil.loadBannerAd(onAdLoaded: () {
             setState(() {
               _isLoaded = true;
@@ -96,7 +97,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    _daysController.dispose();
+    // _daysController.dispose();
     _titleController.dispose();
     _payAmountController.dispose();
     _usedTypeController.dispose();
@@ -483,7 +484,6 @@ class _AccountBookPageState extends State<AccountBookPage> {
   Widget _totalInfoSection(BuildContext context, double hei, bool isDarkMode) {
     final wid = MediaQuery.sizeOf(context).width;
     final unit = widget.plan.unit;
-
     final isKor = Localizations.localeOf(context).languageCode == "ko";
     final localization = AppLocalizations.of(context)!;
     return SizedBox(
@@ -656,8 +656,8 @@ class _AccountBookPageState extends State<AccountBookPage> {
                               isKor
                                   ? "${scheduleDay.month}월${scheduleDay.day}일 (${idx + 1}일차)"
                                   : (Localizations.localeOf(context).languageCode == "ja"
-                                  ? "${scheduleDay.month}.${scheduleDay.day} (${idx + 1}${localization.day})"
-                                  : "${scheduleDay.month}.${scheduleDay.day} (${localization.day} ${idx + 1})"),
+                                      ? "${scheduleDay.month}.${scheduleDay.day} (${idx + 1}${localization.day})"
+                                      : "${scheduleDay.month}.${scheduleDay.day} (${localization.day} ${idx + 1})"),
                               style: LocalizationsUtil.setTextStyle(isKor,
                                   color: _selectedDay == idx ? Colors.white : (isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
                                   fontWeight: _selectedDay == idx ? FontWeight.w600 : FontWeight.w400),
@@ -1075,7 +1075,9 @@ class _AccountBookPageState extends State<AccountBookPage> {
                             // onChanged: _onChanged,
                             decoration: InputDecoration(
                                 label: Text(localization.details,
-                                    style: isKor ? null : LocalizationsUtil.setTextStyle(isKor, size: 12, color: isDarkMode ? Colors.white : Colors.black87)),
+                                    style: isKor
+                                        ? null
+                                        : LocalizationsUtil.setTextStyle(isKor, size: 12, color: isDarkMode ? Colors.white : Colors.black87)),
                                 counterText: ""),
                             textAlign: TextAlign.end,
                             maxLines: 1,
@@ -1099,9 +1101,13 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                   controller: _payAmountController,
                                   // onChanged: _onChanged,
                                   decoration: InputDecoration(
-                                      counterText: "",
-                                      label: Text(localization.amount,
-                                      style: isKor ? null : LocalizationsUtil.setTextStyle(isKor,  size: 12, color: isDarkMode ? Colors.white : Colors.black87),),
+                                    counterText: "",
+                                    label: Text(
+                                      localization.amount,
+                                      style: isKor
+                                          ? null
+                                          : LocalizationsUtil.setTextStyle(isKor, size: 12, color: isDarkMode ? Colors.white : Colors.black87),
+                                    ),
                                   ),
                                   maxLines: 1,
                                   maxLength: 13,
@@ -1181,19 +1187,25 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                     //   return;
                                     // }
                                     if (_titleController.text.isEmpty) {
-                                      Get.snackbar(localization.snackTitle, localization.snackCommonDetail,
+                                      Get.snackbar(
+                                        localization.snackTitle,
+                                        localization.snackCommonDetail,
                                         backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
                                       );
                                       return;
                                     }
                                     if (_payAmountController.text.isEmpty) {
-                                      Get.snackbar(localization.snackTitle, localization.snackDetail(localization.amount),
+                                      Get.snackbar(
+                                        localization.snackTitle,
+                                        localization.snackDetail(localization.amount),
                                         backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
                                       );
                                       return;
                                     }
                                     if (_categoryController.text.isEmpty) {
-                                      Get.snackbar(localization.snackTitle, localization.snackDetail("category"),
+                                      Get.snackbar(
+                                        localization.snackTitle,
+                                        localization.snackDetail("category"),
                                         backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
                                       );
                                       return;
@@ -1201,13 +1213,14 @@ class _AccountBookPageState extends State<AccountBookPage> {
 
                                     AmountModel newAmount = AmountModel();
                                     if (item != null) {
-                                      newAmount.id = _daysController.text.split(" ").first;
-                                      newAmount.title = _titleController.text;
-                                      newAmount.amount = IntlUtils.removeComma(_payAmountController.text);
-                                      newAmount.category = _usedTypeController.text == localization.cash ? 0 : 2;
-                                      newAmount.methodType = StatisticsUtil.conversionStringToMethodType(
-                                          Localizations.localeOf(context).languageCode, _categoryController.text);
-                                      newAmount.type = item.type;
+                                      newAmount
+                                        ..id = "${widget.plan.id}_$_selectedDay"
+                                        ..title = _titleController.text
+                                        ..amount = IntlUtils.removeComma(_payAmountController.text)
+                                        ..category = _usedTypeController.text == localization.cash ? 0 : 2
+                                        ..methodType = StatisticsUtil.conversionStringToMethodType(
+                                            Localizations.localeOf(context).languageCode, _categoryController.text)
+                                        ..type = item.type;
                                       // newAmount.usageTime = item.usageTime;
                                       // int day = int.parse(_daysController.text.split(" ").first);
                                       if (_selectedDay == 0) {
@@ -1221,7 +1234,9 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                           newAmount.amount == item.amount &&
                                           newAmount.category == item.category &&
                                           newAmount.methodType == item.methodType) {
-                                        Get.snackbar(localization.snackNoChangeTitle, localization.snackNoChangeDesc,
+                                        Get.snackbar(
+                                          localization.snackNoChangeTitle,
+                                          localization.snackNoChangeDesc,
                                           backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
                                         );
                                         return;
@@ -1392,7 +1407,9 @@ class _AccountBookPageState extends State<AccountBookPage> {
                             child: ElevatedButton(
                                 onPressed: () {
                                   if (_totalAmountController.text.isEmpty) {
-                                    Get.snackbar(localization.snackTitle, localization.snackDetail(localization.amount),
+                                    Get.snackbar(
+                                      localization.snackTitle,
+                                      localization.snackDetail(localization.amount),
                                       backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
                                     );
                                     return;
@@ -1416,10 +1433,13 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                   // int days = int.parse(_totalDaysController.text.split(" ").first);
 
                                   if (kReleaseMode && !isRemove) {
-                                    context.read<AdmobProvider>().interstitialAd!.show();
+                                    context.read<AdmobProvider>().loadAdInterstitialAd();
+                                    context.read<AdmobProvider>().showInterstitialAd();
+                                    context.read<AccountProvider>().addTotalAmount(title, amount, _selectedDay, widget.plan.id!);
+                                  } else {
+                                    context.read<AccountProvider>().addTotalAmount(title, amount, _selectedDay, widget.plan.id!);
                                   }
 
-                                  context.read<AccountProvider>().addTotalAmount(title, amount, _selectedDay, widget.plan.id!);
                                   _totalAmountController.clear();
                                   Get.back();
                                 },

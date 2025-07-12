@@ -17,7 +17,7 @@ class RoamingPreference {
   final logger = Logger();
   // roaming
 
-  Future<RoamingModel?> getRoamingData(int id) async {
+  Future<RoamingModel?> getRoamingData(String id) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
 
     try {
@@ -35,7 +35,7 @@ class RoamingPreference {
     }
   }
 
-  Future<void> setRoamingData(RoamingModel data, int id) async {
+  Future<void> setRoamingData(RoamingModel data, String id) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
 
     try {
@@ -150,7 +150,7 @@ class RoamingPreference {
   // addRoaming -> getRoamingData -> provider -> notifyListeners()
 
 
-  Future<void> removeAllData(int id)async{
+  Future<void> removeAllData(String id)async{
     SharedPreferences pref = await SharedPreferences.getInstance();
     pref.remove("roaming$id");
   }

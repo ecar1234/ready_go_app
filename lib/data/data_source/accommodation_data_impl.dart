@@ -9,7 +9,7 @@ class AccommodationDataImpl implements AccommodationLocalDateRepo{
   final logger = Logger();
 
   @override
-  Future<List<AccommodationModel>> getAccommodationList(int id)async {
+  Future<List<AccommodationModel>> getAccommodationList(String id)async {
     try{
       var list = await pref.getAccommodationList(id);
       return list;
@@ -20,7 +20,7 @@ class AccommodationDataImpl implements AccommodationLocalDateRepo{
   }
 
   @override
-  Future<void> updateAccommodationList(List<AccommodationModel> list, int id)async {
+  Future<void> updateAccommodationList(List<AccommodationModel> list, String id)async {
     try{
       await pref.updateAccommodationList(list, id);
     }catch(ex){
@@ -30,7 +30,7 @@ class AccommodationDataImpl implements AccommodationLocalDateRepo{
   }
 
   @override
-  Future<void> removeAllData(int id)async {
+  Future<void> removeAllData(String id)async {
     await pref.removeAllData(id);
   }
 

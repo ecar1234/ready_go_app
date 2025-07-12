@@ -8,17 +8,21 @@ import 'package:ready_go_project/domain/repositories/plan_repo.dart';
 import '../../../data/models/plan_model/plan_model.dart';
 
 
-class PlanListProvider with ChangeNotifier {
-  final GetIt _getIt = GetIt.I;
+  final _getIt = GetIt.I.get<PlanRepo>();
   final logger = Logger();
+class PlanListProvider with ChangeNotifier {
 
   List<PlanModel> _planList = [];
+  // int _migratedVer = 0;
 
   List<PlanModel> get planList => _planList;
+  // int get migratedVer => _migratedVer;
 
   Future<void> getPlanList() async {
     try {
-      var list = await _getIt.get<PlanRepo>().getLocalList();
+      // final ver = await _getIt.getMigratedVer();
+      // _migratedVer = ver;
+      final list = await _getIt.getLocalList();
       _planList = list;
     } catch (ex) {
       logger.e(ex.toString());
@@ -29,7 +33,7 @@ class PlanListProvider with ChangeNotifier {
 
   Future<void> addPlanList(PlanModel plan) async {
     try {
-      var list = await _getIt.get<PlanRepo>().addToPlanList(plan);
+      var list = await _getIt.addToPlanList(plan);
       _planList = list;
     } catch (ex) {
       logger.e(ex.toString());
@@ -37,9 +41,10 @@ class PlanListProvider with ChangeNotifier {
     }
     notifyListeners();
   }
+
   Future<void> changePlan(PlanModel plan) async {
     try {
-      var list = await _getIt.get<PlanRepo>().changePlan(plan);
+      var list = await _getIt.changePlan(plan);
       _planList = list;
     } catch (ex) {
       logger.e(ex.toString());
@@ -48,9 +53,9 @@ class PlanListProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> removePlanList(int id) async {
+  Future<void> removePlanList(String id) async {
     try {
-      var list = await _getIt.get<PlanRepo>().removePlan(id);
+      var list = await _getIt.removePlan(id);
       _planList = list;
     } catch (ex) {
       logger.e(ex.toString());
@@ -59,7 +64,17 @@ class PlanListProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addFavoriteList(PlanModel plan)async{
-    _getIt.get<PlanRepo>().changePlan(plan);
-  }
+  // Future<void> addFavoriteList(PlanModel plan)async{
+  //   await _getIt.changePlan(plan);
+  //   notifyListeners();
+  // }
+  //
+  // Future<void> planDataMigration(int oldId, String newId)async{
+  //   await _getIt.planDataMigration(oldId, newId);
+  //   notifyListeners();
+  // }
+  // Future<void> updateMigratedVer(int ver)async{
+  //   await _getIt.updateMigratedVer(ver);
+  //   notifyListeners();
+  // }
 }

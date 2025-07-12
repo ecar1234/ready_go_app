@@ -36,7 +36,7 @@ class PlanMenuPage extends StatefulWidget {
 class _PlanMenuPageState extends State<PlanMenuPage> {
   final AdmobUtil _admobUtil = AdmobUtil();
   bool _isLoaded = false;
-  final logger = Logger();
+  final _logger = Logger();
 
   // List<String> itemList = ["항공권", "준비물", "로밍(E-SIM)", "사용 경비", "숙소"];
   // List<String> itemList = ["항공권", "준비물", "로밍 & ESIM", "여행 경비", "숙소", "일정"];
@@ -56,7 +56,7 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
           }, onAdFailed: () {
             setState(() {
               _isLoaded = false;
-              logger.e("banner is not loaded");
+              _logger.e("banner is not loaded");
             });
           });
         }
@@ -66,11 +66,7 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
 
   @override
   Widget build(BuildContext context) {
-    DataState state = context.watch<DataBloc>().state;
-    if (state.state == DataStatus.loadedPlanList) {
-      // context.read<ImagesProvider>().getImgList(widget.plan.id!);
-      context.read<DataBloc>().add(PlanDataLoadingEvent(context: context, planId: widget.plan.id!));
-    }
+
     bool isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
     final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
 
@@ -100,106 +96,118 @@ class _PlanMenuPageState extends State<PlanMenuPage> {
             icon: const Icon(Icons.arrow_back_ios),
           ),
         ),
-        body: Center(
-          child: Container(
-            height: height,
-            padding: const EdgeInsets.all(20),
-            child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraints) => SizedBox(
-                  height: height - 100,
-                  width: constraints.maxWidth > 800 ? 700 : MediaQuery.sizeOf(context).width,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        // height: 70 * itemList.length.toDouble(),
-                        child: ListView.separated(
-                            physics: const BouncingScrollPhysics(),
-                            shrinkWrap: true,
-                            primary: false,
-                            itemBuilder: (context, idx) {
-                              return Container(
-                                height: 60,
-                                padding: const EdgeInsets.symmetric(horizontal: 20),
-                                child: ElevatedButton.icon(
-                                  onPressed: () {
-                                    final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
-                                    if (kReleaseMode && !isRemove) {
-                                      if (itemList[idx] == AppLocalizations.of(context)!.menuCheckList ||
-                                          itemList[idx] == AppLocalizations.of(context)!.menuAccommodation ||
-                                          itemList[idx] == AppLocalizations.of(context)!.menuExpensePlan ||
-                                          itemList[idx] == AppLocalizations.of(context)!.menuRoaming) {
-                                        context.read<AdmobProvider>().loadAdInterstitialAd();
-                                        context.read<AdmobProvider>().showInterstitialAd();
-                                      }
-                                    }
-                                    if (isKor && isPlanKor) {
-                                      switch (korItemList[idx]) {
-                                        case "예상 경비":
-                                          Navigator.of(context)
-                                              .push(MaterialPageRoute(builder: (context) => ExpectationPage(planId: widget.plan.id)));
-                                        case "체크 리스트":
-                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => SuppliesPage(planId: widget.plan.id!)));
-                                        case "여행 경비":
-                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
-                                        case "숙소":
-                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccommodationPage(plan: widget.plan)));
-                                        case "사용 경비":
-                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
-                                        case "일정":
-                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => SchedulePage(plan: widget.plan)));
-                                        default:
-                                          return;
-                                      }
-                                    } else {
-                                      if(itemList[idx] == AppLocalizations.of(context)!.menuExpensePlan){
-                                        Navigator.of(context)
-                                            .push(MaterialPageRoute(builder: (context) => ExpectationPage(planId: widget.plan.id)));
-                                      }else if(itemList[idx] == AppLocalizations.of(context)!.menuFlightTicket){
-                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => AirTicketPage(planId: widget.plan.id!)));
-                                      }else if(itemList[idx] == AppLocalizations.of(context)!.menuCheckList){
-                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => SuppliesPage(planId: widget.plan.id!)));
-                                      }else if(itemList[idx] == AppLocalizations.of(context)!.menuRoaming){
-                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => RoamingPage(planId: widget.plan.id!)));
-                                      }else if(itemList[idx] == AppLocalizations.of(context)!.menuSpentBudget){
-                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
-                                      }else if(itemList[idx] == AppLocalizations.of(context)!.menuAccommodation){
-                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccommodationPage(plan: widget.plan)));
-                                      }else {
-                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => SchedulePage(plan: widget.plan)));
-                                      }
-
-                                    }
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
-                                      side: BorderSide(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                                  label: Text(
-                                    isKor && isPlanKor ? korItemList[idx] : itemList[idx],
-                                    style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w600),
-                                  ),
-                                  iconAlignment: IconAlignment.end,
-                                  icon: _iconSelector(idx, isKor, isPlanKor, isDarkMode),
-                                ),
-                              );
-                            },
-                            separatorBuilder: (context, idx) => const Gap(20),
-                            itemCount: isKor && isPlanKor ? korItemList.length : itemList.length),
+        body: BlocBuilder<DataBloc, DataState>(
+          builder: (context, state){
+            if (state.state == DataStatus.loadedPlanList) {
+              // context.read<ImagesProvider>().getImgList(widget.plan.id!);
+              context.read<DataBloc>().add(PlanDataLoadingEvent(context: context, planId: widget.plan.id!));
+            }
+            return Center(
+              child: Container(
+                height: height,
+                padding: const EdgeInsets.all(20),
+                child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                  LayoutBuilder(
+                    builder: (BuildContext context, BoxConstraints constraints) => SizedBox(
+                      height: height - 100,
+                      width: constraints.maxWidth > 800 ? 700 : MediaQuery.sizeOf(context).width,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            // height: 70 * itemList.length.toDouble(),
+                            child: ListView.separated(
+                                physics: const BouncingScrollPhysics(),
+                                shrinkWrap: true,
+                                primary: false,
+                                itemBuilder: (context, idx) {
+                                  return Container(
+                                    height: 60,
+                                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                                    child: ElevatedButton.icon(
+                                      onPressed: () {
+                                        final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
+                                        if (kReleaseMode && !isRemove) {
+                                          if (itemList[idx] == AppLocalizations.of(context)!.menuCheckList ||
+                                              itemList[idx] == AppLocalizations.of(context)!.menuAccommodation ||
+                                              itemList[idx] == AppLocalizations.of(context)!.menuExpensePlan ||
+                                              itemList[idx] == AppLocalizations.of(context)!.menuRoaming) {
+                                            context.read<AdmobProvider>().loadAdInterstitialAd();
+                                            context.read<AdmobProvider>().showInterstitialAd();
+                                          }
+                                        }
+                                        if (isKor && isPlanKor) {
+                                          switch (korItemList[idx]) {
+                                            case "예상 경비":
+                                              Navigator.of(context)
+                                                  .push(MaterialPageRoute(builder: (context) => ExpectationPage(planId: widget.plan.id)));
+                                            case "체크 리스트":
+                                              Navigator.of(context)
+                                                  .push(MaterialPageRoute(builder: (context) => SuppliesPage(planId: widget.plan.id!)));
+                                            case "여행 경비":
+                                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
+                                            case "숙소":
+                                              Navigator.of(context)
+                                                  .push(MaterialPageRoute(builder: (context) => AccommodationPage(plan: widget.plan)));
+                                            case "사용 경비":
+                                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
+                                            case "일정":
+                                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => SchedulePage(plan: widget.plan)));
+                                            default:
+                                              return;
+                                          }
+                                        } else {
+                                          if (itemList[idx] == AppLocalizations.of(context)!.menuExpensePlan) {
+                                            Navigator.of(context)
+                                                .push(MaterialPageRoute(builder: (context) => ExpectationPage(planId: widget.plan.id)));
+                                          } else if (itemList[idx] == AppLocalizations.of(context)!.menuFlightTicket) {
+                                            Navigator.of(context)
+                                                .push(MaterialPageRoute(builder: (context) => AirTicketPage(planId: widget.plan.id!)));
+                                          } else if (itemList[idx] == AppLocalizations.of(context)!.menuCheckList) {
+                                            Navigator.of(context)
+                                                .push(MaterialPageRoute(builder: (context) => SuppliesPage(planId: widget.plan.id!)));
+                                          } else if (itemList[idx] == AppLocalizations.of(context)!.menuRoaming) {
+                                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => RoamingPage(planId: widget.plan.id!)));
+                                          } else if (itemList[idx] == AppLocalizations.of(context)!.menuSpentBudget) {
+                                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountBookPage(plan: widget.plan)));
+                                          } else if (itemList[idx] == AppLocalizations.of(context)!.menuAccommodation) {
+                                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccommodationPage(plan: widget.plan)));
+                                          } else {
+                                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => SchedulePage(plan: widget.plan)));
+                                          }
+                                        }
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                          side: BorderSide(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                                      label: Text(
+                                        isKor && isPlanKor ? korItemList[idx] : itemList[idx],
+                                        style: LocalizationsUtil.setTextStyle(isKor,
+                                            color: isDarkMode ? Colors.white : Colors.black87, fontWeight: FontWeight.w600),
+                                      ),
+                                      iconAlignment: IconAlignment.end,
+                                      icon: _iconSelector(idx, isKor, isPlanKor, isDarkMode),
+                                    ),
+                                  );
+                                },
+                                separatorBuilder: (context, idx) => const Gap(20),
+                                itemCount: isKor && isPlanKor ? korItemList.length : itemList.length),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                  if (_isLoaded && _admobUtil.bannerAd != null)
+                    SizedBox(
+                      height: _admobUtil.bannerAd!.size.height.toDouble(),
+                      width: _admobUtil.bannerAd!.size.width.toDouble(),
+                      child: _admobUtil.getBannerAdWidget(),
+                    )
+                ]),
               ),
-              if (_isLoaded && _admobUtil.bannerAd != null)
-                SizedBox(
-                  height: _admobUtil.bannerAd!.size.height.toDouble(),
-                  width: _admobUtil.bannerAd!.size.width.toDouble(),
-                  child: _admobUtil.getBannerAdWidget(),
-                )
-            ]),
-          ),
+            );
+          },
         ),
       ),
     );

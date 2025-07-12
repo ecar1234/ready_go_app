@@ -12,7 +12,7 @@ class AccountPreference {
 
   final logger = Logger();
   // account
-  Future<AccountModel> getAccountInfo(int id)async{
+  Future<AccountModel> getAccountInfo(String id)async{
     SharedPreferences pref = await SharedPreferences.getInstance();
 
     try{
@@ -37,7 +37,7 @@ class AccountPreference {
     }
   }
 
-  Future<void> updateAccountInfo(AccountModel info, int id)async{
+  Future<void> updateAccountInfo(AccountModel info, String id)async{
     SharedPreferences pref = await SharedPreferences.getInstance();
     Map<String, dynamic> json = info.toJson();
     String stringJson = jsonEncode(json);
@@ -68,7 +68,7 @@ class AccountPreference {
     return list;
   }
 
-  Future<void> removeAllData(int id)async{
+  Future<void> removeAllData(String id)async{
     SharedPreferences pref = await SharedPreferences.getInstance();
     pref.remove("accountInfo$id");
   }

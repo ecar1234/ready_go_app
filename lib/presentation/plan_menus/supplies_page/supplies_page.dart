@@ -20,7 +20,7 @@ import '../../../util/admob_util.dart';
 import 'add_template_page.dart';
 
 class SuppliesPage extends StatefulWidget {
-  final int planId;
+  final String planId;
 
   const SuppliesPage({super.key, required this.planId});
 
@@ -35,12 +35,12 @@ class _SuppliesPageState extends State<SuppliesPage> {
 
   Timer? _debounce;
 
-  _onChanged(String value) {
-    if (_debounce?.isActive ?? false) {
-      _debounce?.cancel();
-    }
-    _debounce = Timer(const Duration(milliseconds: 500), () {});
-  }
+  // _onChanged(String value) {
+  //   if (_debounce?.isActive ?? false) {
+  //     _debounce?.cancel();
+  //   }
+  //   _debounce = Timer(const Duration(milliseconds: 500), () {});
+  // }
 
   @override
   void initState() {
@@ -52,7 +52,8 @@ class _SuppliesPageState extends State<SuppliesPage> {
       if (kReleaseMode) {
         final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
         if (!isRemove) {
-          context.read<AdmobProvider>().interstitialAd!.show();
+          context.read<AdmobProvider>().loadAdInterstitialAd();
+          context.read<AdmobProvider>().showInterstitialAd();
           _admobUtil.loadBannerAd(onAdLoaded: () {
             setState(() {
               _isLoaded = true;

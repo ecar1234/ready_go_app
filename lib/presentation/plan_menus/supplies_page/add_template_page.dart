@@ -246,9 +246,12 @@ class _AddTemplatePageState extends State<AddTemplatePage> {
                                             }
                                           } else {
                                             if (kReleaseMode && !isRemove) {
-                                              context.read<AdmobProvider>().interstitialAd!.show();
+                                              context.read<AdmobProvider>().loadAdInterstitialAd();
+                                              context.read<AdmobProvider>().showInterstitialAd();
+                                              context.read<SuppliesTemplateProvider>().changeTemplate(_tempList, widget.idx);
+                                            }else {
+                                              context.read<SuppliesTemplateProvider>().changeTemplate(_tempList, widget.idx);
                                             }
-                                            context.read<SuppliesTemplateProvider>().changeTemplate(_tempList, widget.idx);
                                             Navigator.pop(context);
                                           }
                                         },

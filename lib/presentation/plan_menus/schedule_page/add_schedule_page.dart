@@ -19,7 +19,7 @@ class AddSchedulePage extends StatefulWidget {
   final ScheduleModel daySchedule;
   final int roundIdx;
   final int scheduleIdx;
-  final int planId;
+  final String planId;
   const AddSchedulePage({super.key, required this.daySchedule, required this.roundIdx, required this.scheduleIdx, required this.planId});
 
   @override

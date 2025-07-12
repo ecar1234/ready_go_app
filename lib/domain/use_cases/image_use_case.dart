@@ -14,7 +14,7 @@ class ImageUseCase with ImageRepo {
   final logger = Logger();
 
   @override
-  Future<List<File>> addArrivalFile(List<PlatformFile> files, int id) async {
+  Future<List<File>> addArrivalFile(List<PlatformFile> files, String id) async {
     try {
       List<String> arrivalPathList = await _getIt.get<ImageLocalDataRepo>().getArrivalImgList(id);
       Directory dir = await getApplicationDocumentsDirectory();
@@ -42,7 +42,7 @@ class ImageUseCase with ImageRepo {
   }
 
   @override
-  Future<List<File>> addDepartureFile(List<PlatformFile> files, int id) async {
+  Future<List<File>> addDepartureFile(List<PlatformFile> files, String id) async {
     try {
       List<String> departurePathList = await _getIt.get<ImageLocalDataRepo>().getDepartureImgList(id);
       Directory dir = await getApplicationDocumentsDirectory();
@@ -72,7 +72,7 @@ class ImageUseCase with ImageRepo {
   }
 
   @override
-  Future<List<List<File>>> getImageList(int id) async {
+  Future<List<List<File>>> getImageList(String id) async {
     try {
       final departurePathList = await _getIt.get<ImageLocalDataRepo>().getDepartureImgList(id);
       final arrivalPathList = await _getIt.get<ImageLocalDataRepo>().getArrivalImgList(id);
@@ -115,7 +115,7 @@ class ImageUseCase with ImageRepo {
   }
 
   @override
-  Future<List<File>> addArrivalImg(XFile image, int id) async {
+  Future<List<File>> addArrivalImg(XFile image, String id) async {
     try {
       List<String> arrivalPathList = await _getIt.get<ImageLocalDataRepo>().getArrivalImgList(id);
       Directory dir = await getApplicationDocumentsDirectory();
@@ -142,7 +142,7 @@ class ImageUseCase with ImageRepo {
   }
 
   @override
-  Future<List<File>> addDepartureImg(XFile image, int id) async {
+  Future<List<File>> addDepartureImg(XFile image, String id) async {
     try {
       List<String> departurePathList = await _getIt.get<ImageLocalDataRepo>().getDepartureImgList(id);
       Directory dir = await getApplicationDocumentsDirectory();
@@ -169,7 +169,7 @@ class ImageUseCase with ImageRepo {
   }
 
   @override
-  Future<List<File>> removeArrivalImg(File image, int id) async {
+  Future<List<File>> removeArrivalImg(File image, String id) async {
     try {
       List<String> arrivalPathList = await _getIt.get<ImageLocalDataRepo>().getArrivalImgList(id);
       String? targetPath = arrivalPathList.firstWhere((path) => path.contains(image.path.split("/").last), orElse: () => "");
@@ -190,7 +190,7 @@ class ImageUseCase with ImageRepo {
   }
 
   @override
-  Future<List<File>> removeDepartureImg(File image, int id) async {
+  Future<List<File>> removeDepartureImg(File image, String id) async {
     try {
       List<String> departurePathList = await _getIt.get<ImageLocalDataRepo>().getDepartureImgList(id);
       String? targetPath = departurePathList.firstWhere((path) => path.contains(image.path.split("/").last), orElse: () => "");
@@ -212,7 +212,7 @@ class ImageUseCase with ImageRepo {
   }
 
   @override
-  Future<List<List<File>>> removeAllData(int id) async {
+  Future<List<List<File>>> removeAllData(String id) async {
     await _getIt.get<ImageLocalDataRepo>().removeAllData(id);
     return [[], []];
   }

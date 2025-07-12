@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:ready_go_project/data/repositories/plan_local_data_repo.dart';
 import 'package:ready_go_project/domain/entities/provider/plan_list_provider.dart';
 import 'package:ready_go_project/domain/repositories/account_repo.dart';
 import 'package:ready_go_project/domain/repositories/plan_repo.dart';
@@ -24,7 +25,7 @@ class StatisticsUseCase with ChangeNotifier {
     Map<String, int> nations = {};
     Map<String, List<int>> accounts = {};
 
-    final planList = await GetIt.I.get<PlanRepo>().getLocalList();
+    final planList = await GetIt.I.get<PlanLocalDataRepo>().getLocalList();
     final completePlanList = planList.where((item) => item.schedule!.last!.isBefore(DateTime.now())).toList();
 
     try {

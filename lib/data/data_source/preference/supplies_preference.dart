@@ -13,7 +13,7 @@ class SuppliesPreference {
 
   final logger = Logger();
   //supplies
-  Future<List<SupplyModel>> getSuppliesList(int id) async {
+  Future<List<SupplyModel>> getSuppliesList(String id) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
 
     List<SupplyModel> list = [];
@@ -33,7 +33,7 @@ class SuppliesPreference {
     }
   }
 
-  Future<void> updateSupplyList(List<SupplyModel> list, int id) async {
+  Future<void> updateSupplyList(List<SupplyModel> list, String id) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     try {
       List<Map<String, dynamic>> listToJson = list.map((supply) => supply.toJson()).toList();
@@ -45,7 +45,7 @@ class SuppliesPreference {
     }
   }
 
-  Future<void> removeAllData(int id)async{
+  Future<void> removeAllData(String id)async{
     SharedPreferences pref = await SharedPreferences.getInstance();
     pref.remove("supplies$id");
   }

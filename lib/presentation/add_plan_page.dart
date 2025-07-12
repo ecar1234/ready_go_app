@@ -12,6 +12,7 @@ import 'package:ready_go_project/util/date_util.dart';
 import 'package:ready_go_project/util/localizations_util.dart';
 import 'package:ready_go_project/util/nation_currency_unit_util.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:uuid/uuid.dart';
 
 import '../data/models/plan_model/plan_model.dart';
 import '../domain/entities/provider/admob_provider.dart';
@@ -204,7 +205,6 @@ class _AddPlanPageState extends State<AddPlanPage> {
   @override
   Widget build(BuildContext context) {
     final list = context.read<PlanListProvider>().planList;
-    final idNum = list.length;
     final isDarkMode = context.read<ThemeModeProvider>().isDarkMode;
     final hei = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
     final double bannerHei = _isLoaded ? _admobUtil.bannerAd!.size.height.toDouble() : 0;
@@ -288,7 +288,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                           context.read<PlanListProvider>().changePlan(plan);
                         } else {
                           plan
-                            ..id = idNum + 1
+                            ..id = const Uuid().v4()
                             ..nation = nationController.text.split(" ")[0]
                             ..subject = subjectController.text
                             ..schedule = _dates

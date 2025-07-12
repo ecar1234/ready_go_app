@@ -55,6 +55,7 @@ import 'package:ready_go_project/domain/use_cases/statistics_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/supplies_temp_use_case.dart';
 import 'package:ready_go_project/domain/use_cases/supplies_use_case.dart';
 import 'package:ready_go_project/firebase/firebase_options.dart';
+import 'package:ready_go_project/service/migration_service.dart';
 
 final _getIt = GetIt.instance;
 
@@ -116,6 +117,10 @@ Future<void> serviceLocator() async {
   _getIt.registerLazySingleton<ResponsiveHeightProvider>(() => ResponsiveHeightProvider());
   // statistics
   // _getIt.registerLazySingleton<StatisticsUseCase>(() => StatisticsUseCase());
+
+  // Run migrations before starting the app
+  final migrationService = MigrationService();
+  await migrationService.runMigrations();
 
   FlutterNativeSplash.remove();
 }

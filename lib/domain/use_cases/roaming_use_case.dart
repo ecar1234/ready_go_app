@@ -15,7 +15,7 @@ class RoamingUseCase with RoamingRepo {
   final logger = Logger();
 
   @override
-  Future<RoamingModel> getRoamingData(int id) async {
+  Future<RoamingModel> getRoamingData(String id) async {
     final data = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
 
     Directory dir = await getApplicationDocumentsDirectory();
@@ -38,7 +38,7 @@ class RoamingUseCase with RoamingRepo {
   }
 
   @override
-  Future<RoamingModel> addRoamingImage(XFile image, int id) async {
+  Future<RoamingModel> addRoamingImage(XFile image, String id) async {
     RoamingModel? res = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
 
     Directory dir = await getApplicationDocumentsDirectory();
@@ -61,7 +61,7 @@ class RoamingUseCase with RoamingRepo {
   }
 
   @override
-  Future<RoamingModel> removeRoamingImage(File image, int id) async {
+  Future<RoamingModel> removeRoamingImage(File image, String id) async {
     RoamingModel? res = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
     String? targetPath = res.imgList!.firstWhere((path) => path.contains(image.path.split("/").last), orElse: () => "");
 
@@ -85,14 +85,14 @@ class RoamingUseCase with RoamingRepo {
   // }
 
   @override
-  Future<void> removeAddress(int id) async {
+  Future<void> removeAddress(String id) async {
     RoamingModel? res = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
     res.dpAddress = "";
     await _getIt.get<RoamingLocalDataRepo>().setRoamingData(res, id);
   }
 
   @override
-  Future<void> enterCode(String address, String code, int id) async {
+  Future<void> enterCode(String address, String code, String id) async {
     RoamingModel? res = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
     res.activeCode = code;
     res.dpAddress = address;
@@ -100,14 +100,14 @@ class RoamingUseCase with RoamingRepo {
   }
 
   @override
-  Future<void> removeCode(int id) async {
+  Future<void> removeCode(String id) async {
     RoamingModel? res = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
     res.activeCode = "";
     await _getIt.get<RoamingLocalDataRepo>().setRoamingData(res, id);
   }
 
   @override
-  Future<RoamingModel> setPeriodDate(int day, int id) async {
+  Future<RoamingModel> setPeriodDate(int day, String id) async {
     try {
       RoamingModel? res = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
       final period = RoamingPeriodModel()
@@ -124,7 +124,7 @@ class RoamingUseCase with RoamingRepo {
   }
 
   @override
-  Future<RoamingModel> startPeriod(int id) async {
+  Future<RoamingModel> startPeriod(String id) async {
     try {
       RoamingModel? res = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
 
@@ -142,7 +142,7 @@ class RoamingUseCase with RoamingRepo {
   }
 
   @override
-  Future<RoamingModel> resetPeriod(int id) async {
+  Future<RoamingModel> resetPeriod(String id) async {
     try {
       RoamingModel? res = await _getIt.get<RoamingLocalDataRepo>().getRoamingData(id);
 
@@ -161,7 +161,7 @@ class RoamingUseCase with RoamingRepo {
   }
 
   @override
-  Future<RoamingModel> removeAllData(int id) async {
+  Future<RoamingModel> removeAllData(String id) async {
     await _getIt.get<RoamingLocalDataRepo>().removeAllData(id);
     return RoamingModel();
   }

@@ -10,7 +10,7 @@ class ExpectationPreference{
   static ExpectationPreference get singleton => _singleton;
   Logger logger = Logger();
 
-  Future<List<ExpectationModel>> getExpectationData(int id)async{
+  Future<List<ExpectationModel>> getExpectationData(String id)async{
     SharedPreferences pref = await SharedPreferences.getInstance();
 
     String? jsonStr = pref.getString("expectation$id");
@@ -27,7 +27,7 @@ class ExpectationPreference{
       return [];
     }
   }
-  Future<void> updateExpectationDate(List<ExpectationModel> list, int id)async{
+  Future<void> updateExpectationDate(List<ExpectationModel> list, String id)async{
     SharedPreferences pref = await SharedPreferences.getInstance();
 
     final toJson = list.map((item) => item.toJson()).toList();
@@ -36,7 +36,7 @@ class ExpectationPreference{
     logger.i("expectation data save success");
   }
 
-  Future<void> removeAllData(int id)async{
+  Future<void> removeAllData(String id)async{
     SharedPreferences pref = await SharedPreferences.getInstance();
     pref.remove("expectation$id");
     logger.i("success expectation data remove all");

@@ -8,18 +8,18 @@ class ScheduleDataImpl implements ScheduleLocalDataRepo {
   SchedulePreference get pref => SchedulePreference.singleton;
 
   @override
-  Future<List<ScheduleListModel>> getScheduleList(int planId) async {
+  Future<List<ScheduleListModel>> getScheduleList(String planId) async {
     final list = await pref.getScheduleList(planId);
     return list;
   }
 
   @override
-  Future<void> updateScheduleList(List<ScheduleListModel> data, int planId) async {
+  Future<void> updateScheduleList(List<ScheduleListModel> data, String planId) async {
     await pref.updateScheduleList(data, planId);
   }
 
   @override
-  Future<void> removeAllScheduleData(int planId) async {
+  Future<void> removeAllScheduleData(String planId) async {
     await pref.removeAllScheduleData(planId);
   }
 

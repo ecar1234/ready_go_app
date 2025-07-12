@@ -7,7 +7,7 @@ part of 'plan_model.dart';
 // **************************************************************************
 
 PlanModel _$PlanModelFromJson(Map<String, dynamic> json) => PlanModel(
-      id: (json['id'] as num?)?.toInt(),
+      id: _idFromJson(json['id']),
       nation: json['nation'] as String?,
       subject: json['subject'] as String?,
       schedule: (json['schedule'] as List<dynamic>?)

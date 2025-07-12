@@ -8,13 +8,13 @@ import '../../data/repositories/supplies_local_data_repo.dart';
 class SuppliesUseCase with SuppliesRepo{
 
   @override
-  Future<List<SupplyModel>> getSuppliesList(int id) async {
+  Future<List<SupplyModel>> getSuppliesList(String id) async {
     var list = await _getIt.getSuppliesList(id);
     return list;
   }
 
   @override
-  Future<List<SupplyModel>> addSuppliesItem(SupplyModel item, int id) async {
+  Future<List<SupplyModel>> addSuppliesItem(SupplyModel item, String id) async {
     var list = await _getIt.getSuppliesList(id);
     list.add(item);
     await _getIt.addSuppliesItem(list, id);
@@ -23,7 +23,7 @@ class SuppliesUseCase with SuppliesRepo{
   }
 
   @override
-  Future<List<SupplyModel>> editSuppliesItem(int idx, String item, int id) async {
+  Future<List<SupplyModel>> editSuppliesItem(int idx, String item, String id) async {
     var list = await _getIt.getSuppliesList(id);
     list[idx].item = item;
     await _getIt.editSuppliesItem(list, id);
@@ -33,7 +33,7 @@ class SuppliesUseCase with SuppliesRepo{
   }
 
   @override
-  Future<List<SupplyModel>> removeSuppliesItem(int idx, int id) async {
+  Future<List<SupplyModel>> removeSuppliesItem(int idx, String id) async {
     var list = await _getIt.getSuppliesList(id);
     list.removeAt(idx);
     await _getIt.removeSuppliesItem(list, id);
@@ -41,7 +41,7 @@ class SuppliesUseCase with SuppliesRepo{
   }
 
   @override
-  Future<List<SupplyModel>> updateSupplyState(int idx, int id) async {
+  Future<List<SupplyModel>> updateSupplyState(int idx, String id) async {
     var list = await _getIt.getSuppliesList(id);
     list[idx].isCheck = !list[idx].isCheck!;
     await _getIt.updateSuppliesItem(list, id);
@@ -50,13 +50,13 @@ class SuppliesUseCase with SuppliesRepo{
   }
 
   @override
-  Future<List<SupplyModel>> removeAllData(int id)async{
+  Future<List<SupplyModel>> removeAllData(String id)async{
     await _getIt.removeAllData(id);
     return [];
   }
 
   @override
-  Future<void> addTemplateList(List<SupplyModel> list, int id) async{
+  Future<void> addTemplateList(List<SupplyModel> list, String id) async{
     await _getIt.updateSuppliesItem(list, id);
   }
 

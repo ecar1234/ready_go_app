@@ -11,29 +11,29 @@ class ExpectationProvider with ChangeNotifier {
 
   List<ExpectationModel>? get expectationList => _expectationList;
 
-  Future<void> getExpectationData(int id)async{
+  Future<void> getExpectationData(String id)async{
     final list = await _getIt.getExpectationData(id);
     _expectationList = list;
     notifyListeners();
   }
 
-  Future<void> addExpectationData(ExpectationModel item, int id)async{
+  Future<void> addExpectationData(ExpectationModel item, String id)async{
     final list = await _getIt.addExpectationData(item, id);
     _expectationList = list;
     notifyListeners();
   }
-  Future<void> modifyExpectationData(ExpectationModel item, int idx, int id)async{
+  Future<void> modifyExpectationData(ExpectationModel item, int idx, String id)async{
     final list = await _getIt.modifyExpectationData(item, idx, id);
     _expectationList = list;
     notifyListeners();
   }
 
-  Future<void> removeExpectationData(int index, int id)async{
+  Future<void> removeExpectationData(int index, String id)async{
     final list = await _getIt.removeExpectationData(index, id);
     _expectationList = list;
     notifyListeners();
   }
-  Future<void> removeAllData(int id)async{
+  Future<void> removeAllData(String id)async{
     await _getIt.removeAllData(id);
     _expectationList = [];
     notifyListeners();

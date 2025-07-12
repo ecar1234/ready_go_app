@@ -19,11 +19,10 @@ part 'data_event.dart';
 
 part 'data_state.dart';
 
-
 class DataBloc extends Bloc<DataEvent, DataState> {
   final logger = Logger();
-  DataBloc() : super(DataState(state: DataStatus.beforeCheckPurchases)) {
 
+  DataBloc() : super(DataState(state: DataStatus.beforeCheckPurchases)) {
     on<CheckPurchases>((event, emit) async {
       Set<String> productIds = {'remove_ad.in_app_purchase.cash_3300'};
       event.context.read<PurchaseManager>().loadPurchase();
@@ -43,9 +42,10 @@ class DataBloc extends Bloc<DataEvent, DataState> {
       event.context.read<StatisticsUseCase>().getStatisticsData();
       logger.i("service local Data loaded");
       emit(DataState(state: DataStatus.loadedPlanList));
+      // add(CheckPlanMigrated(context: event.context));
     });
 
-    on<DataLoadingPlanListEvent>((event, emit){
+    on<DataLoadingPlanListEvent>((event, emit) {
       emit(DataState(state: DataStatus.loadedPlanList));
     });
 
@@ -61,7 +61,7 @@ class DataBloc extends Bloc<DataEvent, DataState> {
       emit(DataState(state: DataStatus.loadedPlan));
     });
 
-    on<PlanAllDataRemoveEvent>((event, emit){
+    on<PlanAllDataRemoveEvent>((event, emit) {
       event.context.read<PlanListProvider>().removePlanList(event.planId);
       event.context.read<AccommodationProvider>().removeAllData(event.planId);
       event.context.read<AccountProvider>().removeAllData(event.planId);
@@ -71,11 +71,14 @@ class DataBloc extends Bloc<DataEvent, DataState> {
       event.context.read<PlanFavoritesProvider>().removeFavoriteList(event.planId);
       event.context.read<ExpectationProvider>().removeAllData(event.planId);
       event.context.read<ScheduleProvider>().removeAllSchedule(event.planId);
-      emit(DataState(state: DataStatus.loadedPlan));
+      emit(DataState(state: DataStatus.beforePlanList));
     });
 
     on<DataResetEvent>((event, emit) async {
       emit(DataState(state: DataStatus.endPlan));
+    });
+    on<BackToPlanListEvent>((event, emit)async{
+      emit(DataState(state: DataStatus.loadedPlanList));
     });
   }
 }
