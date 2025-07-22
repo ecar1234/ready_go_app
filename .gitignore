@@ -5,9 +5,11 @@
 *.swp
 .DS_Store
 .atom/
+.build/
 .buildlog/
 .history
 .svn/
+.swiftpm/
 migrate_working_dir/
 
 # IntelliJ related
@@ -42,3 +44,33 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+**/*.jks
+**/*.json
+versionCode
+versionName
+
+# Flutter build output directory
+build/
+
+# iOS
+ios/Flutter/Flutter.framework
+ios/Flutter/App.framework
+ios/Flutter/engine/
+ios/Flutter/Generated.xcconfig
+
+# Android
+.android/
+app/build/
+
+# Xcode 빌드 데이터
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.podspec
+ios/Flutter/*.xcconfig
+ios/DerivedData/
+
+# Gradle 빌드 파일
+.gradle/
+
+# FVM Version Cache
+.fvm/

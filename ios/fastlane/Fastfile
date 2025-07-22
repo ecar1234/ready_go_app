@@ -1,0 +1,95 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  lane :get_version_code do
+      versionCode = File.read("../../versionCode")
+      versionCode
+  end
+
+  lane :get_version_name do
+    versionName = File.read("../../versionName").to_i
+    versionName = versionName + 1
+
+    f = File.new("../../versionName", "w")
+    f.write(versionName)
+    f.close
+
+    versionName
+  end
+
+  lane :build do
+    ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] = "120"
+    code = get_version_code
+    name = get_version_name
+
+    Dir.chdir "../.."
+      sh("flutter", "clean")
+      sh("flutter", "pub", "get")
+      sh("flutter", "build", "ios", "--release", "--build-number=#{name}", "--build-name=#{code}.#{name}")
+
+    build_app(
+      workspace: "ready_go_project/ios/Runner.xcworkspace",
+      scheme: "Runner",
+      output_directory: "ready_go_project/build/ios",
+      export_options: {
+        provisioningProfiles: {
+          "com.readygo.devon.studio" => "DevOn readygo profile"
+        }
+      }
+    )
+    puts "build Number : #{code}.#{name}"
+  end
+
+  desc "Description of what the lane does"
+  lane :custom_lane do
+    # add actions here: https://docs.fastlane.tools/actions
+  end
+
+  desc "test build number"
+  lane :test do
+    versionCode = File.read("../../versionCode")
+    versionName = File.read("../../versionName")
+
+    puts "current buildNum : #{versionCode}.#{versionName}"
+  end
+
+  desc "Deploy testFlight"
+  lane :beta do
+    build
+    upload_to_testFlight(
+      username: "ecar1234@naver.com",
+      apple_id: "6744342927",
+      team_id: "38DCD6F7UP",
+      app_identifier: "com.readygo.devon.studio",
+      ipa: "./ready_go_project/build/ios/Runner.ipa",
+      skip_waiting_for_build_processing: true
+    )
+  end
+
+  lane :deploy do
+    upload_to_testFlight(
+      username: "ecar1234@naver.com",
+      apple_id: "6744342927",
+      team_id: "38DCD6F7UP",
+#       team_name: "DevOn Studio",
+      app_identifier: "com.readygo.devon.studio",
+      ipa: "../build/ios/Runner.ipa",
+#       skip_waiting_for_build_processing: false
+    )
+  end
+end

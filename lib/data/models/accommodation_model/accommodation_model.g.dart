@@ -17,6 +17,8 @@ AccommodationModel _$AccommodationModelFromJson(Map<String, dynamic> json) =>
       checkInTime: json['checkInTime'] as String?,
       checkOutTime: json['checkOutTime'] as String?,
       payment: json['payment'] as String?,
+      bookApp: json['bookApp'] as String?,
+      bookNum: json['bookNum'] as String?,
     );
 
 Map<String, dynamic> _$AccommodationModelToJson(AccommodationModel instance) =>
@@ -28,4 +30,6 @@ Map<String, dynamic> _$AccommodationModelToJson(AccommodationModel instance) =>
       'checkInTime': instance.checkInTime,
       'checkOutTime': instance.checkOutTime,
       'payment': instance.payment,
+      'bookApp': instance.bookApp,
+      'bookNum': instance.bookNum,
     };

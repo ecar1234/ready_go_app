@@ -1,0 +1,97 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+
+  def get_version_code
+    versionCode = File.read("../../versionCode")
+    versionCode
+  end
+
+  def get_version_name
+    versionName = File.read("../../versionName").to_i
+    versionName = versionName + 1
+
+    f = File.new("../../versionName", "w")
+    f.write(versionName)
+    f.close
+
+    versionName
+  end
+
+  lane :build_aab do
+    code = get_version_code
+    name = get_version_name
+
+    Dir.chdir "../.." do
+      sh("flutter", "clean")
+      sh("flutter", "pub", "get")
+      sh("flutter", "build", "appbundle", "--build-number=#{name}", "--build-name=#{code}.#{name}")
+    end
+
+    puts "#{code}.#{name}"
+  end
+
+  desc "Runs all the tests"
+  lane :test do
+#     gradle(task: "test")
+    versionCode = File.read("../../versionCode")
+    versionName = File.read("../../versionName")
+
+    puts "#{versionCode}.#{versionName}"
+  end
+
+  lane :internal do
+    build_aab
+    upload_to_play_store(
+      json_key: "readygo-444508-fa605496760b.json",
+      package_name: "com.ready_go_project",
+      track: "internal",
+      release_status: "draft",
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      skip_upload_changelogs: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true
+    )
+  end
+
+  desc "Submit a new Beta Build to Crashlytics Beta"
+  lane :beta do
+
+    build_aab
+
+    upload_to_play_store(
+      json_key: "readygo-444508-fa605496760b.json",
+      package_name: "com.ready_go_project",
+      track: "alpha",
+      release_status: "draft",
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      skip_upload_changelogs: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true
+    )
+  end
+
+  desc "Deploy a new version to the Google Play but not used"
+  lane :deploy do
+    build_aab
+
+    upload_to_play_store(
+
+    )
+  end
+end
