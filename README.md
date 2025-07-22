@@ -10,7 +10,8 @@ status management : **flutter_provider, flutter_bloc, GetX**
 service locator : **get_it**  
 http communication : **Http, json_serializable**  
 server : **firebase-functions**  
-analytics : **firebase-analytics**
+analytics : **firebase-analytics**  
+CI/CD : **github(manual) / fastlane**
 
 ## Features of the app
 
