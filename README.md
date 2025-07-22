@@ -11,8 +11,8 @@ service locator : **get_it**
 http communication : **Http, json_serializable**  
 server : **firebase-functions**  
 analytics : **firebase-analytics**  
-CI/CD : **github(manual) / fastlane**
-
+CI/CD : **github(manual) / fastlane**  
+ect. : flutter_sharedPreferences
 ## Features of the app
 
 - **Estimated expense check**  
