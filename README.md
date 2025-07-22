@@ -1,4 +1,4 @@
-## readyGo App(IOS, ANDROID)
+## ReadyGo App(IOS, ANDROID)
 
 ReadyGo App is an all-in-one travel app that makes your entire trip convenient, 
 from travel preparation to travel records.
