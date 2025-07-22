@@ -36,3 +36,5 @@ https://play.google.com/store/apps/details?id=com.ready_go_project
 
 # App store download link
 https://apps.apple.com/us/app/readygo-travel-planning-app/id6744342927
+
+@copyright 2025 DevOn Studio
