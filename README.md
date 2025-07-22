@@ -1,16 +1,38 @@
-# ready_go_project
+## readyGo App(IOS, ANDROID)
 
-A new Flutter project.
+ReadyGo App is an all-in-one travel app that makes your entire trip convenient, 
+from travel preparation to travel records.
 
-## Getting Started
+# stack
+framework : Flutter (v.3.27.3)
+language : Dart
 
-This project is a starting point for a Flutter application.
+## Features of the app
 
-A few resources to get you started if this is your first Flutter project:
+- Estimated expense check
+Record and prepare the estimated expenses before departure.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- E-Ticket Management
+Store departure/arrival E-ticket images for easy management.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+-  a travel checklist
+Make a checklist of all the supplies you need for your trip and prepare them meticulously.
+
+- eSIM Information Management
+Save eSIM information and check the remaining time in real time for convenience.
+
+- the management of travel expenses
+Enjoy an efficient trip by recording and managing expenses used during the trip.
+
+- Accommodation information management
+Store accommodation information and check the accommodation location through real-time maps,
+Keep a note of the overall details of the accommodation.
+
+- Schedule Management
+You can record important schedules and detailed schedules before traveling, and check them easily.
+
+# Play store download link
+https://play.google.com/store/apps/details?id=com.ready_go_project
+
+# App store download link
+https://apps.apple.com/us/app/readygo-travel-planning-app/id6744342927
