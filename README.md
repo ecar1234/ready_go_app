@@ -5,7 +5,10 @@ from travel preparation to travel records.
 
 # stack
 framework : Flutter (v.3.27.3)  
-language : Dart
+language : Dart  
+status management : flutter_provider, flutter_bloc, GetX  
+service locator : get_it  
+http communication : Http, json_serializable
 
 ## Features of the app
 
