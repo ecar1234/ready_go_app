@@ -3,7 +3,7 @@
 **ReadyGo** App is an all-in-one travel app that makes your entire trip convenient, 
 from travel preparation to travel records.
 
-## stack
+## Stack
 framework : **Flutter** (v.3.27.3)  
 language : **Dart**  
 status management : **flutter_provider, flutter_bloc, GetX**  
