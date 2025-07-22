@@ -1,37 +1,37 @@
 # ReadyGo App(IOS, ANDROID)
 
-<b>ReadyGo<b> App is an all-in-one travel app that makes your entire trip convenient, 
+**ReadyGo** App is an all-in-one travel app that makes your entire trip convenient, 
 from travel preparation to travel records.
 
 ## stack
-framework : <b>Flutter<b> (v.3.27.3)  
-language : <b>Dart<b>  
-status management : <b>flutter_provider, flutter_bloc, GetX<b>  
-service locator : get_it  
-http communication : Http, json_serializable
+framework : **Flutter** (v.3.27.3)  
+language : **Dart**  
+status management : **flutter_provider, flutter_bloc, GetX**  
+service locator : **get_it**  
+http communication : **Http, json_serializable**
 
 ## Features of the app
 
-- <b>Estimated expense check<b>  
+- **Estimated expense check**  
 Record and prepare the estimated expenses before departure.
 
-- <b>E-Ticket Management<b>  
+- **E-Ticket Management**  
 Store departure/arrival E-ticket images for easy management.
 
--  <b>a travel checklist<b>  
+-  **a travel checklist**  
 Make a checklist of all the supplies you need for your trip and prepare them meticulously.
 
-- <b>eSIM Information Management<b>  
+- **eSIM Information Management**  
 Save eSIM information and check the remaining time in real time for convenience.
 
-- <b>the management of travel expenses<b>  
+- **the management of travel expenses**  
 Enjoy an efficient trip by recording and managing expenses used during the trip.
 
-- <b>Accommodation information management<b>  
+- **Accommodation information management**  
 Store accommodation information and check the accommodation location through real-time maps,  
 Keep a note of the overall details of the accommodation.
 
-- <b>Schedule Management<b>  
+- **Schedule Management**  
 You can record important schedules and detailed schedules before traveling, and check them easily.
 
 ## Play store download link
