@@ -46,8 +46,9 @@ app.*.map.json
 /android/app/release
 **/*.jks
 **/*.json
-versionCode
-versionName
+/android/readygo-444508-fa605496760b.json
+/android/app/jk_key_store.jks
+/android/app/google-services.json
 
 # Flutter build output directory
 build/
