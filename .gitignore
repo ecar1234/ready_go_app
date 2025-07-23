@@ -75,3 +75,7 @@ ios/DerivedData/
 
 # FVM Version Cache
 .fvm/
+
+# Fastlane
+android/fastlane/report.xml
+ios/fastlane/report.xml
