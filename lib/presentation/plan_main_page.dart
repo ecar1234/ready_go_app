@@ -147,7 +147,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (kReleaseMode) {
+      if (kDebugMode) {
         final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
         if (!isRemove) {
           _admobUtil.loadBannerAd(onAdLoaded: () {
@@ -192,7 +192,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
       final isKor = Localizations.localeOf(context).languageCode == "ko";
       // logger.i("plan list page bloc state: ${state.state}");
       return Container(
-        height: height - 80, // height - 하단바 높이 - gap(10) => body 크기
+        // height: height - 80, // height - 하단바 높이 - gap(10) => body 크기
         // color: const Color(0xff192a56),
         padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
         child: Column(
@@ -242,105 +242,107 @@ class _PlanMainPageState extends State<PlanMainPage> {
                   const Gap(20),
                   LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
                     return list.isEmpty
-                        ? SizedBox(
-                            height: height * 0.75,
-                            width: constraints.maxWidth > 640 ? (constraints.maxWidth > 800 ? 650 : 520) : 320,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Center(
-                                  child: Text("✨ ${AppLocalizations.of(context)!.planMainDesc}!",
-                                      style: LocalizationsUtil.setTextStyle(isKor,
-                                          fontWeight: FontWeight.w600, size: constraints.maxWidth > 640 ? 34 : 22)),
-                                ),
-                                Gap(isKor ? 20 : 10),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "✅ ${AppLocalizations.of(context)!.expectedMenu}",
-                                      style: LocalizationsUtil.setTextStyle(isKor,
-                                          size: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    Text(AppLocalizations.of(context)!.expectedDesc)
-                                  ],
-                                ),
-                                const Gap(10),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("✅ ${AppLocalizations.of(context)!.eTicketMenu}",
+                        ? SingleChildScrollView(
+                          child: SizedBox(
+                              height: height * 0.7,
+                              width: constraints.maxWidth > 640 ? (constraints.maxWidth > 800 ? 650 : 520) : 320,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Center(
+                                    child: Text("✨ ${AppLocalizations.of(context)!.planMainDesc}!",
+                                        style: LocalizationsUtil.setTextStyle(isKor,
+                                            fontWeight: FontWeight.w600, size: constraints.maxWidth > 640 ? 34 : 22)),
+                                  ),
+                                  Gap(isKor ? 20 : 10),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "✅ ${AppLocalizations.of(context)!.expectedMenu}",
                                         style: LocalizationsUtil.setTextStyle(isKor,
                                             size: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
-                                        textAlign: TextAlign.center),
-                                    Text(AppLocalizations.of(context)!.eTicketDesc)
-                                  ],
-                                ),
-                                const Gap(10),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("✅ ${AppLocalizations.of(context)!.checkListMenu}",
-                                        style: isKor
-                                            ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
-                                            : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
-                                        textAlign: TextAlign.center),
-                                    Text(AppLocalizations.of(context)!.checkListDesc)
-                                  ],
-                                ),
-                                const Gap(10),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("✅ ${AppLocalizations.of(context)!.eSimMenu}",
-                                        style: isKor
-                                            ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
-                                            : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
-                                        textAlign: TextAlign.center),
-                                    Text(AppLocalizations.of(context)!.eSimDesc)
-                                  ],
-                                ),
-                                const Gap(10),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("✅ ${AppLocalizations.of(context)!.expenseMenu}",
-                                        style: isKor
-                                            ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
-                                            : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
-                                        textAlign: TextAlign.center),
-                                    Text(AppLocalizations.of(context)!.expenseDesc)
-                                  ],
-                                ),
-                                const Gap(10),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("✅ ${AppLocalizations.of(context)!.accommodationMenu}",
-                                        style: isKor
-                                            ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
-                                            : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
-                                        textAlign: TextAlign.center),
-                                    Text(AppLocalizations.of(context)!.accommodationDesc)
-                                  ],
-                                ),
-                                const Gap(10),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("✅ ${AppLocalizations.of(context)!.scheduleMenu}",
-                                        style: isKor
-                                            ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
-                                            : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
-                                        textAlign: TextAlign.center),
-                                    Text(AppLocalizations.of(context)!.scheduleDesc)
-                                  ],
-                                ),
-                              ],
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      Text(AppLocalizations.of(context)!.expectedDesc)
+                                    ],
+                                  ),
+                                  const Gap(10),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text("✅ ${AppLocalizations.of(context)!.eTicketMenu}",
+                                          style: LocalizationsUtil.setTextStyle(isKor,
+                                              size: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
+                                          textAlign: TextAlign.center),
+                                      Text(AppLocalizations.of(context)!.eTicketDesc)
+                                    ],
+                                  ),
+                                  const Gap(10),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text("✅ ${AppLocalizations.of(context)!.checkListMenu}",
+                                          style: isKor
+                                              ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
+                                              : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
+                                          textAlign: TextAlign.center),
+                                      Text(AppLocalizations.of(context)!.checkListDesc)
+                                    ],
+                                  ),
+                                  const Gap(10),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text("✅ ${AppLocalizations.of(context)!.eSimMenu}",
+                                          style: isKor
+                                              ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
+                                              : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
+                                          textAlign: TextAlign.center),
+                                      Text(AppLocalizations.of(context)!.eSimDesc)
+                                    ],
+                                  ),
+                                  const Gap(10),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text("✅ ${AppLocalizations.of(context)!.expenseMenu}",
+                                          style: isKor
+                                              ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
+                                              : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
+                                          textAlign: TextAlign.center),
+                                      Text(AppLocalizations.of(context)!.expenseDesc)
+                                    ],
+                                  ),
+                                  const Gap(10),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text("✅ ${AppLocalizations.of(context)!.accommodationMenu}",
+                                          style: isKor
+                                              ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
+                                              : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
+                                          textAlign: TextAlign.center),
+                                      Text(AppLocalizations.of(context)!.accommodationDesc)
+                                    ],
+                                  ),
+                                  const Gap(10),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text("✅ ${AppLocalizations.of(context)!.scheduleMenu}",
+                                          style: isKor
+                                              ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
+                                              : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
+                                          textAlign: TextAlign.center),
+                                      Text(AppLocalizations.of(context)!.scheduleDesc)
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                          )
+                        )
                         : SizedBox(
                             width: MediaQuery.sizeOf(context).width,
                             height: height - 180 - bannerHeight, // height - button+gap(100) + banner(50) + bottom(70)
