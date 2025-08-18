@@ -11,7 +11,6 @@ import 'package:ready_go_project/presentation/plan_menus/plan_menu_page.dart';
 import 'package:ready_go_project/util/admob_util.dart';
 import 'package:ready_go_project/util/localizations_util.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../bloc/data_bloc.dart';
 import '../data/models/plan_model/plan_model.dart';
@@ -20,6 +19,7 @@ import '../domain/entities/provider/plan_list_provider.dart';
 import '../domain/entities/provider/purchase_manager.dart';
 import '../domain/entities/provider/responsive_height_provider.dart';
 import '../domain/entities/provider/theme_mode_provider.dart';
+import '../l10n/app_localizations.dart';
 import '../util/date_util.dart';
 
 class HomePage extends StatefulWidget {

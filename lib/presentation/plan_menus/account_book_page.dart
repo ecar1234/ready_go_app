@@ -17,13 +17,13 @@ import 'package:ready_go_project/util/date_util.dart';
 import 'package:ready_go_project/util/intl_utils.dart';
 import 'package:ready_go_project/util/localizations_util.dart';
 import 'package:ready_go_project/util/statistics_util.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../data/models/plan_model/plan_model.dart';
 import '../../domain/entities/provider/account_provider.dart';
 import '../../domain/entities/provider/admob_provider.dart';
 import '../../domain/entities/provider/purchase_manager.dart';
 import '../../domain/entities/provider/responsive_height_provider.dart';
+import '../../l10n/app_localizations.dart';
 import '../../util/admob_util.dart';
 
 class AccountBookPage extends StatefulWidget {

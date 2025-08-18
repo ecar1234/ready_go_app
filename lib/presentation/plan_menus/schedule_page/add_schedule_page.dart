@@ -7,12 +7,12 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:ready_go_project/data/models/schedule_model/schedule_model.dart';
 import 'package:ready_go_project/domain/entities/provider/schedule_provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:ready_go_project/util/localizations_util.dart';
 
 import '../../../domain/entities/provider/purchase_manager.dart';
 import '../../../domain/entities/provider/responsive_height_provider.dart';
 import '../../../domain/entities/provider/theme_mode_provider.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../util/admob_util.dart';
 
 class AddSchedulePage extends StatefulWidget {

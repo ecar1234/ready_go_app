@@ -7,8 +7,9 @@ import 'package:ready_go_project/data/models/purchases/purchase_model.dart';
 import 'package:ready_go_project/domain/entities/provider/purchase_manager.dart';
 import 'package:ready_go_project/domain/entities/provider/responsive_height_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:ready_go_project/util/localizations_util.dart';
+
+import '../l10n/app_localizations.dart';
 
 class InAppPurchasePage extends StatefulWidget {
   const InAppPurchasePage({super.key});

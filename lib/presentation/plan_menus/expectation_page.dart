@@ -16,11 +16,11 @@ import 'package:ready_go_project/domain/entities/provider/expectation_provider.d
 import 'package:ready_go_project/domain/entities/provider/plan_list_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
 import 'package:ready_go_project/util/intl_utils.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:ready_go_project/util/localizations_util.dart';
 
 import '../../domain/entities/provider/purchase_manager.dart';
 import '../../domain/entities/provider/responsive_height_provider.dart';
+import '../../l10n/app_localizations.dart';
 import '../../util/admob_util.dart';
 import '../../util/statistics_util.dart';
 

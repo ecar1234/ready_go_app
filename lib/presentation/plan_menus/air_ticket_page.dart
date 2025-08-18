@@ -13,12 +13,12 @@ import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.da
 import 'package:file_picker/file_picker.dart';
 import 'package:ready_go_project/util/localizations_util.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../domain/entities/provider/admob_provider.dart';
 import '../../domain/entities/provider/images_provider.dart';
 import '../../domain/entities/provider/purchase_manager.dart';
 import '../../domain/entities/provider/responsive_height_provider.dart';
+import '../../l10n/app_localizations.dart';
 import '../../util/admob_util.dart';
 
 class AirTicketPage extends StatefulWidget {

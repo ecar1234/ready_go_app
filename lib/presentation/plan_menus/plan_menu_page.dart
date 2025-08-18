@@ -14,7 +14,7 @@ import 'package:ready_go_project/presentation/plan_menus/expectation_page.dart';
 import 'package:ready_go_project/presentation/plan_menus/roaming_page.dart';
 import 'package:ready_go_project/presentation/plan_menus/schedule_page/schedule_page.dart';
 import 'package:ready_go_project/presentation/plan_menus/supplies_page/supplies_page.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'package:ready_go_project/util/localizations_util.dart';
 
 import '../../data/models/plan_model/plan_model.dart';
@@ -22,6 +22,8 @@ import '../../domain/entities/provider/admob_provider.dart';
 import '../../domain/entities/provider/purchase_manager.dart';
 import '../../domain/entities/provider/responsive_height_provider.dart';
 import '../../domain/entities/provider/theme_mode_provider.dart';
+
+import '../../l10n/app_localizations.dart';
 import '../../util/admob_util.dart';
 
 class PlanMenuPage extends StatefulWidget {

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ad-services-config>
+    <topics>
+        <advertiser-name>com.google.android.gms.ads.AdProvider</advertiser-name>
+        <topic-key>82024</topic-key>
+        <version>1</version>
+    </topics>
+</ad-services-config>

@@ -21,7 +21,8 @@ import '../data/models/plan_model/plan_model.dart';
 import '../domain/entities/provider/plan_list_provider.dart';
 import '../domain/entities/provider/purchase_manager.dart';
 import '../domain/entities/provider/theme_mode_provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
+
 
 // class PlanMainPage extends StatefulWidget {
 //   const PlanMainPage({super.key});

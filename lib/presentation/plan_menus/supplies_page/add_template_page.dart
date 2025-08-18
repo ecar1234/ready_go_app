@@ -10,12 +10,12 @@ import 'package:ready_go_project/data/models/supply_model/template_model.dart';
 import 'package:ready_go_project/domain/entities/provider/supplies_template_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/theme_mode_provider.dart';
 import 'package:ready_go_project/util/admob_util.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:ready_go_project/util/localizations_util.dart';
 
 import '../../../domain/entities/provider/admob_provider.dart';
 import '../../../domain/entities/provider/purchase_manager.dart';
 import '../../../domain/entities/provider/responsive_height_provider.dart';
+import '../../../l10n/app_localizations.dart';
 
 class AddTemplatePage extends StatefulWidget {
   final List<SupplyModel>? temp;

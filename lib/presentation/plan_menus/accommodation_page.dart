@@ -14,7 +14,6 @@ import 'package:ready_go_project/util/date_util.dart';
 import 'package:ready_go_project/util/intl_utils.dart';
 import 'package:ready_go_project/util/localizations_util.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../data/models/plan_model/plan_model.dart';
 import '../../domain/entities/provider/accommodation_provider.dart';
@@ -22,6 +21,7 @@ import '../../domain/entities/provider/admob_provider.dart';
 import '../../domain/entities/provider/purchase_manager.dart';
 import '../../domain/entities/provider/responsive_height_provider.dart';
 import '../../domain/entities/provider/theme_mode_provider.dart';
+import '../../l10n/app_localizations.dart';
 import '../../util/admob_util.dart';
 
 class AccommodationPage extends StatefulWidget {
@@ -575,7 +575,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                       );
                                       return;
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("여행 종료일 보다 이후 날짜로 설정 할 수 없습니다.")));
-                                      return;
+                                      // return;
                                     }
                                     if (_addressController.text.isEmpty) {
                                       Get.snackbar(localization.snackTitle, localization.snackDetail(localization.address),

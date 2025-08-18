@@ -3,11 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:ready_go_project/domain/entities/provider/purchase_manager.dart';
 import 'package:ready_go_project/util/localizations_util.dart';
-import 'package:ready_go_project/util/nation_currency_unit_util.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+
 
 
 import '../domain/entities/provider/theme_mode_provider.dart';
+import '../l10n/app_localizations.dart';
 
 class OptionPage extends StatefulWidget {
   const OptionPage({super.key});
@@ -138,7 +139,7 @@ class _OptionPageState extends State<OptionPage> {
             FutureBuilder(
               future: PackageInfo.fromPlatform(),
               builder:(context, info) {
-                String? versionNum = info.data != null ? info.data!.buildNumber : "";
+                // String? versionNum = info.data != null ? info.data!.buildNumber : "";
                 String? buildNum = info.data != null ? info.data!.version : "";
                 return Column(
                 children: [

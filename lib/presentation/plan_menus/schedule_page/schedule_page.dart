@@ -13,12 +13,12 @@ import 'package:ready_go_project/domain/entities/provider/schedule_provider.dart
 import 'package:ready_go_project/presentation/plan_menus/schedule_page/add_schedule_page.dart';
 import 'package:ready_go_project/util/admob_util.dart';
 import 'package:ready_go_project/util/date_util.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:ready_go_project/util/localizations_util.dart';
 
 import '../../../data/models/plan_model/plan_model.dart';
 import '../../../domain/entities/provider/purchase_manager.dart';
 import '../../../domain/entities/provider/theme_mode_provider.dart';
+import '../../../l10n/app_localizations.dart';
 
 class SchedulePage extends StatefulWidget {
   final PlanModel plan;

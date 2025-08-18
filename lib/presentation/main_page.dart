@@ -23,7 +23,6 @@ import 'package:ready_go_project/presentation/plan_main_page.dart';
 import 'package:ready_go_project/presentation/visit_statistics_page.dart';
 import 'package:ready_go_project/util/localizations_util.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../bloc/data_bloc.dart';
 import '../domain/entities/provider/passport_provider.dart';
@@ -31,6 +30,7 @@ import '../domain/entities/provider/plan_list_provider.dart';
 import '../domain/entities/provider/responsive_height_provider.dart';
 import '../domain/entities/provider/theme_mode_provider.dart';
 
+import '../l10n/app_localizations.dart';
 import 'components/custom_bottom_navigation_bar.dart';
 
 class MainPage extends StatefulWidget {
@@ -135,17 +135,19 @@ class _MainPageState extends State<MainPage> {
       child: GetMaterialApp(
           navigatorObservers: [FirebaseAnalyticsObserver(analytics: _analytics)],
           debugShowCheckedModeBanner: false,
-          supportedLocales: const [
-            Locale('en', ''), // English
-            Locale('ko', ''), // Korean
-            Locale('ja', ''), // Japan
-          ],
-          localizationsDelegates: const [
-            AppLocalizations.delegate, // 자동으로 생성된 delegate
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
+          // supportedLocales: const [
+          //   Locale('en', ''), // English
+          //   Locale('ko', ''), // Korean
+          //   Locale('ja', ''), // Japan
+          // ],
+          supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          // localizationsDelegates: const [
+          //   AppLocalizations.delegate, // 자동으로 생성된 delegate
+          //   GlobalMaterialLocalizations.delegate,
+          //   GlobalWidgetsLocalizations.delegate,
+          //   GlobalCupertinoLocalizations.delegate,
+          // ],
           // localeResolutionCallback: (locale, supportedLocales) {
           //   if (locale != null) {
           //     for (var supportedLocale in supportedLocales) {
