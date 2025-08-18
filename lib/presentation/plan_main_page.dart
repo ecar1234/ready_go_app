@@ -245,7 +245,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
                     return list.isEmpty
                         ? SingleChildScrollView(
                           child: SizedBox(
-                              height: height * 0.7,
+                              // height:  height * 0.7,
                               width: constraints.maxWidth > 640 ? (constraints.maxWidth > 800 ? 650 : 520) : 320,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
