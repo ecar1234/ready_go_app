@@ -601,6 +601,7 @@ class _SchedulePageState extends State<SchedulePage> {
                                 if (_titleController.text.isEmpty) {
                                   Get.snackbar(localization.snackTitle, localization.snackDetail(localization.scheduleMenu),
                                     backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                      snackPosition: SnackPosition.TOP
                                   );
                                   return;
                                 }
@@ -609,6 +610,7 @@ class _SchedulePageState extends State<SchedulePage> {
                                     dayScheduleList.scheduleList!.any((item) => item.time == "${_hourController.text}:${_minController.text}")) {
                                   Get.snackbar(localization.snackTitle, localization.snackCheckScheduleTime,
                                     backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                      snackPosition: SnackPosition.TOP
                                   );
                                   return;
                                 }

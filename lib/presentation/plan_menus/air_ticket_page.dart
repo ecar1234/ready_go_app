@@ -371,6 +371,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
                             Get.snackbar(AppLocalizations.of(context)!.snackLoadFailedTitle,
                               AppLocalizations.of(context)!.snackLoadFailedDesc,
                               backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                              snackPosition: SnackPosition.TOP
                             );
                             return;
                           }
@@ -415,6 +416,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
                             Get.snackbar(AppLocalizations.of(context)!.snackLoadFailedTitle,
                                 AppLocalizations.of(context)!.snackLoadFailedDesc,
                               backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                snackPosition: SnackPosition.TOP
                             );
                             return;
                           }
@@ -463,6 +465,7 @@ class _AirTicketPageState extends State<AirTicketPage> {
                             Get.snackbar(AppLocalizations.of(context)!.snackLoadFailedTitle,
                               AppLocalizations.of(context)!.snackLoadFailedDesc,
                               backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                snackPosition: SnackPosition.TOP
                             );
                             return;
                           }

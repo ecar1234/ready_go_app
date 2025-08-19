@@ -370,15 +370,17 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                     onSelected: (value) {
                                       setState(() {
                                         if (value! < day) {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                              SnackBar(
-                                                  content: Text(localization.snackRejectAccPeriod1)));
+                                          // ScaffoldMessenger.of(context).showSnackBar(
+                                          //     SnackBar(
+                                          //         content: Text(localization.snackRejectAccPeriod1)));
+                                          Get.snackbar(localization.snackRejectAccPeriod1, '', snackPosition: SnackPosition.TOP);
                                           return;
                                         }
                                         if (value > widget.plan.schedule!.last!.day) {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                              SnackBar(
-                                                  content: Text(localization.snackRejectAccPeriod2)));
+                                          // ScaffoldMessenger.of(context).showSnackBar(
+                                          //     SnackBar(
+                                          //         content: Text(localization.snackRejectAccPeriod2)));
+                                          Get.snackbar(localization.snackRejectAccPeriod2, '', snackPosition: SnackPosition.TOP);
                                           return;
                                         }
                                         day = value;
@@ -571,7 +573,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                     if (_nameController.text.isEmpty) {
                                       Get.snackbar(localization.snackTitle, localization.snackDetail(localization.accName),
                                           backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
-                                        snackPosition: SnackPosition.BOTTOM
+                                        snackPosition: SnackPosition.TOP
                                       );
                                       return;
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("여행 종료일 보다 이후 날짜로 설정 할 수 없습니다.")));
@@ -580,7 +582,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                     if (_addressController.text.isEmpty) {
                                       Get.snackbar(localization.snackTitle, localization.snackDetail(localization.address),
                                           backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
-                                          snackPosition: SnackPosition.BOTTOM
+                                          snackPosition: SnackPosition.TOP
                                       );
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("숙소 주소를 확인해 주세요")));
                                       return;
@@ -588,7 +590,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                     if (_paymentController.text.isEmpty) {
                                       Get.snackbar(localization.snackTitle, localization.snackDetail(localization.amount),
                                           backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
-                                          snackPosition: SnackPosition.BOTTOM
+                                          snackPosition: SnackPosition.TOP
                                       );
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("숙소 가격을 확인해 주세요")));
                                       return;
@@ -596,7 +598,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                     if (_periodController.text.isEmpty) {
                                       Get.snackbar(localization.snackTitle, localization.snackDetail(localization.enterPeriod),
                                           backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
-                                          snackPosition: SnackPosition.BOTTOM
+                                          snackPosition: SnackPosition.TOP
                                       );
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("숙박 기간을 확인해 주세요")));
                                       return;
@@ -604,7 +606,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                     if (_checkInController.text.isEmpty) {
                                       Get.snackbar(localization.snackTitle, localization.snackDetail(localization.checkIn),
                                           backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
-                                          snackPosition: SnackPosition.BOTTOM
+                                          snackPosition: SnackPosition.TOP
                                       );
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("체크인 시간을 확인해 주세요")));
                                       return;
@@ -612,7 +614,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                     if (_checkOutController.text.isEmpty) {
                                       Get.snackbar(localization.snackTitle, localization.snackDetail(localization.checkout),
                                           backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
-                                          snackPosition: SnackPosition.BOTTOM
+                                          snackPosition: SnackPosition.TOP
                                       );
                                       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("체크아웃 시간을 확인해 주세요")));
                                       return;
@@ -761,13 +763,16 @@ class _AccommodationPageState extends State<AccommodationPage> {
                                         child: TextButton(
                                           onPressed: () {
                                             if (list[idx].address!.isEmpty) {
-                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("주소가 존재하지 않습니다.")));
+                                              // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("주소가 존재하지 않습니다.")));
+                                              Get.snackbar('알림', '주소가 존재하지 않습니다.', snackPosition: SnackPosition.TOP);
                                               return;
                                             }
                                             Clipboard.setData(ClipboardData(text: list[idx].address!));
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(content: Text(localization.snackAccommodationCopy,
-                                                  style: LocalizationsUtil.setTextStyle(isKor),)));
+                                            // ScaffoldMessenger.of(context).showSnackBar(
+                                            //     SnackBar(content: Text(localization.snackAccommodationCopy,
+                                            //       style: LocalizationsUtil.setTextStyle(isKor),)));
+                                            Get.snackbar(localization.snackAccommodationCopy, '', snackPosition: SnackPosition.TOP);
+                                            return;
                                           },
                                           style: TextButton.styleFrom(padding: EdgeInsets.zero),
                                           child: Text(localization.copy),

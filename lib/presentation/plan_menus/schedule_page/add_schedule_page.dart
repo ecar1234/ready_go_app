@@ -117,176 +117,185 @@ class _AddSchedulePageState extends State<AddSchedulePage> {
         },
         child: SingleChildScrollView(
           child: Container(
-            height: height - bannerHei,
+            height: height ,
             padding: const EdgeInsets.all(20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: isDarkMode ? Colors.white : Colors.black87),
-                    borderRadius: BorderRadius.circular(10)
-                  ),
+                SizedBox(
+                  height: height - bannerHei - 50,
                   child: Column(
                     children: [
-                      SizedBox(
-                        height: 30,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(localization.mainSchedule,
-                                style: LocalizationsUtil.setTextStyle(isKor, size: 20, fontWeight: FontWeight.w600)),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 30,
-                        child: Row(
-                          children: [
-                            conversionTime,
-                            const Gap(10),
-                            Text("${widget.daySchedule.title}",
-                              style: LocalizationsUtil.setTextStyle(isKor, size: 18, fontWeight: FontWeight.w600),
-                                overflow: TextOverflow.ellipsis
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Gap(10),
-                SizedBox(
-                  height: 50,
-                  // width: MediaQuery.sizeOf(context).width-80,
-                  child: Row(
-                    children: [
-                      Flexible(
-                        flex: 3,
-                        child: SizedBox(
-                          height: 50,
-                          child: TextField(
-                            controller: _detailController,
-                            decoration: InputDecoration(
-                                label: Text(
-                                  localization.detailAndMemo,
-                                  style: isKor ? null : LocalizationsUtil.setTextStyle(isKor),
-                                )),
-                          ),
-                        ),
-                      ),
-                      const Gap(10),
-                      Flexible(
-                        flex: 1,
-                        child: SizedBox(
-                          height: 50,
-                          child: ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  if(_detailController.text.isEmpty){
-                                    Get.snackbar(localization.snackTitle, localization.snackDetail(localization.detailAndMemo),
-                                      backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
-                                    );
-                                    return;
-                                  }
-                                  details.add(_detailController.text);
-                                  _detailController.clear();
-                                });
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white
-                              ),
-                              child: Text(localization.add, style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),)),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                const Gap(10),
-                Expanded(
-                    child: Container(
-                      width: MediaQuery.sizeOf(context).width-40,
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
                           border: Border.all(color: isDarkMode ? Colors.white : Colors.black87),
                           borderRadius: BorderRadius.circular(10)
-                      ),
-                      child: details.isEmpty ?
-                      SizedBox(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(localization.detailDesc1, style: LocalizationsUtil.setTextStyle(isKor, size: 16, fontWeight: FontWeight.w600),),
-                          Text(localization.detailDesc2, style: LocalizationsUtil.setTextStyle(isKor, size: 16, fontWeight: FontWeight.w600),),
-                        ],
-                      ))
-                          : ListView.separated(
-                          shrinkWrap: true ,
-                          itemBuilder: (context, idx){
-                            return SizedBox(
+                        ),
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: 30,
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("${idx+1}. ${details[idx]}", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),),
-                                  SizedBox(
-                                    height: 30,
-                                    width: 70,
-                                    child: ElevatedButton(onPressed: (){
-                                      setState(() {
-                                        details.removeAt(idx);
-                                      });
-                                    }, style: ElevatedButton.styleFrom(
-                                      padding: EdgeInsets.zero,
-                                      backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10)
-                                      )
-                                    ),
-                                        child: Text(localization.delete, style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),)),
+                                  Text(localization.mainSchedule,
+                                      style: LocalizationsUtil.setTextStyle(isKor, size: 20, fontWeight: FontWeight.w600)),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                              child: Row(
+                                children: [
+                                  conversionTime,
+                                  const Gap(10),
+                                  Text("${widget.daySchedule.title}",
+                                    style: LocalizationsUtil.setTextStyle(isKor, size: 18, fontWeight: FontWeight.w600),
+                                      overflow: TextOverflow.ellipsis
                                   )
                                 ],
                               ),
-                            );
-                          }, separatorBuilder: (context, idx)=> const Gap(8), itemCount: details.length) ,
-                    )),
-                const Gap(10),
-                SizedBox(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        height: 50,
-                        width: 100,
-                        child: ElevatedButton(
-                            onPressed: () {
-                              _detailController.clear();
-                              Navigator.pop(context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              side: isDarkMode ? const BorderSide(color: Colors.white) : null,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)
-                              )
                             ),
-                            child: Text(localization.close, style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary ),)),
+                          ],
+                        ),
                       ),
-                      const Gap(20),
+                      const Gap(10),
                       SizedBox(
                         height: 50,
-                        width: 100,
-                        child: ElevatedButton(onPressed: () {
-                          context.read<ScheduleProvider>().addScheduleDetails(details, widget.roundIdx, widget.scheduleIdx, widget.planId);
-                          Navigator.pop(context);
-                        }, style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).colorScheme.primary,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
+                        // width: MediaQuery.sizeOf(context).width-80,
+                        child: Row(
+                          children: [
+                            Flexible(
+                              flex: 3,
+                              child: SizedBox(
+                                height: 50,
+                                child: TextField(
+                                  controller: _detailController,
+                                  decoration: InputDecoration(
+                                      label: Text(
+                                        localization.detailAndMemo,
+                                        style: isKor ? null : LocalizationsUtil.setTextStyle(isKor),
+                                      )),
+                                ),
+                              ),
+                            ),
+                            const Gap(10),
+                            Flexible(
+                              flex: 1,
+                              child: SizedBox(
+                                height: 50,
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        if(_detailController.text.isEmpty){
+                                          Get.snackbar(localization.snackTitle, localization.snackDetail(localization.detailAndMemo),
+                                            backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                              snackPosition: SnackPosition.TOP
+                                          );
+                                          return;
+                                        }
+                                        details.add(_detailController.text);
+                                        _detailController.clear();
+                                      });
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white
+                                    ),
+                                    child: Text(localization.add, style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),)),
+                              ),
                             )
+                          ],
                         ),
-                            child: Text(localization.add, style: LocalizationsUtil.setTextStyle(isKor, color: Colors.white),)),
-                      )
+                      ),
+                      const Gap(10),
+                      Expanded(
+                          child: Container(
+                            width: MediaQuery.sizeOf(context).width-40,
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                                border: Border.all(color: isDarkMode ? Colors.white : Colors.black87),
+                                borderRadius: BorderRadius.circular(10)
+                            ),
+                            child: details.isEmpty ?
+                            SizedBox(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(localization.detailDesc1, style: LocalizationsUtil.setTextStyle(isKor, size: 16, fontWeight: FontWeight.w600),),
+                                Text(localization.detailDesc2, style: LocalizationsUtil.setTextStyle(isKor, size: 16, fontWeight: FontWeight.w600),),
+                              ],
+                            ))
+                                : ListView.separated(
+                                shrinkWrap: true ,
+                                itemBuilder: (context, idx){
+                                  return SizedBox(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text("${idx+1}. ${details[idx]}", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),),
+                                        SizedBox(
+                                          height: 30,
+                                          width: 70,
+                                          child: ElevatedButton(onPressed: (){
+                                            setState(() {
+                                              details.removeAt(idx);
+                                            });
+                                          }, style: ElevatedButton.styleFrom(
+                                            padding: EdgeInsets.zero,
+                                            backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10)
+                                            )
+                                          ),
+                                              child: Text(localization.delete, style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary),)),
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                }, separatorBuilder: (context, idx)=> const Gap(8), itemCount: details.length) ,
+                          )),
+                      const Gap(10),
+                      SizedBox(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: 50,
+                              width: 100,
+                              child: ElevatedButton(
+                                  onPressed: () {
+                                    _detailController.clear();
+                                    Navigator.pop(context);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    side: isDarkMode ? const BorderSide(color: Colors.white) : null,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)
+                                    )
+                                  ),
+                                  child: Text(localization.close, style: LocalizationsUtil.setTextStyle(isKor, color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary ),)),
+                            ),
+                            const Gap(20),
+                            SizedBox(
+                              height: 50,
+                              width: 100,
+                              child: ElevatedButton(onPressed: () {
+                                context.read<ScheduleProvider>().addScheduleDetails(details, widget.roundIdx, widget.scheduleIdx, widget.planId);
+                                Navigator.pop(context);
+                              }, style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(context).colorScheme.primary,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                  )
+                              ),
+                                  child: Text(localization.add, style: LocalizationsUtil.setTextStyle(isKor, color: Colors.white),)),
+                            )
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),

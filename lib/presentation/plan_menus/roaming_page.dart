@@ -285,8 +285,10 @@ class _RoamingPageState extends State<RoamingPage> {
                                         child: ElevatedButton(
                                           onPressed: () {
                                             Clipboard.setData(ClipboardData(text: dpAddressController.text));
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(content: Text(localization.copyDpAddress), duration: const Duration(milliseconds: 1000)));
+                                            // ScaffoldMessenger.of(context).showSnackBar(
+                                            //     SnackBar(content: Text(localization.copyDpAddress), duration: const Duration(milliseconds: 1000)));
+                                            Get.snackbar(localization.copyDpAddress, '', snackPosition: SnackPosition.TOP);
+                                            return;
                                           },
                                           style: ElevatedButton.styleFrom(
                                             padding: EdgeInsets.zero,
@@ -396,10 +398,12 @@ class _RoamingPageState extends State<RoamingPage> {
                                       child: ElevatedButton(
                                         onPressed: () {
                                           Clipboard.setData(ClipboardData(text: activeCodeController.text));
-                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                            content: Text(localization.copyActiveCode),
-                                            duration: const Duration(milliseconds: 1000),
-                                          ));
+                                          // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                          //   content: Text(localization.copyActiveCode),
+                                          //   duration: const Duration(milliseconds: 1000),
+                                          // ));
+                                          Get.snackbar(localization.copyActiveCode, '', snackPosition: SnackPosition.TOP);
+                                          return;
                                         },
                                         style: ElevatedButton.styleFrom(
                                           padding: EdgeInsets.zero,
@@ -621,7 +625,9 @@ class _RoamingPageState extends State<RoamingPage> {
                                                 selectedValue = period.period;
                                                 context.read<RoamingProvider>().resetPeriod(widget.planId);
                                                 Navigator.of(context).pop();
-                                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text((localization.resetCompleted))));
+                                                // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text((localization.resetCompleted))));
+                                                Get.snackbar(localization.resetCompleted, '', snackPosition: SnackPosition.TOP);
+                                                return;
                                               },
                                               child: Text(localization.confirm)),
                                         )
@@ -643,7 +649,8 @@ class _RoamingPageState extends State<RoamingPage> {
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
                           onPressed: () {
                             if (period.period == 0) {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(localization.startUsingSnack)));
+                              // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(localization.startUsingSnack),));
+                              Get.snackbar(localization.startUsingSnack, "",snackPosition: SnackPosition.TOP);
                               return;
                             }
                             context.read<RoamingProvider>().startPeriod(widget.planId);
@@ -838,12 +845,14 @@ class _RoamingPageState extends State<RoamingPage> {
                                   if (Platform.isIOS && dpAddressController.text.isEmpty) {
                                     Get.snackbar(localization.snackTitle, localization.snackDetail(localization.dpAddressTitle),
                                       backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                        snackPosition: SnackPosition.TOP
                                     );
                                     return;
                                   }
                                   if (activeCodeController.text.isEmpty) {
                                     Get.snackbar(localization.snackTitle, localization.snackDetail(localization.activeCodeTitle),
                                       backgroundColor: Theme.of(context).colorScheme.surface,
+                                        snackPosition: SnackPosition.TOP
                                     );
                                     return;
                                   }

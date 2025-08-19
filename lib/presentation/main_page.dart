@@ -380,6 +380,7 @@ class _MainPage2State extends State<MainPage2> {
                               Get.snackbar(AppLocalizations.of(context)!.passportAlertTitle,
                                   AppLocalizations.of(context)!.passportAlertContent,
                                 backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                  snackPosition: SnackPosition.TOP
                               );
                               return;
                             }

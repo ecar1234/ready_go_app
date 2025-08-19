@@ -1191,6 +1191,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                         localization.snackTitle,
                                         localization.snackCommonDetail,
                                         backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                          snackPosition: SnackPosition.TOP
                                       );
                                       return;
                                     }
@@ -1199,6 +1200,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                         localization.snackTitle,
                                         localization.snackDetail(localization.amount),
                                         backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                          snackPosition: SnackPosition.TOP
                                       );
                                       return;
                                     }
@@ -1207,6 +1209,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                         localization.snackTitle,
                                         localization.snackDetail("category"),
                                         backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                          snackPosition: SnackPosition.TOP
                                       );
                                       return;
                                     }
@@ -1238,6 +1241,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                           localization.snackNoChangeTitle,
                                           localization.snackNoChangeDesc,
                                           backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                            snackPosition: SnackPosition.TOP
                                         );
                                         return;
                                       }
@@ -1411,6 +1415,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
                                       localization.snackTitle,
                                       localization.snackDetail(localization.amount),
                                       backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                        snackPosition: SnackPosition.TOP
                                     );
                                     return;
                                   }

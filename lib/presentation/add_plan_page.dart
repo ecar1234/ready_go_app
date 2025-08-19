@@ -2,6 +2,7 @@ import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
@@ -233,43 +234,48 @@ class _AddPlanPageState extends State<AddPlanPage> {
                             (widget.plan!.subject! == subjectController.text) &&
                             (widget.plan!.schedule! == _dates)) {
                           FocusManager.instance.primaryFocus!.unfocus();
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                            content: Text("변경 사항이 존재 하지 않습니다."),
-                            duration: Duration(seconds: 1),
-                          ));
+                          // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          //   content: Text("변경 사항이 존재 하지 않습니다."),
+                          //   duration: Duration(seconds: 1),
+                          // ));
+                          Get.snackbar("변경 사항이 존재 하지 않습니다.","", snackPosition: SnackPosition.TOP);
                           return;
                         }
                       }
                       if (nationController.text.isEmpty) {
                         FocusManager.instance.primaryFocus!.unfocus();
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(localization.snackEmptyNation),
-                          duration: const Duration(seconds: 1),
-                        ));
+                        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        //   content: Text(localization.snackEmptyNation),
+                        //   duration: const Duration(seconds: 1),
+                        // ));
+                        Get.snackbar(localization.snackEmptyNation, "", snackPosition: SnackPosition.TOP);
                         return;
                       }
                       if (subjectController.text.isEmpty) {
                         FocusManager.instance.primaryFocus!.unfocus();
-                        ScaffoldMessenger.of(context).showSnackBar( SnackBar(
-                          content: Text(localization.snackEmptySubject),
-                          duration: const Duration(seconds: 1),
-                        ));
+                        // ScaffoldMessenger.of(context).showSnackBar( SnackBar(
+                        //   content: Text(localization.snackEmptySubject),
+                        //   duration: const Duration(seconds: 1),
+                        // ));
+                        Get.snackbar(localization.snackEmptySubject, "", snackPosition: SnackPosition.TOP);
                         return;
                       }
                       if (_dates.length > 2 || _dates.isEmpty) {
                         FocusManager.instance.primaryFocus!.unfocus();
-                        ScaffoldMessenger.of(context).showSnackBar( SnackBar(
-                          content: Text(localization.snackEmptyPeriod),
-                          duration: const Duration(seconds: 1),
-                        ));
+                        // ScaffoldMessenger.of(context).showSnackBar( SnackBar(
+                        //   content: Text(localization.snackEmptyPeriod),
+                        //   duration: const Duration(seconds: 1),
+                        // ));
+                        Get.snackbar(localization.snackEmptyPeriod, "", snackPosition: SnackPosition.TOP);
                         return;
                       }
                       if(nationController.text == localization.select){
                         FocusManager.instance.primaryFocus!.unfocus();
-                        ScaffoldMessenger.of(context).showSnackBar( SnackBar(
-                          content: Text(localization.snackEmptyNation),
-                          duration: const Duration(seconds: 1),
-                        ));
+                        // ScaffoldMessenger.of(context).showSnackBar( SnackBar(
+                        //   content: Text(localization.snackEmptyNation),
+                        //   duration: const Duration(seconds: 1),
+                        // ));
+                        Get.snackbar(localization.snackEmptyNation, "", snackPosition: SnackPosition.TOP);
                         return;
                       }
 

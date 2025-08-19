@@ -148,7 +148,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (kDebugMode) {
+      if (kReleaseMode) {
         final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
         if (!isRemove) {
           _admobUtil.loadBannerAd(onAdLoaded: () {
@@ -468,6 +468,7 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                                   AppLocalizations.of(context)!.snackFavoriteTitle,
                                                   AppLocalizations.of(context)!.snackFavoriteDesc,
                                                   backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                                    snackPosition: SnackPosition.TOP
                                                 );
                                                 return;
                                               }

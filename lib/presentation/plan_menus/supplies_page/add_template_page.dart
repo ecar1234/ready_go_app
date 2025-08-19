@@ -134,6 +134,7 @@ class _AddTemplatePageState extends State<AddTemplatePage> {
                                             if (_textController.text.isEmpty) {
                                               Get.snackbar(AppLocalizations.of(context)!.snackTitle, AppLocalizations.of(context)!.snackDetail("item"),
                                                 backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                                  snackPosition: SnackPosition.TOP
                                               );
                                               return;
                                             }
@@ -339,6 +340,7 @@ class _AddTemplatePageState extends State<AddTemplatePage> {
                                   Get.snackbar(AppLocalizations.of(context)!.snackTitle,
                                     AppLocalizations.of(context)!.snackCommonDetail,
                                     backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                      snackPosition: SnackPosition.TOP
                                   );
                                   return;
                                 }

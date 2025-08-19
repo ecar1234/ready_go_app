@@ -718,6 +718,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                       AppLocalizations.of(context)!.snackTitle,
                                       AppLocalizations.of(context)!.snackCommonDetail,
                                       backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                        snackPosition: SnackPosition.TOP
                                     );
                                     return;
                                   }
@@ -733,6 +734,7 @@ class _ExpectationPageState extends State<ExpectationPage> {
                                         AppLocalizations.of(context)!.snackNoChangeTitle,
                                         AppLocalizations.of(context)!.snackNoChangeDesc,
                                         backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                          snackPosition: SnackPosition.TOP
                                       );
                                       return;
                                     }

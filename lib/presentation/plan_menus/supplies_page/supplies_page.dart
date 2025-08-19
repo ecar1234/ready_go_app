@@ -154,7 +154,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
                         ),
                         const Gap(10),
                         Container(
-                            height: height - bannerHei - 90,
+                            height: height - bannerHei - 100,
                             decoration: BoxDecoration(border: Border.all(color: const Color(0xff666666)), borderRadius: BorderRadius.circular(10)),
                             child: list.isEmpty
                                 ? Center(
@@ -463,6 +463,7 @@ class _SuppliesPageState extends State<SuppliesPage> {
                                     Get.snackbar(AppLocalizations.of(context)!.snackTitle,
                                       AppLocalizations.of(context)!.snackTemplateSelectDesc,
                                       backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
+                                        snackPosition: SnackPosition.TOP
                                     );
                                     return;
                                   }
@@ -540,7 +541,8 @@ class _SuppliesPageState extends State<SuppliesPage> {
                               child: ElevatedButton(
                                 onPressed: () {
                                   if (_controller.text.isEmpty) {
-                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("항목을 입력해 주세요")));
+                                    // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("항목을 입력해 주세요")));
+                                    Get.snackbar("항목을 입력해 주세요", "",snackPosition: SnackPosition.TOP);
                                     return;
                                   }
                                   SupplyModel item = SupplyModel(item: _controller.text, isCheck: false);
@@ -619,7 +621,8 @@ class _SuppliesPageState extends State<SuppliesPage> {
                               child: ElevatedButton(
                                 onPressed: () {
                                   if (_controller.text.isEmpty) {
-                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("항목을 입력해 주세요")));
+                                    // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("항목을 입력해 주세요")));
+                                    Get.snackbar("항목을 입력해 주세요", "",snackPosition: SnackPosition.TOP);
                                     return;
                                   }
                                   String item = _controller.text;
