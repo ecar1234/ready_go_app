@@ -252,10 +252,10 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
 
     return List.generate(nationsList.length, (idx) {
       final isTouched = idx == nationTouchedIndex;
-      final fontSize = isTouched ? 20.0 : 16.0;
+      final fontSize = isTouched ? 16.0 : 12.0;
       final radius = isTouched ? 70.0 : 60.0;
-      final widgetSize = isTouched ? 55.0 : 10.0;
-      final offset = isTouched ? 1.4 : 1.1;
+      final widgetSize = isTouched ? 75.0 : 10.0;
+      final offset = isTouched ? 1.5 : 1.1;
       final color = nationColors[idx % nationColors.length];
       return PieChartSectionData(
           title: nationsList[idx].keys.first,
@@ -346,10 +346,10 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
 
     return List.generate(accountList.length, (idx) {
       final isTouched = idx == accountTouchedIndex;
-      final fontSize = isTouched ? 20.0 : 16.0;
+      final fontSize = isTouched ? 16.0 : 12.0;
       final radius = isTouched ? 70.0 : 60.0;
-      final widgetSize = isTouched ? 55.0 : 10.0;
-      final offset = isTouched ? 1.4 : 1.0;
+      final widgetSize = isTouched ? 75.0 : 10.0;
+      final offset = isTouched ? 1.5 : 1.1;
       final color = accountColors[idx % accountColors.length];
       return PieChartSectionData(
           title: StatisticsUtil.getAccountValue(accountList, idx) == 0 ? "" : accountList[idx].keys.first,
@@ -416,7 +416,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
                       )
                     : GridView.builder(
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            mainAxisExtent: 40, crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10),
+                            mainAxisExtent: 40, crossAxisCount: 1, crossAxisSpacing: 10, mainAxisSpacing: 10),
                         itemBuilder: (context, idx) {
                           return SizedBox(
                             child: Row(
@@ -426,7 +426,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
                                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                                 ),
                                 const Gap(10),
-                                Text("${nationList[idx].values.first}회 (${(nationList[idx].values.first / list.length) * 100}%)"),
+                                Text("${nationList[idx].values.first}회 (${((nationList[idx].values.first / list.length) * 100).toStringAsFixed(1)}%)"),
                               ],
                             ),
                           );

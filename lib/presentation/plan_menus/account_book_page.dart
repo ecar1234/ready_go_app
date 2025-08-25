@@ -129,7 +129,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
             child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               SizedBox(
                 height: height - bannerHei - 40,
-                child: _page1(context, height - bannerHei - 40, isDarkMode),
+                child: _page1(context, height - bannerHei - 50, isDarkMode),
                 // child: ExpandablePageView(controller: _expandController, physics: const BouncingScrollPhysics(), children: [
                 //   _page1(context, height - bannerHei - 40, isDarkMode),
                 //   // _page2(context, height - bannerHei - 40, info, isDarkMode)
@@ -952,6 +952,7 @@ class _AccountBookPageState extends State<AccountBookPage> {
               ],
             ),
           ),
+          const Gap(10)
         ],
       ),
     );

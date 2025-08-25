@@ -62,7 +62,7 @@ ios/Flutter/Generated.xcconfig
 # Android
 .android/
 app/build/
-app/.cxx
+android/app/.cxx
 
 # Xcode 빌드 데이터
 ios/Pods/

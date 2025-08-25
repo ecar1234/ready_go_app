@@ -304,12 +304,14 @@ class _ExpectationPageState extends State<ExpectationPage> {
                     child: SizedBox(
                       width: isNationKor ? wid - 40 : (wid - 40) / 2,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
-                            AppLocalizations.of(context)!.ownCurrency,
-                            style: LocalizationsUtil.setTextStyle(isKor, size: 18, fontWeight: FontWeight.w600),
+                          SizedBox(
+                            child: Text(
+                              AppLocalizations.of(context)!.ownCurrency,
+                              style: LocalizationsUtil.setTextStyle(isKor, size: 18, fontWeight: FontWeight.w600),
+                            ),
                           ),
                           Selector<ExpectationProvider, List<ExpectationModel>>(
                             selector: (context, expectation) {
@@ -376,11 +378,14 @@ class _ExpectationPageState extends State<ExpectationPage> {
                       child: SizedBox(
                         width: (wid - 40) / 2,
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(
-                              AppLocalizations.of(context)!.foreignCurrency,
-                              style: LocalizationsUtil.setTextStyle(isKor, size: 18, fontWeight: FontWeight.w600),
+                            SizedBox(
+                              child: Text(
+                                AppLocalizations.of(context)!.foreignCurrency,
+                                style: LocalizationsUtil.setTextStyle(isKor, size: 18, fontWeight: FontWeight.w600),
+                              ),
                             ),
                             Selector<ExpectationProvider, List<ExpectationModel>>(
                               selector: (context, expectation) {
