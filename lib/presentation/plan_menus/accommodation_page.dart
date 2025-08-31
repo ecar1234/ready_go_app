@@ -186,7 +186,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
                 builder: (BuildContext context, BoxConstraints constraints) => SizedBox(
                     child: list?.isEmpty == true || list == null
                         ? SizedBox(
-                            height: height - bannerHei - 170,
+                            height: height - bannerHei - 40,
                             width: MediaQuery.sizeOf(context).width - 40,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -216,7 +216,7 @@ class _AccommodationPageState extends State<AccommodationPage> {
               if (_isLoaded && _admobUtil.bannerAd != null)
                 SizedBox(
                   height: _admobUtil.bannerAd!.size.height.toDouble(),
-                  width: _admobUtil.bannerAd!.size.width.toDouble(),
+                  width: MediaQuery.sizeOf(context).width,
                   child: _admobUtil.getBannerAdWidget(),
                 )
             ]),

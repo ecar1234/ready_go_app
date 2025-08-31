@@ -193,7 +193,7 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
             if (_isLoaded && _admobUtil.bannerAd != null)
               SizedBox(
                 height: _admobUtil.bannerAd!.size.height.toDouble(),
-                width: _admobUtil.bannerAd!.size.width.toDouble(),
+                width: MediaQuery.sizeOf(context).width,
                 child: _admobUtil.getBannerAdWidget(),
               )
           ],
@@ -282,9 +282,9 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
                 child: Text(
                   "${((nationsList[idx].values.first / list.length) * 100).toStringAsFixed(1)}%",
                   maxLines: 1,
-                  style: TextStyle(
+                  style: const TextStyle(
                     overflow: TextOverflow.ellipsis,
-                    color: isDarkMode ? Colors.white : Colors.black87,
+                    color: Colors.black87,
                   ),
                 ),
               )),
@@ -378,9 +378,9 @@ class _VisitStatisticsPageState extends State<VisitStatisticsPage> {
                     child: Text(
                       "${StatisticsUtil.getAccountStatistics(accountList, idx)}%",
                       maxLines: 1,
-                      style: TextStyle(
+                      style: const TextStyle(
                         overflow: TextOverflow.ellipsis,
-                        color: isDarkMode ? Colors.white : Colors.black87,
+                        color: Colors.black87,
                       ),
                     ),
                   )),

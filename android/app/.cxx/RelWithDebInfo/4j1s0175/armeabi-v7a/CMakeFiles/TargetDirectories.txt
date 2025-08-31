@@ -1,2 +1,0 @@
-/Users/mac/Projects/ready_go_project/android/app/.cxx/RelWithDebInfo/4j1s0175/armeabi-v7a/CMakeFiles/edit_cache.dir
-/Users/mac/Projects/ready_go_project/android/app/.cxx/RelWithDebInfo/4j1s0175/armeabi-v7a/CMakeFiles/rebuild_cache.dir

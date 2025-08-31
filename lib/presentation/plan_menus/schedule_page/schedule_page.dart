@@ -153,7 +153,7 @@ class _SchedulePageState extends State<SchedulePage> {
                 if (_isLoaded && _admobUtil.bannerAd != null)
                   SizedBox(
                     height: _admobUtil.bannerAd!.size.height.toDouble(),
-                    width: _admobUtil.bannerAd!.size.width.toDouble(),
+                    width: MediaQuery.sizeOf(context).width,
                     child: _admobUtil.getBannerAdWidget(),
                   )
               ],

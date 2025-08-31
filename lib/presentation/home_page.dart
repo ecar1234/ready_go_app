@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_){
-      if(kReleaseMode){
+      if(!kReleaseMode){
         final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
         if(!isRemove){
           _admobUtil.loadBannerAd(onAdLoaded: () {
@@ -89,7 +89,7 @@ class _HomePageState extends State<HomePage> {
             if (_isLoaded && _admobUtil.bannerAd != null)
               SizedBox(
                 height: _admobUtil.bannerAd!.size.height.toDouble(),
-                width: _admobUtil.bannerAd!.size.width.toDouble(),
+                width: MediaQuery.sizeOf(context).width,
                 child: _admobUtil.getBannerAdWidget(),
               ),
           ],
