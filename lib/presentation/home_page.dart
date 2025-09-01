@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_){
-      if(!kReleaseMode){
+      if(kReleaseMode){
         final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
         if(!isRemove){
           _admobUtil.loadBannerAd(onAdLoaded: () {

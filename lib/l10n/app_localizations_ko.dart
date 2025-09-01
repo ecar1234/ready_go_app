@@ -415,7 +415,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get totalCost => '총 사용 경비';
 
   @override
-  String get cashUsed => '환전 현금 사용';
+  String get cashUsed => '현금 사용';
 
   @override
   String get cardUsed => '카드 사용';
