@@ -16,6 +16,9 @@ class DateUtil {
   }
 
   static int datesDifference(List<DateTime?> list) {
+    if(list.length == 1){
+      return 0;
+    }
     return list[1]!.difference(list[0]!).inDays;
   }
 
