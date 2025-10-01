@@ -9,6 +9,7 @@ import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 import 'package:ready_go_project/bloc/data_bloc.dart';
 import 'package:ready_go_project/domain/entities/provider/plan_favorites_provider.dart';
 import 'package:ready_go_project/domain/entities/provider/responsive_height_provider.dart';
@@ -149,7 +150,9 @@ class _PlanMainPageState extends State<PlanMainPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (kReleaseMode) {
-        final isRemove = context.read<PurchaseManager>().isRemoveAdsUser;
+        final isRemove = context
+            .read<PurchaseManager>()
+            .isRemoveAdsUser;
         if (!isRemove) {
           _admobUtil.loadBannerAd(onAdLoaded: () {
             setState(() {
@@ -182,22 +185,32 @@ class _PlanMainPageState extends State<PlanMainPage> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode = context.watch<ThemeModeProvider>().isDarkMode;
+    bool isDarkMode = context
+        .watch<ThemeModeProvider>()
+        .isDarkMode;
     // File? passImg = context.watch<PassportProvider>().passport;
     return BlocBuilder<DataBloc, DataState>(builder: (context, state) {
-      final list = context.watch<PlanListProvider>().planList;
-      final height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
+      final list = context
+          .watch<PlanListProvider>()
+          .planList;
+      final height = GetIt.I
+          .get<ResponsiveHeightProvider>()
+          .resHeight ?? MediaQuery
+          .sizeOf(context)
+          .height - 120;
       // logger.d("body height : $height");
       final double bannerHeight = _isLoaded ? _admobUtil.bannerAd!.size.height.toDouble() : 0;
 
-      final isKor = Localizations.localeOf(context).languageCode == "ko";
+      final isKor = Localizations
+          .localeOf(context)
+          .languageCode == "ko";
       // logger.i("plan list page bloc state: ${state.state}");
       return Container(
         // height: height - 80, // height - 하단바 높이 - gap(10) => body 크기
         // color: const Color(0xff192a56),
         padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
         child: Column(
-            // mainAxisSize: MainAxisSize.min,
+          // mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SizedBox(
@@ -206,7 +219,9 @@ class _PlanMainPageState extends State<PlanMainPage> {
                 child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
                   // 여행 생성 버튼
                   SizedBox(
-                    width: MediaQuery.sizeOf(context).width,
+                    width: MediaQuery
+                        .sizeOf(context)
+                        .width,
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () {
@@ -214,26 +229,39 @@ class _PlanMainPageState extends State<PlanMainPage> {
                           MaterialPageRoute(builder: (context) => const AddPlanPage()),
                         );
                       },
-                      style: TextButton.styleFrom(padding: EdgeInsets.zero, backgroundColor: isDarkMode ? const Color(0xff283C63) : Colors.white),
+                      style: TextButton.styleFrom(padding: EdgeInsets.zero, backgroundColor: isDarkMode ? const Color(
+                          0xff283C63) : Colors.white),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Icon(
                             Icons.flight_takeoff,
                             size: 25,
-                            color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
+                            color: isDarkMode ? Colors.white : Theme
+                                .of(context)
+                                .colorScheme
+                                .primary,
                           ),
                           Text(
                             AppLocalizations.of(context)!.createNewPlan,
                             style: isKor
-                                ? TextStyle(color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600)
+                                ? TextStyle(color: isDarkMode ? Colors.white : Theme
+                                .of(context)
+                                .colorScheme
+                                .primary, fontWeight: FontWeight.w600)
                                 : GoogleFonts.notoSans(
-                                    color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600),
+                                color: isDarkMode ? Colors.white : Theme
+                                    .of(context)
+                                    .colorScheme
+                                    .primary, fontWeight: FontWeight.w600),
                           ),
                           Icon(
                             Icons.arrow_forward_ios,
                             size: 16,
-                            color: isDarkMode ? Colors.white : Theme.of(context).colorScheme.primary,
+                            color: isDarkMode ? Colors.white : Theme
+                                .of(context)
+                                .colorScheme
+                                .primary,
                           )
                         ],
                       ),
@@ -244,117 +272,131 @@ class _PlanMainPageState extends State<PlanMainPage> {
                   LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
                     return list.isEmpty
                         ? SingleChildScrollView(
-                          child: SizedBox(
-                              // height:  height * 0.7,
-                              width: constraints.maxWidth > 640 ? (constraints.maxWidth > 800 ? 650 : 520) : 320,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Center(
-                                    child: Text("✨ ${AppLocalizations.of(context)!.planMainDesc}!",
-                                        style: LocalizationsUtil.setTextStyle(isKor,
-                                            fontWeight: FontWeight.w600, size: constraints.maxWidth > 640 ? 34 : 22)),
-                                  ),
-                                  Gap(isKor ? 20 : 10),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "✅ ${AppLocalizations.of(context)!.expectedMenu}",
-                                        style: LocalizationsUtil.setTextStyle(isKor,
-                                            size: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      Text(AppLocalizations.of(context)!.expectedDesc)
-                                    ],
-                                  ),
-                                  const Gap(10),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text("✅ ${AppLocalizations.of(context)!.eTicketMenu}",
-                                          style: LocalizationsUtil.setTextStyle(isKor,
-                                              size: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
-                                          textAlign: TextAlign.center),
-                                      Text(AppLocalizations.of(context)!.eTicketDesc)
-                                    ],
-                                  ),
-                                  const Gap(10),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text("✅ ${AppLocalizations.of(context)!.checkListMenu}",
-                                          style: isKor
-                                              ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
-                                              : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
-                                          textAlign: TextAlign.center),
-                                      Text(AppLocalizations.of(context)!.checkListDesc)
-                                    ],
-                                  ),
-                                  const Gap(10),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text("✅ ${AppLocalizations.of(context)!.eSimMenu}",
-                                          style: isKor
-                                              ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
-                                              : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
-                                          textAlign: TextAlign.center),
-                                      Text(AppLocalizations.of(context)!.eSimDesc)
-                                    ],
-                                  ),
-                                  const Gap(10),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text("✅ ${AppLocalizations.of(context)!.expenseMenu}",
-                                          style: isKor
-                                              ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
-                                              : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
-                                          textAlign: TextAlign.center),
-                                      Text(AppLocalizations.of(context)!.expenseDesc)
-                                    ],
-                                  ),
-                                  const Gap(10),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text("✅ ${AppLocalizations.of(context)!.accommodationMenu}",
-                                          style: isKor
-                                              ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
-                                              : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
-                                          textAlign: TextAlign.center),
-                                      Text(AppLocalizations.of(context)!.accommodationDesc)
-                                    ],
-                                  ),
-                                  const Gap(10),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text("✅ ${AppLocalizations.of(context)!.scheduleMenu}",
-                                          style: isKor
-                                              ? TextStyle(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
-                                              : GoogleFonts.notoSans(fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
-                                          textAlign: TextAlign.center),
-                                      Text(AppLocalizations.of(context)!.scheduleDesc)
-                                    ],
-                                  ),
-                                ],
-                              ),
+                      child: SizedBox(
+                        // height:  height * 0.7,
+                        width: constraints.maxWidth > 640 ? (constraints.maxWidth > 800 ? 650 : 520) : 320,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Center(
+                              child: Text("✨ ${AppLocalizations.of(context)!.planMainDesc}!",
+                                  style: LocalizationsUtil.setTextStyle(isKor,
+                                      fontWeight: FontWeight.w600, size: constraints.maxWidth > 640 ? 34 : 22)),
                             ),
-                        )
+                            Gap(isKor ? 20 : 10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "✅ ${AppLocalizations.of(context)!.expectedMenu}",
+                                  style: LocalizationsUtil.setTextStyle(isKor,
+                                      size: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
+                                  textAlign: TextAlign.center,
+                                ),
+                                Text(AppLocalizations.of(context)!.expectedDesc)
+                              ],
+                            ),
+                            const Gap(10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("✅ ${AppLocalizations.of(context)!.eTicketMenu}",
+                                    style: LocalizationsUtil.setTextStyle(isKor,
+                                        size: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
+                                    textAlign: TextAlign.center),
+                                Text(AppLocalizations.of(context)!.eTicketDesc)
+                              ],
+                            ),
+                            const Gap(10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("✅ ${AppLocalizations.of(context)!.checkListMenu}",
+                                    style: isKor
+                                        ? TextStyle(
+                                        fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
+                                        : GoogleFonts.notoSans(
+                                        fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
+                                    textAlign: TextAlign.center),
+                                Text(AppLocalizations.of(context)!.checkListDesc)
+                              ],
+                            ),
+                            const Gap(10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("✅ ${AppLocalizations.of(context)!.eSimMenu}",
+                                    style: isKor
+                                        ? TextStyle(
+                                        fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
+                                        : GoogleFonts.notoSans(
+                                        fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
+                                    textAlign: TextAlign.center),
+                                Text(AppLocalizations.of(context)!.eSimDesc)
+                              ],
+                            ),
+                            const Gap(10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("✅ ${AppLocalizations.of(context)!.expenseMenu}",
+                                    style: isKor
+                                        ? TextStyle(
+                                        fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
+                                        : GoogleFonts.notoSans(
+                                        fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
+                                    textAlign: TextAlign.center),
+                                Text(AppLocalizations.of(context)!.expenseDesc)
+                              ],
+                            ),
+                            const Gap(10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("✅ ${AppLocalizations.of(context)!.accommodationMenu}",
+                                    style: isKor
+                                        ? TextStyle(
+                                        fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
+                                        : GoogleFonts.notoSans(
+                                        fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
+                                    textAlign: TextAlign.center),
+                                Text(AppLocalizations.of(context)!.accommodationDesc)
+                              ],
+                            ),
+                            const Gap(10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("✅ ${AppLocalizations.of(context)!.scheduleMenu}",
+                                    style: isKor
+                                        ? TextStyle(
+                                        fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600)
+                                        : GoogleFonts.notoSans(
+                                        fontSize: constraints.maxWidth > 640 ? 24 : 16, fontWeight: FontWeight.w600),
+                                    textAlign: TextAlign.center),
+                                Text(AppLocalizations.of(context)!.scheduleDesc)
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
                         : SizedBox(
-                            width: MediaQuery.sizeOf(context).width,
-                            height: height - 180 - bannerHeight, // height - button+gap(100) + banner(50) + bottom(70)
-                            child: _planListSection(context, list, isDarkMode, state, isKor));
+                        width: MediaQuery
+                            .sizeOf(context)
+                            .width,
+                        height: height - 180 - bannerHeight, // height - button+gap(100) + banner(50) + bottom(70)
+                        child: _planListSection(context, list, isDarkMode, state, isKor));
                   }),
                 ]),
               ),
               if (_isLoaded && _admobUtil.bannerAd != null)
                 SizedBox(
                   height: _admobUtil.bannerAd!.size.height.toDouble(),
-                  width: MediaQuery.sizeOf(context).width,
+                  width: MediaQuery
+                      .sizeOf(context)
+                      .width,
                   child: _admobUtil.getBannerAdWidget(),
                 )
             ]),
@@ -363,8 +405,12 @@ class _PlanMainPageState extends State<PlanMainPage> {
   }
 
   Widget _planListSection(BuildContext context, List<PlanModel> list, bool isDarkMode, DataState state, bool isKor) {
-    double? height = GetIt.I.get<ResponsiveHeightProvider>().resHeight ?? MediaQuery.sizeOf(context).height - 120;
-    final favoriteList = context.read<PlanFavoritesProvider>().favoriteList;
+    double? height = GetIt.I
+        .get<ResponsiveHeightProvider>()
+        .resHeight ?? MediaQuery
+        .sizeOf(context)
+        .height - 120;
+    // final favoriteList = context.read<PlanFavoritesProvider>().favoriteList;
     // if(favorite > 0){
     //   height = height - ((favorite * 120)+80) - 100;
     // }
@@ -388,18 +434,28 @@ class _PlanMainPageState extends State<PlanMainPage> {
                   SlidableAction(
                       icon: Icons.edit,
                       label: AppLocalizations.of(context)!.modify,
-                      foregroundColor: Theme.of(context).colorScheme.primary,
-                      backgroundColor: Theme.of(context).colorScheme.surface,
+                      foregroundColor: Theme
+                          .of(context)
+                          .colorScheme
+                          .primary,
+                      backgroundColor: Theme
+                          .of(context)
+                          .colorScheme
+                          .surface,
                       borderRadius: BorderRadius.circular(10),
                       onPressed: (context) {
-                        Get.to(() => AddPlanPage(
+                        Get.to(() =>
+                            AddPlanPage(
                               plan: list[idx],
                             ));
                       }),
                   SlidableAction(
                       icon: Icons.delete,
                       label: AppLocalizations.of(context)!.delete,
-                      foregroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme
+                          .of(context)
+                          .colorScheme
+                          .primary,
                       backgroundColor: Colors.redAccent,
                       borderRadius: BorderRadius.circular(10),
                       onPressed: (context) {
@@ -424,7 +480,9 @@ class _PlanMainPageState extends State<PlanMainPage> {
                             // 상단 바
                             Container(
                               height: 30,
-                              width: MediaQuery.sizeOf(context).width - 122,
+                              width: MediaQuery
+                                  .sizeOf(context)
+                                  .width - 122,
                               padding: const EdgeInsets.only(left: 5),
                               decoration: BoxDecoration(
                                   color: isDarkMode ? const Color(0xff5B89C3) : const Color(0xff007AFF),
@@ -451,39 +509,49 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(
-                                      height: 30,
-                                      width: 50,
-                                      child: IconButton(
-                                          onPressed: () {
-                                            if (list[idx].favorites == true) {
-                                              if (favoriteList.isNotEmpty) {
-                                                context.read<PlanFavoritesProvider>().removeFavoriteList(list[idx].id!);
-                                              }
-                                              list[idx].favorites = false;
-                                              context.read<PlanListProvider>().changePlan(list[idx]);
-                                            } else {
-                                              if (favoriteList.length == 2) {
-                                                Get.snackbar(
-                                                  AppLocalizations.of(context)!.snackFavoriteTitle,
-                                                  AppLocalizations.of(context)!.snackFavoriteDesc,
-                                                  backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.white,
-                                                    snackPosition: SnackPosition.TOP
-                                                );
-                                                return;
-                                              }
-                                              list[idx].favorites = true;
-                                              context.read<PlanFavoritesProvider>().addFavoriteList(list[idx]);
-                                              context.read<PlanListProvider>().changePlan(list[idx]);
-                                            }
-                                          },
-                                          style: IconButton.styleFrom(padding: EdgeInsets.zero),
-                                          icon: list[idx].favorites == false
-                                              ? const Icon(Icons.label_important_outline)
-                                              : const Icon(
-                                                  Icons.label_important,
-                                                  color: Colors.amberAccent,
-                                                )))
+                                  Consumer<PlanFavoritesProvider>(
+                                    builder: (context, provider, child) {
+                                      final favorite = provider.favoriteList.any((element) =>
+                                      element.id == list[idx].id);
+                                      return SizedBox(
+                                          height: 30,
+                                          width: 50,
+                                          child: IconButton(
+                                              onPressed: () {
+                                                if (list[idx].favorites == true) {
+                                                  context
+                                                      .read<PlanFavoritesProvider>()
+                                                      .removeFavoriteList(list[idx].id!);
+
+                                                  list[idx].favorites = false;
+                                                  context.read<PlanListProvider>().changePlan(list[idx]);
+                                                } else {
+                                                  if (provider.favoriteList.length == 2) {
+                                                    Get.snackbar(AppLocalizations.of(context)!.snackFavoriteTitle,
+                                                        AppLocalizations.of(context)!.snackFavoriteDesc,
+                                                        backgroundColor: isDarkMode
+                                                            ? Theme
+                                                            .of(context)
+                                                            .colorScheme
+                                                            .primary
+                                                            : Colors.white,
+                                                        snackPosition: SnackPosition.TOP);
+                                                    return;
+                                                  }
+                                                  context.read<PlanFavoritesProvider>().addFavoriteList(list[idx]);
+                                                  list[idx].favorites = true;
+                                                  context.read<PlanListProvider>().changePlan(list[idx]);
+                                                }
+                                              },
+                                              style: IconButton.styleFrom(padding: EdgeInsets.zero),
+                                              icon: list[idx].favorites == false
+                                                  ? const Icon(Icons.label_important_outline)
+                                                  : const Icon(
+                                                Icons.label_important,
+                                                color: Colors.amberAccent,
+                                              )));
+                                    },
+                                  )
                                 ],
                               ),
                             ),
@@ -499,7 +567,8 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                     children: [
                                       SizedBox(
                                           child: Text(
-                                              "${list[idx].nation} (${DateUtil.datesDifference(list[idx].schedule!) + 1}${AppLocalizations.of(context)!.days})",
+                                              "${list[idx].nation} (${DateUtil.datesDifference(list[idx].schedule!) +
+                                                  1}${AppLocalizations.of(context)!.days})",
                                               style: LocalizationsUtil.setTextStyle(isKor, // color: Colors.white,
                                                   size: 18,
                                                   fontWeight: FontWeight.w600))),
@@ -511,17 +580,19 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                       Expanded(
                                         child: SizedBox(
                                             child: Text(
-                                          "${list[idx].subject}",
-                                          maxLines: 1,
-                                          style: LocalizationsUtil.setTextStyle(isKor, fontWeight: FontWeight.w600),
-                                          overflow: TextOverflow.ellipsis,
-                                        )),
+                                              "${list[idx].subject}",
+                                              maxLines: 1,
+                                              style: LocalizationsUtil.setTextStyle(isKor, fontWeight: FontWeight.w600),
+                                              overflow: TextOverflow.ellipsis,
+                                            )),
                                       ),
                                     ],
                                   ),
                                   SizedBox(
                                     child: Text(
-                                      "${DateUtil.dateToString(list[idx].schedule?.first ?? DateTime.now())} ~ ${DateUtil.dateToString(list[idx].schedule?.last ?? DateTime.now())}",
+                                      "${DateUtil.dateToString(
+                                          list[idx].schedule?.first ?? DateTime.now())} ~ ${DateUtil.dateToString(
+                                          list[idx].schedule?.last ?? DateTime.now())}",
                                       // style: const TextStyle(color: Colors.white)
                                     ),
                                   ),
@@ -555,7 +626,9 @@ class _PlanMainPageState extends State<PlanMainPage> {
                                 child: Center(
                                   child: Text(
                                     DateUtil.planState(list[idx].schedule!.first!, list[idx].schedule!.last!),
-                                    style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87, fontSize: 16, fontWeight: FontWeight.w600),
+                                    style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600),
                                   ),
                                 ),
                               ),
